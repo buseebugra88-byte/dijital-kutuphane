@@ -1,0 +1,13 @@
+DİJİTAL KÜTÜPHANEM — GitHub Pages'e yükleme
+
+1. github.com'da hesabına gir, sağ üstte "+" → "New repository".
+   Ad: kutuphanem  ·  Public seç  ·  "Create repository".
+2. Açılan sayfada "uploading an existing file" bağlantısına tıkla.
+   Bu klasördeki TÜM dosyaları (index.html, sw.js, config.js, manifest.webmanifest,
+   icon-192.png, icon-512.png, gizlilik.html, README.md) sürükleyip bırak → "Commit changes".
+3. Depoda Settings → Pages → "Branch: main", klasör "/ (root)" → Save.
+4. 1-2 dakika sonra adres hazır olur: https://KULLANICIADI.github.io/kutuphanem/
+
+Telefonda: adresi Safari'de aç → Paylaş → "Ana Ekrana Ekle". Uygulama gibi açılır, internetsiz de çalışır.
+Kitaplar ve notlar sadece o cihazın tarayıcısında saklanır (sunucuya gitmez).
+Ayarlar → Yedekle'den ara ara yedek almayı unutma.
