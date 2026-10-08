@@ -2409,7 +2409,7 @@ function csvBooks(){const H=['Başlık','Yazar','Tür','Raf','Etiketler','Durum'
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   return '﻿'+[H.map(q).join(','),...st.books.map(b=>[b.title,b.author,{kitap:'Kitap',pdf:'PDF',roman:'Romanım',makale:'Makale'}[b.kind]||b.kind,b.shelf,(b.tags||[]).join('; '),STATUS_LABEL[b.status]||b.status,b.pages||'',b.currentPage||'',b.finishedAt||'',b.rating||'',b.year||'',b.journal||'',b.doi||'',b.fileName||''].map(q).join(','))].join('\r\n')}
 async function restore(file){const m=$('bkMsg');try{const d=JSON.parse(await file.text());if(!d||d.app!=='Dijital Kütüphanem')throw 0;let n=0;
-  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'&&!(rest.assetId&&LOCAL.AURL[rest.assetId])){Object.assign(rest,{assetId:'',parts:[],driveParts:[],driveId:'',source:'',squeezed:false,noSqueeze:0});if(rest.coverId&&!LOCAL.AURL[rest.coverId]){rest.coverId='';rest.autoCover=false}}if(col==='chars'&&typeof LOCAL!=='undefined'&&rest.img&&!LOCAL.AURL[rest.img])rest.img='';await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
+  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'&&!(rest.assetId&&LOCAL.AURL[rest.assetId])){const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf';if(rest.coverId&&!LOCAL.AURL[rest.coverId]){rest.coverId='';rest.autoCover=false}}if(col==='chars'&&typeof LOCAL!=='undefined'&&rest.img&&!LOCAL.AURL[rest.img])rest.img='';await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
   if(d.settings){if(d.settings.thesis)await st.db.doc('settings/thesis').set(d.settings.thesis);if(d.settings.writing)await st.db.doc('settings/writing').set(d.settings.writing);if(d.settings.log)await st.db.doc('settings/log').set(d.settings.log);if(d.settings.bingo)await st.db.doc('settings/bingo').set(d.settings.bingo);if(d.settings.journal)await st.db.doc('settings/journal').set(d.settings.journal);if(d.settings.widgets)await st.db.doc('settings/widgets').set(d.settings.widgets);if(d.settings.ui){const u={...d.settings.ui};if(u.art==='custom')u.art='fairy';setUI(u)}}
   m.textContent=`Geri yükleme tamam: ${n} kayıt.`+(typeof LOCAL!=='undefined'?' Şimdi Ayarlar → Klasörden ekle ile kitap klasörünü seç; dosyalar kayıtlarına kendiliğinden bağlanır.':'')}catch(e){m.textContent='Bu dosya bir Dijital Kütüphanem yedeği gibi görünmüyor.'}}
 
@@ -2723,6 +2723,7 @@ function bulkRender(){
   $('bulkClose').textContent=B.running?'Durdur':'Kapat';
 }
 const DRIVE_MAX=Infinity;const DRIVE_PART=3.4*1048576;
+function driveCanOpen(b){return typeof GAUTH!=='undefined'?GAUTH.configured():!bigDrive(b)}
 function bigDrive(b){return b&&b.source==='drive'&&!(b.driveParts&&b.driveParts.length)&&(b.fileSize||0)>DRIVE_MAX}
 function bulkMark(){
   const local=st.books.filter(b=>b.source!=='drive'&&hasFile(b)),sizes=new Set(local.map(b=>b.fileSize).filter(Boolean)),names=new Set(local.map(b=>trLow(b.fileName||'')).filter(Boolean)),seen=new Set();
@@ -2730,9 +2731,9 @@ function bulkMark(){
   B.items.forEach(it=>{if(it.state==='ok'||it.state==='err')return;const wasOff=it.state==='off';it.state='wait';it.msg='';if(wasOff){it.state='off';it.msg='seçilmedi'}
     const key=it.file.size+'|'+it.file.name;
     const dr=driveRec(it.file);it.migrate=null;it.wish=false;
-    const wk=trLow(it.title||'').replace(/[^\p{L}\p{N} ]/gu,'').trim(),wm=st.books.find(b=>!hasFile(b)&&!b.driveId&&b.fileName&&trLow(b.fileName)===trLow(it.file.name))||(wk.length>2?st.books.find(b=>!hasFile(b)&&!b.driveId&&b.kind!=='makale'&&trLow(b.title||'').replace(/[^\p{L}\p{N} ]/gu,'').trim()===wk):null);
+    const wk=trLow(it.title||'').replace(/[^\p{L}\p{N} ]/gu,'').trim(),wm=st.books.find(b=>!b.assetId&&(!b.driveId||!driveCanOpen(b))&&b.fileName&&trLow(b.fileName)===trLow(it.file.name))||(wk.length>2?st.books.find(b=>!b.assetId&&(!b.driveId||!driveCanOpen(b))&&b.kind!=='makale'&&trLow(b.title||'').replace(/[^\p{L}\p{N} ]/gu,'').trim()===wk):null);
     if(sizes.has(it.file.size)||names.has(trLow(it.file.name))){it.state='skip';it.msg='zaten rafta'}
-    else if(dr&&!bigDrive(dr)){it.state='skip';it.msg="Drive'da, açılabiliyor"}
+    else if(dr&&driveCanOpen(dr)){it.state='skip';it.msg="Drive'da, açılabiliyor"}
     else if(dr){it.migrate=dr.id;it.title=dr.title;it.author=dr.author;it.shelf=dr.shelf;if(!wasOff){it.state='wait';it.msg="Drive'dan uygulamaya taşınacak"}}
     else if(wm){it.migrate=wm.id;it.wish=true;it.title=wm.title;if(!wasOff){it.state='wait';it.msg='rafındaki kayda bağlanacak ✨'}}
     else if(seen.has(it.file.size)){it.state='skip';it.msg='tekrar eden dosya'}
