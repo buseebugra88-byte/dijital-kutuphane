@@ -827,6 +827,7 @@ const LOCAL=(()=>{
       try{await tx('blobs','readwrite',s=>s.put({blob:b,type,size:b.size,at:Date.now()},id))}catch(e){throw{code:'quota_or_state',message:'Bu cihazda yer kalmadı'}}
       if(navigator.storage&&navigator.storage.persist){try{navigator.storage.persist()}catch(e){}}
       BL.add(id);AURLc[id]=URL.createObjectURL(b);return {id,url:AURLc[id],sizeBytes:b.size,contentType:type}},
+    putId:async(id,blob)=>{const type=blob.type||'application/octet-stream';await tx('blobs','readwrite',s=>s.put({blob,type,size:blob.size,at:Date.now()},id));BL.add(id);if(/^image\//.test(type)){if(AURLc[id])URL.revokeObjectURL(AURLc[id]);AURLc[id]=URL.createObjectURL(blob)}return {id}},
     delete:async id=>{await tx('blobs','readwrite',s=>s.delete(id));BL.delete(id);if(AURLc[id]){URL.revokeObjectURL(AURLc[id]);delete AURLc[id]}return {deleted:true}},
     list:async()=>{const all=await getAll('blobs');let est={quota:0};try{est=await navigator.storage.estimate()}catch(e){}const bytes=all.reduce((a,[,v])=>a+(v.size||0),0);
       return {assets:all.map(([k,v])=>({id:k,contentType:v.type,sizeBytes:v.size})),usage:{files:all.length,bytes,maxFiles:1e9,maxBytes:Math.max(bytes+1,est.quota||bytes*4)}}}
@@ -2398,20 +2399,21 @@ function tYear(){
 
 /* ---------- 💾 Yedekle ---------- */
 function tBackup(){return toolHead('💾 Yedekle')+`<p class="hint" style="margin:0;font-size:14px">Kitap listen, notların, alıntıların, kartların, tez planın ve yazar köşen bir yedek dosyasına yazılır. PDF dosyalarının kendisi yedeğe girmez; onlar Drive'ında ya da kütüphanenin deposunda kalır.</p>
-  <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="button" data-act="bkjson">⬇️ Tam yedek (.json)</button><button class="btn" type="button" data-act="bkcsv">⬇️ Kitap listesi (Excel için .csv)</button></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="button" data-act="bkjson">⬇️ Tam yedek (.json)</button><button class="btn" type="button" data-act="bkfull">🖼 Görsellerle tam yedek</button><button class="btn" type="button" data-act="bkcsv">⬇️ Kitap listesi (Excel için .csv)</button></div>
   <div class="f"><label for="bkFile">Yedekten geri yükle</label><input id="bkFile" type="file" accept="application/json,.json"><span class="hint" style="font-size:12px">Aynı kayıtlar yedektekiyle değiştirilir, yeni kayıtlar eklenir; hiçbir şey silinmez.</span></div><div class="hint" id="bkMsg"></div>${typeof GAUTH!=='undefined'&&GAUTH.configured()?`<div class="f" style="margin-top:8px"><label>Google Drive yedeği</label><div class="hint dbk-info" style="margin:0;font-size:13px">Drive'a giriş yaptığın sürece her şey Drive'ındaki "Dijital Kütüphanem — yedek.json" dosyasıyla kendiliğinden eşitlenir: değişikliklerin birkaç dakikada bir Drive'a yazılır, uygulamayı açtığında başka cihazdaki daha yeni değişiklikler alınır. Giriş süresi dolduysa köşedeki "Drive ile eşitle" düğmesine bas.</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn primary" type="button" data-act="bkdrive">☁️ Şimdi eşitle</button><button class="btn" type="button" data-act="bkdriveget">⬇️ Drive'dan geri yükle</button></div><span class="hint" id="dbkMsg" style="font-size:12px">${dbkStatus()}</span></div>`:''}`}
 async function saveFile(name,data){
   try{const dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;if(!dl){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toast('Dosya indirildi');return}await dl.save({filename:name,data});toast('Dosya kaydedildi')}
   catch(e){toast(e&&e.code==='declined'?'İndirme iptal edildi':e&&e.code==='rate_limited'?'Biraz bekleyip tekrar dene':'Bu görünümde dosya indirilemiyor')}}
 async function backupData(){const get=async col=>{try{const s_=await st.db.collection(col).get();return s_.docs.map(d=>({id:d.id,...d.data()}))}catch(e){return []}};
   return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),
-    settings:{ui:UI,thesis:TL.thesis,writing:TL.writing,log:st.log,bingo:TL.bingo,journal:TL.journal,widgets:TL.widgets}}}
+    settings:{ui:UI,thesis:TL.thesis,writing:TL.writing,log:st.log,bingo:TL.bingo,journal:TL.journal,widgets:TL.widgets,stickers:{items:STK.items,emblem:STK.emblem}}}}
 function csvBooks(){const H=['Başlık','Yazar','Tür','Raf','Etiketler','Durum','Sayfa','Kaldığı sayfa','Bitirme','Puan','Yıl','Dergi','DOI','Dosya'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   return '﻿'+[H.map(q).join(','),...st.books.map(b=>[b.title,b.author,{kitap:'Kitap',pdf:'PDF',roman:'Romanım',makale:'Makale'}[b.kind]||b.kind,b.shelf,(b.tags||[]).join('; '),STATUS_LABEL[b.status]||b.status,b.pages||'',b.currentPage||'',b.finishedAt||'',b.rating||'',b.year||'',b.journal||'',b.doi||'',b.fileName||''].map(q).join(','))].join('\r\n')}
 async function restore(file,quiet){const m=$('bkMsg')||{textContent:''};try{const d=JSON.parse(await file.text());if(!d||d.app!=='Dijital Kütüphanem')throw 0;let n=0;
+  if(d.blobs&&typeof LOCAL!=='undefined'){const ids=Object.keys(d.blobs);let k=0;for(const id of ids){if(!LOCAL.has(id)){const x=d.blobs[id];try{await LOCAL.assets.putId(id,new Blob([b64dec(x.b64)],{type:x.type||'image/jpeg'}))}catch(e){}}if(++k%20===0)m.textContent='Görseller: '+k+'/'+ids.length}}
   for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}else{rest.coverId='';rest.autoCover=false}}}if(col==='chars'&&typeof LOCAL!=='undefined'&&rest.img&&!LOCAL.has(rest.img))rest.img='';await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
-  if(d.settings){if(d.settings.thesis)await st.db.doc('settings/thesis').set(d.settings.thesis);if(d.settings.writing)await st.db.doc('settings/writing').set(d.settings.writing);if(d.settings.log)await st.db.doc('settings/log').set(d.settings.log);if(d.settings.bingo)await st.db.doc('settings/bingo').set(d.settings.bingo);if(d.settings.journal)await st.db.doc('settings/journal').set(d.settings.journal);if(d.settings.widgets)await st.db.doc('settings/widgets').set(d.settings.widgets);if(d.settings.ui){const u={...d.settings.ui};if(u.art==='custom')u.art='fairy';setUI(u)}}
+  if(d.settings){if(d.settings.thesis)await st.db.doc('settings/thesis').set(d.settings.thesis);if(d.settings.writing)await st.db.doc('settings/writing').set(d.settings.writing);if(d.settings.log)await st.db.doc('settings/log').set(d.settings.log);if(d.settings.bingo)await st.db.doc('settings/bingo').set(d.settings.bingo);if(d.settings.journal)await st.db.doc('settings/journal').set(d.settings.journal);if(d.settings.widgets)await st.db.doc('settings/widgets').set(d.settings.widgets);if(d.settings.stickers&&Array.isArray(d.settings.stickers.items)){const it=d.settings.stickers.items.filter(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(it.length||!STK.items.length)await st.db.doc('settings/stickers').set({items:it,emblem:it.some(x=>x.id===d.settings.stickers.emblem)?d.settings.stickers.emblem:'',updatedAt:new Date().toISOString()})}if(d.settings.ui){const u={...d.settings.ui};const hasStk=d.settings.stickers&&(d.settings.stickers.items||[]).some(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(u.art==='custom'&&!hasStk)u.art='fairy';setUI(u)}}
   m.textContent=`Geri yükleme tamam: ${n} kayıt.`+(typeof LOCAL!=='undefined'?' Şimdi Ayarlar → Klasörden ekle ile kitap klasörünü seç; dosyalar kayıtlarına kendiliğinden bağlanır.':'')}catch(e){m.textContent='Bu dosya bir Dijital Kütüphanem yedeği gibi görünmüyor.';if(quiet)throw e}}
 /* Drive ile otomatik eşitleme: açılışta/girişte Drive'daki daha yeni yedeği alır, değişiklikleri Drive'a yazar */
 const DBK={name:'Dijital Kütüphanem — yedek.json',busy:false};
@@ -2423,6 +2425,23 @@ async function driveBackupFind(){
   const q=encodeURIComponent("name = '"+DBK.name+"' and trashed = false");
   const r=await gfetch(GD+'?q='+q+'&orderBy='+encodeURIComponent('modifiedTime desc')+'&pageSize=1&fields='+encodeURIComponent('files(id,modifiedTime)'));const j=await r.json();
   return (j.files&&j.files[0])||null}
+const DIMG={folder:'',nonimg:new Set()};
+function dimgMap(){try{return JSON.parse(localStorage.getItem('dk-bk-imgs')||'{}')}catch(e){return {}}}
+function dimgSave(m){try{localStorage.setItem('dk-bk-imgs',JSON.stringify(m))}catch(e){}}
+async function dimgFolder(){if(DIMG.folder)return DIMG.folder;let id=dbkGet('imgfolder');
+  if(!id){const q=encodeURIComponent("name = 'Dijital Kütüphanem — görseller' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");const j=await (await gfetch(GD+'?q='+q+'&pageSize=1&fields='+encodeURIComponent('files(id)'))).json();id=j.files&&j.files[0]&&j.files[0].id||''}
+  if(!id){const r=await gfetch(GD+'?fields=id',1,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'Dijital Kütüphanem — görseller',mimeType:'application/vnd.google-apps.folder'})});id=(await r.json()).id}
+  dbkSet('imgfolder',id);DIMG.folder=id;return id}
+async function dimgPush(dataTxt,map,lim){if(typeof LOCAL==='undefined')return 0;const ids=[...new Set(dataTxt.match(/\b[0-9a-f]{32}\b/g)||[])].filter(id=>!map[id]&&!DIMG.nonimg.has(id)&&LOCAL.has(id));let n=0;
+  for(const id of ids.slice(0,lim||40)){const r=await LOCAL.fetchAsset(id);const t=r.headers.get('content-type')||'';if(!/^image\//.test(t)){DIMG.nonimg.add(id);continue}
+    const blob=await r.blob(),folder=await dimgFolder(),b='dki'+Date.now();
+    const body=new Blob(['--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify({name:'dk-img-'+id,parents:[folder]})+'\r\n--'+b+'\r\nContent-Type: '+t+'\r\n\r\n',blob,'\r\n--'+b+'--']);
+    const j=await (await gfetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',1,{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body})).json();if(j.id){map[id]=j.id;n++}}
+  return n}
+async function dimgPull(d){if(typeof LOCAL==='undefined'||!d||!d.imgs)return;const map=dimgMap();Object.assign(map,d.imgs);dimgSave(map);
+  const ids=Object.keys(d.imgs).filter(id=>!LOCAL.has(id));let i=0;
+  const worker=async()=>{while(i<ids.length){const id=ids[i++];try{const r=await gfetch(GD+'/'+encodeURIComponent(d.imgs[id])+'?alt=media');const b=await r.blob();await LOCAL.assets.putId(id,b)}catch(e){}}};
+  await Promise.all([worker(),worker(),worker(),worker()])}
 async function driveSync(force){
   if(typeof GAUTH==='undefined'||!GAUTH.configured()||DBK.busy)return false;
   if(!force&&!GAUTH.signedIn())return false;
@@ -2433,10 +2452,12 @@ async function driveSync(force){
     if(f){dbkSet('id',f.id);
       if(f.modifiedTime&&(!synced||f.modifiedTime>synced)){
         const r=await gfetch(GD+'/'+encodeURIComponent(f.id)+'?alt=media');const txt=await r.text();
+        try{await dimgPull(JSON.parse(txt))}catch(e){}
         await restore({text:async()=>txt},true);dbkSet('synced',f.modifiedTime);pulled=true;
-        await new Promise(x=>setTimeout(x,600));dbkSet('hash',dbkHash(dbkData(await backupData())))}}
+        await new Promise(x=>setTimeout(x,600));dbkSet('hash',dbkHash(JSON.stringify({...JSON.parse(dbkData(await backupData())),imgs:dimgMap()})))}}
     else dbkSet('id','');
-    const data=dbkData(await backupData()),h=dbkHash(data);
+    const data0=dbkData(await backupData());const imap=dimgMap();try{if(await dimgPush(data0,imap,force?1000:40))dimgSave(imap)}catch(e){}
+    const data=JSON.stringify({...JSON.parse(data0),imgs:imap}),h=dbkHash(data);
     if(!(st.books||[]).length){dbkSet('hash',h)}
     else if(force||h!==dbkGet('hash')||!f){
       const id=dbkGet('id'),b='dkb'+Date.now(),meta=JSON.stringify(id?{}:{name:DBK.name,mimeType:'application/json'});
@@ -2558,6 +2579,9 @@ $('toolPanel').addEventListener('click',async e=>{
   // backup
   if(act==='bkdrive'){const m=document.getElementById('dbkMsg');A.disabled=true;if(m)m.textContent='Yedekleniyor…';try{await driveSync(true);toast("Drive ile eşitlendi ☁️")}catch(e){if(m)m.textContent=(e&&e.ui)||"Drive'a yedeklenemedi."}A.disabled=false;return}
   if(act==='bkdriveget'){const m=document.getElementById('dbkMsg');A.disabled=true;if(m)m.textContent="Drive'dan alınıyor…";try{const f=await driveRestoreLatest();if(m)m.textContent="Drive yedeği yüklendi ("+new Date(f.modifiedTime).toLocaleString('tr-TR')+").";toast('Yedek geri yüklendi')}catch(e){if(m)m.textContent=(e&&e.ui)||"Drive'dan alınamadı."}A.disabled=false;return}
+  if(act==='bkfull'){A.disabled=true;const m=$('bkMsg');try{const d=await backupData();const txt=JSON.stringify(d);const ids=[...new Set(txt.match(/\b[0-9a-f]{32}\b/g)||[])];d.blobs={};let k=0;
+      for(const id of ids){try{const r=await LOCAL.fetchAsset(id);if(r.ok){const t=(r.headers.get('content-type')||'');if(/^image\//.test(t)){d.blobs[id]={type:t,b64:b64enc(new Uint8Array(await r.arrayBuffer()))}}}}catch(e){}if(m)m.textContent='Görseller hazırlanıyor: '+(++k)+'/'+ids.length}
+      if(m)m.textContent=Object.keys(d.blobs).length+' görsel yedeğe eklendi.';await saveFile(`dijital-kutuphanem-gorselli-yedek-${todayKey()}.json`,JSON.stringify(d))}catch(e){if(m)m.textContent='Yedek hazırlanamadı.'}A.disabled=false;return}
   if(act==='bkjson'){A.disabled=true;const d=await backupData();A.disabled=false;return saveFile(`dijital-kutuphanem-yedek-${todayKey()}.json`,JSON.stringify(d,null,1))}
   if(act==='bkcsv')return saveFile(`dijital-kutuphanem-liste-${todayKey()}.csv`,csvBooks());
 });
