@@ -2437,7 +2437,7 @@ async function driveSync(force){
         await new Promise(x=>setTimeout(x,600));dbkSet('hash',dbkHash(dbkData(await backupData())))}}
     else dbkSet('id','');
     const data=dbkData(await backupData()),h=dbkHash(data);
-    if(!(st.books||[]).length&&f){dbkSet('hash',h)}
+    if(!(st.books||[]).length){dbkSet('hash',h)}
     else if(force||h!==dbkGet('hash')||!f){
       const id=dbkGet('id'),b='dkb'+Date.now(),meta=JSON.stringify(id?{}:{name:DBK.name,mimeType:'application/json'});
       const full=JSON.stringify({...JSON.parse(data),at:new Date().toISOString()});
