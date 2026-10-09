@@ -112,7 +112,7 @@ aside h3{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.
 .goal{position:relative;overflow:hidden}
 .goal .deco{position:absolute;right:-6px;bottom:-8px;width:110px;height:110px;color:var(--on);opacity:.18;pointer-events:none}
 aside h3 svg{width:14px;height:14px;vertical-align:-2px;margin-right:4px}
-header.top{position:relative}.reloadbtn{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;z-index:44;width:32px;height:32px;font-size:17px;opacity:.8;box-shadow:0 4px 12px -6px rgba(0,0,0,.35)}.reloadbtn:hover{opacity:1}body:has(#reader:not([hidden])) .reloadbtn,body:has(.wroom) .reloadbtn{display:none}
+header.top{position:relative}.reloadbtn{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);right:8px;z-index:44;width:32px;height:32px;font-size:17px;opacity:.8;box-shadow:0 4px 12px -6px rgba(0,0,0,.35)}.reloadbtn:hover{opacity:1}body:has(#reader:not([hidden])) .reloadbtn,body:has(.wroom) .reloadbtn,body:has(#reader:not([hidden])) #dbkChip,body:has(.wroom) #dbkChip{display:none}
 header.top .sprigL{position:absolute;left:-14px;bottom:-18px;width:90px;height:90px;color:var(--accent);opacity:.35;transform:scaleX(-1)}
 .rmsg svg{width:120px;height:auto;color:var(--muted)}
 .divider{display:flex;align-items:center;gap:12px;color:var(--muted)}
@@ -2477,7 +2477,7 @@ function dbkStatus(){const a=dbkGet('at');if(!a)return "Henüz Drive ile eşitle
 async function driveRestoreLatest(){dbkSet('synced','');await driveSync(true);return {modifiedTime:dbkGet('synced')}}
 function dbkChip(){if(typeof GAUTH==='undefined'||!GAUTH.configured())return;let c=document.getElementById('dbkChip');const need=!!dbkGet('at')&&!GAUTH.signedIn();
   if(!need){if(c)c.remove();return}
-  if(!c){c=document.createElement('button');c.id='dbkChip';c.type='button';c.className='btn';c.textContent='☁️ Drive ile eşitle';c.style.cssText='position:fixed;left:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);z-index:44;box-shadow:0 8px 20px -10px rgba(0,0,0,.35)';
+  if(!c){c=document.createElement('button');c.id='dbkChip';c.type='button';c.className='btn';c.textContent='☁️ Drive ile eşitle';c.style.cssText='position:fixed;right:48px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:44;height:32px;padding:0 12px;font-size:13px;box-shadow:0 4px 12px -6px rgba(0,0,0,.35)';
     c.onclick=async()=>{c.disabled=true;c.textContent='Eşitleniyor…';try{await driveSync(true)}catch(e){toast((e&&e.ui)||'Eşitlenemedi')}c.disabled=false;c.textContent='☁️ Drive ile eşitle';dbkChip()};document.body.appendChild(c)}}
 if(typeof GAUTH!=='undefined'){
   setInterval(()=>{driveSync(false).catch(()=>{})},120000);
