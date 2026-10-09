@@ -2728,7 +2728,7 @@ function bulkRender(){
 }
 const DRIVE_MAX=Infinity;const DRIVE_PART=3.4*1048576;
 function driveCanOpen(b){return typeof GAUTH!=='undefined'?GAUTH.configured():!bigDrive(b)}
-function bigDrive(b){return b&&b.source==='drive'&&!(b.driveParts&&b.driveParts.length)&&(b.fileSize||0)>DRIVE_MAX}
+function bigDrive(b){return typeof GAUTH==='undefined'&&b&&b.source==='drive'&&!(b.driveParts&&b.driveParts.length)&&(b.fileSize||0)>DRIVE_MAX}
 function bulkMark(){
   const local=st.books.filter(b=>b.source!=='drive'&&hasFile(b)),sizes=new Set(local.map(b=>b.fileSize).filter(Boolean)),names=new Set(local.map(b=>trLow(b.fileName||'')).filter(Boolean)),seen=new Set();
   const driveRec=f=>st.books.find(b=>b.source==='drive'&&(trLow(b.fileName||'')===trLow(f.name)||(b.fileSize&&b.fileSize===f.size)));
@@ -2876,7 +2876,12 @@ async function driveCall(tool,input){
   throw{ui:'Bu Drive işlemi uygulamada yok.'}
 }
 function driveErr(e){if(e&&e.ui)return e.ui;const c=e&&e.code;return {needs_reauth:'Google Drive bağlantısının süresi dolmuş. claude.ai → Ayarlar → Bağlayıcılar\'dan yeniden bağla.',server_not_connected:'Google Drive bağlı değil. claude.ai → Ayarlar → Bağlayıcılar\'dan ekle.',not_in_manifest:'Bu sayfanın Google Drive\'a erişimine izin verilmemiş. Sayfa menüsündeki İzinler bölümünden aç.',selection_required:'Birden fazla Google Drive bağlantın var; açılan pencereden birini seç.',server_unavailable:'Google Drive şu an yanıt vermiyor, biraz sonra tekrar dene.',capability_disabled:'Google Drive bu görünümde kullanılamıyor.',not_granted:'Google Drive bu görünümde kullanılamıyor.',tool_error:'Google Drive isteği reddetti'+(e&&e.message?': '+String(e.message).slice(0,80):'.')}[c]||('Google Drive\'a ulaşılamadı'+(c?' ('+c+')':'')+'.')}
-async function driveBytes(b){const r=await gfetch(GD+'/'+encodeURIComponent(b.driveId)+'?alt=media&supportsAllDrives=true');return new Uint8Array(await r.arrayBuffer())}
+async function driveBytes(b){const key='https://dk-offline/drive/'+encodeURIComponent(b.driveId);let C=null;try{C=await caches.open('dk-books')}catch(e){}
+  if(C){try{const hit=await C.match(key);if(hit)return new Uint8Array(await hit.arrayBuffer())}catch(e){}}
+  if(!navigator.onLine)throw{ui:'İnternet yok. Bu kitap bu cihazda daha önce açılmadığı için çevrimdışı okunamıyor.'};
+  const r=await gfetch(GD+'/'+encodeURIComponent(b.driveId)+'?alt=media&supportsAllDrives=true');const buf=await r.arrayBuffer();
+  if(C){try{await C.put(key,new Response(buf.slice(0),{headers:{'Content-Type':'application/octet-stream'}}))}catch(e){}}
+  return new Uint8Array(buf)}
 async function driveEnsureFolder(){
   let d={};try{const s_=await st.db.doc('settings/drive').get();if(s_.exists)d=s_.data()}catch(e){}
   if(d.partsId)return d.partsId;if(!d.rootId)throw{ui:'Önce Ayarlar → Google Drive\'dan kütüphane klasörünü bul.'};
