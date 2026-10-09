@@ -839,11 +839,11 @@ const LOCAL=(()=>{
 
 /* Google ile giriş + Drive (uygulama / web sürümü) */
 const GAUTH=(()=>{
-  const CFG=window.DK_CONFIG||{};const SCOPE='https://www.googleapis.com/auth/drive.readonly';
+  const CFG=window.DK_CONFIG||{};const SCOPE='https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.file';
   let tok=null,exp=0,client=null,pending=null,inited=false;
   try{const s=JSON.parse(sessionStorage.getItem('dk-gtok')||'null');if(s&&s.exp>Date.now()+60000){tok=s.t;exp=s.exp}}catch(e){}
   const native=()=>!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
-  const fire=()=>{try{G.onchange&&G.onchange()}catch(e){}};
+  const fire=()=>{try{G.onchange&&G.onchange()}catch(e){}try{window.dkAfterAuth&&window.dkAfterAuth()}catch(e){}};
   function save(t,sec){tok=t;exp=Date.now()+Math.max(300,(sec||3500)-120)*1000;try{sessionStorage.setItem('dk-gtok',JSON.stringify({t,exp}))}catch(e){}fire()}
   function loadGis(){return new Promise((res,rej)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return res();
     const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=()=>res();s.onerror=()=>rej({ui:'Google girişi yüklenemedi. İnternet bağlantını kontrol et.'});document.head.appendChild(s)})}
@@ -875,15 +875,16 @@ const GAUTH=(()=>{
   return G;
 })();
 const GD='https://www.googleapis.com/drive/v3/files';
-async function gfetch(url,retry=1){
+async function gfetch(url,retry=1,opts){
   const t=await GAUTH.token();let r;
-  try{r=await fetch(url,{headers:{Authorization:'Bearer '+t}})}catch(e){throw{code:'network',ui:'Google Drive\'a ulaşılamadı. İnternet bağlantını kontrol et.'}}
-  if(r.status===401&&retry){GAUTH.expire();return gfetch(url,0)}
-  if((r.status===429||r.status>=500)&&retry){await new Promise(x=>setTimeout(x,1500+Math.random()*1000));return gfetch(url,0)}
+  try{r=await fetch(url,{...(opts||{}),headers:{...((opts&&opts.headers)||{}),Authorization:'Bearer '+t}})}catch(e){throw{code:'network',ui:'Google Drive\'a ulaşılamadı. İnternet bağlantını kontrol et.'}}
+  if(r.status===401&&retry){GAUTH.expire();return gfetch(url,0,opts)}
+  if((r.status===429||r.status>=500)&&retry){await new Promise(x=>setTimeout(x,1500+Math.random()*1000));return gfetch(url,0,opts)}
   if(!r.ok){let m='';try{m=((await r.json()).error||{}).message||''}catch(e){}
     throw{code:'http_'+r.status,ui:r.status===404?'Dosya Drive\'da bulunamadı (silinmiş ya da taşınmış olabilir).':r.status===403?'Google Drive bu dosyaya erişime izin vermedi. '+m:'Google Drive hatası ('+r.status+'). '+m}}
   return r}
 function v2q(q){return q.replace(/parentId = '([^']+)'/g,"'$1' in parents").replace(/\btitle\b/g,'name')+' and trashed = false'}
+
 
 (function(){
 const $=id=>document.getElementById(id);
@@ -2398,7 +2399,7 @@ function tYear(){
 /* ---------- 💾 Yedekle ---------- */
 function tBackup(){return toolHead('💾 Yedekle')+`<p class="hint" style="margin:0;font-size:14px">Kitap listen, notların, alıntıların, kartların, tez planın ve yazar köşen bir yedek dosyasına yazılır. PDF dosyalarının kendisi yedeğe girmez; onlar Drive'ında ya da kütüphanenin deposunda kalır.</p>
   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="button" data-act="bkjson">⬇️ Tam yedek (.json)</button><button class="btn" type="button" data-act="bkcsv">⬇️ Kitap listesi (Excel için .csv)</button></div>
-  <div class="f"><label for="bkFile">Yedekten geri yükle</label><input id="bkFile" type="file" accept="application/json,.json"><span class="hint" style="font-size:12px">Aynı kayıtlar yedektekiyle değiştirilir, yeni kayıtlar eklenir; hiçbir şey silinmez.</span></div><div class="hint" id="bkMsg"></div>`}
+  <div class="f"><label for="bkFile">Yedekten geri yükle</label><input id="bkFile" type="file" accept="application/json,.json"><span class="hint" style="font-size:12px">Aynı kayıtlar yedektekiyle değiştirilir, yeni kayıtlar eklenir; hiçbir şey silinmez.</span></div><div class="hint" id="bkMsg"></div>${typeof GAUTH!=='undefined'&&GAUTH.configured()?`<div class="f" style="margin-top:8px"><label>Google Drive yedeği</label><div class="hint dbk-info" style="margin:0;font-size:13px">Drive'a giriş yaptığın sürece her şey birkaç dakikada bir kendiliğinden Drive'ındaki "Dijital Kütüphanem — yedek.json" dosyasına yedeklenir. Yeni bir cihazda "Drive'dan geri yükle" ile hepsi geri gelir.</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn primary" type="button" data-act="bkdrive">☁️ Şimdi Drive'a yedekle</button><button class="btn" type="button" data-act="bkdriveget">⬇️ Drive'dan geri yükle</button></div><span class="hint" id="dbkMsg" style="font-size:12px">${dbkStatus()}</span></div>`:''}`}
 async function saveFile(name,data){
   try{const dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;if(!dl){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toast('Dosya indirildi');return}await dl.save({filename:name,data});toast('Dosya kaydedildi')}
   catch(e){toast(e&&e.code==='declined'?'İndirme iptal edildi':e&&e.code==='rate_limited'?'Biraz bekleyip tekrar dene':'Bu görünümde dosya indirilemiyor')}}
@@ -2412,6 +2413,42 @@ async function restore(file){const m=$('bkMsg');try{const d=JSON.parse(await fil
   for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'&&!(rest.assetId&&LOCAL.AURL[rest.assetId])){const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf';if(rest.coverId&&!LOCAL.AURL[rest.coverId]){rest.coverId='';rest.autoCover=false}}if(col==='chars'&&typeof LOCAL!=='undefined'&&rest.img&&!LOCAL.AURL[rest.img])rest.img='';await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
   if(d.settings){if(d.settings.thesis)await st.db.doc('settings/thesis').set(d.settings.thesis);if(d.settings.writing)await st.db.doc('settings/writing').set(d.settings.writing);if(d.settings.log)await st.db.doc('settings/log').set(d.settings.log);if(d.settings.bingo)await st.db.doc('settings/bingo').set(d.settings.bingo);if(d.settings.journal)await st.db.doc('settings/journal').set(d.settings.journal);if(d.settings.widgets)await st.db.doc('settings/widgets').set(d.settings.widgets);if(d.settings.ui){const u={...d.settings.ui};if(u.art==='custom')u.art='fairy';setUI(u)}}
   m.textContent=`Geri yükleme tamam: ${n} kayıt.`+(typeof LOCAL!=='undefined'?' Şimdi Ayarlar → Klasörden ekle ile kitap klasörünü seç; dosyalar kayıtlarına kendiliğinden bağlanır.':'')}catch(e){m.textContent='Bu dosya bir Dijital Kütüphanem yedeği gibi görünmüyor.'}}
+/* Drive'a otomatik yedek (yalnızca uygulamanın kendi oluşturduğu yedek dosyası) */
+const DBK={name:'Dijital Kütüphanem — yedek.json',busy:false,last:''};
+function dbkGet(k){try{return localStorage.getItem('dk-bk-'+k)||''}catch(e){return ''}}
+function dbkSet(k,v){try{localStorage.setItem('dk-bk-'+k,v)}catch(e){}}
+async function driveBackupFind(){
+  const q=encodeURIComponent("name = '"+DBK.name.replace(/'/g,"\\'")+"' and trashed = false");
+  const r=await gfetch(GD+'?q='+q+'&orderBy=modifiedTime desc&pageSize=1&fields=files(id,modifiedTime)');const j=await r.json();
+  return (j.files&&j.files[0])||null}
+async function driveBackupNow(force){
+  if(typeof GAUTH==='undefined'||!GAUTH.configured()||DBK.busy)return false;
+  if(!force&&!GAUTH.signedIn())return false;
+  if(!navigator.onLine)return false;
+  DBK.busy=true;
+  try{
+    const data=JSON.stringify(await backupData());
+    if(!force&&data===DBK.last)return true;
+    let id=dbkGet('id');if(!id){const f=await driveBackupFind().catch(()=>null);if(f)id=f.id}
+    const b='dkb'+Date.now(),meta=JSON.stringify(id?{}:{name:DBK.name,mimeType:'application/json'});
+    const body='--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+meta+'\r\n--'+b+'\r\nContent-Type: application/json\r\n\r\n'+data+'\r\n--'+b+'--';
+    const up='https://www.googleapis.com/upload/drive/v3/files';
+    const go=i=>gfetch(i?up+'/'+encodeURIComponent(i)+'?uploadType=multipart&fields=id':up+'?uploadType=multipart&fields=id',1,{method:i?'PATCH':'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body});
+    let r;try{r=await go(id)}catch(e){if(id&&e&&e.code==='http_404'){id='';r=await go('')}else throw e}
+    const j=await r.json();dbkSet('id',j.id||id);dbkSet('at',new Date().toISOString());DBK.last=data;
+    try{const m=document.getElementById('dbkMsg');if(m)m.textContent=dbkStatus()}catch(e){}
+    return true
+  }finally{DBK.busy=false}}
+function dbkStatus(){const a=dbkGet('at');if(!a)return "Henüz Drive'a yedeklenmedi.";const d=new Date(a);return "Son Drive yedeği: "+d.toLocaleDateString('tr-TR')+' '+d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}
+async function driveRestoreLatest(){
+  const f=await driveBackupFind();if(!f)throw{ui:"Drive'da yedek bulunamadı."};
+  const r=await gfetch(GD+'/'+encodeURIComponent(f.id)+'?alt=media');const txt=await r.text();dbkSet('id',f.id);
+  await restore({text:async()=>txt});return f}
+setInterval(()=>{driveBackupNow(false).catch(()=>{})},120000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')driveBackupNow(false).catch(()=>{})});
+window.dkAfterAuth=()=>setTimeout(()=>driveBackupNow(false).catch(()=>{}),1500);
+
+
 
 /* ---------- olaylar ---------- */
 $('toolsBtn').addEventListener('click',()=>openTool('menu'));
@@ -2504,6 +2541,8 @@ $('toolPanel').addEventListener('click',async e=>{
   if(act==='sbadd'){const pub=$('sbPub').value.trim();if(!pub){toast('Yayınevi adını yaz');return}try{await st.db.collection('subs').doc().set({novel:TL.novel,pub,date:$('sbDate').value,status:'gonderildi',note:$('sbNote').value.trim(),at:new Date().toISOString()});toast('Başvuru eklendi 📮')}catch(err){toast('Kaydedilemedi')}return}
   const sbr=t.closest('[data-sbrm]');if(sbr){if(sbr.dataset.sure){await st.db.collection('subs').doc(sbr.dataset.sbrm).delete()}else{sbr.dataset.sure='1';sbr.textContent='?'}return}
   // backup
+  if(act==='bkdrive'){const m=document.getElementById('dbkMsg');A.disabled=true;if(m)m.textContent='Yedekleniyor…';try{await driveBackupNow(true);toast("Drive'a yedeklendi ☁️")}catch(e){if(m)m.textContent=(e&&e.ui)||"Drive'a yedeklenemedi."}A.disabled=false;return}
+  if(act==='bkdriveget'){const m=document.getElementById('dbkMsg');A.disabled=true;if(m)m.textContent="Drive'dan alınıyor…";try{const f=await driveRestoreLatest();if(m)m.textContent="Drive yedeği yüklendi ("+new Date(f.modifiedTime).toLocaleString('tr-TR')+").";toast('Yedek geri yüklendi')}catch(e){if(m)m.textContent=(e&&e.ui)||"Drive'dan alınamadı."}A.disabled=false;return}
   if(act==='bkjson'){A.disabled=true;const d=await backupData();A.disabled=false;return saveFile(`dijital-kutuphanem-yedek-${todayKey()}.json`,JSON.stringify(d,null,1))}
   if(act==='bkcsv')return saveFile(`dijital-kutuphanem-liste-${todayKey()}.csv`,csvBooks());
 });
