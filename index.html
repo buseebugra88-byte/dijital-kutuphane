@@ -1007,14 +1007,14 @@ function shelfHtml(list){
   return '<div class="shelves">'+keys.map((k,i)=>`<section class="shelf"><h3>${esc(k)} <small>${g[k].length}</small></h3><div class="books">${g[k].map(bookHtml).join('')}${deco&&i%2===0?`<span class="shdeco">${stampSvg(AR[(i/2)%4],58)}</span>`:''}</div></section>`).join('')+'</div>';
 }
 async function pdfCoverBlob(bytes){
-  const lib=await pdfLib(),doc=await lib.getDocument({data:bytes}).promise;
+  const lib=await pdfLib(),doc=await lib.getDocument(bytes&&bytes.url?{url:bytes.url,httpHeaders:bytes.headers,disableAutoFetch:true,disableStream:true,rangeChunkSize:65536}:{data:bytes}).promise;
   pdfCoverBlob.pages=doc.numPages;
   try{const pg=await doc.getPage(1),v=pg.getViewport({scale:1}),vp=pg.getViewport({scale:320/v.width});
     const c=document.createElement('canvas');c.width=Math.floor(vp.width);c.height=Math.floor(vp.height);
     const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
     await pg.render({canvasContext:ctx,viewport:vp}).promise;
     return await new Promise(r=>c.toBlob(r,'image/jpeg',.85));
-  }finally{doc.destroy()}
+  }finally{try{doc.destroy?doc.destroy():doc.cleanup&&doc.cleanup()}catch(e){}}
 }
 const coverTried=new Set();let coverBusy=false;
 function queueCovers(list){
@@ -1025,9 +1025,14 @@ const coverQ=[];
 async function runCovers(){
   coverBusy=true;
   while(coverQ.length){
-    const b=coverQ.shift();if(coverTried.has(b.id))continue;coverTried.add(b.id);
-    try{const bytes=await bookBytes(b);let blob=null,pages=0;
-      if(b.fileType==='epub'){const ep=await epubOpen(bytes);blob=await epubCover(ep);pages=ep.spine.length}else{blob=await pdfCoverBlob(bytes);pages=pdfCoverBlob.pages||0}
+    const b=coverQ.shift();if(coverTried.has(b.id))continue;
+    const viaDrive=b.source==='drive'&&typeof GAUTH!=='undefined';
+    if(viaDrive&&!GAUTH.signedIn())continue;
+    coverTried.add(b.id);
+    try{let blob=null,pages=0;
+      if(viaDrive&&b.fileType!=='epub'&&!(b.driveParts&&b.driveParts.length)){const t=await GAUTH.token();blob=await pdfCoverBlob({url:'https://www.googleapis.com/drive/v3/files/'+encodeURIComponent(b.driveId)+'?alt=media&supportsAllDrives=true',headers:{Authorization:'Bearer '+t}});pages=pdfCoverBlob.pages||0}
+      else{const bytes=await bookBytes(b);
+      if(b.fileType==='epub'){const ep=await epubOpen(bytes);blob=await epubCover(ep);pages=ep.spine.length}else{blob=await pdfCoverBlob(bytes);pages=pdfCoverBlob.pages||0}}
       if(!blob)continue;thumbCache[b.id]=URL.createObjectURL(blob);renderList();
       if(st.assets&&st.db){const upd={};try{const up=await upl(blob,{type:'image/jpeg'});upd.coverId=up.id;upd.autoCover=true}catch(e){}if(pages&&!b.pages)upd.pages=pages;if(Object.keys(upd).length){try{await st.db.collection('books').doc(b.id).update(upd)}catch(e){}}}
     }catch(e){if(e&&['needs_reauth','server_not_connected','not_in_manifest','not_granted','capability_disabled'].includes(e.code)){coverQ.length=0;break}}
@@ -2482,7 +2487,7 @@ function dbkChip(){if(typeof GAUTH==='undefined'||!GAUTH.configured())return;let
 if(typeof GAUTH!=='undefined'){
   setInterval(()=>{driveSync(false).catch(()=>{})},120000);
   document.addEventListener('visibilitychange',()=>{driveSync(false).catch(()=>{})});
-  window.dkAfterAuth=()=>{dbkChip();setTimeout(()=>driveSync(false).catch(()=>{}),800)};
+  window.dkAfterAuth=()=>{dbkChip();setTimeout(()=>driveSync(false).catch(()=>{}).finally(()=>{try{queueCovers(st.books)}catch(e){}}),800)};
   setTimeout(()=>{dbkChip();driveSync(false).catch(()=>{})},2500);
 }
 
