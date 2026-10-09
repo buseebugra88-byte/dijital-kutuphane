@@ -2437,13 +2437,14 @@ async function driveSync(force){
         await new Promise(x=>setTimeout(x,600));dbkSet('hash',dbkHash(dbkData(await backupData())))}}
     else dbkSet('id','');
     const data=dbkData(await backupData()),h=dbkHash(data);
-    if(force||h!==dbkGet('hash')||!f){
+    if(!(st.books||[]).length&&f){dbkSet('hash',h)}
+    else if(force||h!==dbkGet('hash')||!f){
       const id=dbkGet('id'),b='dkb'+Date.now(),meta=JSON.stringify(id?{}:{name:DBK.name,mimeType:'application/json'});
       const full=JSON.stringify({...JSON.parse(data),at:new Date().toISOString()});
       const body='--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+meta+'\r\n--'+b+'\r\nContent-Type: application/json\r\n\r\n'+full+'\r\n--'+b+'--';
       const up='https://www.googleapis.com/upload/drive/v3/files';
       const go=i=>gfetch((i?up+'/'+encodeURIComponent(i):up)+'?uploadType=multipart&fields=id,modifiedTime',1,{method:i?'PATCH':'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body});
-      let r;try{r=await go(id)}catch(e){if(id&&e&&e.code==='http_404'){r=await go('')}else throw e}
+      let r;try{r=await go(id)}catch(e){if(id&&e&&(e.code==='http_404'||e.code==='http_403')){r=await go('')}else throw e}
       const j=await r.json();dbkSet('id',j.id||id);dbkSet('synced',j.modifiedTime||new Date().toISOString());dbkSet('hash',h)}
     dbkSet('at',new Date().toISOString());
     if(pulled){toast('Diğer cihazdaki değişiklikler alındı ☁️');try{render()}catch(e){}}
