@@ -2018,11 +2018,21 @@ async function msPasteApply(all){const v=$('mpPaste').value.replace(/^\s+|\s+$/g
   if(s&&s[1]<=t.value.length)t.value=t.value.slice(0,s[0])+v+t.value.slice(s[1]);else t.value=v;WR.pasteSel=null;WR.base=t.value;msClose();wrInfo();await wrSave();toast('Uygulandı · eski hâli Sürümler\'de')}
 /* ---- Taslak içe aktar ---- */
 function msImportDlg(){if(!TL.novel){toast('Önce bir roman seç');return}msModal(`<div class="eyebrow">📥 Taslak içe aktar</div><p class="hint">ChatGPT'den ya da başka bir yerden metni yapıştır. <b>"Bölüm 1"</b>, <b>"1. Bölüm"</b>, <b>"Chapter 1"</b> gibi satırlar yeni bölüm başlangıcı sayılır; başlık yoksa hepsi tek bölüm olur. Bölümler mevcutların sonuna eklenir.</p>
-  <div class="msm-acts"><label class="btn" for="mpFile">📄 Word / PDF / TXT dosyası seç</label><input id="mpFile" type="file" accept=".docx,.pdf,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden><span class="hint">ya da metni aşağıya yapıştır</span></div>
+  <div class="msm-acts"><label class="btn" for="mpFile">📄 Word / PDF / TXT dosyası seç</label><input id="mpFile" type="file" accept=".docx,.pdf,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden>${typeof GAUTH!=='undefined'&&GAUTH.configured()?'<button class="btn" type="button" data-ms="gdocs">📝 Google Dokümanı seç</button>':''}<span class="hint">ya da metni aşağıya yapıştır</span></div><div id="mpGd" hidden></div>
   <textarea id="mpImp" rows="14" style="width:100%" placeholder="Buraya yapıştır…"></textarea><div class="msm-acts"><button class="btn primary" type="button" data-ms="impok">İçe aktar</button><span class="hint" id="mpImpInfo"></span></div>`,'wide');
   $('mpFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;const info=$('mpImpInfo');info.textContent='Dosya okunuyor…';
     try{const txt=await msFileText(f);$('mpImp').value=txt;const p=msSplit(txt);info.textContent=`${f.name} okundu · ${wcount(txt).toLocaleString('tr-TR')} kelime · ${p.length} bölüm bulundu. Kontrol et, sonra İçe aktar.`}catch(err){info.textContent='Dosya okunamadı. Word için .docx (eski .doc değil), PDF için metin içeren PDF gerekir.'}});
   $('mpImp').addEventListener('input',()=>{const p=msSplit($('mpImp').value);$('mpImpInfo').textContent=p.length?p.length+' bölüm bulundu':''})}
+async function msGdocs(q){const box=$('mpGd');box.hidden=false;box.innerHTML='<input id="mpGdQ" placeholder="Doküman adında ara…"><div class="msv" id="mpGdL"><p class="hint">Google Drive\'daki dokümanların yükleniyor…</p></div>';
+  $('mpGdQ').value=q||'';let t;$('mpGdQ').addEventListener('input',()=>{clearTimeout(t);t=setTimeout(()=>msGdList($('mpGdQ').value),400)});await msGdList(q||'')}
+async function msGdList(q){const L=$('mpGdL');if(!L)return;try{let qq="mimeType = 'application/vnd.google-apps.document' and trashed = false";if(q.trim())qq+=" and name contains '"+q.trim().replace(/['\\]/g,'')+"'";
+    const j=await (await gfetch(GD+'?q='+encodeURIComponent(qq)+'&orderBy='+encodeURIComponent('modifiedTime desc')+'&pageSize=40&fields='+encodeURIComponent('files(id,name,modifiedTime)'))).json();
+    L.innerHTML=(j.files||[]).map(f=>`<button type="button" class="msv-i" data-ms="gdpick" data-id="${esc(f.id)}" data-name="${esc(f.name)}"><b>${esc(f.name)}</b><span class="hint">${esc(new Date(f.modifiedTime).toLocaleDateString('tr-TR'))}</span></button>`).join('')||'<p class="hint">Doküman bulunamadı.</p>'}
+  catch(e){L.innerHTML='<p class="hint">Google Drive\'a bağlanılamadı. İnternetini kontrol et; gerekirse sağ üstteki ☁️ ile giriş yap.</p>'}}
+async function msGdPick(id,name){const info=$('mpImpInfo');info.textContent='"'+name+'" alınıyor…';
+  try{const r=await gfetch(GD+'/'+encodeURIComponent(id)+'/export?mimeType=text%2Fplain');let txt=(await r.text()).replace(/^\ufeff/,'').replace(/\r/g,'');
+    txt=txt.split('\n').map(x=>x.trimEnd()).join('\n').replace(/\n{3,}/g,'\n\n').trim();$('mpImp').value=txt;$('mpGd').hidden=true;
+    info.textContent=`"${name}" alındı · ${wcount(txt).toLocaleString('tr-TR')} kelime · ${msSplit(txt).length} bölüm bulundu. Kontrol et, sonra İçe aktar.`}catch(e){info.textContent='Doküman alınamadı.'}}
 async function msFileText(f){const n=f.name.toLowerCase();
   if(n.endsWith('.docx')){const JZ=await zipLib();const z=await JZ.loadAsync(await f.arrayBuffer());const xml=await z.file('word/document.xml').async('string');
     const doc=new DOMParser().parseFromString(xml,'application/xml');const W='http://schemas.openxmlformats.org/wordprocessingml/2006/main';const out=[];
@@ -2065,6 +2075,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-ms]'
   if(a==='pack')return msPackDlg();if(a==='pksave')return msPackSave();
   if(a==='pkdoc'||a==='pkpdf'){await msPackSave(true);const nv=msNovel(TL.novel);msOut(msSubmission(TL.novel),(nv?nv.title:'roman')+' - yayınevi dosyası',a==='pkdoc'?'doc':'pdf');return}
   if(a==='pksyn')return msSynAI();if(a==='pkcopy'){await msPackSave(true);return msCopy(msSynPrompt(TL.novel),'Kopyalandı — ChatGPT ya da Claude\'a yapıştır')}
+  if(a==='gdocs')return msGdocs('');if(a==='gdpick')return msGdPick(b.dataset.id,b.dataset.name);
   if(a==='plot')return msPlotCtx();if(a==='import')return msImportDlg();if(a==='impok')return msImport();
   if(a==='up'||a==='down')return msMove(b.dataset.id,a==='up'?-1:1);
   if(a==='edcopy')return msEditPrompt();if(a==='paste')return msPasteDlg();if(a==='pasteok')return msPasteApply(false);if(a==='pasteall')return msPasteApply(true);
