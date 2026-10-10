@@ -346,7 +346,23 @@ body.ink-finger .pgwrap .inklayer{touch-action:none;cursor:crosshair}
 .flash .fl-q{font-family:var(--display);font-size:21px;line-height:1.35}.flash .fl-a{font-size:15px;line-height:1.5;color:var(--accent);border-top:1px dashed var(--line);padding-top:10px}
 .wr-style{background:var(--bg);border:1px solid var(--line);border-radius:16px;padding:10px 14px}.wr-style summary{cursor:pointer;font-weight:600}.wr-style textarea{width:100%;margin-top:8px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font:inherit;line-height:1.5}
 .wr-list{display:grid;gap:8px}.wr-ch{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:10px 14px;cursor:pointer;font:inherit;color:var(--ink)}.wr-ch:hover{border-color:var(--accent)}.wr-ch>span:nth-child(2){display:grid}.wr-no{width:34px;height:34px;border-radius:999px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-family:var(--display);font-weight:600}
-.wroom{position:fixed;inset:0;z-index:60;background:var(--paper);display:grid;grid-template-rows:auto 1fr}.wr-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;border-bottom:1px solid var(--line)}.wr-top input{flex:1;min-width:140px;border:0;background:transparent;font-family:var(--display);font-size:22px;color:var(--ink);padding:4px}.wr-acts{display:flex;gap:6px;flex-wrap:wrap}.wr-acts .btn{padding:6px 12px}
+.wroom{position:fixed;inset:0;z-index:60;background:var(--paper);display:grid;grid-template-rows:auto 1fr}.wr-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:calc(env(safe-area-inset-top,0px) + 10px) 16px 10px;border-bottom:1px solid var(--line)}.wr-top input{flex:1;min-width:140px;border:0;background:transparent;font-family:var(--display);font-size:22px;color:var(--ink);padding:4px}.wr-acts{display:flex;gap:6px;flex-wrap:wrap}
+.ms-bar{display:flex;gap:6px;flex-wrap:wrap}
+.wr-row{display:flex;gap:6px;align-items:center}.wr-row .wr-ch{flex:1;min-width:0}.wr-mv{display:flex;flex-direction:column;gap:2px}.wr-mv .iconbtn{width:28px;height:24px;font-size:12px;border-radius:8px}.wr-mv .iconbtn:disabled{opacity:.3;cursor:default}
+.wr-notes{width:min(340px,40%);border-left:1px solid var(--line);background:var(--bg);display:grid;grid-template-rows:auto 1fr auto;gap:8px;padding:14px}
+.wr-notes textarea{width:100%;min-height:160px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);padding:10px;font:inherit;font-size:15px;line-height:1.6;resize:none}
+@media (max-width:899px){.wr-notes{width:auto;max-height:45%;border-left:0;border-top:1px solid var(--line)}}
+.wr-fx{display:none}
+.wroom.focus{grid-template-rows:1fr}.wroom.focus .wr-top{display:none}.wroom.focus .wr-fx{display:grid;position:fixed;top:calc(env(safe-area-inset-top,0px) + 10px);right:12px;z-index:2;opacity:.35}.wroom.focus .wr-fx:hover{opacity:1}
+.wroom.focus .wr-notes,.wroom.focus .wr-ai{display:none}.wroom.focus .wr-body textarea{font-size:21px;line-height:1.9;padding-top:56px;padding-left:max(18px,calc((100% - 660px)/2));padding-right:max(18px,calc((100% - 660px)/2))}
+.msm{position:fixed;inset:0;z-index:80;background:rgba(30,20,25,.45);display:grid;place-items:center;padding:16px}
+.msm-box{position:relative;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:20px;padding:22px;width:min(460px,100%);max-height:calc(100vh - 32px);overflow:auto;display:grid;gap:10px;box-shadow:0 20px 50px -20px rgba(0,0,0,.4)}
+.msm-box.wide{width:min(760px,100%)}.msm-box h3{margin:0;font-family:var(--display)}.msm-x{position:absolute;top:12px;right:12px;width:32px;height:32px}
+.msm-box textarea,.msm-box input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);padding:9px 12px;font:inherit}
+.msm-box textarea{line-height:1.6;resize:vertical}.msm-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.msv{display:grid;gap:6px;max-height:200px;overflow:auto}.msv-i{display:flex;justify-content:space-between;gap:10px;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:8px 12px;cursor:pointer;font:inherit;color:var(--ink)}
+.msv-prev{display:grid;gap:8px}.msv-text{white-space:pre-wrap;max-height:40vh;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px;font-family:var(--efont,"Lora",Georgia,serif);font-size:15px;line-height:1.7;color:var(--ink)}
+.wr-acts .btn{padding:6px 12px}
 .wr-body{display:flex;min-height:0}.wr-body textarea{flex:1;border:0;resize:none;background:transparent;color:var(--ink);font-family:var(--efont,"Lora",Georgia,serif);font-size:19px;line-height:1.85;padding:32px max(18px,calc((100% - 720px)/2)) 120px;outline:none}
 .wr-ai{width:min(420px,45%);border-left:1px solid var(--line);background:var(--bg);display:grid;grid-template-rows:auto 1fr auto;gap:8px;padding:14px}.wr-out{overflow:auto;white-space:pre-wrap;font-family:var(--efont,"Lora",Georgia,serif);font-size:16px;line-height:1.7;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px}.wr-ai-a{display:flex;gap:6px;flex-wrap:wrap}
 @media (max-width:760px){.wr-body{flex-direction:column}.wr-ai{width:auto;max-height:50%;border-left:0;border-top:1px solid var(--line)}}
@@ -1849,33 +1865,36 @@ function roomHtml(ns,nsel){
   const id=TL.novel,chs=(TL.chapters||[]).filter(c=>c.novel===id).sort((a,b)=>(a.no||0)-(b.no||0)),style=((TL.styles||{})[id]||{}).text||'';
   const tot=chs.reduce((a,c)=>a+(c.words||0),0);
   return `<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${nsel('wNovel4')}<button class="btn primary" type="button" data-act="wrnew">+ Yeni bölüm</button><span class="hint">${chs.length} bölüm · ${tot.toLocaleString('tr-TR')} kelime</span></div>
+    <div class="ms-bar"><button class="btn" type="button" data-ms="import">📥 Taslak içe aktar</button><button class="btn" type="button" data-ms="plot">📋 Kurgu bilgilerini kopyala</button><button class="btn" type="button" data-ms="export">⬇ Romanı indir</button><button class="btn" type="button" data-ms="pack">📦 Yayınevi dosyası</button></div>
     <details class="wr-style"${style?'':' open'}><summary>🖋 Üslup notu <span class="hint">— bu romanın dili, anlatıcısı, havası; Claude düzenlerken buna uyar</span></summary>
       <textarea id="wrStyle" rows="4" placeholder="ör. Birinci tekil şahıs, şimdiki zaman. Kısa, keskin cümleler; iç ses italik. Mekân betimlemeleri az ama duyusal. Diyaloglarda argo yok.">${esc(style)}</textarea></details>
-    <div class="wr-list">${chs.map(c=>`<button type="button" class="wr-ch" data-wropen="${c.id}"><span class="wr-no">${c.no||'•'}</span><span><b>${esc(c.title||'Adsız bölüm')}</b><small class="hint">${(c.words||0).toLocaleString('tr-TR')} kelime${c.updatedAt?' · '+esc(fmtTR(c.updatedAt.slice(0,10))):''}</small></span><span class="hint">Aç →</span></button>`).join('')||`<div class="empty" style="padding:20px">${stampSvg('pengu',80)}<p>Bu romanda henüz bölüm yok. İlk bölümü başlat ✍️</p></div>`}</div>`;
+    <div class="wr-list">${chs.map((c,i)=>`<div class="wr-row"><button type="button" class="wr-ch" data-wropen="${c.id}"><span class="wr-no">${c.no||'•'}</span><span><b>${esc(c.title||'Adsız bölüm')}</b><small class="hint">${(c.words||0).toLocaleString('tr-TR')} kelime${c.updatedAt?' · '+esc(fmtTR(c.updatedAt.slice(0,10))):''}${c.notes?' · 🗒':''}</small></span><span class="hint">Aç →</span></button><span class="wr-mv"><button class="iconbtn" type="button" data-ms="up" data-id="${c.id}" aria-label="Yukarı taşı"${i?'':' disabled'}>↑</button><button class="iconbtn" type="button" data-ms="down" data-id="${c.id}" aria-label="Aşağı taşı"${i<chs.length-1?'':' disabled'}>↓</button></span></div>`).join('')||`<div class="empty" style="padding:20px">${stampSvg('pengu',80)}<p>Bu romanda henüz bölüm yok. İlk bölümü başlat ✍️</p></div>`}</div>`;
 }
 function wrEnsure(){if($('wroom'))return;const d=document.createElement('div');d.id='wroom';d.className='wroom';d.hidden=true;
   d.innerHTML=`<div class="wr-top"><button class="iconbtn" type="button" id="wrClose" aria-label="Kapat">←</button><input id="wrTitle" placeholder="Bölüm adı"><span class="hint" id="wrInfo"></span>
-    <div class="wr-acts"><button class="btn" type="button" id="wrAI" hidden>✨ Claude'la düzenle</button><button class="btn" type="button" id="wrBeta">📤 Beta okur dosyası</button><button class="btn" type="button" id="wrTxt">⬇ .txt</button></div></div>
-    <div class="wr-body"><textarea id="wrText" placeholder="Yazmaya başla…" spellcheck="true"></textarea>
+    <div class="wr-acts"><button class="btn" type="button" data-ms="focus" title="Odak modu">🎯 Odak</button><button class="btn" type="button" data-ms="notes">🗒 Notlar</button><button class="btn" type="button" data-ms="vers">🕘 Sürümler</button><button class="btn" type="button" data-ms="edcopy" title="Bölümü (ya da seçili kısmı) düzenleme talimatıyla kopyalar">📋 Claude'a kopyala</button><button class="btn" type="button" data-ms="paste">📥 Düzenlemeyi yapıştır</button><button class="btn" type="button" id="wrAI" hidden>✨ Claude'la düzenle</button><button class="btn" type="button" id="wrBeta">📤 Beta okur dosyası</button><button class="btn" type="button" data-ms="chexp">⬇ Bölümü indir</button><button class="btn" type="button" id="wrTxt" hidden>⬇ .txt</button></div></div>
+    <button class="iconbtn wr-fx" type="button" data-ms="focus" aria-label="Odak modundan çık">✕</button><div class="wr-body"><textarea id="wrText" placeholder="Yazmaya başla…" spellcheck="true"></textarea>
+    <aside class="wr-notes" id="wrNotes" hidden><div class="eyebrow">🗒 Bölüm notları <span class="hint" id="wrNotesH"></span></div><textarea id="wrNotesT" placeholder="Bu bölüm için notlar: yapılacaklar, sahne fikirleri, düzeltilecekler…"></textarea><button class="btn" type="button" data-ms="notes">Kapat</button></aside>
     <aside class="wr-ai" id="wrAside" hidden><div class="eyebrow">Claude'un önerisi</div><div id="wrOut" class="wr-out"></div><div class="wr-ai-a"><button class="btn primary" type="button" id="wrApply" disabled>Uygula</button><button class="btn" type="button" id="wrCopy">Kopyala</button><button class="btn" type="button" id="wrAsideX">Kapat</button></div></aside></div>`;
   document.body.appendChild(d);
   $('wrClose').addEventListener('click',wrClose);
   $('wrText').addEventListener('input',()=>{wrInfo();clearTimeout(WR.timer);WR.timer=setTimeout(wrSave,1200);$('wrInfo').textContent+=' · kaydediliyor…'});
   $('wrTitle').addEventListener('input',()=>{clearTimeout(WR.timer);WR.timer=setTimeout(wrSave,1200)});
   $('wrTxt').addEventListener('click',()=>{const c=wrCur();saveFile(`${(c&&c.title)||'bolum'}.txt`,($('wrTitle').value?$('wrTitle').value+'\n\n':'')+$('wrText').value)});
-  $('wrBeta').addEventListener('click',wrBeta);$('wrAI').addEventListener('click',wrAI);
+  $('wrBeta').addEventListener('click',wrBeta);let nT;$('wrNotesT').addEventListener('input',()=>{$('wrNotesH').textContent='…';clearTimeout(nT);nT=setTimeout(msNotesSave,900)});$('wrAI').addEventListener('click',wrAI);
   $('wrAsideX').addEventListener('click',()=>{if(WR.ctl)WR.ctl.abort();$('wrAside').hidden=true});
   $('wrCopy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('wrOut').textContent);toast('Kopyalandı')}catch(e){}});
   $('wrApply').addEventListener('click',()=>{const t=$('wrText'),s=WR.sel;if(!s)return;t.value=t.value.slice(0,s[0])+$('wrOut').textContent+t.value.slice(s[1]);$('wrAside').hidden=true;wrInfo();wrSave();toast('Uygulandı')});
 }
 function wrCur(){return (TL.chapters||[]).find(c=>c.id===WR.id)}
 function wrInfo(){const w=wcount($('wrText').value);$('wrInfo').textContent=w.toLocaleString('tr-TR')+' kelime'}
-function wrOpen(id){wrEnsure();const c=(TL.chapters||[]).find(x=>x.id===id);if(!c)return;WR.id=id;WR.lastWords=c.words||0;
+function wrOpen(id){wrEnsure();const c=(TL.chapters||[]).find(x=>x.id===id);if(!c)return;WR.id=id;WR.lastWords=c.words||0;WR.base=c.text||'';WR.snapAt=Date.now();WR.pasteSel=null;$('wrNotes').hidden=!c.notes||innerWidth<900;$('wrNotesT').value=c.notes||'';$('wrNotesH').textContent='';
   $('wrTitle').value=c.title||'';$('wrText').value=c.text||'';$('wrAI').hidden=!st.sample;$('wrAside').hidden=true;wrInfo();$('wroom').hidden=false;document.body.style.overflow='hidden';setTimeout(()=>$('wrText').focus(),50)}
-async function wrClose(){clearTimeout(WR.timer);await wrSave();$('wroom').hidden=true;document.body.style.overflow='';WR.id=null;renderTool()}
+async function wrClose(){clearTimeout(WR.timer);await wrSave();const cc=wrCur();if(cc&&WR.base&&WR.base!==(cc.text||''))await msSnap(cc.id,WR.base,'Oturum öncesi');$('wroom').classList.remove('focus');msClose();$('wroom').hidden=true;document.body.style.overflow='';WR.id=null;renderTool()}
 async function wrSave(){const c=wrCur();if(!c||!st.db)return;const text=$('wrText').value,title=$('wrTitle').value.trim(),words=wcount(text);
   if(text===(c.text||'')&&title===(c.title||'')){wrInfo();return}
   try{await st.db.collection('chapters').doc(c.id).set({...c,id:undefined,text,title,words,updatedAt:new Date().toISOString()});Object.assign(c,{text,title,words});wrInfo();$('wrInfo').textContent+=' · kaydedildi ✓'}catch(e){$('wrInfo').textContent='Kaydedilemedi!';return}
+  if(WR.base!==undefined&&WR.base!==text&&Date.now()-(WR.snapAt||0)>6e5){const old=WR.base;WR.base=text;WR.snapAt=Date.now();msSnap(c.id,old,'Otomatik')}
   const delta=words-WR.lastWords;WR.lastWords=words;if(delta>0){const W=TL.writing||{sessions:[],goal:500},ses=[...(W.sessions||[])],k=todayKey(),i=ses.findIndex(s=>s.auto&&s.date===k&&s.novel===c.novel);
     if(i>=0)ses[i]={...ses[i],words:(+ses[i].words||0)+delta};else ses.push({date:k,novel:c.novel,words:delta,note:'Yazı odası',auto:true});
     TL.writing={...W,sessions:ses.slice(-1500)};clearTimeout(thT);thT=setTimeout(()=>st.db&&st.db.doc('settings/writing').set({...TL.writing,updatedAt:new Date().toISOString()}).catch(()=>{}),1500)}}
@@ -1902,6 +1921,160 @@ function wrBeta(){const c=wrCur();if(!c)return;const nv=st.books.find(x=>x.id===
 <h1>${esc(title)}</h1>${nv?`<h2>${esc(nv.title)}</h2>`:''}
 ${paras}</body></html>`;
   saveFile(`${(nv?nv.title+' - ':'')+title}.doc`.replace(/[\\/:*?"<>|]/g,''),'﻿'+html)}
+/* ===== Yazar köşesi eklentileri: dışa aktarma, yayınevi dosyası, sürümler, notlar, odak, ChatGPT/Claude akışı ===== */
+function msChs(id){return (TL.chapters||[]).filter(c=>c.novel===id).sort((a,b)=>(a.no||0)-(b.no||0))}
+function msNovel(id){return st.books.find(b=>b.id===id)}
+function msPack(id){return Object.assign({author:(typeof UI!=='undefined'&&UI.name)||'',contact:'',genre:'',synopsis:'',letter:'',n:3},(((TL.styles||{})[id]||{}).pack)||{})}
+async function msSaveStyle(id,patch){const cur=(TL.styles||{})[id]||{};const next={...cur,...patch,updatedAt:new Date().toISOString()};TL.styles={...TL.styles,[id]:next};if(st.db)await st.db.collection('styles').doc(id).set(next)}
+function msParas(text){return (text||'').split(/\n\s*\n|\n/).filter(x=>x.trim()).map(p=>`<p class=MsoNormal style="text-indent:1.25cm;line-height:150%;margin:0 0 0 0;text-align:justify">${esc(p.trim())}</p>`).join('\n')}
+function msDoc(title,bodyHtml){return `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${esc(title)}</title>
+<style>@page{size:21cm 29.7cm;margin:2.5cm}body{font-family:'Times New Roman',Times,serif;font-size:12pt;color:#000}h1{font-size:20pt;text-align:center;margin:0 0 6pt}h2.ch{font-size:15pt;text-align:center;margin:0 0 18pt;page-break-before:always;break-before:page}h2.sec{font-size:14pt;margin:0 0 12pt;page-break-before:always;break-before:page}.tp{text-align:center;padding-top:6cm}.tp p{margin:4pt 0}.meta{text-align:center;color:#333}.lt p{margin:0 0 10pt;line-height:140%}.first h2.ch{page-break-before:auto;break-before:auto}@media print{body{margin:0}}</style></head><body>${bodyHtml}</body></html>`}
+function msChaptersHtml(chs,firstNoBreak){return chs.map((c,i)=>`<div${i===0&&firstNoBreak?' class="first"':''}><h2 class="ch">${esc(c.title||('Bölüm '+(c.no||i+1)))}</h2>${msParas(c.text)}</div>`).join('\n')}
+function msManuscript(id){const nv=msNovel(id),chs=msChs(id),P=msPack(id),words=chs.reduce((a,c)=>a+(c.words||wcount(c.text)),0);
+  const tp=`<div class="tp"><h1>${esc(nv?nv.title:'Roman')}</h1>${P.author?`<p class="meta">${esc(P.author)}</p>`:''}<p class="meta">${words.toLocaleString('tr-TR')} kelime</p></div>`;
+  return msDoc(nv?nv.title:'Roman',tp+msChaptersHtml(chs,false))}
+function msSubmission(id){const nv=msNovel(id),chs=msChs(id),P=msPack(id),words=chs.reduce((a,c)=>a+(c.words||wcount(c.text)),0),n=Math.max(0,Math.min(chs.length,+P.n||0));
+  const contact=(P.contact||'').split('\n').filter(x=>x.trim()).map(x=>`<p class="meta">${esc(x.trim())}</p>`).join('');
+  const tp=`<div class="tp"><h1>${esc(nv?nv.title:'Roman')}</h1>${P.genre?`<p class="meta">${esc(P.genre)}</p>`:''}<p class="meta">${words.toLocaleString('tr-TR')} kelime</p><p>&nbsp;</p>${P.author?`<p class="meta"><b>${esc(P.author)}</b></p>`:''}${contact}</div>`;
+  const lt=P.letter.trim()?`<h2 class="sec">Ön yazı</h2><div class="lt">${P.letter.split(/\n\s*\n/).map(p=>`<p>${esc(p.trim()).replace(/\n/g,'<br>')}</p>`).join('')}</div>`:'';
+  const sy=P.synopsis.trim()?`<h2 class="sec">Sinopsis</h2>${msParas(P.synopsis)}`:'';
+  return msDoc((nv?nv.title:'Roman')+' — yayınevi dosyası',tp+lt+sy+msChaptersHtml(chs.slice(0,n),false))}
+function msFileName(s){return s.replace(/[\\/:*?"<>|]/g,'').trim()||'roman'}
+function msOut(html,name,kind){
+  if(kind==='doc'){saveFile(msFileName(name)+'.doc','﻿'+html);return}
+  const auto='<script>window.onload=function(){setTimeout(function(){window.focus();window.print()},350)}<\/script>';
+  const h=html.replace('</body>',auto+'</body>');
+  if(/iP(hone|ad|od)/.test(navigator.userAgent)){const w=window.open('','_blank');if(w){w.document.open();w.document.write(h);w.document.close();toast('Paylaş → Yazdır → PDF olarak kaydet');return}}
+  let f=$('msPrint');if(f)f.remove();f=document.createElement('iframe');f.id='msPrint';f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
+  const d=f.contentDocument;d.open();d.write(html);d.close();setTimeout(()=>{try{f.contentWindow.focus();f.contentWindow.print();toast('Yazdır penceresinde "PDF olarak kaydet"i seç')}catch(e){toast('Yazdırma açılamadı')}},400)}
+/* ---- basit pencere ---- */
+function msModal(html,cls){let m=$('msModal');if(m)m.remove();m=document.createElement('div');m.id='msModal';m.className='msm';
+  m.innerHTML=`<div class="msm-box ${cls||''}" role="dialog" aria-modal="true"><button class="iconbtn msm-x" type="button" data-ms="close" aria-label="Kapat">×</button>${html}</div>`;
+  document.body.appendChild(m);m.addEventListener('click',e=>{if(e.target===m)m.remove()});return m}
+function msClose(){const m=$('msModal');if(m)m.remove()}
+/* ---- Romanı indir ---- */
+function msExportDlg(){const id=TL.novel,nv=msNovel(id),chs=msChs(id);if(!chs.length){toast('Bu romanda henüz bölüm yok');return}
+  msModal(`<div class="eyebrow">Romanı indir</div><h3>${esc(nv?nv.title:'Roman')}</h3><p class="hint">${chs.length} bölüm, standart taslak biçiminde: Times New Roman 12, 1,5 satır aralığı, her bölüm yeni sayfada, başta kapak sayfası.</p>
+  <div class="msm-acts"><button class="btn primary" type="button" data-ms="exdoc">📄 Word (.doc)</button><button class="btn" type="button" data-ms="expdf">🖨 PDF</button></div>
+  <p class="hint">PDF için yazdırma penceresi açılır; orada <b>PDF olarak kaydet</b>'i seç.</p>`)}
+/* ---- Yayınevi dosyası ---- */
+const MS_LETTER=n=>`Sayın Editör,
+
+${n.title?`"${n.title}" adlı`:'Adlı'} ${n.genre?n.genre.toLowerCase()+' ':''}romanımı değerlendirmeniz için sunuyorum. Roman yaklaşık ${n.words.toLocaleString('tr-TR')} kelimedir ve tamamlanmıştır.
+
+[Romanı bir-iki cümleyle anlat: kimin hikâyesi, neyi istiyor, önünde ne var?]
+
+[Kendinden kısaca bahset: neden bu hikâyeyi yazdın, varsa yazı geçmişin.]
+
+Ekte sinopsis ve ilk ${n.n} bölümü bulabilirsiniz. Tam metni talep etmeniz hâlinde memnuniyetle gönderirim.
+
+Zaman ayırdığınız için teşekkür ederim.
+
+Saygılarımla,
+${n.author||'[Adın]'}`;
+function msPackDlg(){const id=TL.novel,nv=msNovel(id),chs=msChs(id);if(!id){toast('Önce bir roman seç');return}
+  const P=msPack(id),words=chs.reduce((a,c)=>a+(c.words||wcount(c.text)),0);
+  const letter=P.letter||MS_LETTER({title:nv?nv.title:'',genre:P.genre,words,n:Math.min(chs.length,+P.n||3),author:P.author});
+  msModal(`<div class="eyebrow">📦 Yayınevi dosyası</div><h3>${esc(nv?nv.title:'Roman')}</h3><p class="hint">Kapak sayfası + ön yazı + sinopsis + ilk bölümler tek dosyada. Yazdıkların bu romana kaydedilir, sonra tekrar düzenleyebilirsin.</p>
+  <div class="row"><div class="f"><label for="mpAuthor">Yazar adı</label><input id="mpAuthor" value="${esc(P.author)}"></div><div class="f"><label for="mpGenre">Tür</label><input id="mpGenre" value="${esc(P.genre)}" placeholder="ör. Psikolojik gerilim"></div></div>
+  <div class="row"><div class="f"><label for="mpContact">İletişim (her satıra bir bilgi)</label><textarea id="mpContact" rows="2" placeholder="e-posta&#10;telefon">${esc(P.contact)}</textarea></div><div class="f"><label for="mpN">Kaç bölüm eklensin?</label><input id="mpN" type="number" min="0" max="${chs.length}" value="${Math.min(chs.length,+P.n||3)}"><span class="hint">Toplam ${chs.length} bölüm · ${words.toLocaleString('tr-TR')} kelime</span></div></div>
+  <div class="f"><label for="mpSyn">Sinopsis <span class="hint">— 1-2 sayfa, sonu dahil tüm hikâye</span></label><textarea id="mpSyn" rows="7" placeholder="Hikâyenin tamamını, sonu da dahil, üçüncü tekil şahıs ve şimdiki zamanla anlat.">${esc(P.synopsis)}</textarea></div>
+  <div class="f"><label for="mpLetter">Ön yazı</label><textarea id="mpLetter" rows="9">${esc(letter)}</textarea></div>
+  <div class="msm-acts"><button class="btn" type="button" data-ms="pksave">Kaydet</button><button class="btn primary" type="button" data-ms="pkdoc">📄 Word indir</button><button class="btn" type="button" data-ms="pkpdf">🖨 PDF</button>${st.sample?'<button class="btn" type="button" data-ms="pksyn">✨ Sinopsis taslağı</button>':''}<button class="btn" type="button" data-ms="pkcopy">📋 Sinopsis için ChatGPT/Claude metni</button></div><p class="hint" id="mpMsg"></p>`,'wide')}
+async function msPackSave(quiet){const id=TL.novel;const pack={author:$('mpAuthor').value.trim(),genre:$('mpGenre').value.trim(),contact:$('mpContact').value,n:+$('mpN').value||0,synopsis:$('mpSyn').value,letter:$('mpLetter').value};
+  try{await msSaveStyle(id,{pack});if(!quiet)toast('Kaydedildi ✓')}catch(e){toast('Kaydedilemedi')}}
+function msSynPrompt(id){const nv=msNovel(id),chs=msChs(id),P=msPack(id);
+  return `Romanım için yayınevine göndereceğim bir sinopsis yazmanı istiyorum. Türkçe, 1-2 sayfa, üçüncü tekil şahıs ve şimdiki zaman; sonu da dahil tüm hikâyeyi anlat, ana karakterin isteği ve çatışma net olsun. Yeni olay uydurma.
+Roman: "${nv?nv.title:''}"${P.genre?` (${P.genre})`:''}
+${msCharsTxt(id)}
+Bölümler:
+${chs.map(c=>`- ${c.title||'Bölüm '+c.no}: ${(c.text||'').replace(/\s+/g,' ').slice(0,700)}${(c.text||'').length>700?'…':''}`).join('\n')}`}
+async function msSynAI(){if(!st.sample)return;const out=$('mpSyn'),msg=$('mpMsg');msg.textContent='Claude okuyor…';
+  try{const r=await st.sample(msSynPrompt(TL.novel),{modelTier:'default',cache:false,onText:({text})=>{out.value=text}});out.value=r.text||out.value;msg.textContent='Taslak hazır — okuyup düzelt, sonra Kaydet.'}catch(e){msg.textContent=sampleErr(e)}}
+/* ---- ChatGPT / Claude akışı ---- */
+function msCharsTxt(id){const cs=(TL.chars||[]).filter(x=>x.novel===id);return cs.length?'Karakterler:\n'+cs.map(c=>`- ${c.name}${c.role?' ('+c.role+')':''}${c.desc?': '+c.desc.replace(/\s+/g,' '):''}`).join('\n'):''}
+async function msCopy(txt,okMsg){try{await navigator.clipboard.writeText(txt);toast(okMsg||'Kopyalandı')}catch(e){msModal(`<div class="eyebrow">Kopyala</div><p class="hint">Otomatik kopyalanamadı; metni seçip kopyala.</p><textarea rows="14" style="width:100%">${esc(txt)}</textarea>`,'wide')}}
+function msPlotCtx(){const id=TL.novel,nv=msNovel(id),chs=msChs(id),style=((TL.styles||{})[id]||{}).text||'';
+  const txt=`Romanım hakkında bilgiler (bunu aklında tut, kurguyu birlikte geliştireceğiz):
+Roman: "${nv?nv.title:''}"
+${style?'Üslup notu: '+style+'\n':''}${msCharsTxt(id)}
+Şu ana kadarki bölümler:
+${chs.map(c=>`- ${c.title||'Bölüm '+c.no} (${(c.words||0)} kelime): ${(c.text||'').replace(/\s+/g,' ').slice(0,300)}${(c.text||'').length>300?'…':''}`).join('\n')||'(henüz bölüm yok)'}`;
+  msCopy(txt,'Kopyalandı — ChatGPT\'ye yapıştır')}
+function msEditPrompt(){const c=wrCur();if(!c)return;const t=$('wrText');let a=t.selectionStart,b=t.selectionEnd;const whole=b-a<20;const part=whole?t.value:t.value.slice(a,b);
+  const nv=msNovel(c.novel),style=((TL.styles||{})[c.novel]||{}).text||'',names=(TL.chars||[]).filter(x=>x.novel===c.novel).map(x=>x.name).join(', ');
+  WR.pasteSel=whole?null:[a,b];
+  msCopy(`Bir romancının metnini editör gibi düzenle. Türkçe.
+${nv?`Roman: "${nv.title}". `:''}${names?`Karakterler: ${names}.`:''}
+Üslup notu (buna kesinlikle uy): ${style||'(yok — yazarın mevcut sesini koru)'}
+Görev: yazım, noktalama, akış ve ritmi düzelt; tekrarları azalt; yazarın sesini ve anlatım zamanını koru. Yeni olay, karakter, bilgi ya da sahne ekleme; kısaltma yapma. Paragraf yapısını koru.
+Sadece düzenlenmiş metni yaz; açıklama, başlık ya da tırnak ekleme.
+--- Metin (${whole?'bölümün tamamı':'seçili kısım'}: ${c.title||''}) ---
+${part}`,whole?'Bölüm kopyalandı — Claude\'a yapıştır':'Seçili kısım kopyalandı — Claude\'a yapıştır')}
+function msPasteDlg(){const sel=WR.pasteSel;msModal(`<div class="eyebrow">📥 Düzenlemeyi yapıştır</div><p class="hint">Claude'un düzenlediği metni buraya yapıştır. ${sel?'Daha önce kopyaladığın <b>seçili kısmın</b> yerine geçer.':'<b>Bölümün tamamının</b> yerine geçer.'} Şu anki hâli önce <b>Sürümler</b>'e kaydedilir, istersen geri dönersin.</p>
+  <textarea id="mpPaste" rows="14" style="width:100%" placeholder="Buraya yapıştır…"></textarea><div class="msm-acts"><button class="btn primary" type="button" data-ms="pasteok">Uygula</button>${sel?'<button class="btn" type="button" data-ms="pasteall">Tüm bölümün yerine koy</button>':''}</div>`,'wide');setTimeout(()=>$('mpPaste')&&$('mpPaste').focus(),50)}
+async function msPasteApply(all){const v=$('mpPaste').value.replace(/^\s+|\s+$/g,'');if(!v){toast('Önce metni yapıştır');return}const c=wrCur();if(!c)return;
+  const t=$('wrText');await msSnap(c.id,t.value,'Yapıştırmadan önce');const s=all?null:WR.pasteSel;
+  if(s&&s[1]<=t.value.length)t.value=t.value.slice(0,s[0])+v+t.value.slice(s[1]);else t.value=v;WR.pasteSel=null;WR.base=t.value;msClose();wrInfo();await wrSave();toast('Uygulandı · eski hâli Sürümler\'de')}
+/* ---- Taslak içe aktar ---- */
+function msImportDlg(){if(!TL.novel){toast('Önce bir roman seç');return}msModal(`<div class="eyebrow">📥 Taslak içe aktar</div><p class="hint">ChatGPT'den ya da başka bir yerden metni yapıştır. <b>"Bölüm 1"</b>, <b>"1. Bölüm"</b>, <b>"Chapter 1"</b> gibi satırlar yeni bölüm başlangıcı sayılır; başlık yoksa hepsi tek bölüm olur. Bölümler mevcutların sonuna eklenir.</p>
+  <div class="msm-acts"><label class="btn" for="mpFile">📄 Word / PDF / TXT dosyası seç</label><input id="mpFile" type="file" accept=".docx,.pdf,.txt,.md,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden><span class="hint">ya da metni aşağıya yapıştır</span></div>
+  <textarea id="mpImp" rows="14" style="width:100%" placeholder="Buraya yapıştır…"></textarea><div class="msm-acts"><button class="btn primary" type="button" data-ms="impok">İçe aktar</button><span class="hint" id="mpImpInfo"></span></div>`,'wide');
+  $('mpFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;const info=$('mpImpInfo');info.textContent='Dosya okunuyor…';
+    try{const txt=await msFileText(f);$('mpImp').value=txt;const p=msSplit(txt);info.textContent=`${f.name} okundu · ${wcount(txt).toLocaleString('tr-TR')} kelime · ${p.length} bölüm bulundu. Kontrol et, sonra İçe aktar.`}catch(err){info.textContent='Dosya okunamadı. Word için .docx (eski .doc değil), PDF için metin içeren PDF gerekir.'}});
+  $('mpImp').addEventListener('input',()=>{const p=msSplit($('mpImp').value);$('mpImpInfo').textContent=p.length?p.length+' bölüm bulundu':''})}
+async function msFileText(f){const n=f.name.toLowerCase();
+  if(n.endsWith('.docx')){const JZ=await zipLib();const z=await JZ.loadAsync(await f.arrayBuffer());const xml=await z.file('word/document.xml').async('string');
+    const doc=new DOMParser().parseFromString(xml,'application/xml');const W='http://schemas.openxmlformats.org/wordprocessingml/2006/main';const out=[];
+    for(const p of doc.getElementsByTagNameNS(W,'p')){let t='';for(const el of p.getElementsByTagNameNS('*','*')){if(el.namespaceURI!==W)continue;if(el.localName==='t')t+=el.textContent;else if(el.localName==='tab')t+='\t';else if(el.localName==='br'||el.localName==='cr')t+='\n'}out.push(t)}
+    return out.join('\n\n').replace(/\n{3,}/g,'\n\n').trim()}
+  if(n.endsWith('.pdf')){const L=await pdfLib();const pdf=await L.getDocument({data:new Uint8Array(await f.arrayBuffer())}).promise;const paras=[];let cur='';
+    for(let i=1;i<=pdf.numPages;i++){const pg=await pdf.getPage(i);const tc=await pg.getTextContent();
+      for(const it of tc.items){cur+=it.str;if(it.hasEOL){const line=cur.trim();if(/[.!?…:"”»]$/.test(line)||/^(bölüm|chapter)\b/i.test(line)){paras.push(line);cur=''}else cur=line+' '}}
+      if(pg.cleanup)pg.cleanup()}
+    if(cur.trim())paras.push(cur.trim());try{pdf.destroy()}catch(e){}
+    return paras.filter(x=>!/^\d{1,4}$/.test(x)).join('\n\n')}
+  return (await f.text()).replace(/\r/g,'')}
+function msSplit(txt){const lines=(txt||'').replace(/\r/g,'').split('\n'),out=[];let cur=null;
+  const H=/^\s*(?:#{1,4}\s*)?(?:\*\*)?\s*((?:bölüm|chapter|kısım)\s*[\divxlc]+\b.*|[\d]+\s*\.\s*bölüm\b.*|(?:birinci|ikinci|üçüncü|dördüncü|beşinci|altıncı|yedinci|sekizinci|dokuzuncu|onuncu)\s+bölüm\b.*)$/i;
+  for(const ln of lines){const m=ln.match(H);if(m&&ln.trim().length<120){cur={title:m[1].replace(/\*\*/g,'').trim(),body:[]};out.push(cur)}else{if(!cur){cur={title:'',body:[]};out.push(cur)}cur.body.push(ln)}}
+  return out.map(x=>({title:x.title,text:x.body.join('\n').replace(/^\s+|\s+$/g,'')})).filter(x=>x.text||x.title)}
+async function msImport(){const parts=msSplit($('mpImp').value);if(!parts.length){toast('Metin boş');return}const id=TL.novel;let no=Math.max(0,...msChs(id).map(c=>c.no||0));
+  try{for(const p of parts){no++;const ref=st.db.collection('chapters').doc();const data={novel:id,no,title:p.title||('Bölüm '+no),text:p.text,words:wcount(p.text),updatedAt:new Date().toISOString()};await ref.set(data);const nid=ref.id||(ref.path||'').split('/').pop();TL.chapters=[...(TL.chapters||[]).filter(c=>c.id!==nid),{id:nid,...data}]}
+    msClose();toast(parts.length+' bölüm eklendi ✓');renderTool()}catch(e){toast('İçe aktarılamadı')}}
+/* ---- Bölüm sırası ---- */
+async function msMove(cid,dir){const chs=msChs(TL.novel),i=chs.findIndex(c=>c.id===cid),j=i+dir;if(i<0||j<0||j>=chs.length)return;
+  const a=chs[i],b=chs[j];const na=b.no||j+1,nb=a.no||i+1;try{await st.db.collection('chapters').doc(a.id).update({no:na});await st.db.collection('chapters').doc(b.id).update({no:nb});a.no=na;b.no=nb;renderTool()}catch(e){toast('Taşınamadı')}}
+/* ---- Sürümler (bu cihazda + eşitlemede) ---- */
+async function msVers(cid){try{const s=await st.db.collection('chvers').doc(cid).get();return (s.exists&&s.data().list)||[]}catch(e){return []}}
+async function msSnap(cid,text,label){if(!st.db||!(text||'').trim())return;const list=await msVers(cid);if(list.length&&list[list.length-1].text===text)return;
+  list.push({at:new Date().toISOString(),words:wcount(text),text,label:label||''});try{await st.db.collection('chvers').doc(cid).set({list:list.slice(-15),updatedAt:new Date().toISOString()})}catch(e){}}
+async function msVersDlg(){const c=wrCur();if(!c)return;await wrSave();const list=(await msVers(c.id)).slice().reverse();
+  msModal(`<div class="eyebrow">🕘 Sürümler — ${esc(c.title||'')}</div><p class="hint">Yazarken her ~10 dakikada bir, bölümü kapatırken ve yapıştırmadan önce eski hâl otomatik saklanır (son 15 sürüm).</p>
+  ${list.length?`<div class="msv">${list.map((v,i)=>`<button type="button" class="msv-i" data-ms="vsee" data-i="${i}"><b>${esc(new Date(v.at).toLocaleString('tr-TR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}))}</b><span class="hint">${v.words.toLocaleString('tr-TR')} kelime${v.label?' · '+esc(v.label):''}</span></button>`).join('')}</div><div id="msvPrev" class="msv-prev hint">Bir sürüme dokun, burada görünsün.</div>`:'<p class="hint">Henüz kayıtlı sürüm yok. Yazdıkça oluşacak.</p>'}`,'wide');WR.vlist=list}
+function msVerSee(i){const v=WR.vlist[i];if(!v)return;$('msvPrev').innerHTML=`<div class="msm-acts"><button class="btn primary" type="button" data-ms="vback" data-i="${i}">Bu sürüme dön</button><button class="btn" type="button" data-ms="vcopy" data-i="${i}">Kopyala</button></div><div class="msv-text">${esc(v.text)}</div>`}
+async function msVerBack(i){const v=WR.vlist[i],c=wrCur();if(!v||!c)return;const t=$('wrText');await msSnap(c.id,t.value,'Geri dönmeden önce');t.value=v.text;WR.base=v.text;msClose();wrInfo();await wrSave();toast('Sürüme dönüldü ✓')}
+/* ---- Notlar ve odak ---- */
+function msNotesToggle(){const a=$('wrNotes');a.hidden=!a.hidden;if(!a.hidden){const c=wrCur();$('wrNotesT').value=(c&&c.notes)||'';$('wrNotesT').focus()}}
+async function msNotesSave(){const c=wrCur();if(!c||!st.db)return;const v=$('wrNotesT').value;c.notes=v;try{await st.db.collection('chapters').doc(c.id).update({notes:v});$('wrNotesH').textContent='kaydedildi ✓'}catch(e){$('wrNotesH').textContent='kaydedilemedi'}}
+function msFocus(on){const r=$('wroom');if(!r)return;r.classList.toggle('focus',on===undefined?!r.classList.contains('focus'):on);if(r.classList.contains('focus'))toast('Odak modu · çıkmak için Esc ya da sağ üstteki ✕');$('wrText').focus()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const r=$('wroom');if($('msModal')){msClose();e.preventDefault()}else if(r&&!r.hidden&&r.classList.contains('focus')){msFocus(false);e.preventDefault()}}});
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-ms]');if(!b)return;const a=b.dataset.ms,i=+b.dataset.i;
+  if(a==='close')return msClose();
+  if(a==='export')return msExportDlg();if(a==='exdoc'){const nv=msNovel(TL.novel);msOut(msManuscript(TL.novel),nv?nv.title:'roman','doc');return}if(a==='expdf'){msOut(msManuscript(TL.novel),'','pdf');return}
+  if(a==='pack')return msPackDlg();if(a==='pksave')return msPackSave();
+  if(a==='pkdoc'||a==='pkpdf'){await msPackSave(true);const nv=msNovel(TL.novel);msOut(msSubmission(TL.novel),(nv?nv.title:'roman')+' - yayınevi dosyası',a==='pkdoc'?'doc':'pdf');return}
+  if(a==='pksyn')return msSynAI();if(a==='pkcopy'){await msPackSave(true);return msCopy(msSynPrompt(TL.novel),'Kopyalandı — ChatGPT ya da Claude\'a yapıştır')}
+  if(a==='plot')return msPlotCtx();if(a==='import')return msImportDlg();if(a==='impok')return msImport();
+  if(a==='up'||a==='down')return msMove(b.dataset.id,a==='up'?-1:1);
+  if(a==='edcopy')return msEditPrompt();if(a==='paste')return msPasteDlg();if(a==='pasteok')return msPasteApply(false);if(a==='pasteall')return msPasteApply(true);
+  if(a==='vers')return msVersDlg();if(a==='vsee')return msVerSee(i);if(a==='vback')return msVerBack(i);if(a==='vcopy'){const v=WR.vlist[i];if(v)msCopy(v.text);return}
+  if(a==='chexp'){await wrSave();return msModal(`<div class="eyebrow">Bölümü indir</div><h3>${esc($('wrTitle').value||'Bölüm')}</h3><div class="msm-acts"><button class="btn primary" type="button" data-ms="chdoc">📄 Word</button><button class="btn" type="button" data-ms="chpdf">🖨 PDF</button><button class="btn" type="button" data-ms="chtxt">⬇ .txt</button></div>`)}
+  if(a==='chdoc'||a==='chpdf'){const c=wrCur();if(!c)return;const nv=msNovel(c.novel);const h=msDoc(c.title||'Bölüm',msChaptersHtml([c],true));msOut(h,(nv?nv.title+' - ':'')+(c.title||'Bölüm'),a==='chdoc'?'doc':'pdf');return}
+  if(a==='chtxt'){msClose();return $('wrTxt').click()}
+  if(a==='notes')return msNotesToggle();if(a==='focus')return msFocus();
+});
+
 /* ===== Sahne panosu ===== */
 const SC={edit:null,drag:null};const SCST=[['fikir','Fikir'],['taslak','Taslak'],['yazildi','Yazıldı'],['duzenlendi','Düzenlendi']];
 const POVC=['#e8b4b8','#a9c48a','#b9a6d9','#f2c99a','#9cc6cf','#e6c86e'];
@@ -2372,7 +2545,7 @@ function tWriter(){
       <div class="shbars">${ns.map(b=>`<div class="shbar"><span>${esc(b.title)}</span><span class="hint">${(per[b.id]||0).toLocaleString('tr-TR')} kelime</span></div>`).join('')}</div>
       <div class="wlog">${ses.slice().reverse().slice(0,12).map(s=>{const b=st.books.find(x=>x.id===s.novel);return `<div><span class="hint">${fmtTR(s.date)}</span> · <b>${(+s.words).toLocaleString('tr-TR')}</b> kelime · ${esc(b?b.title:'')}${s.note?' — '+esc(s.note):''}</div>`}).join('')}</div>`}
   else{const ss=TL.subs.filter(x=>!TL.novel||x.novel===TL.novel).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-    body=`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${nsel('wNovel2')}</div>
+    body=`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${nsel('wNovel2')}<button class="btn" type="button" data-ms="pack">📦 Yayınevi dosyası hazırla</button></div>
       <div class="row"><div class="f"><label for="sbPub">Yayınevi / ajans</label><input id="sbPub" placeholder="ör. Artemis Yayınları"></div><div class="f"><label for="sbDate">Gönderim tarihi</label><input id="sbDate" type="date" value="${todayKey()}"></div></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input id="sbNote" placeholder="Not (ör. sinopsis + ilk 3 bölüm, e-posta ile)" style="flex:1;min-width:0;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--bg)"><button class="btn primary" type="button" data-act="sbadd">+ Başvuru ekle</button></div>
       <div class="sublist">${ss.map(x=>{const b=st.books.find(y=>y.id===x.novel);const wait=x.date?Math.round((new Date()-new Date(x.date))/864e5):0;return `<div class="subrow"><div><b>${esc(x.pub)}</b> <span class="hint">· ${esc(b?b.title:'')} · ${fmtTR(x.date)}${['gonderildi','bekleniyor'].includes(x.status)?` · ${wait} gündür`:''}</span>${x.note?`<p class="hint" style="margin:2px 0 0">${esc(x.note)}</p>`:''}</div><select data-sbst="${x.id}">${SUB_ST.map(([k,l])=>`<option value="${k}"${x.status===k?' selected':''}>${l}</option>`).join('')}</select><button class="iconbtn" type="button" data-sbrm="${x.id}" aria-label="Sil">×</button></div>`}).join('')||'<p class="hint">Henüz başvuru kaydı yok.</p>'}</div>`}
@@ -2630,7 +2803,7 @@ $('toolPanel').addEventListener('change',async e=>{
   const t=e.target;const ca=t.closest('[data-chadd]');if(ca&&t.value){const d=thesisData(),c=d.chapters[+ca.dataset.chadd];c.articles=[...(c.articles||[]),t.value];thesisSave(d);return renderTool()}
   if(t.dataset&&t.dataset.prp!==undefined&&PR.items){PR.items[+t.dataset.prp].on=t.checked;const n=PR.items.filter(x=>x.on).length,btn=document.querySelector('[data-act="prapply"]');if(btn){btn.disabled=!n;btn.textContent='Ekle ('+n+')'}return}
   if(t.id==='idNovel'){ID.novel=t.value;return}
-  if(t.id==='wrStyle'){try{await st.db.collection('styles').doc(TL.novel).set({text:t.value,updatedAt:new Date().toISOString()});TL.styles={...TL.styles,[TL.novel]:{text:t.value}};toast('Üslup notu kaydedildi')}catch(err){toast('Kaydedilemedi')}return}
+  if(t.id==='wrStyle'){try{await msSaveStyle(TL.novel,{text:t.value});toast('Üslup notu kaydedildi')}catch(err){toast('Kaydedilemedi')}return}
   if(t.id==='bdImg'){const fs=[...t.files];t.value='';return bdAddImgs(fs)}
   if(t.dataset.bdtxt!==undefined||t.dataset.bdcap!==undefined){const d=bdData(TL.novel),i=+(t.dataset.bdtxt??t.dataset.bdcap);if(!d.items[i])return;d.items=d.items.map((x,k)=>k===i?{...x,[t.dataset.bdtxt!==undefined?'text':'cap']:t.value}:x);await bdSave(TL.novel,d);return}
   if(/^wNovel\d*$/.test(t.id)||t.id==='wsNovel'){SC.edit=null;TLN.edit=null;LR.edit=null;RL.focus=null;PR.kind=null;PR.items=null;TLN.check=null;TL.novel=t.value;if(t.id!=='wsNovel')renderTool();return}
