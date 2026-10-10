@@ -2053,8 +2053,12 @@ async function msFileText(f){const n=f.name.toLowerCase();
   return (await f.text()).replace(/\r/g,'')}
 function msSplit(txt){const lines=(txt||'').replace(/\r/g,'').split('\n'),out=[];let cur=null;
   const H=/^\s*(?:#{1,4}\s*)?(?:\*\*)?\s*((?:bölüm|chapter|kısım)\s*[\divxlc]+\b.*|[\d]+\s*\.\s*bölüm\b.*|(?:birinci|ikinci|üçüncü|dördüncü|beşinci|altıncı|yedinci|sekizinci|dokuzuncu|onuncu)\s+bölüm\b.*)$/i;
-  for(const ln of lines){const m=ln.match(H);if(m&&ln.trim().length<120){cur={title:m[1].replace(/\*\*/g,'').trim(),body:[]};out.push(cur)}else{if(!cur){cur={title:'',body:[]};out.push(cur)}cur.body.push(ln)}}
-  return out.map(x=>({title:x.title,text:x.body.join('\n').replace(/^\s+|\s+$/g,'')})).filter(x=>x.text||x.title)}
+  const H2=/^(?:\d+\.?)?(?:on|yirmi|otuz|kırk|elli)?(?:birinci|ikinci|üçüncü|dördüncü|beşinci|altıncı|yedinci|sekizinci|dokuzuncu|onuncu|yirminci|otuzuncu|kırkıncı|ellinci)?bölüm\d*$|^(?:epilog|prolog|önsöz|sonsöz)$/;
+  for(const ln of lines){const m=ln.match(H),flat=ln.replace(/[\s*#]/g,'').toLocaleLowerCase('tr-TR');const isH=(m&&ln.trim().length<120)||(ln.trim().length<60&&H2.test(flat));
+    if(isH){const t=m?m[1]:ln.trim().replace(/\s+/g,' ');const tt=/\S \S \S/.test(t)&&!/\S\S\S/.test(t)?t.replace(/(\S) (?=\S)/g,'$1'):t;cur={title:tt.replace(/\*\*/g,'').trim(),body:[],sub:true};out.push(cur)}
+    else{if(!cur){cur={title:'',body:[]};out.push(cur)}if(cur.sub&&ln.trim()){cur.sub=false;if(ln.trim().length<60&&!/[.!?…:,;"”]$/.test(ln.trim())){cur.title+=' — '+ln.trim();continue}}cur.body.push(ln)}}
+  let res=out.map(x=>({title:x.title,text:x.body.join('\n').replace(/^\s+|\s+$/g,'')})).filter(x=>x.text||x.title);
+  if(res.length>2&&!res[0].title&&wcount(res[0].text)<120)res=res.slice(1);return res}
 async function msImport(){const parts=msSplit($('mpImp').value);if(!parts.length){toast('Metin boş');return}const id=TL.novel;let no=Math.max(0,...msChs(id).map(c=>c.no||0));
   try{for(const p of parts){no++;const ref=st.db.collection('chapters').doc();const data={novel:id,no,title:p.title||('Bölüm '+no),text:p.text,words:wcount(p.text),updatedAt:new Date().toISOString()};await ref.set(data);const nid=ref.id||(ref.path||'').split('/').pop();TL.chapters=[...(TL.chapters||[]).filter(c=>c.id!==nid),{id:nid,...data}]}
     msClose();toast(parts.length+' bölüm eklendi ✓');renderTool()}catch(e){toast('İçe aktarılamadı')}}
