@@ -717,6 +717,20 @@ body.sec-home.home-simple header.top,body.sec-home.home-simple .divider{display:
 .lf-yr{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}.lf-yc{text-align:center;justify-items:center}.lf-yc span:first-child{font-size:26px}.lf-yc b{font:600 26px var(--display)}
 .lf-ybars{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;height:140px;align-items:end}.lf-ybars div{display:grid;grid-template-rows:1fr auto;height:100%;align-items:end;text-align:center}.lf-ybars i{display:block;border-radius:6px 6px 2px 2px}.lf-ybars span{font-size:10.5px;color:var(--muted)}
 .hs-today2 .lft{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+/* ===== yedek, bölümler, arama, hızlı not, haftam ===== */
+.bk-ban{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:color-mix(in srgb,#f59f00 12%,var(--paper));border:1px solid color-mix(in srgb,#f59f00 35%,var(--line));border-radius:16px;padding:10px 14px;font-size:14px}
+.wk-ban{background:color-mix(in srgb,var(--accent) 10%,var(--paper));border-color:color-mix(in srgb,var(--accent) 30%,var(--line))}
+.parts{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}.parts-h{display:flex;gap:8px;align-items:center;font-size:15px}.parts-t{display:grid;gap:4px;padding-left:24px;font-size:13.5px}.parts-t label{display:flex;gap:6px;align-items:center}
+.parts input{width:17px;height:17px;accent-color:var(--accent)}
+.gs-btn{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);right:48px;z-index:44;width:32px;height:32px;font-size:15px;opacity:.85;box-shadow:0 4px 12px -6px rgba(0,0,0,.35)}
+.msm-box.gs{align-self:start;margin-top:6vh}.gs-r{display:grid;gap:12px;max-height:60vh;overflow:auto}.gs-g{display:grid;gap:2px}
+.gs-i{border:0;background:none;text-align:left;padding:7px 8px;border-radius:10px;cursor:pointer;font:inherit;color:inherit;display:grid;gap:1px}.gs-i:hover{background:var(--accent-soft)}.gs-i .hint{font-size:12.5px}.gs-i mark{background:#ffe066;color:inherit;border-radius:2px}
+.qc-fab{position:fixed;right:18px;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);z-index:45;width:56px;height:56px;border-radius:50%;border:0;background:var(--accent);color:#fff;font-size:30px;line-height:1;cursor:pointer;box-shadow:0 10px 24px -8px rgba(0,0,0,.45);display:grid;place-items:center}
+@media (max-width:860px){.qc-fab{bottom:calc(env(safe-area-inset-bottom,0px) + 84px);width:50px;height:50px;font-size:26px;right:14px}}
+body.nb-open .qc-fab,body.nb-open .gs-btn,body:has(#reader:not([hidden])) .qc-fab,body:has(#reader:not([hidden])) .gs-btn,body:has(#wroom:not([hidden])) .qc-fab,body:has(#wroom:not([hidden])) .gs-btn,body:has(#msModal) .qc-fab{display:none}
+.qc-k{flex-wrap:wrap;border-radius:16px !important}.qc-k button{font-size:13px}
+.exp-c{border-left:4px solid var(--accent)}.exp-b{display:flex;gap:12px;align-items:center}.exp-i{font-size:34px}.exp-b b{font-size:16px;line-height:1.35}.exp-f button{font-size:12px}
+.wk-m{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;gap:4px}.wk-m div{display:grid;gap:2px}.wk-m b{font-size:22px}.wk-g{margin:0;padding-left:20px;line-height:1.7}
 </style>
 
 </head><body>
@@ -2853,21 +2867,21 @@ function tYear(){
 }
 
 /* ---------- 💾 Yedekle ---------- */
-function tBackup(){return toolHead('💾 Yedekle')+`<p class="hint" style="margin:0;font-size:14px">Kitap listen, notların, alıntıların, kartların, tez planın ve yazar köşen bir yedek dosyasına yazılır. PDF dosyalarının kendisi yedeğe girmez; onlar Drive'ında ya da kütüphanenin deposunda kalır.</p>
+function tBackup(){setTimeout(bkWeeklyUi,60);return toolHead('💾 Yedekle')+`<div class="f"><label>🗂 Haftalık otomatik yedekler (Drive)</label><div id="bkWeeklyBox" class="lfc"></div></div>`+`<p class="hint" style="margin:0;font-size:14px">Kitap listen, notların, alıntıların, kartların, tez planın ve yazar köşen bir yedek dosyasına yazılır. PDF dosyalarının kendisi yedeğe girmez; onlar Drive'ında ya da kütüphanenin deposunda kalır.</p>
   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="button" data-act="bkjson">⬇️ Tam yedek (.json)</button><button class="btn" type="button" data-act="bkfull">🖼 Görsellerle tam yedek</button><button class="btn" type="button" data-act="bkcsv">⬇️ Kitap listesi (Excel için .csv)</button></div>
   <div class="f"><label for="bkFile">Yedekten geri yükle</label><input id="bkFile" type="file" accept="application/json,.json"><span class="hint" style="font-size:12px">Aynı kayıtlar yedektekiyle değiştirilir, yeni kayıtlar eklenir; hiçbir şey silinmez.</span></div><div class="hint" id="bkMsg"></div>${typeof GAUTH!=='undefined'&&GAUTH.configured()?`<div class="f" style="margin-top:8px"><label>Google Drive yedeği</label><div class="hint dbk-info" style="margin:0;font-size:13px">Drive'a giriş yaptığın sürece her şey Drive'ındaki "Dijital Kütüphanem — yedek.json" dosyasıyla kendiliğinden eşitlenir: değişikliklerin birkaç dakikada bir Drive'a yazılır, uygulamayı açtığında başka cihazdaki daha yeni değişiklikler alınır. Giriş süresi dolduysa köşedeki "Drive ile eşitle" düğmesine bas.</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn primary" type="button" data-act="bkdrive">☁️ Şimdi eşitle</button><button class="btn" type="button" data-act="bkdriveget">⬇️ Drive'dan geri yükle</button></div><span class="hint" id="dbkMsg" style="font-size:12px">${dbkStatus()}</span></div>`:''}`}
 async function saveFile(name,data){
   try{const dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;if(!dl){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toast('Dosya indirildi');return}await dl.save({filename:name,data});toast('Dosya kaydedildi')}
   catch(e){toast(e&&e.code==='declined'?'İndirme iptal edildi':e&&e.code==='rate_limited'?'Biraz bekleyip tekrar dene':'Bu görünümde dosya indirilemiyor')}}
 async function backupData(){const get=async col=>{try{const s_=await st.db.collection(col).get();return s_.docs.map(d=>({id:d.id,...d.data()}))}catch(e){return []}};
-  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),nfolders:await get('nfolders'),nbooks:await get('nbooks'),npages:await get('npages'),cal:await get('cal'),tasks:await get('tasks'),moods:await get('moods'),habits:await get('habits'),money:await get('money'),lists:await get('lists'),recipes:await get('recipes'),goals:await get('goals'),lifecfg:await get('lifecfg'),
+  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),nfolders:await get('nfolders'),nbooks:await get('nbooks'),npages:await get('npages'),cal:await get('cal'),tasks:await get('tasks'),moods:await get('moods'),habits:await get('habits'),money:await get('money'),lists:await get('lists'),recipes:await get('recipes'),goals:await get('goals'),lifecfg:await get('lifecfg'),weeks:await get('weeks'),
     settings:{ui:UI,thesis:TL.thesis,writing:TL.writing,log:st.log,bingo:TL.bingo,journal:TL.journal,widgets:TL.widgets,stickers:{items:STK.items,emblem:STK.emblem}}}}
 function csvBooks(){const H=['Başlık','Yazar','Tür','Raf','Etiketler','Durum','Sayfa','Kaldığı sayfa','Bitirme','Puan','Yıl','Dergi','DOI','Dosya'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   return '﻿'+[H.map(q).join(','),...st.books.map(b=>[b.title,b.author,{kitap:'Kitap',pdf:'PDF',roman:'Romanım',makale:'Makale'}[b.kind]||b.kind,b.shelf,(b.tags||[]).join('; '),STATUS_LABEL[b.status]||b.status,b.pages||'',b.currentPage||'',b.finishedAt||'',b.rating||'',b.year||'',b.journal||'',b.doi||'',b.fileName||''].map(q).join(','))].join('\r\n')}
 async function restore(file,quiet){const m=$('bkMsg')||{textContent:''};try{const d=JSON.parse(await file.text());if(!d||d.app!=='Dijital Kütüphanem')throw 0;let n=0;
   if(d.blobs&&typeof LOCAL!=='undefined'){const ids=Object.keys(d.blobs);let k=0;for(const id of ids){if(!LOCAL.has(id)){const x=d.blobs[id];try{await LOCAL.assets.putId(id,new Blob([b64dec(x.b64)],{type:x.type||'image/jpeg'}))}catch(e){}}if(++k%20===0)m.textContent='Görseller: '+k+'/'+ids.length}}
-  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages],['cal',d.cal],['tasks',d.tasks],['moods',d.moods],['habits',d.habits],['money',d.money],['lists',d.lists],['recipes',d.recipes],['goals',d.goals],['lifecfg',d.lifecfg]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
+  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages],['cal',d.cal],['tasks',d.tasks],['moods',d.moods],['habits',d.habits],['money',d.money],['lists',d.lists],['recipes',d.recipes],['goals',d.goals],['lifecfg',d.lifecfg],['weeks',d.weeks]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
   if(d.settings){if(d.settings.thesis)await st.db.doc('settings/thesis').set(d.settings.thesis);if(d.settings.writing)await st.db.doc('settings/writing').set(d.settings.writing);if(d.settings.log)await st.db.doc('settings/log').set(d.settings.log);if(d.settings.bingo)await st.db.doc('settings/bingo').set(d.settings.bingo);if(d.settings.journal)await st.db.doc('settings/journal').set(d.settings.journal);if(d.settings.widgets)await st.db.doc('settings/widgets').set(d.settings.widgets);if(d.settings.stickers&&Array.isArray(d.settings.stickers.items)){const it=d.settings.stickers.items.filter(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(it.length||!STK.items.length)await st.db.doc('settings/stickers').set({items:it,emblem:it.some(x=>x.id===d.settings.stickers.emblem)?d.settings.stickers.emblem:'',updatedAt:new Date().toISOString()})}if(d.settings.ui){const u={...d.settings.ui};const hasStk=d.settings.stickers&&(d.settings.stickers.items||[]).some(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(u.art==='custom'&&!hasStk)u.art='fairy';setUI(u)}}
   m.textContent=`Geri yükleme tamam: ${n} kayıt.`+(typeof LOCAL!=='undefined'?' Şimdi Ayarlar → Klasörden ekle ile kitap klasörünü seç; dosyalar kayıtlarına kendiliğinden bağlanır.':'')}catch(e){m.textContent='Bu dosya bir Dijital Kütüphanem yedeği gibi görünmüyor.';if(quiet)throw e}}
 /* Drive ile otomatik eşitleme: açılışta/girişte Drive'daki daha yeni yedeği alır, değişiklikleri Drive'a yazar */
@@ -2945,7 +2959,7 @@ async function driveSync(force){
       const go=i=>gfetch((i?up+'/'+encodeURIComponent(i):up)+'?uploadType=multipart&fields=id,modifiedTime',1,{method:i?'PATCH':'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body});
       let r;try{r=await go(id)}catch(e){if(id&&e&&(e.code==='http_404'||e.code==='http_403')){r=await go('')}else throw e}
       const j=await r.json();dbkSet('id',j.id||id);dbkSet('synced',j.modifiedTime||new Date().toISOString());dbkSet('hash',h)}
-    dbkSet('at',new Date().toISOString());
+    dbkSet('at',new Date().toISOString());bkWeekly().catch(()=>{});
     if(pulled){toast('Diğer cihazdaki değişiklikler alındı ☁️');try{render()}catch(e){}}
     try{const m=document.getElementById('dbkMsg');if(m)m.textContent=dbkStatus()}catch(e){}
     dbkChip();return true
@@ -2956,7 +2970,7 @@ function dbkStatus(){const a=dbkGet('at');if(!a)return "Henüz Drive ile eşitle
 async function driveRestoreLatest(){dbkSet('synced','');await driveSync(true);return {modifiedTime:dbkGet('synced')}}
 function dbkChip(){if(typeof GAUTH==='undefined'||!GAUTH.configured())return;let c=document.getElementById('dbkChip');const need=!!dbkGet('at')&&!GAUTH.signedIn();
   if(!need){if(c)c.remove();return}
-  if(!c){c=document.createElement('button');c.id='dbkChip';c.type='button';c.className='btn';c.textContent='☁️ Drive ile eşitle';c.style.cssText='position:fixed;right:48px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:44;height:32px;padding:0 12px;font-size:13px;box-shadow:0 4px 12px -6px rgba(0,0,0,.35)';
+  if(!c){c=document.createElement('button');c.id='dbkChip';c.type='button';c.className='btn';c.textContent='☁️ Drive ile eşitle';c.style.cssText='position:fixed;right:88px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:44;height:32px;padding:0 12px;font-size:13px;box-shadow:0 4px 12px -6px rgba(0,0,0,.35)';
     c.onclick=async()=>{c.disabled=true;c.textContent='Eşitleniyor…';try{await driveSync(true)}catch(e){toast((e&&e.ui)||'Eşitlenemedi')}c.disabled=false;c.textContent='☁️ Drive ile eşitle';dbkChip()};document.body.appendChild(c)}}
 if(typeof GAUTH!=='undefined'){
   setInterval(()=>{driveSync(false).catch(()=>{})},120000);
@@ -3062,7 +3076,7 @@ $('toolPanel').addEventListener('click',async e=>{
   if(act==='bkfull'){A.disabled=true;const m=$('bkMsg');try{const d=await backupData();const txt=JSON.stringify(d);const ids=[...new Set(txt.match(/\b[0-9a-f]{32}\b/g)||[])];d.blobs={};let k=0;
       for(const id of ids){try{const r=await LOCAL.fetchAsset(id);if(r.ok){const t=(r.headers.get('content-type')||'');if(/^image\//.test(t)){d.blobs[id]={type:t,b64:b64enc(new Uint8Array(await r.arrayBuffer()))}}}}catch(e){}if(m)m.textContent='Görseller hazırlanıyor: '+(++k)+'/'+ids.length}
       if(m)m.textContent=Object.keys(d.blobs).length+' görsel yedeğe eklendi.';await saveFile(`dijital-kutuphanem-gorselli-yedek-${todayKey()}.json`,JSON.stringify(d))}catch(e){if(m)m.textContent='Yedek hazırlanamadı.'}A.disabled=false;return}
-  if(act==='bkjson'){A.disabled=true;const d=await backupData();A.disabled=false;return saveFile(`dijital-kutuphanem-yedek-${todayKey()}.json`,JSON.stringify(d,null,1))}
+  if(act==='bkjson'){A.disabled=true;const d=await backupData();A.disabled=false;dbkSet('manual',new Date().toISOString());return saveFile(`dijital-kutuphanem-yedek-${todayKey()}.json`,JSON.stringify(d,null,1))}
   if(act==='bkcsv')return saveFile(`dijital-kutuphanem-liste-${todayKey()}.csv`,csvBooks());
 });
 $('toolPanel').addEventListener('input',e=>{
@@ -3811,7 +3825,8 @@ function homeSimple(){document.body.classList.add('home-simple');
   const qc=typeof quoteCard==='function'?quoteCard():'';
   return `<div class="hs">
    <section class="hs-hello"><div><div class="eyebrow">${esc(trDate(t))}</div><h2>${greet}${name?', '+esc(name):''}</h2></div><div class="hs-acts"><button class="btn primary" type="button" data-hs="add">＋ Yeni ekle</button><button class="btn" type="button" data-hs="idea">💡 Fikir</button></div></section>
-   <section class="hs-today2"><h3 class="hs-h">☀️ Bugün <button class="lf-lnk" type="button" data-lf="go" data-v="today" style="font-size:13px;margin-left:6px">Hayatım →</button></h3>${lfTodayBox(true)}</section>
+   ${bkBanner()}${wkNudge()}
+   <section class="hs-today2"><h3 class="hs-h">☀️ Bugün <button class="lf-lnk" type="button" data-lf="go" data-v="today" style="font-size:13px;margin-left:6px">Hayatım →</button></h3>${lfTodayBox(true)}<div style="margin-top:12px">${expCard(true)}</div></section>
    ${cards.length?`<section><h3 class="hs-h">Kaldığın yerler</h3><div class="hs-cont">${cards.join('')}</div></section>`:`<section class="hs-empty"><b>Hoş geldin 🌿</b><span class="hint">Bir kitap ekleyerek ya da Defterlerim'den bir defter açarak başla.</span></section>`}
    <section class="hs-today"><div class="hs-g"><span>📖 Bugün okuma</span><b>${pg} <small>/ ${pgGoal} sayfa</small></b>${bar(pg,pgGoal)}<span class="hint">${pg>=pgGoal?'Hedef tamam 🎉':rs>1?rs+' gündür okuyorsun 🌿':'Okuyucuda sayfa çevirdikçe dolar'}</span></div>
      <div class="hs-g"><span>✍️ Bugün yazma</span><b>${wt.toLocaleString('tr-TR')} <small>/ ${wGoal.toLocaleString('tr-TR')} kelime</small></b>${bar(wt,wGoal)}<span class="hint">${wt>=wGoal?'Hedef tamam 🎉':ws>1?ws+' gündür yazıyorsun 🔥':'Yazı odasında yazdıkça dolar'}</span></div></section>
@@ -3875,7 +3890,7 @@ async function kyAuto(){if(KY.auto||KY.busy||!st.db||!navigator.onLine)return;co
 
 /* ===================== 🌿 Hayatım ===================== */
 const LF={cal:[],tasks:[],moods:[],habits:[],money:[],lists:[],recipes:[],goals:[],cfg:{},mon:null,sel:null,tv:'today',lsel:null,mm:null,rsel:null,breath:null,focus:null};
-const LFC=['cal','tasks','moods','habits','money','lists','recipes','goals','lifecfg'];
+const LFC=['cal','tasks','moods','habits','money','lists','recipes','goals','lifecfg','weeks'];LF.weeks=[];
 const lfK=(d=new Date())=>todayKey(d);
 const lfD=k=>new Date(k+'T12:00:00');
 const lfAdd=(k,n)=>{const d=lfD(k);d.setDate(d.getDate()+n);return lfK(d)};
@@ -3904,7 +3919,7 @@ function lfItems(k){const out=[];
   return out.sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'))}
 
 /* ---- render ---- */
-function lfRender(){const host=$('secHost');if(!host||st.sec!=='life')return;const sub=curSub();const f={today:lfToday,cal:lfCal,tasks:lfTasks,habits:lfHabits,mood:lfMood,calm:lfCalm,goals:lfGoals,money:lfMoney,lists:lfLists,food:lfFood,days:lfDays,year:lfYear}[sub]||lfToday;
+function lfRender(){const host=$('secHost');if(!host||st.sec!=='life')return;const sub=curSub();const f={week:lfWeekView,today:lfToday,cal:lfCal,tasks:lfTasks,habits:lfHabits,mood:lfMood,calm:lfCalm,goals:lfGoals,money:lfMoney,lists:lfLists,food:lfFood,days:lfDays,year:lfYear}[sub]||lfToday;
   host.innerHTML=`<div class="lf lf-${sub}">${f()}</div>`;if(LF.focus){const e=$(LF.focus);if(e)e.focus();LF.focus=null}}
 const lfFaces=['','😞','😕','😐','🙂','😄'],lfFaceC=['','#8fa3c7','#a8b8d8','#e2d6b8','#a8d5a2','#6fc28b'];
 function lfTodayBox(compact){const k=lfK(),items=lfItems(k),T=lfTaskList('today').slice(0,compact?5:20),H=LF.habits.filter(h=>!h.off),md=LF.moods.find(m=>m.id===k);
@@ -4137,17 +4152,174 @@ document.addEventListener('input',e=>{const t=e.target;if(!t.dataset)return;
   if(t.dataset.lfm){clearTimeout(lfMood.t);lfMood.t=setTimeout(async()=>{const d=t.dataset.d,md=LF.moods.find(m=>m.id===d)||{};const patch={...md,id:undefined};if(t.dataset.lfm==='note')patch.note=t.value;else{const g=[...(md.good||['','',''])];g[+t.dataset.i]=t.value;patch.good=g}await lfSet('moods',d,patch);const s=$('lfMS');if(s)s.textContent='Kaydedildi ✓'},700);return}
   if(t.dataset.lfc==='note'){clearTimeout(lfCalm.t);lfCalm.t=setTimeout(()=>{const c=LF.cfg.calm||{};lfSet('lifecfg','calm',{...c,id:undefined,note:t.value})},700)}});
 
+/* ===================== Yedek güvenliği ===================== */
+function bkLast(){const a=[dbkGet('at'),dbkGet('manual'),dbkGet('weekly')].filter(Boolean).sort();return a.length?a[a.length-1]:''}
+function bkDays(){const l=bkLast();return l?Math.floor((Date.now()-new Date(l))/864e5):null}
+function bkBanner(){if(!(st.books||[]).length)return '';const d=bkDays();if(d!==null&&d<7)return '';const drive=typeof GAUTH!=='undefined'&&GAUTH.configured&&GAUTH.configured();
+  return `<section class="bk-ban"><span>💾 ${d===null?'Henüz hiç yedek almadın.':d+' gündür yedek alınmadı.'} Kitapların, defterlerin ve günlüğün güvende olsun.</span><div class="lf-row">${drive?'<button class="btn primary" type="button" data-bk="drive">☁️ Drive\'a yedekle</button>':''}<button class="btn" type="button" data-bk="file">⬇️ Dosyaya indir</button></div></section>`}
+async function bkWeekly(){if(typeof GAUTH==='undefined'||!GAUTH.signedIn()||!dbkGet('id'))return;const last=dbkGet('weekly');if(last&&Date.now()-new Date(last)<7*864e5)return;
+  try{const nm='Dijital Kütüphanem — haftalık yedek '+todayKey()+'.json';await gfetch(GD+'/'+encodeURIComponent(dbkGet('id'))+'/copy?fields=id',1,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm})});dbkSet('weekly',new Date().toISOString());
+    const L=await bkList();for(const f of L.slice(6)){try{await gfetch(GD+'/'+encodeURIComponent(f.id),1,{method:'DELETE'})}catch(e){}}}catch(e){}}
+async function bkList(){const q=encodeURIComponent("name contains 'Dijital Kütüphanem — haftalık yedek' and trashed = false");const j=await (await gfetch(GD+'?q='+q+'&orderBy='+encodeURIComponent('createdTime desc')+'&pageSize=20&fields='+encodeURIComponent('files(id,name,createdTime,size)'))).json();return j.files||[]}
+async function bkWeeklyUi(){const el=$('bkWeeklyBox');if(!el)return;if(typeof GAUTH==='undefined'||!GAUTH.signedIn()){el.innerHTML='<span class="hint">Drive\'a bağlanınca her hafta otomatik bir kopya saklanır (son 6 hafta).</span>';return}
+  try{const L=await bkList();el.innerHTML=L.length?L.map(f=>`<div class="lf-mrow"><span>🗂</span><span class="lf-tt">${esc(f.name.replace('Dijital Kütüphanem — ',''))}</span><button class="btn" type="button" data-bk="rest" data-id="${f.id}">Geri yükle</button></div>`).join('')+'<span class="hint">Geri yükleme hiçbir şeyi silmez; eksik olanları geri getirir.</span>':'<span class="hint">İlk haftalık kopya bu hafta oluşacak.</span>'}catch(e){el.innerHTML='<span class="hint">Liste alınamadı.</span>'}}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-bk]');if(!b)return;const k=b.dataset.bk;b.disabled=true;
+  try{if(k==='drive'){b.textContent='Yedekleniyor…';await driveSync(true);await bkWeekly();toast('☁️ Yedeklendi');renderList()}
+    else if(k==='file'){const d=await backupData();await saveFile(`dijital-kutuphanem-yedek-${todayKey()}.json`,JSON.stringify(d,null,1));dbkSet('manual',new Date().toISOString());renderList()}
+    else if(k==='rest'){if(!b.dataset.sure){b.dataset.sure=1;b.disabled=false;b.textContent='Emin misin? Tekrar bas';return}b.textContent='Yükleniyor…';const txt=await (await gfetch(GD+'/'+encodeURIComponent(b.dataset.id)+'?alt=media')).text();await restore({text:async()=>txt},true);toast('Haftalık yedekten geri yüklendi');b.textContent='✓'}}
+  catch(x){toast((x&&x.ui)||'Olmadı');b.disabled=false}});
+
+/* ===================== Kullandığım bölümler ===================== */
+function secHidden(s){return (UI.hideSec||[]).includes(s)}
+function subHidden(s,t){return ((UI.hideSub||{})[s]||[]).includes(t)}
+function secTabs(s){return SECS[s].tabs.filter(t=>!subHidden(s,t[0]))}
+function partsApply(){document.querySelectorAll('.sn-item').forEach(b=>{b.hidden=secHidden(b.dataset.sec)})}
+function partsHtml(){const S=Object.entries(SECS).filter(([k])=>k!=='settings'&&k!=='home');
+  return `<div class="panel lf"><div><h2 style="margin:0">🧩 Kullandığım bölümler</h2><p class="hint" style="margin:4px 0 0">Kullanmadıklarını kapat; menü sadeleşir. Hiçbir veri silinmez, istediğinde geri açarsın.</p></div>
+   <div class="parts">${S.map(([k,s])=>`<div class="lfc"><label class="parts-h"><input type="checkbox" data-part="${k}" ${secHidden(k)?'':'checked'}> <b>${esc(s.t)}</b></label>${s.tabs.length?`<div class="parts-t">${s.tabs.map(([t,l])=>`<label><input type="checkbox" data-part="${k}" data-sub="${t}" ${subHidden(k,t)?'':'checked'} ${secHidden(k)?'disabled':''}> ${l}</label>`).join('')}</div>`:''}</div>`).join('')}</div></div>`}
+document.addEventListener('change',e=>{const c=e.target;if(!c.dataset||!c.dataset.part)return;const s=c.dataset.part,t=c.dataset.sub;
+  if(!t){const H=new Set(UI.hideSec||[]);c.checked?H.delete(s):H.add(s);setUI({hideSec:[...H]})}
+  else{const all={...(UI.hideSub||{})},H=new Set(all[s]||[]);c.checked?H.delete(t):H.add(t);if(H.size>=SECS[s].tabs.length){c.checked=true;toast('En az bir sekme açık kalmalı');return}all[s]=[...H];setUI({hideSub:all})}
+  partsApply();$('secHost').innerHTML=partsHtml()});
+
+/* ===================== Her şeyde ara ===================== */
+function gsOpen(){msModal(`<div class="eyebrow">🔎 Her şeyde ara</div><input id="gsQ" type="search" placeholder="Kitap, alıntı, defter, görev, günlük, tarif…" autocomplete="off"><div id="gsR" class="gs-r"><span class="hint">Yazmaya başla.</span></div>`,'wide gs');setTimeout(()=>$('gsQ').focus(),40)}
+function gsNorm(s){return String(s||'').toLocaleLowerCase('tr-TR').replace(/<[^>]+>/g,' ')}
+function gsRun(q){const r=$('gsR');if(!r)return;q=gsNorm(q).trim();if(q.length<2){r.innerHTML='<span class="hint">En az 2 harf yaz.</span>';return}
+  const hit=s=>gsNorm(s).includes(q),cut=(s,n)=>{s=String(s||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();const i=gsNorm(s).indexOf(q);if(i<0)return esc(s.slice(0,n));const a=Math.max(0,i-40);return (a?'…':'')+esc(s.slice(a,i))+'<mark>'+esc(s.slice(i,i+q.length))+'</mark>'+esc(s.slice(i+q.length,i+q.length+n-40))};
+  const G=[];const add=(t,items)=>{if(items.length)G.push([t,items.slice(0,8)])};
+  add('📚 Kitaplar',st.books.filter(b=>hit(b.title)||hit(b.author)||hit(b.note)||(b.tags||[]).some(hit)).map(b=>({t:esc(b.title),s:esc(b.author||''),go:'book',id:b.id})));
+  add('💬 Alıntılar',(TL.quotes||[]).filter(x=>hit(x.text)||hit(x.note)).map(x=>({t:cut(x.text,110),s:esc(x.title||''),go:'quote'})));
+  add('📓 Defterler',NB.books.map(bk=>{const P=nbPagesOf(bk.id).filter(p=>hit(nbText(p)));return hit(bk.title)||P.length?{t:esc(bk.title),s:P.length?cut(nbText(P[0]),110):'',go:'nb',id:bk.id}:null}).filter(Boolean));
+  add('✍️ Bölümler',(TL.chapters||[]).filter(c=>hit(c.title)||hit(c.text)||hit(c.notes)).map(c=>{const nv=st.books.find(b=>b.id===c.novel);return {t:esc(c.title||'Bölüm'),s:(nv?esc(nv.title)+' · ':'')+cut(hit(c.title)?'':c.text||c.notes,100),go:'ch',id:c.id,x:c.novel}}));
+  add('💡 Fikirler',(TL.ideas||[]).filter(x=>hit(x.title)||hit(x.text)||hit(x.raw)).map(x=>({t:esc(x.title||'Fikir'),s:cut(x.text||x.raw,100),go:'idea'})));
+  add('👤 Karakterler',(TL.chars||[]).filter(x=>hit(x.name)||hit(x.desc)||hit(x.note)).map(x=>({t:esc(x.name||''),s:cut(x.desc||x.note,90),go:'char'})));
+  add('✅ Görevler',LF.tasks.filter(x=>hit(x.t)).map(x=>({t:esc(x.t),s:x.done?'tamamlandı':x.due?esc(lfShort(x.due)):'',go:'task'})));
+  add('🗓 Takvim',LF.cal.filter(x=>hit(x.title)||hit(x.note)).map(x=>({t:esc(x.title),s:esc(lfShort(x.date)),go:'cal',id:x.date})));
+  add('🌿 Günlük',LF.moods.filter(m=>hit(m.note)||(m.good||[]).some(hit)).sort((a,b)=>b.id.localeCompare(a.id)).map(m=>({t:esc(lfDay(m.id)),s:cut([m.note,...(m.good||[])].join(' · '),110),go:'mood',id:m.id})));
+  add('🎯 Hedefler',LF.goals.filter(g=>hit(g.t)||(g.steps||[]).some(s=>hit(s.t))).map(g=>({t:esc(g.t),go:'goal'})));
+  add('📋 Listeler',LF.lists.flatMap(l=>(l.items||[]).filter(i=>hit(i.t)).map(i=>({t:esc(i.t),s:esc(l.name),go:'list',id:l.id}))));
+  add('🍲 Tarifler',LF.recipes.filter(x=>hit(x.t)||(x.ings||[]).some(hit)).map(x=>({t:esc(x.t),go:'recipe',id:x.id})));
+  add('💰 Bütçe',LF.money.filter(m=>hit(m.note)||hit(m.name)||hit(m.cat)).map(m=>({t:esc(m.note||m.name||m.cat),s:(m.date?esc(lfShort(m.date))+' · ':'')+lfTL(m.amt),go:'money'})));
+  r.innerHTML=G.length?G.map(([t,it])=>`<div class="gs-g"><div class="eyebrow">${t}</div>${it.map(x=>`<button type="button" class="gs-i" data-gs="${x.go}" data-id="${esc(x.id||'')}" data-x="${esc(x.x||'')}"><b>${x.t}</b>${x.s?`<span class="hint">${x.s}</span>`:''}</button>`).join('')}</div>`).join(''):'<span class="hint">Bir şey bulunamadı.</span>'}
+document.addEventListener('input',e=>{if(e.target.id==='gsQ'){clearTimeout(gsRun.t);const v=e.target.value;gsRun.t=setTimeout(()=>gsRun(v),120)}});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-gs]');if(!b)return;const g=b.dataset.gs,id=b.dataset.id;const q=($('gsQ')||{}).value||'';msClose();
+  if(g==='book'){const bk=st.books.find(x=>x.id===id);if(bk)openForm(bk);return}if(g==='nb'){NB.q=q;nbOpen(id);return}if(g==='ch'){TL.novel=b.dataset.x;wrOpen(id);return}
+  if(g==='quote'){goSec('journal','quotes');return}if(g==='idea'){goSec('writer','ideas');return}if(g==='char'){goSec('writer','chars');return}
+  if(g==='task'){LF.tv='today';goSec('life','tasks');return}if(g==='cal'){LF.sel=id;LF.mon=id.slice(0,7)+'-01';goSec('life','cal');return}if(g==='mood'){LF.mm=id;goSec('life','mood');return}
+  if(g==='goal'){goSec('life','goals');return}if(g==='list'){LF.lsel=id;goSec('life','lists');return}if(g==='recipe'){LF.rsel=id;goSec('life','food');return}if(g==='money'){goSec('life','money');return}});
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();gsOpen()}});
+
+/* ===================== Hızlı not (＋) ===================== */
+const QC_T=[['task','✅ Görev'],['idea','💡 Fikir'],['note','📝 Not'],['ev','🗓 Etkinlik'],['money','💸 Harcama'],['shop','🛒 Alışveriş']];
+function qcGuess(s){const t=s.toLocaleLowerCase('tr-TR');if(/\d+([.,]\d+)?\s*(₺|tl\b|lira)/.test(t))return 'money';if(/\b([01]?\d|2[0-3])[:.][0-5]\d\b/.test(t)&&/(bugün|yarın|pazartesi|salı|çarşamba|perşembe|cuma|cumartesi|pazar|\d{1,2}\s+(ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık))/.test(t))return 'ev';if(/^(fikir|roman|sahne|karakter)\b/.test(t))return 'idea';return 'task'}
+function qcOpen(){msModal(`<div class="eyebrow">＋ Hızlı not</div><textarea id="qcT" rows="3" placeholder="Aklındakini yaz… (ör. “yarın 14:00 hoca görüşmesi”, “kahve 85 tl”, “süt”)"></textarea>
+  <div class="seg qc-k" id="qcK">${QC_T.map(([k,l],i)=>`<button type="button" data-qck="${k}" aria-pressed="${i===0}">${l}</button>`).join('')}</div><span class="hint" id="qcH">Nereye gideceğini ben tahmin ederim; istersen değiştir.</span>
+  <div class="msm-acts"><button class="btn primary" type="button" id="qcGo">Kaydet</button></div>`,'qc');setTimeout(()=>$('qcT').focus(),40);
+  $('qcT').addEventListener('input',()=>{if($('qcK').dataset.manual)return;const g=qcGuess($('qcT').value);document.querySelectorAll('[data-qck]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.qck===g))});
+  $('qcT').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.metaKey||e.ctrlKey||!e.shiftKey)&&!e.isComposing){e.preventDefault();qcSave()}});$('qcGo').addEventListener('click',qcSave)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-qck]');if(!b)return;$('qcK').dataset.manual=1;document.querySelectorAll('[data-qck]').forEach(x=>x.setAttribute('aria-pressed',x===b))});
+async function qcSave(){const raw=$('qcT').value.trim();if(!raw)return;const k=(document.querySelector('[data-qck][aria-pressed="true"]')||{dataset:{qck:'task'}}).dataset.qck,now=new Date().toISOString();
+  try{if(k==='task'){const p=lfParseDate(raw);await lfSet('tasks',null,{t:p.txt||raw,due:p.due||undefined,list:'today',done:false,at:now});toast('✅ Görevlere eklendi')}
+    else if(k==='idea'){await st.db.collection('ideas').doc().set({title:raw.split(/\s+/).slice(0,6).join(' '),text:'',raw,tags:[],novel:'',at:now});toast('💡 Fikir defterine eklendi')}
+    else if(k==='note'){let bk=NB.books.find(b=>b.title==='⚡ Hızlı notlar');if(!bk){const id=nbId();bk={id,title:'⚡ Hızlı notlar',kind:'doc',folder:'',color:'#f4c27a',paper:'lined',pc:'#ffffff',recs:[],createdAt:now,opened:now};await nbSaveBook(bk,{});NB.books.push(bk)}
+      let pg=nbPagesOf(bk.id).find(p=>p.type==='text');pg=pg?nbPg(pg.id):await nbNewPage(bk.id,{type:'text',title:'Notlar',icon:'⚡'});
+      pg.blocks=[{id:nbId(),t:'h3',x:esc(new Date().toLocaleString('tr-TR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'}))},...raw.split('\n').map(l=>({id:nbId(),t:'p',x:esc(l)})),...(pg.blocks||[]).filter(b=>(b.x||'').trim()||b.t!=='p')];await nbFlushPatch(pg);toast('📝 “Hızlı notlar” defterine eklendi')}
+    else if(k==='ev'){const p=lfParseDate(raw);const tm=/\b([01]?\d|2[0-3])[:.]([0-5]\d)\b/.exec(p.txt);let txt=p.txt.replace(/\b(saat\s*)?([01]?\d|2[0-3])[:.][0-5]\d\b/i,'').replace(/\s{2,}/g,' ').trim();let date=p.due||lfK();
+      const M=['ocak','şubat','mart','nisan','mayıs','haziran','temmuz','ağustos','eylül','ekim','kasım','aralık'],dm=new RegExp('\\b(\\d{1,2})\\s+('+M.join('|')+')\\b','i').exec(txt);if(dm){const d=new Date();let y=d.getFullYear();const mo=M.indexOf(dm[2].toLocaleLowerCase('tr-TR'));if(mo<d.getMonth())y++;date=lfK(new Date(y,mo,+dm[1]));txt=txt.replace(dm[0],'').trim()}
+      await lfSet('cal',null,{title:txt||raw,date,time:tm?String(tm[1]).padStart(2,'0')+':'+tm[2]:undefined,remind:tm?'60':undefined});toast('🗓 Takvime eklendi: '+lfShort(date)+(tm?' '+tm[0]:''))}
+    else if(k==='money'){const m=/(\d+(?:[.,]\d+)?)/.exec(raw.replace(/(\d)\.(\d{3})\b/g,'$1$2'));if(!m){toast('Tutarı yaz (ör. 85 tl)');return}const amt=parseFloat(m[1].replace(',','.'));const note=raw.replace(m[0],'').replace(/₺|\btl\b|\blira\b/ig,'').replace(/\s{2,}/g,' ').trim();
+      const t=note.toLocaleLowerCase('tr-TR'),cat=/kahve|kafe|çay/.test(t)?'☕ Kafe':/market|süt|ekmek/.test(t)?'🛒 Market':/yemek|döner|pizza|lokanta/.test(t)?'🍽 Yemek':/kitap/.test(t)?'📚 Kitap':/otobüs|taksi|metro|dolmuş|benzin|ulaşım/.test(t)?'🚌 Ulaşım':/fatura|elektrik|su faturası|internet|telefon/.test(t)?'🧾 Fatura':/ilaç|eczane|doktor/.test(t)?'💊 Sağlık':'✨ Diğer';
+      await lfSet('money',null,{type:'out',amt,cat,note:note||undefined,date:lfK()});toast('💸 '+lfTL(amt)+' · '+cat)}
+    else if(k==='shop'){await lfListAddItems('Alışveriş','🛒',raw.split(/[\n,]/).map(x=>x.trim()).filter(Boolean));toast('🛒 Alışveriş listesine eklendi')}
+    msClose();setTimeout(lfForce,200)}catch(e){toast('Kaydedilemedi')}}
+(function(){if($('qcFab'))return;const f=document.createElement('button');f.id='qcFab';f.type='button';f.className='qc-fab';f.setAttribute('aria-label','Hızlı not');f.title='Hızlı not (her yerden)';f.textContent='＋';f.addEventListener('click',qcOpen);document.body.appendChild(f);
+  const s=document.createElement('button');s.id='gsBtn';s.type='button';s.className='iconbtn gs-btn';s.setAttribute('aria-label','Her şeyde ara');s.title='Her şeyde ara (⌘K)';s.textContent='🔎';s.addEventListener('click',gsOpen);document.body.appendChild(s)})();
+
+/* ===================== Haftam + haftanın küçük deneyimi ===================== */
+const EXP=[
+ ['📚','Halk kütüphanesine git, bir saat orada oku','0','out','Sessiz ve sakin; çoğunda asansör ve oturma alanı var.'],
+ ['🖼','Bir sanat galerisini gez','0','out','Galerilerin çoğu ücretsiz; hafta içi sabah en sakin saatler.'],
+ ['🏛','Bir müzeyi hafta içi sabah gez','₺','out','Öğrenci kartınla çoğu müze ücretsiz ya da indirimli.'],
+ ['🌐','Online bir müze turu yap (Google Arts & Culture)','0','home','Uffizi, Louvre, Topkapı… evden.'],
+ ['🌇','Bir bankta oturup telefonsuz gün batımını izle','0','out','Sadece 15 dakika; düz yolu olan yakın bir park yeter.'],
+ ['✉️','Sevdiğin birine elle mektup ya da kartpostal yaz','0','home','Pul parası dışında bedava.'],
+ ['🌌','Pencereden yıldızlara bak, bir takımyıldızın adını öğren','0','home','Ücretsiz bir gökyüzü uygulaması yardımcı olur.'],
+ ['🍵','Hiç denemediğin bir bitki çayı demle, tadım notu yaz','₺','home','Aktardan küçük bir paket yeter.'],
+ ['🍳','Evdeki malzemelerle hiç yapmadığın bir tarif dene','0','home','Sonra 🍲 Yemek sekmesine kaydet.'],
+ ['🎧','Bir podcast bölümüyle uzun, sakin bir akşam','0','home','Battaniye, sıcak içecek, telefon bildirimleri kapalı.'],
+ ['🎬','Çocukken sevdiğin bir filmi yeniden izle','0','home','Ne değişti, ne aynı kaldı? Günlüğe iki satır.'],
+ ['🎞','Sevdiğin bir yazarın hayatını anlatan bir belgesel izle','0','home',''],
+ ['✍️','20 dakika serbest yaz: “Hiç gitmediğim bir şehir”','0','home','Belki bir romana tohum olur.'],
+ ['🧑‍🤝‍🧑','Romanındaki bir karaktere mektup yaz','0','home','Karakteri yeniden keşfetmenin tatlı yolu.'],
+ ['📷','Bir hafta boyunca her gün tek bir güzel şeyi fotoğrafla','0','home','Hafta sonunda mini bir albüm olur.'],
+ ['📖','Yerel bir sahafa uğra, dükkânın en eski kitabını bul','₺','out','Bakmak bedava; alırsan da genelde ucuz.'],
+ ['🗣','Yeni bir dilde 10 kelime öğren, onlarla bir cümle kur','0','home',''],
+ ['📜','Sevdiğin kısa bir şiiri ezberle','0','home',''],
+ ['🕯','Evde “kitap kafe” akşamı: mum, battaniye, telefonsuz 1 saat','0','home',''],
+ ['🎓','Ücretsiz bir online dersin (MOOC) ilk bölümünü izle','0','home','Coursera ve edX\'te ücretsiz dinleme seçeneği var.'],
+ ['🪴','Kendine küçük bir bitki al ve ona bir isim ver','₺','out','Bir çiçekçiden ya da markette.'],
+ ['☕','Hiç gitmediğin sakin bir kafede kitapla otur','₺','out','Hafta içi gündüz kalabalık olmaz.'],
+ ['🎨','Ucuz bir suluboya setiyle basit bir manzara boya','₺','home','Sonuç önemli değil; süreç keyif.'],
+ ['🧩','500 parçalık bir yapboza başla','₺','home','Haftalara yayılan sakin bir uğraş.'],
+ ['🎭','Bir tiyatronun hafta içi matinesine öğrenci bileti al','₺','out','Devlet tiyatrolarında öğrenci biletleri uygun.'],
+ ['🎥','Sinemada hafta içi sabah seansına git','₺','out','Hem ucuz hem sakin.'],
+ ['🏺','Belediyenin ücretsiz ya da ucuz bir atölyesine katıl (ebru, seramik)','₺','out','Halk eğitim merkezlerine bak.'],
+ ['🎶','Belediyenin ücretsiz bir konserine ya da söyleşisine git','0','out','Oturarak dinlenen etkinlikler seç.'],
+ ['🗂','Odanın bir köşesini yeniden düzenle, bir “okuma köşesi” yap','0','home',''],
+ ['📞','Bir arkadaşınla görüntülü “sessiz okuma” buluşması yap','0','home','Herkes kendi kitabını okur, sonunda 10 dk sohbet.'],
+ ['🌿','Kokulu bir mumla yavaş bir akşam rutini kur','₺','home',''],
+ ['📓','Sadece güzel şeyler için küçük bir defter başlat','₺','home','Ya da ✏️ Defterlerim\'de yeni bir defter aç — bedava.'],
+ ['🎹','Sevdiğin bir şarkının hikâyesini araştır','0','home',''],
+ ['🧁','Hiç yapmadığın kolay bir tatlı dene','₺','home',''],
+ ['💌','Kendine bir yıl sonra açılacak bir mektup yaz','0','home','📅 Takvimine hatırlatma koy.'],
+ ['🔭','Bir planetaryum ya da bilim merkezinin ücretsiz gününe bak','₺','out','']];
+function wkStart(off){const k=lfK(),d=lfD(k),o=(d.getDay()+6)%7;return lfAdd(k,-o+(off||0)*7)}
+function wkDoc(s){return (LF.weeks||[]).find(w=>w.id===s)||{}}
+function expPick(s){const W=wkDoc(s),pool=[...EXP,...((LF.cfg.exp||{}).custom||[]).map(t=>['✨',t,'0','home',''])];const f=(LF.cfg.exp||{}).cost||'all';const P=pool.map((x,i)=>[x,i]).filter(([x])=>f==='all'||(f==='0'?x[2]==='0':true));
+  const done=new Set((LF.weeks||[]).filter(w=>w.exp&&w.expDone).map(w=>w.exp));let seed=hashStr(s+(W.roll||0));const avail=P.filter(([x])=>!done.has(x[1]));const L=avail.length?avail:P;return L[seed%L.length][0]}
+function expCard(compact){const s=wkStart(),W=wkDoc(s),x=W.exp?(EXP.find(e=>e[1]===W.exp)||['✨',W.exp,'0','home','']):expPick(s),f=(LF.cfg.exp||{}).cost||'all';
+  return `<div class="lfc exp-c"><div class="lf-gh"><h4>🎁 Bu haftanın küçük deneyimi</h4>${compact?'':`<div class="seg exp-f"><button type="button" data-ex="cost" data-v="all" aria-pressed="${f==='all'}">Hepsi</button><button type="button" data-ex="cost" data-v="0" aria-pressed="${f==='0'}">Sadece ücretsiz</button></div>`}</div>
+   <div class="exp-b"><span class="exp-i">${x[0]}</span><div><b>${esc(x[1])}</b><div class="hint">${x[2]==='0'?'🆓 Ücretsiz':'💸 Az maliyetli'} · ${x[3]==='home'?'🏠 Evde':'🚶 Dışarıda'}${x[4]?' · '+esc(x[4]):''}</div></div></div>
+   ${W.expDone?`<span class="hint">✓ Yaptın! ${W.expNote?'“'+esc(W.expNote)+'”':''}</span>`:`<div class="lf-row"><button class="btn primary" type="button" data-ex="done" data-v="${esc(x[1])}">✓ Yaptım</button><button class="btn" type="button" data-ex="roll">🔀 Başka öner</button>${compact?'<button class="lf-lnk" type="button" data-lf="go" data-v="week">Haftam →</button>':''}</div>`}</div>`}
+function lfWeekView(){const off=LF.woff||0,s=wkStart(off),e=lfAdd(s,6),days=[...Array(7)].map((_,i)=>lfAdd(s,i)),W=wkDoc(s),inW=k=>k>=s&&k<=e;
+  const log=(st.log&&st.log.days)||{},pages=days.reduce((a,k)=>a+(+log[k]||0),0),words=((TL.writing&&TL.writing.sessions)||[]).filter(x=>inW(x.date)).reduce((a,x)=>a+(+x.words||0),0);
+  const td=LF.tasks.filter(t=>t.done&&inW((t.doneAt||'').slice(0,10))).length,H=LF.habits.filter(h=>!h.off),hp=H.length?Math.round(H.reduce((a,h)=>a+days.filter(k=>lfHv(h,k)>=(+h.goal||1)).length,0)/(H.length*7)*100):null;
+  const M=days.map(k=>LF.moods.find(m=>m.id===k)),spent=LF.money.filter(m=>m.type==='out'&&inW(m.date||'')).reduce((a,m)=>a+(+m.amt||0),0),fin=st.books.filter(b=>b.status==='okundu'&&inW((b.finishedAt||'').slice(0,10)));
+  const good=M.flatMap(m=>(m&&m.good||[]).filter(Boolean));const R=W.r||{};
+  return `<div class="lf-hd"><div><div class="eyebrow">${esc(lfShort(s))} – ${esc(lfShort(e))}</div><h2>📆 ${off===0?'Bu haftam':off===-1?'Geçen hafta':'Haftam'}</h2></div><div class="lf-row"><button class="iconbtn" type="button" data-ex="w" data-v="-1" aria-label="Önceki hafta">‹</button>${off?'<button class="btn" type="button" data-ex="w" data-v="0">Bu hafta</button>':''}<button class="iconbtn" type="button" data-ex="w" data-v="1" aria-label="Sonraki hafta" ${off>=0?'disabled':''}>›</button></div></div>
+   ${off===0?expCard(false):''}
+   <div class="lf-yr">${[['📖',pages,'sayfa okudun'],['✍️',words.toLocaleString('tr-TR'),'kelime yazdın'],['✅',td,'görev bitirdin'],['🔁',hp===null?'—':'%'+hp,'alışkanlık'],['📚',fin.length,'kitap bitirdin'],['💸',lfTL(spent),'harcadın']].map(([i,v,l])=>`<div class="lfc lf-yc"><span>${i}</span><b>${v}</b><span class="hint">${l}</span></div>`).join('')}</div>
+   <div class="lfc"><h4>Haftanın ruh hali</h4><div class="wk-m">${days.map((k,i)=>`<div><span class="hint">${lfD(k).toLocaleDateString('tr-TR',{weekday:'short'})}</span><b>${M[i]&&M[i].m?lfFaces[M[i].m]:'·'}</b></div>`).join('')}</div>${good.length?`<h4 style="margin-top:8px">✨ Bu haftanın güzel anları</h4><ul class="wk-g">${good.map(g=>`<li>${esc(g)}</li>`).join('')}</ul>`:''}</div>
+   <div class="lfc"><h4>🪞 Haftayı değerlendir</h4>
+    <label class="hint">Bu hafta neyle gurur duyuyorum?</label><textarea rows="2" data-wk="proud" data-s="${s}">${esc(R.proud||'')}</textarea>
+    <label class="hint">Beni ne zorladı? Ne öğrendim?</label><textarea rows="2" data-wk="hard" data-s="${s}">${esc(R.hard||'')}</textarea>
+    <label class="hint">Gelecek hafta için 3 odak</label>${[0,1,2].map(i=>`<input data-wk="f${i}" data-s="${s}" value="${esc(R['f'+i]||'')}" placeholder="${['ör. Tezin 2. bölümünü bitir','ör. 3 yayınevine dosya gönder','ör. Her gün 20 dk oku'][i]}">`).join('')}
+    <div class="lf-row"><button class="btn" type="button" data-ex="focus" data-s="${s}">✅ Odakları gelecek haftanın görevlerine ekle</button><span class="hint" id="wkMsg"></span></div></div>
+   ${(LF.weeks||[]).filter(w=>w.expDone).length?`<div class="lfc"><h4>🎁 Yaptığın küçük deneyimler</h4>${(LF.weeks||[]).filter(w=>w.expDone).sort((a,b)=>b.id.localeCompare(a.id)).map(w=>`<div class="lf-task"><span class="lf-tt">✓ ${esc(w.exp)} <small>${esc(lfShort(w.id))}${w.expNote?' · '+esc(w.expNote):''}</small></span></div>`).join('')}</div>`:''}`}
+async function wkSet(s,patch){const W=wkDoc(s);await lfSet('weeks',s,{...W,id:undefined,...patch})}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-ex]');if(!b)return;const k=b.dataset.ex,s=wkStart();
+  if(k==='w'){LF.woff=+b.dataset.v?(LF.woff||0)+(+b.dataset.v):0;if(LF.woff>0)LF.woff=0;lfRender();return}
+  if(k==='roll'){await wkSet(s,{roll:(wkDoc(s).roll||0)+1,exp:undefined});return}
+  if(k==='cost'){const c=LF.cfg.exp||{};await lfSet('lifecfg','exp',{...c,id:undefined,cost:b.dataset.v});await wkSet(s,{exp:undefined});return}
+  if(k==='done'){msModal(`<div class="eyebrow">🎁 Nasıldı?</div><b>${esc(b.dataset.v)}</b><input id="exNote" placeholder="Tek cümleyle nasıldı? (isteğe bağlı)"><div class="msm-acts"><button class="btn primary" type="button" data-ex="done2" data-v="${esc(b.dataset.v)}">Kaydet 🎉</button></div>`);setTimeout(()=>$('exNote').focus(),40);return}
+  if(k==='done2'){const n=($('exNote')||{}).value||'';msClose();await wkSet(s,{exp:b.dataset.v,expDone:true,expNote:n.trim()||undefined,expAt:new Date().toISOString()});toast('🎉 Harika! Bir güzel an daha');if(n.trim()){const md=LF.moods.find(m=>m.id===lfK())||{};const g=[...(md.good||['','',''])];const i=g.findIndex(x=>!x);if(i>=0){g[i]=b.dataset.v.split(' ').slice(0,6).join(' ')+' — '+n.trim();await lfSet('moods',lfK(),{...md,id:undefined,good:g})}}setTimeout(lfForce,200);return}
+  if(k==='focus'){const ss=b.dataset.s,R=(wkDoc(ss).r||{});const F=[R.f0,R.f1,R.f2].filter(x=>x&&x.trim());if(!F.length){toast('Önce odakları yaz');return}for(const f of F)await lfSet('tasks',null,{t:f.trim(),list:'week',done:false,star:true,at:new Date().toISOString()});const m=$('wkMsg');if(m)m.textContent='✓ '+F.length+' görev eklendi';return}});
+document.addEventListener('input',e=>{const t=e.target;if(!t.dataset||!t.dataset.wk)return;clearTimeout(lfWeekView.t);lfWeekView.t=setTimeout(async()=>{const s=t.dataset.s,W=wkDoc(s);await wkSet(s,{r:{...(W.r||{}),[t.dataset.wk]:t.value}});const m=$('wkMsg');if(m)m.textContent='Kaydedildi ✓'},700)});
+function wkNudge(){const d=new Date().getDay();if(d!==0&&d!==1)return '';const s=d===0?wkStart():wkStart(-1),W=wkDoc(s);if(W.r&&(W.r.proud||W.r.f0))return '';return `<section class="bk-ban wk-ban"><span>📆 ${d===0?'Pazar akşamı':'Yeni hafta'}: geçen haftanı 2 dakikada değerlendirmek ister misin?</span><button class="btn" type="button" data-ex="nudge" data-v="${d===0?0:-1}">Haftama bak</button></section>`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ex="nudge"]');if(!b)return;LF.woff=+b.dataset.v;goSec('life','week')});
+
 const SECS={
   home:{t:'Ana sayfa',tabs:[]},
-  life:{t:'Hayatım',tabs:[['today','☀️ Bugün'],['cal','🗓 Takvim'],['tasks','✅ Görevler'],['habits','🔁 Alışkanlıklar'],['mood','🌿 Günlük'],['calm','🫧 Sakinleş'],['goals','🎯 Hedefler'],['money','💰 Bütçe'],['lists','📋 Listeler'],['food','🍲 Yemek'],['days','🎂 Önemli günler'],['year','✨ Yılım']]},
+  life:{t:'Hayatım',tabs:[['today','☀️ Bugün'],['week','📆 Haftam'],['cal','🗓 Takvim'],['tasks','✅ Görevler'],['habits','🔁 Alışkanlıklar'],['mood','🌿 Günlük'],['calm','🫧 Sakinleş'],['goals','🎯 Hedefler'],['money','💰 Bütçe'],['lists','📋 Listeler'],['food','🍲 Yemek'],['days','🎂 Önemli günler'],['year','✨ Yılım']]},
   library:{t:'Kütüphanem',tabs:[]},
   academic:{t:'Akademik',tabs:[['makale','📄 Makaleler'],['lit','📊 Literatür tablosu'],['thesis','🎓 Tez planlayıcı'],['cards','🃏 Çalışma kartları'],['kaynak','📑 Kaynakça'],['nb','📓 Defterlerim']]},
   notes:{t:'Defterlerim',tabs:[]},
   writer:{t:'Yazar köşesi',tabs:[['roman','📖 Romanlarım'],['room','✍️ Yazı odası'],['scenes','🎬 Sahne panosu'],['ideas','💡 Fikir defteri'],['chars','👤 Karakterler'],['rel','🕸 İlişki haritası'],['time','🕰 Zaman çizelgesi'],['world','🗺 Dünya'],['board','🎨 İlham panosu'],['write','📝 Yazım takibi'],['subs','📮 Yayınevleri']]},
   journal:{t:'Okuma günlüğüm',tabs:[['month','🗓 Aylık sayfa'],['readlist','📖 Okuma listesi'],['stats','📈 İstatistikler'],['bingo','🎯 Bingo'],['quotes','💬 Alıntı defteri'],['focus','⏱ Odak'],['year','🌟 Yılın özeti']]},
-  settings:{t:'Ayarlar',tabs:[['theme','🎨 Görünüm'],['drive','☁️ Google Drive'],['bulk','📁 Klasörden ekle'],['storage','🧹 Depolama'],['backup','💾 Yedekle']]}
+  settings:{t:'Ayarlar',tabs:[['theme','🎨 Görünüm'],['drive','☁️ Google Drive'],['bulk','📁 Klasörden ekle'],['storage','🧹 Depolama'],['backup','💾 Yedekle'],['parts','🧩 Bölümler']]}
 };
-function curSub(){const S=SECS[st.sec];if(!S.tabs.length)return '';const v=st.secSub[st.sec];return S.tabs.some(t=>t[0]===v)?v:S.tabs[0][0]}
+function curSub(){const S=SECS[st.sec];if(!S.tabs.length)return '';const T=secTabs(st.sec);const v=st.secSub[st.sec];return T.some(t=>t[0]===v)?v:(T[0]||S.tabs[0])[0]}
 function goSec(sec,sub){if(R.book)closeReader();st.sec=sec;if(sub)st.secSub[sec]=sub;try{localStorage.setItem('kt-sec',sec);localStorage.setItem('kt-secsub',JSON.stringify(st.secSub))}catch(e){}
   ['veil','pickVeil','litVeil','driveVeil','bulkVeil','themeVeil','toolVeil'].forEach(id=>{const v=$(id);if(v&&!v.contains(document.activeElement))v.hidden=true});
   render();renderSection();window.scrollTo({top:0})}
@@ -4160,7 +4332,7 @@ function applySec(){
   else if(listSub){if(st.view==='panel')st.view=st.libView;st.tab=sec==='academic'?'makale':sec==='writer'?'roman':(['all','kitap','pdf'].includes(st.tab)?st.tab:'all')}
   document.querySelectorAll('.sn-item').forEach(b=>b.setAttribute('aria-current',b.dataset.sec===sec?'page':'false'));
   $('secTitle').textContent=SECS[sec].t;
-  $('secTabs').innerHTML=SECS[sec].tabs.map(([k,l])=>`<button type="button" data-sub="${k}" aria-pressed="${sub===k}">${l}</button>`).join('');$('secTabs').hidden=!SECS[sec].tabs.length;
+  partsApply();$('secTabs').innerHTML=secTabs(sec).map(([k,l])=>`<button type="button" data-sub="${k}" aria-pressed="${sub===k}">${l}</button>`).join('');$('secTabs').hidden=!SECS[sec].tabs.length;
   $('secAdd').hidden=!(listSub);
 }
 const HOME_PARENTS={lit:'litVeil',theme:'themeVeil',drive:'driveVeil',bulk:'bulkVeil'};
@@ -4172,6 +4344,7 @@ function renderSection(){
   if(!document.body.classList.contains('sec-page'))return;
   if(sec==='notes'||sub==='nb'){nbRender($('secHost'));return}
   if(sec==='life'){lfBStop();lfRender();return}
+  if(sub==='parts'){$('secHost').innerHTML=partsHtml();return}
   if(sub==='kaynak'){kyRender($('secHost'));kyAutoQ();return}
   const toolMap={thesis:['thesis'],cards:['cards'],room:['writer','room'],rel:['writer','rel'],time:['writer','time'],world:['writer','world'],scenes:['writer','scenes'],bingo:['bingo'],month:['month'],readlist:['readlist'],ideas:['writer','ideas'],chars:['writer','chars'],board:['writer','board'],write:['writer','write'],subs:['writer','subs'],quotes:['quotes'],stats:['stats'],focus:['focus'],year:['year'],backup:['backup']};
   if(toolMap[sub]){TL.embedded=true;TL.cur=toolMap[sub][0];TL.sub=toolMap[sub][1]||null;if(TL.cur!=='cards')TL.study=TL.study;$('secHost').appendChild($('toolPanel'));renderTool();return}
