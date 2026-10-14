@@ -545,6 +545,103 @@ body.tex-pencil{--txs:var(--tx-pencil-soft);--tx:var(--tx-pencil);--paper-tex:va
 .tex-on .sp{background:var(--tx),linear-gradient(90deg,rgba(0,0,0,.16),transparent 25%,transparent 75%,rgba(0,0,0,.12)),var(--c,#b07f86)}
 .tex-on.style-journal .dcard:not(.d-hello)::before,.tex-on.style-journal .wg.tape::before{-webkit-mask:var(--tx-mask) 0 0/120px 120px;mask:var(--tx-mask) 0 0/120px 120px}
 .tex-on .ring circle.fgc{filter:url(#pencilgrain)}
+
+/* ===== Defterlerim ===== */
+.toast{z-index:95}
+.nbh{display:grid;gap:14px}
+.nbh-top{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.nbh-top input{flex:1 1 220px;min-width:0}
+.nbh-f{display:flex;gap:6px;flex-wrap:wrap}.nbh-fc{display:inline-flex;align-items:center}.nbh-fm{border:0;background:none;cursor:pointer;color:var(--muted);font-size:16px;padding:4px 6px}
+.nbh-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:18px}
+.nbc{position:relative;display:grid;gap:8px;cursor:pointer;outline:none}
+.nbc-th{position:relative;aspect-ratio:1/1.414;border-radius:6px 14px 14px 6px;background:var(--c);padding:10px 10px 10px 16px;box-shadow:0 10px 24px -14px rgba(0,0,0,.45),inset 6px 0 0 rgba(0,0,0,.12);overflow:hidden;transition:transform .15s}
+.nbc:hover .nbc-th,.nbc:focus-visible .nbc-th{transform:translateY(-3px)}
+.nbc-th canvas{width:100%;height:100%;object-fit:cover;object-position:top;border-radius:4px;background:#fff;display:block}
+.nbc-doc{background:#fff;color:#333;border-radius:4px;height:100%;padding:10px;font-size:12px;display:grid;align-content:start;gap:6px;overflow:hidden}.nbc-doc div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nbc-k{position:absolute;left:18px;bottom:10px;font-size:15px;filter:drop-shadow(0 1px 2px rgba(0,0,0,.3))}.nbc-r{position:absolute;right:10px;bottom:10px;font-size:13px}
+.nbc-m{display:grid;gap:2px;padding-right:30px}.nbc-m b{font-size:14px;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.nbc-m .hint{font-size:12px}
+.nbc-x{position:absolute;right:-4px;bottom:2px;width:30px;height:30px;font-size:14px}
+.nbh-empty{grid-column:1/-1;display:grid;justify-items:center;gap:6px;padding:40px 10px;text-align:center}
+.nbh-tip{font-size:13px;margin:6px 0 0}
+.nb-kinds{display:grid !important;grid-template-columns:repeat(3,1fr);border-radius:16px !important}.nb-kinds button{display:grid;gap:2px;padding:10px 6px !important;border-radius:12px !important;font-size:14px}.nb-kinds small{font-size:11px;opacity:.75;font-weight:400}
+.nb-sws{display:flex;gap:8px;flex-wrap:wrap}.nb-sw{width:28px;height:28px;border-radius:50%;border:1px solid var(--line);cursor:pointer;padding:0}.nb-sw[aria-pressed="true"]{box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--accent)}
+.nb-rl{display:flex;gap:8px;flex-wrap:wrap}
+.nb-pgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px}.nb-pgs button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:6px;cursor:pointer;display:grid;gap:4px;justify-items:center}.nb-pgs canvas{width:100%;border-radius:4px;background:#fff}.nb-pgt{aspect-ratio:1/1.414;width:100%;background:#fff;border-radius:4px;padding:8px;font-size:12px;text-align:left}
+/* düzenleyici */
+.nbed{position:fixed;inset:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,#888);display:flex;flex-direction:column;color:var(--ink)}.nbe-body{flex:1 1 auto}body.nb-open #reloadBtn{display:none}
+.nbed.side{left:auto;width:var(--nbw);border-left:1px solid var(--line);box-shadow:-12px 0 30px -18px rgba(0,0,0,.4)}
+body.nb-side{--nbw:min(50vw,680px);padding-right:var(--nbw)}body.nb-side #reader{right:var(--nbw)}
+@media(max-width:760px){body.nb-side{padding-right:0;padding-bottom:52vh}.nbed.side{width:100%;top:48vh;border-left:0;border-top:1px solid var(--line)}body.nb-side #reader{right:0;bottom:52vh}}
+.nbe-top{display:flex;align-items:center;gap:8px;padding:8px 12px;padding-top:calc(env(safe-area-inset-top,0px) + 8px);background:var(--paper);border-bottom:1px solid var(--line)}
+.nbe-title{flex:1 1 120px;min-width:60px;border:0 !important;background:none !important;font:600 17px/1.2 var(--display);padding:6px 4px !important;color:var(--ink)}
+.nbe-saved{font-size:12px;white-space:nowrap}.nbe-acts{display:flex;gap:6px;align-items:center}
+.nbe-rec.on{background:#e03131;color:#fff;border-color:#e03131;animation:nbpulse 1.4s infinite}@keyframes nbpulse{50%{box-shadow:0 0 0 6px rgba(224,49,49,.2)}}
+.nbe-tools{display:flex;gap:8px;align-items:center;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:7px 12px;background:var(--paper);border-bottom:1px solid var(--line)}
+.nbe-tools[hidden],.nbe-player[hidden]{display:none}.nbe-tools>*{flex:none}.nbt-tools button{display:inline-flex;gap:5px;align-items:center;font-size:15px}.nbt-tools button span{font-size:12px}@media(max-width:1399px){.nbt-tools button span{display:none}}
+.nbt-cols{display:flex;gap:6px;align-items:center}.nb-col{width:26px;height:26px;border-radius:50%;background:var(--c);border:2px solid var(--paper);box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0;position:relative}
+.nb-col[aria-pressed="true"]{box-shadow:0 0 0 2px var(--accent)}.nb-colx{background:conic-gradient(#f03e3e,#fab005,#40c057,#228be6,#be4bdb,#f03e3e);overflow:hidden}.nb-colx input{opacity:0;position:absolute;inset:0;width:100%;height:100%;cursor:pointer}
+.nbt-w button{width:34px;display:grid;place-items:center}.nbt-w i{display:block;border-radius:50%;background:currentColor}
+.nbt-r{display:flex;gap:6px;align-items:center;margin-left:auto}.nbt-r .iconbtn{width:34px;height:34px}.nbt-z{font-size:12px;min-width:38px;text-align:center}
+.nbed.side .nbt-tools button span,.nbed.side .nbe-rec span{display:none}
+@media(max-width:700px){.nbt-tools button span,.nbe-rec span{display:none}.nbt-r{margin-left:0}.nbe-saved{display:none}}
+.nbe-player{padding:8px 12px;background:var(--paper);border-bottom:1px solid var(--line);display:grid;gap:8px}
+.nbpl-c{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nbpl-c input[type=range]{flex:1 1 140px}.nbpl-l{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.nbpl-l .hint{font-size:12px}
+.nbpl-i{display:inline-flex;align-items:center}.nbpl-i.on .chip{background:var(--accent-soft);color:var(--accent)}.nbpl-x{border:0;background:none;cursor:pointer;color:var(--muted);font-size:16px}
+.nbe-body{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);min-height:0}.nbed.doc .nbe-body{grid-template-columns:240px minmax(0,1fr)}
+.nbe-scroll{overflow:auto;-webkit-overflow-scrolling:touch;min-height:0;overscroll-behavior:contain}
+.nbe-pages{width:max-content;min-width:100%;padding:16px 0 120px;display:grid;gap:10px;justify-items:center;transform-origin:0 0}
+.nbpw{margin:0 auto;display:grid;gap:4px}.nbp-h{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted);padding:0 4px}
+.nbp-m{border:0;background:none;cursor:pointer;color:var(--muted);font-size:18px;padding:2px 8px;border-radius:8px}.nbp-m:hover{background:var(--paper)}
+.nbp{position:relative;box-shadow:0 2px 14px -6px rgba(0,0,0,.35);border-radius:3px;overflow:hidden;touch-action:pan-x pan-y;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.nbed.fing .nbp{touch-action:none}
+.nbp>canvas{position:absolute;inset:0;width:100%;height:100%;display:block}.nblive{pointer-events:none}
+.nbed[data-tool="er"] .nbp{cursor:cell}.nbed[data-tool="pen"] .nbp,.nbed[data-tool="hl"] .nbp{cursor:crosshair}.nbed[data-tool="text"] .nbp{cursor:text}
+.nbov{position:absolute;inset:0;pointer-events:none}
+.nbx{position:absolute;line-height:1.35;font-family:-apple-system,"Segoe UI",sans-serif;pointer-events:none}
+.nbed[data-tool="text"] .nbx{pointer-events:auto}
+.nbx-t{outline:none;min-height:1.35em;white-space:pre-wrap;word-break:break-word;padding:2px 4px;border-radius:4px;-webkit-user-select:text;user-select:text}
+.nbed[data-tool="text"] .nbx-t{box-shadow:0 0 0 1px rgba(59,130,246,.35)}.nbx-t:focus{box-shadow:0 0 0 2px #3b82f6 !important;background:rgba(255,255,255,.6)}
+.nbx-g,.nbx-d{position:absolute;top:-22px;display:none;width:22px;height:22px;border-radius:6px;background:#3b82f6;color:#fff;font-size:13px;line-height:22px;text-align:center;cursor:move;border:0;padding:0;touch-action:none}
+.nbx-g{left:0}.nbx-d{right:0;cursor:pointer;background:#e03131}.nbed[data-tool="text"] .nbx:focus-within .nbx-g,.nbed[data-tool="text"] .nbx:focus-within .nbx-d,.nbed[data-tool="text"] .nbx:hover .nbx-g,.nbed[data-tool="text"] .nbx:hover .nbx-d{display:block}
+.nbselbar{position:absolute;transform:translateY(-100%);display:flex;gap:2px;background:#1d1d1f;border-radius:10px;padding:3px;z-index:3;box-shadow:0 6px 16px -6px rgba(0,0,0,.5)}
+.nbselbar button{border:0;background:none;color:#fff;font-size:12.5px;padding:6px 8px;border-radius:7px;cursor:pointer;white-space:nowrap}.nbselbar button:hover{background:rgba(255,255,255,.15)}
+.nbe-add{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:12px}
+.nbmenu{position:fixed;z-index:90;background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:6px;display:grid;gap:2px;min-width:200px;max-width:300px;max-height:60vh;overflow:auto;box-shadow:0 14px 34px -14px rgba(0,0,0,.45)}
+.nbmenu button{border:0;background:none;text-align:left;padding:8px 10px;border-radius:9px;cursor:pointer;font:inherit;font-size:14px;color:inherit;display:flex;gap:8px;align-items:center}.nbmenu button:hover,.nbmenu button.on{background:var(--accent-soft)}
+.nbmenu button i{font-style:normal;width:26px;text-align:center;color:var(--muted);font-size:13px;font-weight:600}
+.nbmenu-l{font-size:11px;color:var(--muted);padding:6px 10px 2px;text-transform:uppercase;letter-spacing:.06em}.nbmenu-r{display:flex;gap:4px;flex-wrap:wrap;padding:2px 6px}.nbmenu-r button{padding:6px 9px;font-size:13px}.nbmenu-r button[aria-pressed="true"]{background:var(--accent-soft);color:var(--accent)}.nbmenu-r .nb-sw{width:28px;height:28px;padding:0;border:1px solid var(--line);border-radius:50%}
+.nbmenu-d{color:#c92a2a !important}.nbmenu-e{display:grid;grid-template-columns:repeat(6,1fr)}.nbmenu-e button{font-size:20px;justify-content:center;padding:6px}
+.nbmenu-c{display:grid}
+/* Notion gibi */
+.nbe-tree{border-right:1px solid var(--line);background:var(--paper);overflow:auto;padding:10px 8px 80px;display:grid;align-content:start;gap:1px}
+.nbtr-h{font-size:11px;text-transform:uppercase;letter-spacing:.06em;padding:4px 8px}
+.nbtr{display:flex;align-items:center;padding-left:calc(var(--d) * 14px);border-radius:8px}.nbtr:hover,.nbtr.on{background:var(--accent-soft)}
+.nbtr>button:first-child{flex:1;min-width:0;border:0;background:none;text-align:left;padding:7px 8px;cursor:pointer;font:inherit;font-size:14px;color:inherit;display:flex;gap:6px}.nbtr>button span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nbtr-a{border:0;background:none;cursor:pointer;color:var(--muted);opacity:0;padding:4px 8px}.nbtr:hover .nbtr-a,.nbtr.on .nbtr-a{opacity:1}.nbtr-n{display:grid;gap:6px;margin-top:10px}
+.nbe-tt{display:none}
+@media(max-width:760px){.nbed.doc .nbe-body{grid-template-columns:minmax(0,1fr)}.nbe-tt{display:grid}.nbe-tree{display:none;position:absolute;z-index:5;top:0;bottom:0;left:0;width:min(280px,82vw);box-shadow:8px 0 24px -10px rgba(0,0,0,.4)}.nbed.tree-open .nbe-tree{display:grid}.nbe-body{position:relative}}
+.nbed.side.doc .nbe-body{grid-template-columns:minmax(0,1fr)}.nbed.side .nbe-tt{display:grid}.nbed.side .nbe-tree{display:none;position:absolute;z-index:5;top:0;bottom:0;left:0;width:min(260px,80%)}.nbed.side.tree-open .nbe-tree{display:grid}.nbed.side .nbe-body{position:relative}
+.nbtp{width:min(100%,var(--tw,820px));padding:0 8px}.nbt-card{background:var(--paper);border-radius:14px;padding:26px clamp(16px,5vw,56px) 40px;box-shadow:0 2px 14px -8px rgba(0,0,0,.3);min-height:300px}
+.nbed.doc .nbt-card{min-height:calc(100vh - 160px);box-shadow:none;background:var(--paper)}
+.nbdoc-h{display:flex;align-items:center;gap:8px;margin-bottom:10px}.nbdoc-ic{border:0;background:none;font-size:34px;cursor:pointer;padding:2px;border-radius:10px;line-height:1}.nbdoc-ic:hover{background:var(--bg)}
+.nbdoc-t{flex:1;font:700 clamp(24px,4vw,34px)/1.2 var(--display);outline:none;min-width:0}.nbdoc-t:empty::before{content:attr(data-ph);color:var(--muted);opacity:.6}
+.nbpw .nbdoc-h .nbdoc-t{font-size:22px}
+.nbt{display:grid;gap:2px}
+.nbb{position:relative;display:flex;align-items:flex-start;gap:6px;padding-left:calc(var(--ind,0) * 26px);border-radius:6px}
+.nbb-g{position:absolute;left:calc(var(--ind,0) * 26px - 50px);top:2px;display:flex;opacity:0;transition:opacity .15s}.nbb:hover .nbb-g,.nbb:focus-within .nbb-g{opacity:1}
+.nbb-g button{border:0;background:none;cursor:pointer;color:var(--muted);font-size:13px;padding:3px 4px;border-radius:5px;line-height:1}.nbb-g button:hover{background:var(--bg)}
+@media(max-width:700px){.nbb-g{left:auto;right:-6px;top:-2px}.nbb:not(:focus-within) .nbb-g{display:none}}
+.nbb-x{flex:1;min-width:0;outline:none;padding:3px 2px;line-height:1.65;font-size:16px;word-break:break-word;white-space:pre-wrap}
+.nbb-x:empty::before{content:attr(data-ph);color:var(--muted);opacity:0;pointer-events:none}.nbb-x:empty:focus::before,.nbb:not(.nbb-p) .nbb-x:empty::before{opacity:.55}
+.nbb-h1 .nbb-x{font:700 28px/1.3 var(--display);margin-top:14px}.nbb-h2 .nbb-x{font:700 22px/1.3 var(--display);margin-top:10px}.nbb-h3 .nbb-x{font:600 18px/1.35 var(--display);margin-top:6px}
+.nbb-dot,.nbb-num{min-width:20px;text-align:right;line-height:1.65;padding-top:3px;font-size:16px}.nbb-dot{font-size:20px;line-height:1.3;text-align:center}
+.nbb input[type=checkbox]{width:18px;height:18px;margin:7px 2px 0;accent-color:var(--accent);flex:none}.nbb-todo.ck .nbb-x{text-decoration:line-through;color:var(--muted)}
+.nbb-quote .nbb-x{border-left:3px solid var(--ink);padding-left:14px;font-style:italic}
+.nbb-callout{background:color-mix(in srgb,var(--accent) 10%,var(--paper));padding:10px 12px;border-radius:10px;margin:4px 0}.nbb-ci{padding-top:4px}
+.nbb-code .nbb-x{font:14px/1.55 ui-monospace,Menlo,monospace;background:var(--bg);padding:10px 12px;border-radius:8px}
+.nbb-hr{padding:8px 0}.nbb-hr hr{flex:1;border:0;border-top:1px solid var(--line);margin:0}
+.nbb-img img{max-width:100%;border-radius:10px;display:block;margin:6px 0}
+.nbb-x a{color:var(--accent)}.nbb-x mark{background:#ffe066}
+.nbdoc-sub{display:grid;gap:4px;margin-top:20px;border-top:1px solid var(--line);padding-top:12px}.nbdoc-sub button{border:0;background:none;text-align:left;cursor:pointer;font:inherit;padding:6px 8px;border-radius:8px;color:inherit}.nbdoc-sub button:hover{background:var(--bg)}
 </style>
 
 </head><body>
@@ -571,7 +668,7 @@ body.tex-pencil{--txs:var(--tx-pencil-soft);--tx:var(--tx-pencil);--paper-tex:va
   <symbol id="i-laurel" viewBox="0 0 120 24"><path d="M6 12h108" /><path d="M20 12c4-6 10-7 14-6-3 5-9 7-14 6zM20 12c4 6 10 7 14 6-3-5-9-7-14-6zM44 12c4-6 10-7 14-6-3 5-9 7-14 6zM44 12c4 6 10 7 14 6-3-5-9-7-14-6zM76 12c-4-6-10-7-14-6 3 5 9 7 14 6zM76 12c-4 6-10 7-14 6 3-5 9-7 14-6zM100 12c-4-6-10-7-14-6 3 5 9 7 14 6zM100 12c-4 6-10 7-14 6 3-5 9-7 14-6z"/><circle cx="60" cy="12" r="2.5"/></symbol>
  </defs>
 </svg>
-<button type="button" class="iconbtn reloadbtn" id="reloadBtn" title="Yenile" aria-label="Sayfayı yenile">↻</button><nav class="sidenav" id="sideNav" aria-label="Bölümler"><div class="sn-brand"><span class="sn-emb" id="snEmb" aria-hidden="true"></span><b id="snTitle">Dijital Kütüphanem</b></div><button type="button" class="sn-item" data-sec="home"><span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11.5 12 4.5l8.5 7"/><path d="M5.5 10v9.5h4.5v-5.5h4v5.5h4.5V10"/></svg></span><span class="sn-l">Ana sayfa</span></button><button type="button" class="sn-item" data-sec="library"><span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h3.5v15H4zM8.5 6.5H12v13H8.5z"/><path d="M13.6 6.3l3.4-.9 3.4 13.3-3.4.9z"/><path d="M3 19.5h18"/></svg></span><span class="sn-l">Kütüphanem</span></button><button type="button" class="sn-item" data-sec="academic"><span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5 12 5l9.5 4.5L12 14z"/><path d="M6.5 11.5v4.2c3 2.4 8 2.4 11 0v-4.2"/><path d="M21.5 9.5v5"/></svg></span><span class="sn-l">Akademik</span></button><button type="button" class="sn-item" data-sec="writer"><span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 4.5c-6.5.8-11 5.4-12.6 12.4L5 19.5l2.6-1.9c7-1.6 11.6-6.1 11.9-13.1z"/><path d="M7.5 16.5l5-5"/></svg></span><span class="sn-l">Yazar köşesi</span></button><button type="button" class="sn-item" data-sec="journal"><span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h11a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5H6z"/><path d="M6 3.5v17M9.5 8.5h5.5M9.5 12h4"/><path d="M15.5 14.5c1.5.3 2 1.6 1.4 3"/></svg></span><span class="sn-l">Okuma günlüğüm</span></button><button type="button" class="sn-item" data-sec="settings"><span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg></span><span class="sn-l">Ayarlar</span></button></nav>
+<button type="button" class="iconbtn reloadbtn" id="reloadBtn" title="Yenile" aria-label="Sayfayı yenile">↻</button><nav class="sidenav" id="sideNav" aria-label="Bölümler"><div class="sn-brand"><span class="sn-emb" id="snEmb" aria-hidden="true"></span><b id="snTitle">Dijital Kütüphanem</b></div><button type="button" class="sn-item" data-sec="home"><span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11.5 12 4.5l8.5 7"/><path d="M5.5 10v9.5h4.5v-5.5h4v5.5h4.5V10"/></svg></span><span class="sn-l">Ana sayfa</span></button><button type="button" class="sn-item" data-sec="library"><span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4.5h3.5v15H4zM8.5 6.5H12v13H8.5z"/><path d="M13.6 6.3l3.4-.9 3.4 13.3-3.4.9z"/><path d="M3 19.5h18"/></svg></span><span class="sn-l">Kütüphanem</span></button><button type="button" class="sn-item" data-sec="academic"><span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5 12 5l9.5 4.5L12 14z"/><path d="M6.5 11.5v4.2c3 2.4 8 2.4 11 0v-4.2"/><path d="M21.5 9.5v5"/></svg></span><span class="sn-l">Akademik</span></button><button type="button" class="sn-item" data-sec="writer"><span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.5 4.5c-6.5.8-11 5.4-12.6 12.4L5 19.5l2.6-1.9c7-1.6 11.6-6.1 11.9-13.1z"/><path d="M7.5 16.5l5-5"/></svg></span><span class="sn-l">Yazar köşesi</span></button><button type="button" class="sn-item" data-sec="notes"><span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h10a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5h-10z"/><path d="M4.5 7h3M4.5 12h3M4.5 17h3"/><path d="M15.5 8.5l-4.8 4.8-.7 2.2 2.2-.7 4.8-4.8z"/></svg></span><span class="sn-l">Defterlerim</span></button><button type="button" class="sn-item" data-sec="journal"><span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h11a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5H6z"/><path d="M6 3.5v17M9.5 8.5h5.5M9.5 12h4"/><path d="M15.5 14.5c1.5.3 2 1.6 1.4 3"/></svg></span><span class="sn-l">Okuma günlüğüm</span></button><button type="button" class="sn-item" data-sec="settings"><span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></svg></span><span class="sn-l">Ayarlar</span></button></nav>
 <div class="wrap">
   <header class="top">
     <div>
@@ -2282,7 +2379,7 @@ async function stoScan(){try{const r=await st.assets.list();STO.usage=r.usage;co
 STO.items=[];
 function stoBooks(){return st.books.filter(b=>!b.source&&b.fileType!=='epub'&&bookAssetIds(b).length).sort((a,b)=>(b.fileSize||0)-(a.fileSize||0))}
 function stoHtml(){const u=STO.usage,L=stoBooks(),mb=x=>(x/1048576).toFixed(x>1e8?0:1)+' MB';
-  return `<div class="panel sto" id="stoPanel"><h2 style="margin:0">Depolama</h2>
+  return `<div class="panel sto" id="stoPanel"><h2 style="margin:0">Depolama</h2><div class="msm-acts" style="margin:8px 0"><button class="btn" type="button" data-ms="dedupe">📚 Aynı kitapları bul ve temizle</button></div>
     ${u?`<div class="sto-bar"><i style="width:${Math.min(100,u.bytes/u.maxBytes*100).toFixed(1)}%"></i></div><span class="hint">${mb(u.bytes)} / ${mb(u.maxBytes)} kullanılıyor · ${u.files} dosya</span>`:'<span class="hint">Kullanım bilgisi alınamadı.</span>'}
     <p class="hint" style="font-size:14px;margin:4px 0 0">Taranmış (fotoğraf gibi) PDF'ler sıkıştırılınca genelde yarı yarıya küçülür, okunurluk bozulmaz. Metinli PDF'lerde yalnızca içindeki resimler küçültülür, metin aynen kalır. Sıkıştırma bitince eski dosya silinir; kitabın kaydı, kapağı ve ayracı aynı kalır.</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="button" data-sto="top" ${STO.busy?'disabled':''}>🗜 En büyük 15 kitabı sıkıştır</button>${STO.busy?'<button class="btn" type="button" data-sto="stop">Durdur</button>':''}${STO.orph&&STO.orph.length?`<button class="btn" type="button" data-sto="orph">Boşta kalan ${STO.orph.length} dosyayı sil (${mb(STO.orph.reduce((a,x)=>a+x.sizeBytes,0))})</button>`:''}</div>
@@ -2683,14 +2780,14 @@ async function saveFile(name,data){
   try{const dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;if(!dl){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toast('Dosya indirildi');return}await dl.save({filename:name,data});toast('Dosya kaydedildi')}
   catch(e){toast(e&&e.code==='declined'?'İndirme iptal edildi':e&&e.code==='rate_limited'?'Biraz bekleyip tekrar dene':'Bu görünümde dosya indirilemiyor')}}
 async function backupData(){const get=async col=>{try{const s_=await st.db.collection(col).get();return s_.docs.map(d=>({id:d.id,...d.data()}))}catch(e){return []}};
-  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),
+  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),nfolders:await get('nfolders'),nbooks:await get('nbooks'),npages:await get('npages'),
     settings:{ui:UI,thesis:TL.thesis,writing:TL.writing,log:st.log,bingo:TL.bingo,journal:TL.journal,widgets:TL.widgets,stickers:{items:STK.items,emblem:STK.emblem}}}}
 function csvBooks(){const H=['Başlık','Yazar','Tür','Raf','Etiketler','Durum','Sayfa','Kaldığı sayfa','Bitirme','Puan','Yıl','Dergi','DOI','Dosya'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   return '﻿'+[H.map(q).join(','),...st.books.map(b=>[b.title,b.author,{kitap:'Kitap',pdf:'PDF',roman:'Romanım',makale:'Makale'}[b.kind]||b.kind,b.shelf,(b.tags||[]).join('; '),STATUS_LABEL[b.status]||b.status,b.pages||'',b.currentPage||'',b.finishedAt||'',b.rating||'',b.year||'',b.journal||'',b.doi||'',b.fileName||''].map(q).join(','))].join('\r\n')}
 async function restore(file,quiet){const m=$('bkMsg')||{textContent:''};try{const d=JSON.parse(await file.text());if(!d||d.app!=='Dijital Kütüphanem')throw 0;let n=0;
   if(d.blobs&&typeof LOCAL!=='undefined'){const ids=Object.keys(d.blobs);let k=0;for(const id of ids){if(!LOCAL.has(id)){const x=d.blobs[id];try{await LOCAL.assets.putId(id,new Blob([b64dec(x.b64)],{type:x.type||'image/jpeg'}))}catch(e){}}if(++k%20===0)m.textContent='Görseller: '+k+'/'+ids.length}}
-  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
+  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
   if(d.settings){if(d.settings.thesis)await st.db.doc('settings/thesis').set(d.settings.thesis);if(d.settings.writing)await st.db.doc('settings/writing').set(d.settings.writing);if(d.settings.log)await st.db.doc('settings/log').set(d.settings.log);if(d.settings.bingo)await st.db.doc('settings/bingo').set(d.settings.bingo);if(d.settings.journal)await st.db.doc('settings/journal').set(d.settings.journal);if(d.settings.widgets)await st.db.doc('settings/widgets').set(d.settings.widgets);if(d.settings.stickers&&Array.isArray(d.settings.stickers.items)){const it=d.settings.stickers.items.filter(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(it.length||!STK.items.length)await st.db.doc('settings/stickers').set({items:it,emblem:it.some(x=>x.id===d.settings.stickers.emblem)?d.settings.stickers.emblem:'',updatedAt:new Date().toISOString()})}if(d.settings.ui){const u={...d.settings.ui};const hasStk=d.settings.stickers&&(d.settings.stickers.items||[]).some(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(u.art==='custom'&&!hasStk)u.art='fairy';setUI(u)}}
   m.textContent=`Geri yükleme tamam: ${n} kayıt.`+(typeof LOCAL!=='undefined'?' Şimdi Ayarlar → Klasörden ekle ile kitap klasörünü seç; dosyalar kayıtlarına kendiliğinden bağlanır.':'')}catch(e){m.textContent='Bu dosya bir Dijital Kütüphanem yedeği gibi görünmüyor.';if(quiet)throw e}}
 /* Drive ile otomatik eşitleme: açılışta/girişte Drive'daki daha yeni yedeği alır, değişiklikleri Drive'a yazar */
@@ -2711,7 +2808,7 @@ async function dimgFolder(){if(DIMG.folder)return DIMG.folder;let id=dbkGet('img
   if(!id){const r=await gfetch(GD+'?fields=id',1,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'Dijital Kütüphanem — görseller',mimeType:'application/vnd.google-apps.folder'})});id=(await r.json()).id}
   dbkSet('imgfolder',id);DIMG.folder=id;return id}
 async function dimgPush(dataTxt,map,lim){if(typeof LOCAL==='undefined')return 0;const ids=[...new Set(dataTxt.match(/\b[0-9a-f]{32}\b/g)||[])].filter(id=>!map[id]&&!DIMG.nonimg.has(id)&&LOCAL.has(id));let n=0;
-  for(const id of ids.slice(0,lim||40)){const r=await LOCAL.fetchAsset(id);const t=r.headers.get('content-type')||'';if(!/^image\//.test(t)){DIMG.nonimg.add(id);continue}
+  for(const id of ids.slice(0,lim||40)){const r=await LOCAL.fetchAsset(id);const t=r.headers.get('content-type')||'';if(!/^(image|audio|video)\//.test(t)){DIMG.nonimg.add(id);continue}
     const blob=await r.blob(),folder=await dimgFolder(),b='dki'+Date.now();
     const body=new Blob(['--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify({name:'dk-img-'+id,parents:[folder]})+'\r\n--'+b+'\r\nContent-Type: '+t+'\r\n\r\n',blob,'\r\n--'+b+'--']);
     const j=await (await gfetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',1,{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body})).json();if(j.id){map[id]=j.id;n++}}
@@ -2917,10 +3014,617 @@ focusTick();
 
 
 /* bölümler */
+
+/* ===== Aynı kitapları bul ve temizle ===== */
+function ddNorm(t){return (t||'').toLocaleLowerCase('tr-TR').normalize('NFC').replace(/@\S+/g,' ').replace(/\((zm)\)|\bzm\b|\bm\.?n\b|\.n\b|ayisigikitap/g,' ').replace(/[^a-zçğıöşüâîû0-9]+/g,' ').trim()}
+function ddHasFile(b){return !!((b.driveId||b.assetId||(b.driveParts&&b.driveParts.length))&&!b.fileRemoved)}
+function ddScore(b){return (ddHasFile(b)?1000:0)+((b.currentPage||0)>0||!['okunacak',''].includes(b.status||'')?100:0)+(b.coverId?10:0)+(b.note?5:0)}
+function ddGroups(){const g={};for(const b of st.books){if(b.kind==='roman')continue;const k=ddNorm(b.title);if(!k)continue;(g[k]=g[k]||[]).push(b)}
+  const out=[];for(const arr of Object.values(g)){if(arr.length<2)continue;
+    const au=arr.map(b=>ddNorm(b.author).split(' ').filter(Boolean).pop()).filter(Boolean);if(new Set(au).size>1)continue; // farklı yazarlar → dokunma
+    arr.sort((a,b)=>ddScore(b)-ddScore(a)||(a.addedAt||'').localeCompare(b.addedAt||''));out.push({keep:arr[0],drop:arr.slice(1)})}
+  return out}
+function ddDlg(){const G=ddGroups();WR.dd=G;
+  msModal(`<div class="eyebrow">📚 Aynı kitaplar</div>${G.length?`<p class="hint">${G.length} kitabın birden fazla kaydı var. <b>PDF'i olan</b> (ya da ilerlemesi/kapağı olan) kayıt kalır; okuma ilerlemesi, notlar, etiketler ve alıntılar ona aktarılır, diğerleri silinir. İstemediğin satırın işaretini kaldır.</p>
+  <div class="msv" style="max-height:50vh">${G.map((g,i)=>`<label class="msv-i" style="cursor:pointer"><span><input type="checkbox" data-ddi="${i}" checked> <b>${esc(g.keep.title)}</b><br><span class="hint">Kalacak: ${ddHasFile(g.keep)?'📄 PDF':'kayıt'}${g.keep.shelf?' · '+esc(g.keep.shelf):''} — Silinecek: ${g.drop.map(d=>(ddHasFile(d)?'📄 PDF':'dosyasız')+(d.shelf?' ('+esc(d.shelf)+')':'')).join(', ')}</span></span></label>`).join('')}</div>
+  <div class="msm-acts"><button class="btn primary" type="button" data-ms="ddgo">Seçilenleri temizle</button><span class="hint" id="ddMsg"></span></div>`:'<p class="hint">Aynı kitaptan birden fazla kayıt bulamadım 👏</p>'}`,'wide')}
+async function ddGo(){const G=WR.dd||[];const sel=[...document.querySelectorAll('[data-ddi]')].filter(x=>x.checked).map(x=>G[+x.dataset.ddi]);if(!sel.length){toast('Hiçbiri seçili değil');return}
+  const ST=['okunacak','okunuyor','okundu'];let n=0;$('ddMsg').textContent='Temizleniyor…';
+  for(const g of sel){const k=g.keep,u={};
+    for(const d of g.drop){
+      if(!ddHasFile(k)&&ddHasFile(d)){for(const f of ['source','driveId','driveUrl','fileType','driveParts','fileName','fileSize','assetId','parts','squeezed','noSqueeze'])if(d[f]!==undefined)u[f]=d[f];u.fileRemoved=false}
+      if((d.currentPage||0)>(u.currentPage??k.currentPage??0))u.currentPage=d.currentPage;
+      if(ST.indexOf(d.status)>ST.indexOf(u.status||k.status))u.status=d.status;
+      if(d.finishedAt&&!k.finishedAt)u.finishedAt=d.finishedAt;
+      if(d.lastReadAt&&(d.lastReadAt>(u.lastReadAt||k.lastReadAt||'')))u.lastReadAt=d.lastReadAt;
+      if(!k.coverId&&d.coverId&&!u.coverId){u.coverId=d.coverId;u.autoCover=!!d.autoCover}
+      if(d.note&&!(k.note||'').includes(d.note))u.note=((u.note??k.note)?(u.note??k.note)+'\n':'')+d.note;
+      if(d.tags&&d.tags.length)u.tags=[...new Set([...(u.tags||k.tags||[]),...d.tags])];
+      if(!k.author&&d.author)u.author=d.author;if(!k.pages&&d.pages)u.pages=d.pages;
+      if((!k.shelf||k.shelf==='İstek listem')&&d.shelf&&d.shelf!=='İstek listem')u.shelf=d.shelf}
+    try{if(Object.keys(u).length)await st.db.collection('books').doc(k.id).update(u);
+      try{const qs=await st.db.collection('quotes').get();for(const q of qs.docs){const x=q.data();if(g.drop.some(d=>d.id===x.book))await st.db.collection('quotes').doc(q.id).update({book:k.id})}}catch(e){}
+      for(const d of g.drop){await st.db.collection('books').doc(d.id).delete();n++}}catch(e){}}
+  msClose();toast(n+' kopya kayıt temizlendi ✓');try{render()}catch(e){}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ms]');if(!b)return;if(b.dataset.ms==='dedupe')ddDlg();if(b.dataset.ms==='ddgo')ddGo()});
+
+/* ===================== ✏️ Defterlerim — Notability + Notion ===================== */
+const NB={folders:[],books:[],raw:{},pg:{},dirty:new Set(),saveT:{},fsel:'all',q:'',
+  bid:null,tool:'pen',color:'#1d1d1f',hl:'#ffe066',w:1,shape:true,finger:false,penSeen:false,zoom:1,undo:[],redo:[],sel:null,cur:null,drag:null,
+  rec:null,audio:null,play:null,playIdx:null,imgs:{},cvs:new Map(),obs:null,live:null,docPid:null,side:false};
+try{const s=JSON.parse(localStorage.getItem('nb-ui')||'{}');['tool','color','hl','w','shape','finger','zoom'].forEach(k=>{if(s[k]!==undefined)NB[k]=s[k]})}catch(e){}
+if(!['pen','hl','er','lasso','text'].includes(NB.tool))NB.tool='pen';
+try{window.__nb=NB}catch(e){}
+function nbUiSave(){try{localStorage.setItem('nb-ui',JSON.stringify({tool:NB.tool,color:NB.color,hl:NB.hl,w:NB.w,shape:NB.shape,finger:NB.finger,zoom:NB.zoom}))}catch(e){}}
+const NB_PEN=['#1d1d1f','#3b5bdb','#d6336c','#2f9e44','#f08c00','#7048e8','#868e96','#c2255c','#0c8599','#ffffff'];
+const NB_HL=['#ffe066','#8ce99a','#74c0fc','#faa2c1','#ffc078','#d0bfff'];
+const NB_W={pen:[1.3,2.3,3.8,6],hl:[12,20,30,42]};
+const NB_COV=['#e8a0b4','#f4c27a','#9cc5a1','#8fb3e0','#b9a3e3','#e98a6b','#6c7a89','#d9c9a3'];
+const NB_PAPER={lined:'Çizgili',grid:'Kareli',dot:'Noktalı',plain:'Düz'};
+const NB_PC=['#ffffff','#fbf6ea','#eef4fb','#26262b'];
+const NB_H=1414;
+const nbId=()=>'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const nbClean=o=>{const r={};for(const k in o)if(o[k]!==undefined)r[k]=o[k];return r};
+function nbBook(id){return NB.books.find(b=>b.id===(id||NB.bid))}
+function nbPagesOf(bid){return Object.values(NB.raw).filter(p=>p.book===bid).sort((a,b)=>(a.idx||0)-(b.idx||0))}
+
+/* ---- kodlama: çizgiler yarım birim hassasiyetle, farklarla saklanır ---- */
+function nbEnc(S){const p=S.pts,o=[];let px=0,py=0,pq=0;for(let i=0;i<p.length;i+=3){const x=Math.round(p[i]*2),y=Math.round(p[i+1]*2),q=Math.round((p[i+2]||.5)*20);o.push(x-px,y-py,q-pq);px=x;py=y;pq=q}
+  const r={k:S.k,c:S.c,w:S.w,d:o.join(',')};if(S.a!=null){r.a=S.a;r.t=Math.round(S.t||0)}return r}
+function nbDec(r){const a=r&&r.d?String(r.d).split(',').map(Number):[];const pts=[];let x=0,y=0,q=0;for(let i=0;i+2<a.length;i+=3){x+=a[i];y+=a[i+1];q+=a[i+2];pts.push(x/2,y/2,q/20)}
+  const S={k:r.k||'pen',c:r.c||'#1d1d1f',w:r.w||2,pts};if(r.a!=null){S.a=r.a;S.t=r.t||0}return S}
+function nbPg(pid){if(NB.pg[pid])return NB.pg[pid];const r=NB.raw[pid];if(!r)return null;
+  const pg={...r,id:pid,strokes:(r.strokes||[]).map(nbDec),items:JSON.parse(JSON.stringify(r.items||[])),blocks:JSON.parse(JSON.stringify(r.blocks||[]))};NB.pg[pid]=pg;return pg}
+function nbBB(S){if(S.bb)return S.bb;const p=S.pts;let a=1e9,b=1e9,c=-1e9,d=-1e9;for(let i=0;i<p.length;i+=3){if(p[i]<a)a=p[i];if(p[i]>c)c=p[i];if(p[i+1]<b)b=p[i+1];if(p[i+1]>d)d=p[i+1]}const m=S.w;S.bb={x:a-m,y:b-m,w:c-a+2*m,h:d-b+2*m};return S.bb}
+
+/* ---- kaydetme ---- */
+function nbSave(pg,fast){if(!pg)return;NB.dirty.add(pg.id);clearTimeout(NB.saveT[pg.id]);nbSaved('…');
+  NB.saveT[pg.id]=setTimeout(()=>nbFlush(pg.id),fast?50:700)}
+async function nbFlush(pid){const pg=NB.pg[pid];clearTimeout(NB.saveT[pid]);if(!pg||!st.db)return;
+  const d=nbClean({book:pg.book,idx:pg.idx,type:pg.type,paper:pg.paper,pc:pg.pc,h:pg.h,bg:pg.bg,title:pg.title,icon:pg.icon,parent:pg.parent,
+    strokes:(pg.strokes||[]).map(nbEnc),items:pg.items||[],blocks:pg.blocks||[],updatedAt:new Date().toISOString()});
+  try{await st.db.collection('npages').doc(pid).set(d);NB.raw[pid]={...d,id:pid};NB.dirty.delete(pid);if(!NB.dirty.size)nbSaved('Kaydedildi ✓');
+    const bk=nbBook(pg.book);if(bk){bk.updatedAt=d.updatedAt;clearTimeout(nbFlush.bt);nbFlush.bt=setTimeout(()=>st.db.collection('nbooks').doc(bk.id).update({updatedAt:d.updatedAt}).catch(()=>{}),1500)}}
+  catch(e){nbSaved(e&&e.code==='invalid_argument'?'Bu sayfa çok dolu — yeni sayfaya geç':'Kaydedilemedi')}}
+async function nbFlushAll(){await Promise.all([...NB.dirty].map(nbFlush))}
+function nbSaved(t){const el=$('nbSaved');if(el)el.textContent=t}
+async function nbSaveBook(bk,patch){Object.assign(bk,patch);const {id,...rest}=bk;try{await st.db.collection('nbooks').doc(id).set(nbClean({...rest,updatedAt:new Date().toISOString()}))}catch(e){toast('Kaydedilemedi')}}
+async function nbNewPage(bid,o){const id=nbId();const pg={id,book:bid,idx:o.idx??(nbPagesOf(bid).reduce((m,p)=>Math.max(m,p.idx||0),0)+1),type:o.type||'ink',paper:o.paper,pc:o.pc,h:o.h||NB_H,bg:o.bg,title:o.title,icon:o.icon,parent:o.parent,strokes:[],items:[],blocks:o.blocks||(o.type==='text'?[{id:nbId(),t:'p',x:''}]:[])};
+  NB.pg[id]=pg;NB.raw[id]={...nbClean(pg),strokes:[],id};await nbFlush(id);return pg}
+
+/* ---- dinleyiciler ---- */
+function nbListen(db){
+  db.collection('nfolders').onSnapshot(s=>{NB.folders=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0)||(a.name||'').localeCompare(b.name||'','tr'));nbHomeRe()},()=>{});
+  db.collection('nbooks').onSnapshot(s=>{NB.books=s.docs.map(d=>({id:d.id,...d.data()}));nbHomeRe();if(NB.bid&&!nbBook()){nbClose()}},()=>{});
+  db.collection('npages').onSnapshot(s=>{const seen=new Set();const changed=[];
+    for(const d of s.docs){const x={id:d.id,...d.data()};seen.add(d.id);const old=NB.raw[d.id];if(NB.dirty.has(d.id))continue;
+      if(!old||old.updatedAt!==x.updatedAt){NB.raw[d.id]=x;if(NB.pg[d.id]){delete NB.pg[d.id];changed.push(d.id)}}}
+    for(const id of Object.keys(NB.raw))if(!seen.has(id)&&!NB.dirty.has(id)){delete NB.raw[id];delete NB.pg[id];changed.push(id)}
+    if(NB.bid&&changed.length){const ae=document.activeElement;if(!(ae&&ae.closest&&ae.closest('#nbEd [contenteditable]'))&&!NB.cur&&!NB.drag)nbBodyRender(true)}
+    nbHomeRe()},()=>{});
+}
+function nbHomeRe(){if(st.sec!=='notes'||NB.bid&&!NB.side)return;const ae=document.activeElement;if(ae&&ae.id==='nbQ')return nbGrid();if($('nbHome'))nbRender($('secHost'))}
+
+/* ===================== Ana ekran: klasörler + defterler ===================== */
+function nbRender(host){host=host||$('secHost');if(!host)return;
+  const F=NB.folders,cnt=f=>NB.books.filter(b=>f==='all'?true:f==='none'?!b.folder||!F.some(x=>x.id===b.folder):b.folder===f).length;
+  host.innerHTML=`<div class="nbh" id="nbHome">
+   <div class="nbh-top"><input type="search" id="nbQ" placeholder="🔎 Defterlerde ve notlarda ara…" value="${esc(NB.q)}">
+    <button class="btn" type="button" data-nb="newfolder">📁 Yeni klasör</button><button class="btn primary" type="button" data-nb="new">＋ Yeni defter</button></div>
+   <div class="nbh-f">${[['all','📚 Tümü'],...F.map(f=>[f.id,'📁 '+f.name]),['none','🗂 Klasörsüz']].filter(([k])=>k!=='none'||cnt('none')).map(([k,l])=>`<span class="nbh-fc"><button type="button" class="chip" data-nb="folder" data-id="${k}" aria-pressed="${NB.fsel===k}">${esc(l)} <span class="hint">${cnt(k)}</span></button>${k!=='all'&&k!=='none'?`<button type="button" class="nbh-fm" data-nb="fmenu" data-id="${k}" aria-label="Klasör seçenekleri">⋯</button>`:''}</span>`).join('')}</div>
+   <div class="nbh-g" id="nbGrid"></div>
+   <p class="hint nbh-tip">✏️ <b>Apple Pencil</b> ile yaz — parmağın sayfayı kaydırır, iki parmakla yakınlaştırırsın. Şekil çizip kalemi bir an <b>bekletirsen</b> düzgün şekle döner. 🎙 Kayıt alırken yazdıkların sesle eşleşir; dinlerken bir yazıya dokunursan o ana gider.</p></div>`;
+  nbGrid()}
+function nbText(r){let t=(r.title||'')+' ';(r.blocks||[]).forEach(b=>t+=' '+(b.x||'').replace(/<[^>]+>/g,' '));(r.items||[]).forEach(i=>{if(i.txt)t+=' '+i.txt});return t}
+function nbGrid(){const g=$('nbGrid');if(!g)return;const F=NB.folders,q=NB.q.trim().toLocaleLowerCase('tr-TR');
+  let L=NB.books.filter(b=>NB.fsel==='all'?true:NB.fsel==='none'?!b.folder||!F.some(x=>x.id===b.folder):b.folder===NB.fsel);
+  if(q)L=L.filter(b=>(b.title||'').toLocaleLowerCase('tr-TR').includes(q)||nbPagesOf(b.id).some(p=>nbText(p).toLocaleLowerCase('tr-TR').includes(q)));
+  L.sort((a,b)=>(b.opened||b.updatedAt||'').localeCompare(a.opened||a.updatedAt||''));
+  g.innerHTML=(L.length?L.map(b=>{const P=nbPagesOf(b.id),f=F.find(x=>x.id===b.folder);
+    const prev=b.kind==='doc'?`<div class="nbc-doc">${P.slice(0,4).map(p=>`<div>${esc(p.icon||'📄')} ${esc(p.title||'Başlıksız')}</div>`).join('')||'<div class="hint">Boş</div>'}</div>`:`<canvas data-th="${b.id}" width="300" height="424"></canvas>`;
+    return `<div class="nbc" data-nb="open" data-id="${b.id}" role="button" tabindex="0"><div class="nbc-th" style="--c:${b.color||NB_COV[0]}">${prev}<span class="nbc-k">${b.kind==='doc'?'📝':b.pdf?'📄':'✍️'}</span>${(b.recs||[]).length?'<span class="nbc-r">🎙</span>':''}</div>
+      <div class="nbc-m"><b>${esc(b.title||'Adsız defter')}</b><span class="hint">${P.length} sayfa${f&&NB.fsel==='all'?' · '+esc(f.name):''}</span></div>
+      <button class="iconbtn nbc-x" type="button" data-nb="bmenu" data-id="${b.id}" aria-label="Defter seçenekleri">⋯</button></div>`}).join(''):`<div class="nbh-empty"><div style="font-size:42px">📓</div><b>${q?'Bulunamadı':'Henüz defter yok'}</b><span class="hint">${q?'Başka bir kelime dene':'＋ Yeni defter ile başla'}</span></div>`);
+  g.querySelectorAll('canvas[data-th]').forEach(cv=>nbThumb(cv,cv.dataset.th))}
+function nbThumb(cv,bid){const P=nbPagesOf(bid);const r=P.find(p=>p.type!=='text');const ctx=cv.getContext('2d');
+  if(!r){ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);const t=P[0];if(t){ctx.fillStyle='#333';ctx.font='bold 22px sans-serif';ctx.fillText((t.title||'').slice(0,18),20,46)}return}
+  const pg=nbPg(r.id);const s=cv.width/1000;cv.height=Math.round((pg.h||NB_H)*s);nbDraw(ctx,pg,s,{thumb:cv})}
+
+/* ---- ana ekran tıklamaları ---- */
+document.addEventListener('input',e=>{if(e.target.id==='nbQ'){NB.q=e.target.value;nbGrid()}});
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-nb]');if(!b)return;const k=b.dataset.nb,id=b.dataset.id;
+  if(k==='open'){if(e.target.closest('.nbc-x'))return;nbOpen(id);return}
+  if(k==='folder'){NB.fsel=id;nbRender();return}
+  if(k==='newfolder'){nbFolderDlg();return}
+  if(k==='fmenu'){nbFolderDlg(id);return}
+  if(k==='new'){nbNewDlg();return}
+  if(k==='bmenu'){e.stopPropagation();nbBookDlg(id);return}
+  if(k==='fsave'){const n=$('nbFName').value.trim();if(!n)return;const fid=id||nbId();await st.db.collection('nfolders').doc(fid).set({name:n,order:(NB.folders.find(f=>f.id===fid)||{}).order??NB.folders.length,createdAt:new Date().toISOString()});msClose();return}
+  if(k==='fdel'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Emin misin? Defterler silinmez, klasörsüz kalır';return}for(const bk of NB.books.filter(x=>x.folder===id))await st.db.collection('nbooks').doc(bk.id).update({folder:''});await st.db.collection('nfolders').doc(id).delete();if(NB.fsel===id)NB.fsel='all';msClose();return}
+  if(k==='create'){nbCreate();return}
+  if(k==='kind'){document.querySelectorAll('[data-nb="kind"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('nbNewF').dataset.kind=b.dataset.v;$('nbPdfRow').hidden=b.dataset.v!=='pdf';$('nbPaperRow').hidden=b.dataset.v==='doc';return}
+  if(k==='pick'){b.parentNode.querySelectorAll('[data-nb="pick"]').forEach(x=>x.setAttribute('aria-pressed',x===b));return}
+  if(k==='bsave'){const bk=nbBook(id);if(!bk)return;await nbSaveBook(bk,{title:$('nbBT').value.trim()||bk.title,folder:$('nbBF').value,color:(document.querySelector('#nbBC [aria-pressed="true"]')||{}).dataset?.v||bk.color});msClose();if(NB.bid===id)nbTop();return}
+  if(k==='bdel'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Emin misin? Tüm sayfalar silinir — tekrar bas';return}
+    if(NB.bid===id)nbClose();for(const p of nbPagesOf(id)){try{await st.db.collection('npages').doc(p.id).delete()}catch(x){}}await st.db.collection('nbooks').doc(id).delete();msClose();toast('Defter silindi');return}
+  if(k==='bside'){msClose();nbOpen(id,{side:true});return}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('nbc')){e.target.click()}});
+function nbFolderDlg(id){const f=NB.folders.find(x=>x.id===id);
+  msModal(`<div class="eyebrow">📁 ${f?'Klasör':'Yeni klasör'}</div><input id="nbFName" placeholder="Klasör adı (ör. Ders notları)" value="${esc(f?f.name:'')}">
+  <div class="msm-acts"><button class="btn primary" type="button" data-nb="fsave" ${f?`data-id="${f.id}"`:''}>Kaydet</button>${f?`<button class="btn" type="button" data-nb="fdel" data-id="${f.id}">🗑 Klasörü sil</button>`:''}</div>`);setTimeout(()=>$('nbFName').focus(),50)}
+function nbFolderOpts(sel){return `<option value="">— Klasörsüz —</option>`+NB.folders.map(f=>`<option value="${f.id}" ${f.id===sel?'selected':''}>${esc(f.name)}</option>`).join('')}
+function nbCovPick(sel){return NB_COV.map(c=>`<button type="button" class="nb-sw" data-nb="pick" data-v="${c}" style="background:${c}" aria-pressed="${c===sel}" aria-label="Renk"></button>`).join('')}
+function nbNewDlg(o){o=o||{};const pdfs=st.books.filter(b=>(b.fileType==='pdf'||b.kind==='pdf'||/\.pdf$/i.test(b.fileName||''))&&(b.assetId||b.driveId||(b.driveParts&&b.driveParts.length))&&!b.fileRemoved).sort((a,b)=>(a.title||'').localeCompare(b.title||'','tr'));
+  msModal(`<div class="eyebrow">📓 Yeni defter</div><form id="nbNewF" data-kind="${o.kind||'ink'}" onsubmit="return false" style="display:grid;gap:12px">
+   <input id="nbNT" placeholder="Defterin adı" value="${esc(o.title||'')}">
+   <div class="seg nb-kinds"><button type="button" data-nb="kind" data-v="ink" aria-pressed="${(o.kind||'ink')==='ink'}">✍️ El yazısı<small>Apple Pencil defteri</small></button><button type="button" data-nb="kind" data-v="doc" aria-pressed="${o.kind==='doc'}">📝 Yazı sayfaları<small>Notion gibi</small></button><button type="button" data-nb="kind" data-v="pdf" aria-pressed="${o.kind==='pdf'}">📄 PDF'e not al<small>Sayfaların üstüne yaz</small></button></div>
+   <div id="nbPaperRow" ${o.kind==='doc'?'hidden':''}><label class="hint">Kağıt</label><div class="seg" id="nbNP">${Object.entries(NB_PAPER).map(([k,l],i)=>`<button type="button" data-nb="pick" data-v="${k}" aria-pressed="${i===0}">${l}</button>`).join('')}</div>
+     <div class="nb-sws" id="nbNPC" style="margin-top:8px">${NB_PC.map((c,i)=>`<button type="button" class="nb-sw" data-nb="pick" data-v="${c}" style="background:${c}" aria-pressed="${i===0}" aria-label="Kağıt rengi"></button>`).join('')}</div></div>
+   <div id="nbPdfRow" ${o.kind==='pdf'?'':'hidden'} style="display:grid;gap:8px"><label class="hint">PDF dosyası seç</label><input type="file" id="nbNFile" accept="application/pdf,.pdf">
+     ${pdfs.length?`<label class="hint">…ya da kütüphanemden</label><select id="nbNLib"><option value="">— seç —</option>${pdfs.map(b=>`<option value="${b.id}" ${o.lib===b.id?'selected':''}>${esc(b.title)}</option>`).join('')}</select>`:''}</div>
+   <div><label class="hint">Kapak rengi</label><div class="nb-sws" id="nbNC">${nbCovPick(NB_COV[Math.floor(Math.random()*NB_COV.length)])}</div></div>
+   <label class="hint">Klasör <select id="nbNF">${nbFolderOpts(o.folder||(NB.fsel!=='all'&&NB.fsel!=='none'?NB.fsel:''))}</select></label>
+   <div class="msm-acts"><button class="btn primary" type="button" data-nb="create">Oluştur</button><span class="hint" id="nbNMsg"></span></div></form>`);
+  if(o.side)$('nbNewF').dataset.side='1';if(o.book)$('nbNewF').dataset.book=o.book;setTimeout(()=>{const t=$('nbNT');if(t&&!o.title)t.focus()},50)}
+async function nbCreate(){const f=$('nbNewF');if(!f||f.dataset.busy)return;const kind=f.dataset.kind,pv=s=>(document.querySelector(s+' [aria-pressed="true"]')||{dataset:{}}).dataset.v;
+  const file=$('nbNFile')&&$('nbNFile').files[0],libId=$('nbNLib')&&$('nbNLib').value;
+  if(kind==='pdf'&&!file&&!libId){$('nbNMsg').textContent='Bir PDF seç';return}
+  const lib=libId&&st.books.find(b=>b.id===libId);
+  const title=$('nbNT').value.trim()||(file?file.name.replace(/\.pdf$/i,''):lib?lib.title:kind==='doc'?'Notlarım':'Yeni defter');
+  f.dataset.busy=1;$('nbNMsg').textContent='Hazırlanıyor…';
+  const id=nbId(),now=new Date().toISOString();
+  const bk={id,title,kind:kind==='doc'?'doc':'ink',pdf:kind==='pdf'||undefined,folder:$('nbNF').value,color:pv('#nbNC')||NB_COV[0],paper:pv('#nbNP')||'lined',pc:pv('#nbNPC')||'#ffffff',recs:[],book:f.dataset.book||(lib?lib.id:undefined),createdAt:now,opened:now};
+  try{await nbSaveBook(bk,{});if(!nbBook(id))NB.books.push(bk);
+    if(kind==='pdf'){const bytes=file?new Uint8Array(await file.arrayBuffer()):await bookBytes(lib);await nbImportPdf(bytes,id,(i,n)=>{$('nbNMsg').textContent='PDF sayfaları aktarılıyor: '+i+'/'+n})}
+    else if(kind==='doc')await nbNewPage(id,{type:'text',title:'İlk sayfa',icon:'📄'});
+    else await nbNewPage(id,{type:'ink'});
+    msClose();nbOpen(id,{side:!!f.dataset.side})}
+  catch(e){delete f.dataset.busy;$('nbNMsg').textContent='Olmadı: '+((e&&e.message)||'hata')}}
+function nbBookDlg(id){const bk=nbBook(id);if(!bk)return;
+  msModal(`<div class="eyebrow">📓 Defter</div><input id="nbBT" value="${esc(bk.title||'')}">
+   <label class="hint">Klasör <select id="nbBF">${nbFolderOpts(bk.folder)}</select></label>
+   <div><label class="hint">Kapak rengi</label><div class="nb-sws" id="nbBC">${nbCovPick(bk.color)}</div></div>
+   <div class="msm-acts"><button class="btn primary" type="button" data-nb="bsave" data-id="${id}">Kaydet</button><button class="btn" type="button" data-nb="bside" data-id="${id}">◧ Yan yana aç</button><button class="btn" type="button" data-nb="bdel" data-id="${id}">🗑 Defteri sil</button></div>`)}
+
+/* ---- PDF → sayfalar ---- */
+async function nbImportPdf(bytes,bid,onStep){const lib=await pdfLib();const doc=await lib.getDocument({data:bytes}).promise;const N=Math.min(doc.numPages,250);
+  let idx=nbPagesOf(bid).reduce((m,p)=>Math.max(m,p.idx||0),0)+1;
+  for(let i=1;i<=N;i++){const page=await doc.getPage(i);const v1=page.getViewport({scale:1});const sc=1400/v1.width;const v=page.getViewport({scale:sc});
+    const cv=document.createElement('canvas');cv.width=Math.round(v.width);cv.height=Math.round(v.height);const ctx=cv.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);
+    await page.render({canvasContext:ctx,viewport:v}).promise;const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.82));cv.width=cv.height=0;
+    const a=await upl(blob,{type:'image/jpeg'});await nbNewPage(bid,{type:'ink',idx:idx++,bg:a.id,paper:'plain',h:Math.round(1000*v1.height/v1.width)});if(onStep)onStep(i,N)}
+  if(doc.numPages>N)toast('İlk '+N+' sayfa aktarıldı')}
+
+/* ===================== Çizim ===================== */
+function nbImg(id,pid){let o=NB.imgs[id];if(!o){o=NB.imgs[id]={img:new Image(),ok:false,w:new Set()};o.img.onload=()=>{o.ok=true;o.w.forEach(p=>{if(p==='th')nbGrid();else nbRedraw(p)});o.w.clear()};o.img.src=assetSrcOf(id)}
+  if(!o.ok&&pid)o.w.add(pid);return o.ok?o.img:null}
+function nbPaper(ctx,pg){const h=pg.h||NB_H,bk=nbBook(pg.book)||{},pc=pg.pc||bk.pc||'#ffffff',kind=pg.paper||bk.paper||'lined',dark=pc==='#26262b';
+  ctx.fillStyle=pc;ctx.fillRect(0,0,1000,h);if(pg.bg)return;const ln=dark?'rgba(255,255,255,.13)':'rgba(70,110,170,.22)';
+  if(kind==='lined'){ctx.strokeStyle=ln;ctx.lineWidth=1.2;ctx.beginPath();for(let y=120;y<h-30;y+=36){ctx.moveTo(0,y);ctx.lineTo(1000,y)}ctx.stroke();ctx.strokeStyle=dark?'rgba(255,120,140,.25)':'rgba(220,80,100,.35)';ctx.beginPath();ctx.moveTo(90,0);ctx.lineTo(90,h);ctx.stroke()}
+  else if(kind==='grid'){ctx.strokeStyle=ln;ctx.lineWidth=1;ctx.beginPath();for(let x=25;x<1000;x+=30){ctx.moveTo(x,0);ctx.lineTo(x,h)}for(let y=25;y<h;y+=30){ctx.moveTo(0,y);ctx.lineTo(1000,y)}ctx.stroke()}
+  else if(kind==='dot'){ctx.fillStyle=dark?'rgba(255,255,255,.25)':'rgba(60,70,90,.32)';for(let x=25;x<1000;x+=30)for(let y=25;y<h;y+=30){ctx.beginPath();ctx.arc(x,y,1.7,0,7);ctx.fill()}}}
+function nbStroke(ctx,S,alpha){const p=S.pts,n=p.length/3;if(!n)return;ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=S.c;ctx.fillStyle=S.c;
+  if(alpha!=null)ctx.globalAlpha=alpha;
+  if(S.k==='hl'){ctx.globalAlpha=(alpha??1)*.38;ctx.globalCompositeOperation='multiply';ctx.lineWidth=S.w;ctx.lineCap='square';ctx.beginPath();ctx.moveTo(p[0],p[1]);for(let i=3;i<p.length;i+=3)ctx.lineTo(p[i],p[i+1]);if(n===1)ctx.lineTo(p[0]+.1,p[1]);ctx.stroke();ctx.restore();return}
+  const lw=q=>S.w*(.42+Math.max(.08,q||.5)*1.16);
+  if(n===1){ctx.beginPath();ctx.arc(p[0],p[1],lw(p[2])/2,0,7);ctx.fill();ctx.restore();return}
+  if(n===2){ctx.lineWidth=lw(p[2]);ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(p[3],p[4]);ctx.stroke();ctx.restore();return}
+  let mx=p[0],my=p[1];for(let i=1;i<n-1;i++){const x=p[i*3],y=p[i*3+1],nx=(x+p[i*3+3])/2,ny=(y+p[i*3+4])/2;ctx.lineWidth=lw(p[i*3+2]);ctx.beginPath();ctx.moveTo(mx,my);ctx.quadraticCurveTo(x,y,nx,ny);ctx.stroke();mx=nx;my=ny}
+  ctx.lineWidth=lw(p[p.length-1]);ctx.beginPath();ctx.moveTo(mx,my);ctx.lineTo(p[p.length-3],p[p.length-2]);ctx.stroke();ctx.restore()}
+function nbXf(S,T){if(!T)return S;const p=S.pts.slice();for(let i=0;i<p.length;i+=3){p[i]=T.ox+(p[i]-T.ox)*T.sc+T.dx;p[i+1]=T.oy+(p[i+1]-T.oy)*T.sc+T.dy}return {...S,pts:p,w:S.w*T.sc,bb:null}}
+function nbDraw(ctx,pg,s,o){o=o||{};ctx.setTransform(s,0,0,s,0,0);nbPaper(ctx,pg);const th=o.thumb?'th':pg.id;
+  if(pg.bg){const im=nbImg(pg.bg,th);if(im)ctx.drawImage(im,0,0,1000,pg.h||NB_H)}
+  const sel=NB.sel&&NB.sel.pid===pg.id?NB.sel:null,T=sel&&NB.drag&&NB.drag.T;
+  for(const it of pg.items||[]){if(it.t!=='img')continue;const im=nbImg(it.src,th);let r={x:it.x,y:it.y,w:it.w,h:it.h};if(T&&sel.items.has(it.id))r={x:T.ox+(r.x-T.ox)*T.sc+T.dx,y:T.oy+(r.y-T.oy)*T.sc+T.dy,w:r.w*T.sc,h:r.h*T.sc};
+    if(im)ctx.drawImage(im,r.x,r.y,r.w,r.h);else{ctx.fillStyle='rgba(0,0,0,.06)';ctx.fillRect(r.x,r.y,r.w,r.h)}}
+  const pl=NB.play;for(const S of pg.strokes){const fade=pl&&S.a===pl.idx&&S.t>pl.ms?.16:null;nbStroke(ctx,T&&sel.strokes.has(S)?nbXf(S,T):S,fade)}
+  ctx.setTransform(1,0,0,1,0,0)}
+
+/* ===================== Düzenleyici ===================== */
+async function nbOpen(bid,o){o=o||{};const bk=nbBook(bid);if(!bk)return;await nbFlushAll();nbStopAudio();
+  NB.bid=bid;NB.undo=[];NB.redo=[];NB.sel=null;NB.side=!!o.side;NB.docPid=null;
+  nbSaveBook(bk,{opened:new Date().toISOString()});
+  let ed=$('nbEd');if(!ed){ed=document.createElement('div');ed.id='nbEd';document.body.appendChild(ed)}
+  ed.className='nbed'+(bk.kind==='doc'?' doc':'')+(NB.side?' side':'');document.body.classList.toggle('nb-side',NB.side);document.body.classList.add('nb-open');
+  ed.innerHTML=`<div class="nbe-top"><button class="iconbtn" type="button" data-ne="close" aria-label="Defteri kapat">←</button>${bk.kind==='doc'?'<button class="iconbtn nbe-tt" type="button" data-ne="tree" aria-label="Sayfalar">☰</button>':''}
+    <input class="nbe-title" id="nbTitle" aria-label="Defter adı"><span class="hint nbe-saved" id="nbSaved"></span>
+    <div class="nbe-acts"><button class="btn nbe-rec" type="button" data-ne="rec" id="nbRecB">🎙 <span>Kayıt</span></button><button class="iconbtn" type="button" data-ne="recs" title="Ses kayıtları" aria-label="Ses kayıtları">🎧</button>
+    ${bk.kind==='doc'?'':'<button class="iconbtn" type="button" data-ne="pages" title="Sayfalar" aria-label="Sayfalar">▦</button>'}<button class="iconbtn" type="button" data-ne="side" title="Yan yana / tam ekran" aria-label="Yan yana">◧</button><button class="iconbtn" type="button" data-ne="export" title="PDF olarak kaydet" aria-label="PDF olarak kaydet">⬇</button></div></div>
+   <div class="nbe-tools" id="nbTools"></div><div class="nbe-player" id="nbPlayer" hidden></div>
+   <div class="nbe-body">${bk.kind==='doc'?'<div class="nbe-tree" id="nbTree"></div>':''}<div class="nbe-scroll" id="nbScroll"><div class="nbe-pages" id="nbPages"></div></div></div>
+   <input type="file" id="nbImgIn" accept="image/*" hidden>`;
+  nbTop();nbTools();nbBind();
+  if(bk.kind==='doc'){const P=nbPagesOf(bid);NB.docPid=(P.find(p=>p.id===bk.last)||P[0]||{}).id;if(!NB.docPid){const pg=await nbNewPage(bid,{type:'text',title:'İlk sayfa',icon:'📄'});NB.docPid=pg.id}}
+  nbBodyRender();if(!NB.side)window.scrollTo({top:0})}
+function nbTop(){const bk=nbBook();if(!bk||!$('nbTitle'))return;if(document.activeElement!==$('nbTitle'))$('nbTitle').value=bk.title||''}
+async function nbClose(){nbStopAudio();if(NB.rec)await nbRecStop();await nbFlushAll();NB.bid=null;NB.sel=null;NB.cvs.forEach((v,k)=>{v.width=v.height=0});NB.cvs.clear();if(NB.obs){NB.obs.disconnect();NB.obs=null}
+  document.querySelectorAll('.nbmenu').forEach(m=>m.remove());nbSelBar();
+  const ed=$('nbEd');if(ed)ed.remove();document.body.classList.remove('nb-side','nb-open');if(st.sec==='notes')nbRender($('secHost'))}
+function nbTools(){const el=$('nbTools');if(!el)return;const t=NB.tool,hl=t==='hl',pal=hl?NB_HL:NB_PEN,cur=hl?NB.hl:NB.color;
+  el.innerHTML=`<div class="seg nbt-tools">${[['pen','✒️','Kalem'],['hl','🖍','Fosforlu'],['er','🧽','Silgi'],['lasso','➰','Kement'],['text','🔤','Yazı']].map(([k,i,l])=>`<button type="button" data-ne="tool" data-v="${k}" aria-pressed="${t===k}" title="${l}">${i}<span>${l}</span></button>`).join('')}<button type="button" data-ne="img" title="Görsel ekle">🖼<span>Görsel</span></button></div>
+   ${t==='er'||t==='lasso'?'':`<div class="nbt-cols">${pal.map(c=>`<button type="button" class="nb-col" data-ne="col" data-v="${c}" style="--c:${c}" aria-pressed="${c===cur}" aria-label="Renk ${c}"></button>`).join('')}<label class="nb-col nb-colx" title="Başka renk" style="--c:${cur}"><input type="color" id="nbColX" value="${cur}"></label></div>`}
+   ${t==='pen'||t==='hl'?`<div class="seg nbt-w">${[0,1,2,3].map(i=>`<button type="button" data-ne="w" data-v="${i}" aria-pressed="${NB.w===i}" aria-label="Kalınlık ${i+1}"><i style="width:${hl?6+i*4:3+i*3}px;height:${hl?6+i*4:3+i*3}px"></i></button>`).join('')}</div>`:''}
+   ${t==='pen'?`<button type="button" class="chip" data-ne="shape" aria-pressed="${NB.shape}" title="Çizip kalemi bekletince düzgün şekle dönüştür">⬠ Şekil</button>`:''}
+   <div class="nbt-r"><button class="iconbtn" type="button" data-ne="undo" aria-label="Geri al">↶</button><button class="iconbtn" type="button" data-ne="redo" aria-label="Yinele">↷</button>
+   <button class="iconbtn" type="button" data-ne="zoom" data-v="-1" aria-label="Uzaklaştır">−</button><span class="hint nbt-z">${Math.round(NB.zoom*100)}%</span><button class="iconbtn" type="button" data-ne="zoom" data-v="1" aria-label="Yakınlaştır">+</button>
+   <button type="button" class="chip" data-ne="finger" aria-pressed="${NB.finger}" title="Kalem yoksa parmakla çiz">👆 Parmakla çiz</button></div>`;
+  const ed=$('nbEd');if(ed){ed.dataset.tool=t;ed.classList.toggle('fing',NB.finger)}
+  const cx=$('nbColX');if(cx)cx.addEventListener('input',()=>{if(NB.tool==='hl')NB.hl=cx.value;else NB.color=cx.value;nbUiSave();nbSelColor()});
+  const doc=nbBook()&&nbBook().kind==='doc';if(doc){const pg=NB.docPid&&nbPg(NB.docPid);el.hidden=!(pg&&pg.type==='ink')}else el.hidden=false}
+function nbBaseW(){const sc=$('nbScroll');const w=sc?sc.clientWidth:800;return Math.max(260,Math.min(w-(w<600?16:48),900))}
+
+/* ---- gövde ---- */
+function nbBodyRender(keep){const box=$('nbPages');if(!box)return;const bk=nbBook();if(!bk)return;const sc=$('nbScroll'),top=sc.scrollTop;
+  NB.cvs.forEach(v=>{v.width=v.height=0});NB.cvs.clear();if(NB.obs)NB.obs.disconnect();
+  let P=nbPagesOf(bk.id);
+  if(bk.kind==='doc'){nbTree();const pg=nbPg(NB.docPid);if(!pg){box.innerHTML='';return}P=[NB.raw[pg.id]];$('nbTools').hidden=pg.type!=='ink'}
+  const W=nbBaseW()*NB.zoom;
+  box.innerHTML=P.map((r,i)=>{const pg=nbPg(r.id);if(pg.type==='text')return nbTextPageHtml(pg,bk.kind==='doc',i+1).replace('class="nbpw nbtp','style="width:'+(bk.kind==='doc'?Math.min(W,860):W)+'px" class="nbpw nbtp');
+    const h=(pg.h||NB_H)/1000*W,pc=pg.pc||bk.pc||'#fff';
+    return `<div class="nbpw" data-pid="${pg.id}">${bk.kind==='doc'?`<div class="nbdoc-h"><button class="nbdoc-ic" type="button" data-ne="icon" data-pid="${pg.id}">${esc(pg.icon||'✍️')}</button><div class="nbdoc-t" contenteditable="true" data-pt="${pg.id}" data-ph="Başlıksız">${esc(pg.title||'')}</div></div>`:''}
+      <div class="nbp-h"><span>${bk.kind==='doc'?'':'Sayfa '+(i+1)}</span><button type="button" class="nbp-m" data-ne="pmenu" data-pid="${pg.id}" aria-label="Sayfa seçenekleri">⋯</button></div>
+      <div class="nbp" data-pid="${pg.id}" style="width:${W}px;height:${h}px;background:${pc};--k:${W/1000}"><div class="nbov">${nbItemsHtml(pg)}</div></div></div>`}).join('')+
+    (bk.kind==='doc'?'':`<div class="nbe-add" style="width:${W}px"><button class="btn" type="button" data-ne="addpage" data-v="ink">＋ Yeni sayfa</button><button class="btn" type="button" data-ne="addpage" data-v="text">＋ Yazı sayfası</button><button class="btn" type="button" data-ne="addpdf">＋ PDF ekle</button></div>`);
+  NB.obs=new IntersectionObserver(es=>{for(const e of es){const pid=e.target.dataset.pid;if(e.isIntersecting)nbMount(e.target);else nbUnmount(pid)}},{root:sc,rootMargin:'900px 0px'});
+  box.querySelectorAll('.nbp').forEach(p=>NB.obs.observe(p));if(keep)sc.scrollTop=top;
+  nbTextBind(box)}
+function nbMount(el){const pid=el.dataset.pid;if(NB.cvs.has(pid))return;const pg=nbPg(pid);if(!pg)return;const cv=document.createElement('canvas');cv.className='nbcv';
+  const W=el.clientWidth||parseFloat(el.style.width),dpr=Math.min(window.devicePixelRatio||1,2.4);let pw=Math.round(W*dpr);if(pw>2400)pw=2400;cv.width=pw;cv.height=Math.round(pw*(pg.h||NB_H)/1000);
+  el.insertBefore(cv,el.firstChild);NB.cvs.set(pid,cv);nbRedraw(pid)}
+function nbUnmount(pid){const cv=NB.cvs.get(pid);if(!cv)return;if(NB.cur&&NB.cur.pid===pid||NB.sel&&NB.sel.pid===pid)return;cv.width=cv.height=0;cv.remove();NB.cvs.delete(pid)}
+function nbRedraw(pid){const cv=NB.cvs.get(pid);const pg=NB.pg[pid];if(!cv||!pg)return;const ctx=cv.getContext('2d');nbDraw(ctx,pg,cv.width/1000);if(NB.sel&&NB.sel.pid===pid)nbSelDraw()}
+function nbItemsHtml(pg){return (pg.items||[]).filter(i=>i.t==='text').map(i=>`<div class="nbx" data-iid="${i.id}" style="left:${i.x/10}%;top:${i.y/(pg.h||NB_H)*100}%;width:${i.w/10}%;color:${i.c};font-size:calc(var(--k) * ${i.fs||24}px)"><span class="nbx-g" data-ne="xdrag" aria-hidden="true">⠿</span><button type="button" class="nbx-d" data-ne="xdel" aria-label="Yazıyı sil">×</button><div class="nbx-t" contenteditable="true">${esc(i.txt||'')}</div></div>`).join('')}
+function nbPageOf(el){const p=el.closest('[data-pid]');return p&&nbPg(p.dataset.pid)}
+function nbLogical(e,el){const r=el.getBoundingClientRect();const pg=nbPg(el.dataset.pid);return [(e.clientX-r.left)/r.width*1000,(e.clientY-r.top)/r.height*(pg.h||NB_H)]}
+function nbLive(el){let L=NB.live;if(!L){L=NB.live=document.createElement('canvas');L.className='nblive'}const cv=NB.cvs.get(el.dataset.pid);if(!cv)return null;
+  if(L.parentNode!==el||L.width!==cv.width||L.height!==cv.height){L.width=cv.width;L.height=cv.height;el.insertBefore(L,el.querySelector('.nbov'))}const c=L.getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,L.width,L.height);c.setTransform(L.width/1000,0,0,L.width/1000,0,0);return c}
+
+/* ---- geri al ---- */
+function nbSnap(pg){return {pid:pg.id,strokes:pg.strokes.slice(),items:JSON.parse(JSON.stringify(pg.items||[]))}}
+function nbPush(pg){NB.undo.push(nbSnap(pg));if(NB.undo.length>80)NB.undo.shift();NB.redo=[]}
+function nbUndoRedo(r){const A=r?NB.redo:NB.undo,B=r?NB.undo:NB.redo;const u=A.pop();if(!u){toast(r?'Yinelenecek bir şey yok':'Geri alınacak bir şey yok');return}const pg=nbPg(u.pid);if(!pg)return;B.push(nbSnap(pg));pg.strokes=u.strokes;pg.items=u.items;NB.sel=null;nbSelBar();nbAfter(pg)}
+function nbAfter(pg){nbRedraw(pg.id);const el=document.querySelector(`.nbp[data-pid="${pg.id}"] .nbov`);if(el){el.innerHTML=nbItemsHtml(pg)}nbSave(pg)}
+
+/* ---- şekil tanıma ---- */
+function nbRdp(P,eps){if(P.length<3)return P;let dm=0,ix=0;const [a,b]=[P[0],P[P.length-1]];const L=Math.hypot(b[0]-a[0],b[1]-a[1])||1;
+  for(let i=1;i<P.length-1;i++){const d=Math.abs((b[1]-a[1])*P[i][0]-(b[0]-a[0])*P[i][1]+b[0]*a[1]-b[1]*a[0])/L;if(d>dm){dm=d;ix=i}}
+  if(dm>eps){const l=nbRdp(P.slice(0,ix+1),eps),r=nbRdp(P.slice(ix),eps);return l.slice(0,-1).concat(r)}return [a,b]}
+function nbShape(pts){const P=[];for(let i=0;i<pts.length;i+=3)P.push([pts[i],pts[i+1]]);if(P.length<6)return null;
+  let len=0;for(let i=1;i<P.length;i++)len+=Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]);if(len<80)return null;
+  const xs=P.map(p=>p[0]),ys=P.map(p=>p[1]),x0=Math.min(...xs),x1=Math.max(...xs),y0=Math.min(...ys),y1=Math.max(...ys),diag=Math.hypot(x1-x0,y1-y0)||1;
+  const se=Math.hypot(P[0][0]-P.at(-1)[0],P[0][1]-P.at(-1)[1]);const out=[];const add=(x,y)=>out.push(x,y,.55);
+  const seg=(a,b)=>{const n=Math.max(2,Math.round(Math.hypot(b[0]-a[0],b[1]-a[1])/14));for(let i=0;i<n;i++)add(a[0]+(b[0]-a[0])*i/n,a[1]+(b[1]-a[1])*i/n)};
+  if(se>len*.22){if(se/len>.9){let a=P[0],b=P.at(-1);const ang=Math.atan2(b[1]-a[1],b[0]-a[0]),sn=Math.round(ang/(Math.PI/4))*(Math.PI/4);if(Math.abs(ang-sn)<.07){const d=Math.hypot(b[0]-a[0],b[1]-a[1]);b=[a[0]+Math.cos(sn)*d,a[1]+Math.sin(sn)*d]}seg(a,b);add(b[0],b[1]);return out}
+    const V=nbRdp(P,diag*.07);if(V.length===3){seg(V[0],V[1]);seg(V[1],V[2]);add(V[2][0],V[2][1]);return out}return null}
+  let V=nbRdp(P,diag*.09);if(V.length>2&&Math.hypot(V[0][0]-V.at(-1)[0],V[0][1]-V.at(-1)[1])<diag*.2)V=V.slice(0,-1);
+  const cx=(x0+x1)/2,cy=(y0+y1)/2,rx=(x1-x0)/2,ry=(y1-y0)/2;
+  let dev=0;for(const p of P){const d=Math.hypot((p[0]-cx)/(rx||1),(p[1]-cy)/(ry||1));dev+=Math.abs(d-1)}dev/=P.length;
+  if(V.length===3){seg(V[0],V[1]);seg(V[1],V[2]);seg(V[2],V[0]);add(V[0][0],V[0][1]);return out}
+  if(V.length===4&&dev>.07){const axis=V.every((v,i)=>{const w=V[(i+1)%4];const a=Math.abs(Math.atan2(w[1]-v[1],w[0]-v[0]))%(Math.PI/2);return a<.25||a>Math.PI/2-.25});
+    const Q=axis?[[x0,y0],[x1,y0],[x1,y1],[x0,y1]]:V;for(let i=0;i<4;i++)seg(Q[i],Q[(i+1)%4]);add(Q[0][0],Q[0][1]);return out}
+  if(dev<.2){const n=72;for(let i=0;i<=n;i++){const a=i/n*Math.PI*2;add(cx+Math.cos(a)*rx,cy+Math.sin(a)*ry)}return out}
+  if(V.length>=5&&V.length<=8){for(let i=0;i<V.length;i++)seg(V[i],V[(i+1)%V.length]);add(V[0][0],V[0][1]);return out}
+  return null}
+
+/* ---- kement ---- */
+function nbInPoly(x,y,L){let c=false;for(let i=0,j=L.length-2;i<L.length;j=i,i+=2){const xi=L[i],yi=L[i+1],xj=L[j],yj=L[j+1];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi||1e-9)+xi)c=!c}return c}
+function nbSelBB(){const s=NB.sel,pg=nbPg(s.pid);let a=1e9,b=1e9,c=-1e9,d=-1e9;const u=r=>{a=Math.min(a,r.x);b=Math.min(b,r.y);c=Math.max(c,r.x+r.w);d=Math.max(d,r.y+r.h)};
+  s.strokes.forEach(S=>u(nbBB(S)));(pg.items||[]).forEach(i=>{if(s.items.has(i.id))u({x:i.x,y:i.y,w:i.w,h:i.h||i.fs*1.5||40})});s.bb={x:a,y:b,w:c-a,h:d-b}}
+function nbSelDraw(){const s=NB.sel;if(!s)return;const el=document.querySelector(`.nbp[data-pid="${s.pid}"]`);if(!el)return;const c=nbLive(el);if(!c)return;let r=s.bb;const T=NB.drag&&NB.drag.T;
+  if(T)r={x:T.ox+(r.x-T.ox)*T.sc+T.dx,y:T.oy+(r.y-T.oy)*T.sc+T.dy,w:r.w*T.sc,h:r.h*T.sc};
+  c.strokeStyle='#3b82f6';c.lineWidth=2;c.setLineDash([8,6]);c.strokeRect(r.x-6,r.y-6,r.w+12,r.h+12);c.setLineDash([]);c.fillStyle='#fff';c.beginPath();c.arc(r.x+r.w+6,r.y+r.h+6,11,0,7);c.fill();c.stroke();
+  nbSelBar(r)}
+function nbSelBar(r){let bar=$('nbSelBar');const s=NB.sel;if(!s){if(bar)bar.remove();return}const el=document.querySelector(`.nbp[data-pid="${s.pid}"]`);if(!el)return;
+  if(!bar||bar.parentNode!==el){if(bar)bar.remove();bar=document.createElement('div');bar.id='nbSelBar';bar.className='nbselbar';
+    bar.innerHTML=`<button type="button" data-ne="sdel">🗑 Sil</button><button type="button" data-ne="sdup">⧉ Çoğalt</button><button type="button" data-ne="scol">🎨 Renk</button><button type="button" data-ne="scopy">📋 Kopyala</button><button type="button" data-ne="soff" aria-label="Seçimi kaldır">✕</button>`;el.appendChild(bar)}
+  const pg=nbPg(s.pid);r=r||s.bb;bar.style.left=Math.max(0,r.x/10)+'%';bar.style.top=Math.max(0,(r.y-8)/(pg.h||NB_H)*100)+'%'}
+function nbSelClear(){if(!NB.sel)return;const pid=NB.sel.pid;NB.sel=null;nbSelBar();const el=document.querySelector(`.nbp[data-pid="${pid}"]`);if(el&&NB.live&&NB.live.parentNode===el){const c=NB.live.getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,NB.live.width,NB.live.height)}}
+function nbSelApply(T){const s=NB.sel,pg=nbPg(s.pid);nbPush(pg);const ns=new Set();pg.strokes=pg.strokes.map(S=>{if(!s.strokes.has(S))return S;const n=nbXf(S,T);ns.add(n);return n});s.strokes=ns;
+  for(const i of pg.items||[])if(s.items.has(i.id)){i.x=T.ox+(i.x-T.ox)*T.sc+T.dx;i.y=T.oy+(i.y-T.oy)*T.sc+T.dy;i.w*=T.sc;if(i.h)i.h*=T.sc;if(i.fs)i.fs=Math.max(8,i.fs*T.sc)}
+  nbSelBB();nbAfter(pg)}
+function nbSelColor(){const s=NB.sel;if(!s)return;const pg=nbPg(s.pid);nbPush(pg);const c=NB.tool==='hl'?NB.hl:NB.color;const ns=new Set();pg.strokes=pg.strokes.map(S=>{if(!s.strokes.has(S))return S;const n={...S,c,bb:null};ns.add(n);return n});s.strokes=ns;
+  (pg.items||[]).forEach(i=>{if(s.items.has(i.id)&&i.t==='text')i.c=c});nbAfter(pg)}
+
+/* ---- işaretçi olayları ---- */
+function nbBind(){const sc=$('nbScroll');
+  sc.addEventListener('touchstart',e=>{if(e.target.closest('.nbp')&&[...e.touches].some(t=>t.touchType==='stylus'))e.preventDefault();nbPinch(e,'start')},{passive:false});
+  sc.addEventListener('touchmove',e=>{if((NB.cur||NB.drag)||e.target.closest('.nbp')&&[...e.touches].some(t=>t.touchType==='stylus'))e.preventDefault();nbPinch(e,'move')},{passive:false});
+  sc.addEventListener('touchend',e=>nbPinch(e,'end'));sc.addEventListener('touchcancel',e=>nbPinch(e,'end'));
+  sc.addEventListener('click',e=>{if(NB.tool!=='text'||Date.now()-(NB.textAt||0)<800)return;const el=e.target.closest('.nbp');if(!el||e.target.closest('.nbx,.nbselbar'))return;const pg=nbPg(el.dataset.pid);if(!pg)return;const [x,y]=nbLogical(e,el);nbAddText(pg,x,y)});
+  sc.addEventListener('pointerdown',nbDown);sc.addEventListener('pointermove',nbMove);sc.addEventListener('pointerup',nbUp);sc.addEventListener('pointercancel',nbUp);
+  $('nbTitle').addEventListener('input',()=>{const bk=nbBook();if(!bk)return;bk.title=$('nbTitle').value;clearTimeout(nbTop.t);nbTop.t=setTimeout(()=>nbSaveBook(bk,{}),600)});
+  $('nbImgIn').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(f)nbAddImage(f)});
+  const ro=new ResizeObserver(()=>{clearTimeout(nbBind.rt);nbBind.rt=setTimeout(()=>{const p=document.querySelector('#nbPages .nbp');if(p&&Math.abs(parseFloat(p.style.width)-nbBaseW()*NB.zoom)>4)nbBodyRender(true)},180)});ro.observe(sc)}
+function nbCan(e){if(e.pointerType==='pen'){if(!NB.penSeen){NB.penSeen=true}return true}if(e.pointerType==='mouse')return e.button===0;return NB.finger}
+function nbDown(e){const el=e.target.closest('.nbp');if(!el||e.target.closest('.nbx,.nbselbar'))return;if(!nbCan(e))return;
+  const pg=nbPg(el.dataset.pid);if(!pg)return;e.preventDefault();try{el.setPointerCapture(e.pointerId)}catch(x){}if(!NB.cvs.has(pg.id))nbMount(el);
+  const [x,y]=nbLogical(e,el);const t=NB.tool;NB.down={x,y,t:performance.now(),pid:pg.id,el};
+  if(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('.nbx'))document.activeElement.blur();
+  if(NB.sel&&NB.sel.pid===pg.id){const r=NB.sel.bb;const hx=r.x+r.w+6,hy=r.y+r.h+6;
+    if(Math.hypot(x-hx,y-hy)<26/NB.zoom){NB.drag={mode:'scale',x0:x,y0:y,T:{ox:r.x,oy:r.y,dx:0,dy:0,sc:1}};return}
+    if(x>r.x-10&&x<r.x+r.w+10&&y>r.y-10&&y<r.y+r.h+10){NB.drag={mode:'move',x0:x,y0:y,T:{ox:r.x,oy:r.y,dx:0,dy:0,sc:1}};return}}
+  nbSelClear();
+  if(t==='text'){NB.textAt=Date.now();nbAddText(pg,x,y);return}
+  if(t==='er'){nbPush(pg);NB.cur={pid:pg.id,er:true,hit:0};nbErase(pg,x,y);return}
+  if(t==='lasso'){NB.cur={pid:pg.id,lasso:[x,y]};return}
+  const S={k:t==='hl'?'hl':'pen',c:t==='hl'?NB.hl:NB.color,w:NB_W[t==='hl'?'hl':'pen'][NB.w]||2,pts:[x,y,e.pointerType==='pen'?Math.max(.1,e.pressure||.5):.5]};
+  if(NB.rec&&NB.rec.bid===NB.bid){S.a=NB.rec.idx;S.t=performance.now()-NB.rec.t0}
+  NB.cur={pid:pg.id,S,lastMove:performance.now()};if(S.k==='hl')nbLive(el);nbHold()}
+function nbHold(){clearTimeout(NB.holdT);if(!NB.shape||NB.tool!=='pen')return;NB.holdT=setTimeout(()=>{const c=NB.cur;if(!c||!c.S||c.snapped)return;const sh=nbShape(c.S.pts);if(!sh)return;c.S.pts=sh;c.snapped=true;c.S.bb=null;nbRedraw(c.pid);const cv=NB.cvs.get(c.pid);if(cv){const ctx=cv.getContext('2d');ctx.setTransform(cv.width/1000,0,0,cv.width/1000,0,0);nbStroke(ctx,c.S);ctx.setTransform(1,0,0,1,0,0)}if(navigator.vibrate)navigator.vibrate(8)},520)}
+function nbMove(e){const c=NB.cur,d=NB.drag;if(!c&&!d)return;const el=NB.down&&NB.down.el;if(!el)return;e.preventDefault();
+  const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];const [x,y]=nbLogical(e,el);
+  if(d){const T=d.T;if(d.mode==='move'){T.dx=x-d.x0;T.dy=y-d.y0}else{const r=NB.sel.bb;const sx=(x-r.x)/(d.x0-r.x||1),sy=(y-r.y)/(d.y0-r.y||1);T.sc=Math.max(.15,Math.min(8,(sx+sy)/2))}
+    if(!d.raf)d.raf=requestAnimationFrame(()=>{d.raf=0;nbRedraw(NB.sel.pid)});return}
+  if(c.er){for(const ev of evs){const [a,b]=nbLogical(ev,el);nbErase(nbPg(c.pid),a,b)}return}
+  if(c.lasso){for(const ev of evs){const [a,b]=nbLogical(ev,el);c.lasso.push(a,b)}const ctx=nbLive(el);if(!ctx)return;ctx.strokeStyle='#3b82f6';ctx.lineWidth=2;ctx.setLineDash([7,6]);ctx.beginPath();ctx.moveTo(c.lasso[0],c.lasso[1]);for(let i=2;i<c.lasso.length;i+=2)ctx.lineTo(c.lasso[i],c.lasso[i+1]);ctx.stroke();ctx.setLineDash([]);return}
+  const S=c.S;if(c.snapped)return;let moved=false;
+  for(const ev of evs){const [a,b]=nbLogical(ev,el);const p=S.pts,lx=p[p.length-3],ly=p[p.length-2];if(Math.hypot(a-lx,b-ly)<.9/NB.zoom)continue;p.push(a,b,ev.pointerType==='pen'?Math.max(.1,ev.pressure||.5):.5);if(Math.hypot(a-lx,b-ly)>2.5)moved=true}
+  if(moved)nbHold();
+  const cv=NB.cvs.get(c.pid);if(!cv)return;
+  if(S.k==='hl'){const ctx=nbLive(el);if(ctx)nbStroke(ctx,S);return}
+  const ctx=cv.getContext('2d');ctx.setTransform(cv.width/1000,0,0,cv.width/1000,0,0);const p=S.pts,n=p.length/3;
+  if(n>=3){const k=n-2;const q=p.slice((k-1)*3,(k+2)*3);const m0=[(q[0]+q[3])/2,(q[1]+q[4])/2],m1=[(q[3]+q[6])/2,(q[4]+q[7])/2];ctx.lineCap='round';ctx.strokeStyle=S.c;ctx.lineWidth=S.w*(.42+Math.max(.08,q[5])*1.16);ctx.beginPath();ctx.moveTo(k===1?q[0]:m0[0],k===1?q[1]:m0[1]);ctx.quadraticCurveTo(q[3],q[4],m1[0],m1[1]);ctx.stroke()}
+  ctx.setTransform(1,0,0,1,0,0)}
+function nbUp(e){clearTimeout(NB.holdT);const c=NB.cur,d=NB.drag,dn=NB.down;NB.cur=null;NB.drag=null;
+  if(d){if(d.raf)cancelAnimationFrame(d.raf);const T=d.T;if(Math.abs(T.dx)+Math.abs(T.dy)>.5||Math.abs(T.sc-1)>.01)nbSelApply(T);else nbRedraw(NB.sel.pid);return}
+  if(!c)return;const pg=nbPg(c.pid);if(!pg)return;
+  if(c.er){if(!c.hit)NB.undo.pop();else nbSave(pg);return}
+  if(c.lasso){const L=c.lasso;if(NB.live){const x=NB.live.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,NB.live.width,NB.live.height)}if(L.length<8)return;
+    const s={pid:pg.id,strokes:new Set(),items:new Set()};
+    for(const S of pg.strokes){let n=0,k=0;for(let i=0;i<S.pts.length;i+=6){k++;if(nbInPoly(S.pts[i],S.pts[i+1],L))n++}if(k&&n/k>=.5)s.strokes.add(S)}
+    for(const i of pg.items||[]){const h=i.h||(i.fs||24)*1.5;if(nbInPoly(i.x+i.w/2,i.y+h/2,L))s.items.add(i.id)}
+    if(s.strokes.size||s.items.size){NB.sel=s;nbSelBB();nbSelDraw()}return}
+  const S=c.S;
+  if(NB.playIdx!=null&&dn&&performance.now()-dn.t<320&&S.pts.length<=12){const [x,y]=[dn.x,dn.y];let best=null,bd=28;for(const T of pg.strokes){if(T.a==null)continue;const b=nbBB(T);if(x<b.x-bd||x>b.x+b.w+bd||y<b.y-bd||y>b.y+b.h+bd)continue;for(let i=0;i<T.pts.length;i+=3){const dd=Math.hypot(T.pts[i]-x,T.pts[i+1]-y);if(dd<bd){bd=dd;best=T}}}
+    nbRedraw(pg.id);if(best){nbSeek(best.a,best.t);return}}
+  if(S.k==='pen'&&S.pts.length>=9){const sm=[S.pts[0],S.pts[1],S.pts[2]];for(let i=3;i<S.pts.length-3;i+=3){sm.push((S.pts[i-3]+4*S.pts[i]+S.pts[i+3])/6,(S.pts[i-2]+4*S.pts[i+1]+S.pts[i+4])/6,S.pts[i+2])}sm.push(...S.pts.slice(-3));if(!c.snapped)S.pts=sm}
+  nbPush(pg);pg.strokes.push(S);if(S.k==='hl'&&NB.live){const x=NB.live.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,NB.live.width,NB.live.height)}nbRedraw(pg.id);nbSave(pg)}
+function nbErase(pg,x,y){const r=11/NB.zoom;const n0=pg.strokes.length;pg.strokes=pg.strokes.filter(S=>{const b=nbBB(S);if(x<b.x-r||x>b.x+b.w+r||y<b.y-r||y>b.y+b.h+r)return true;const p=S.pts,rr=r+S.w/2;
+    for(let i=0;i<p.length;i+=3){const ax=p[i],ay=p[i+1],bx=p[i+3]??ax,by=p[i+4]??ay;const dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy;let t=l?((x-ax)*dx+(y-ay)*dy)/l:0;t=Math.max(0,Math.min(1,t));if(Math.hypot(ax+t*dx-x,ay+t*dy-y)<rr)return false}return true});
+  if(pg.strokes.length!==n0){NB.cur.hit=1;nbRedraw(pg.id)}}
+/* iki parmakla yakınlaştırma */
+function nbPinch(e,ph){const P=NB.pz;const tt=[...e.touches].filter(t=>t.touchType!=='stylus');
+  if(ph==='start'&&tt.length===2){const d=Math.hypot(tt[0].clientX-tt[1].clientX,tt[0].clientY-tt[1].clientY);const sc=$('nbScroll'),r=sc.getBoundingClientRect();const cx=(tt[0].clientX+tt[1].clientX)/2-r.left,cy=(tt[0].clientY+tt[1].clientY)/2-r.top;
+    NB.pz={d,s:1,cx,cy,sl:sc.scrollLeft,st:sc.scrollTop};$('nbPages').style.transformOrigin=(cx+sc.scrollLeft)+'px '+(cy+sc.scrollTop)+'px';return}
+  if(!P)return;if(ph==='move'&&tt.length===2){e.preventDefault();const d=Math.hypot(tt[0].clientX-tt[1].clientX,tt[0].clientY-tt[1].clientY);P.s=Math.max(.5/NB.zoom,Math.min(4/NB.zoom,d/P.d));$('nbPages').style.transform='scale('+P.s+')';return}
+  if(ph==='end'&&tt.length<2){NB.pz=null;$('nbPages').style.transform='';if(Math.abs(P.s-1)<.04)return;nbZoom(NB.zoom*P.s,P)}}
+function nbZoom(z,P){const sc=$('nbScroll');const old=NB.zoom;NB.zoom=Math.round(Math.max(.5,Math.min(4,z))*100)/100;nbUiSave();const f=NB.zoom/old;
+  const cx=P?P.cx:sc.clientWidth/2,cy=P?P.cy:sc.clientHeight/2;const ax=(P?P.sl:sc.scrollLeft)+cx,ay=(P?P.st:sc.scrollTop)+cy;nbBodyRender();sc.scrollLeft=ax*f-cx;sc.scrollTop=ay*f-cy;nbTools()}
+
+/* ---- yazı kutuları ve görseller ---- */
+function nbAddText(pg,x,y){nbPush(pg);const it={t:'text',id:nbId(),x:Math.min(x,880),y:Math.max(0,y-14),w:Math.min(420,1000-x),fs:24,c:NB.color,txt:''};pg.items.push(it);
+  const ov=document.querySelector(`.nbp[data-pid="${pg.id}"] .nbov`);ov.innerHTML=nbItemsHtml(pg);const t=ov.querySelector(`[data-iid="${it.id}"] .nbx-t`);t.focus();setTimeout(()=>{if(document.activeElement!==t)t.focus()},0)}
+document.addEventListener('focusout',e=>{const t=e.target.closest&&e.target.closest('.nbx-t');if(!t)return;const box=t.closest('.nbx'),pg=nbPageOf(box);if(!pg)return;const it=pg.items.find(i=>i.id===box.dataset.iid);if(!it)return;
+  const v=t.innerText.replace(/\n$/,'');if(!v.trim()){pg.items=pg.items.filter(i=>i!==it);box.remove();nbSave(pg);return}if(v!==it.txt){it.txt=v;it.h=box.offsetHeight/box.parentNode.offsetHeight*(pg.h||NB_H);nbSave(pg)}});
+async function nbAddImage(f,target){try{toast('Görsel ekleniyor…');const blob=await nbShrink(f,1800);const a=await upl(blob,{type:blob.type});
+  const im=await new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=URL.createObjectURL(blob)});const ar=im?im.naturalHeight/im.naturalWidth:.75;
+  if(target){target(a.id);return}
+  const pg=nbVisiblePage();if(!pg)return;nbPush(pg);const w=Math.min(520,700),h=w*ar;const sc=$('nbScroll'),el=document.querySelector(`.nbp[data-pid="${pg.id}"]`);
+  let y=200;if(el){const r=el.getBoundingClientRect(),sr=sc.getBoundingClientRect();y=Math.max(40,((sr.top+sr.height/2-r.top)/r.height)*(pg.h||NB_H)-h/2)}
+  const it={t:'img',id:nbId(),src:a.id,x:(1000-w)/2,y:Math.min(y,(pg.h||NB_H)-h-10),w,h};pg.items.push(it);NB.imgs[a.id]={img:im,ok:!!im,w:new Set()};
+  nbAfter(pg);NB.tool='lasso';nbTools();NB.sel={pid:pg.id,strokes:new Set(),items:new Set([it.id])};nbSelBB();nbSelDraw();toast('Taşımak için sürükle, köşeden büyüt')}catch(e){toast('Görsel eklenemedi')}}
+async function nbShrink(f,max){if(!/^image\//.test(f.type)||/gif|svg/.test(f.type))return f;const im=await new Promise((r,j)=>{const i=new Image();i.onload=()=>r(i);i.onerror=j;i.src=URL.createObjectURL(f)});
+  const k=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight));if(k===1&&f.size<900000)return f;const cv=document.createElement('canvas');cv.width=Math.round(im.naturalWidth*k);cv.height=Math.round(im.naturalHeight*k);cv.getContext('2d').drawImage(im,0,0,cv.width,cv.height);
+  const png=/png/.test(f.type)&&f.size<1500000;return await new Promise(r=>cv.toBlob(r,png?'image/png':'image/jpeg',.86))}
+function nbVisiblePage(){const sc=$('nbScroll');if(!sc)return null;const sr=sc.getBoundingClientRect();let best=null,bd=1e9;document.querySelectorAll('#nbPages .nbp').forEach(el=>{const r=el.getBoundingClientRect();const d=Math.abs(r.top+r.height/2-(sr.top+sr.height/2));if(d<bd){bd=d;best=el}});return best&&nbPg(best.dataset.pid)}
+/* yazı kutusunu sürükleme */
+document.addEventListener('pointerdown',e=>{const g=e.target.closest('.nbx-g');if(!g)return;e.preventDefault();e.stopPropagation();const box=g.closest('.nbx'),el=box.closest('.nbp'),pg=nbPg(el.dataset.pid),it=pg.items.find(i=>i.id===box.dataset.iid);if(!it)return;nbPush(pg);
+  const r=el.getBoundingClientRect(),x0=e.clientX,y0=e.clientY,ix=it.x,iy=it.y;g.setPointerCapture(e.pointerId);
+  const mv=ev=>{it.x=Math.max(0,Math.min(980,ix+(ev.clientX-x0)/r.width*1000));it.y=Math.max(0,iy+(ev.clientY-y0)/r.height*(pg.h||NB_H));box.style.left=it.x/10+'%';box.style.top=it.y/(pg.h||NB_H)*100+'%'};
+  const up=()=>{g.removeEventListener('pointermove',mv);g.removeEventListener('pointerup',up);nbSave(pg)};g.addEventListener('pointermove',mv);g.addEventListener('pointerup',up)},true);
+
+/* ---- düzenleyici düğmeleri ---- */
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-ne]');if(!b||!b.closest('#nbEd,.nbmenu,.msm'))return;const k=b.dataset.ne,bk=nbBook();
+  if(k==='close'){nbClose();return}
+  if(k==='tool'){NB.tool=b.dataset.v;if(NB.tool!=='lasso')nbSelClear();nbUiSave();nbTools();return}
+  if(k==='col'){if(NB.tool==='hl')NB.hl=b.dataset.v;else NB.color=b.dataset.v;if(NB.tool==='er'||NB.tool==='lasso'&&!NB.sel)NB.tool='pen';nbUiSave();nbSelColor();nbTools();return}
+  if(k==='w'){NB.w=+b.dataset.v;nbUiSave();nbTools();return}
+  if(k==='shape'){NB.shape=!NB.shape;nbUiSave();nbTools();return}
+  if(k==='finger'){NB.finger=!NB.finger;nbUiSave();nbTools();toast(NB.finger?'Parmakla çizim açık — kaydırmak için iki parmak kullan':'Parmak artık sayfayı kaydırır');return}
+  if(k==='undo'||k==='redo'){nbUndoRedo(k==='redo');return}
+  if(k==='zoom'){nbZoom(NB.zoom*(+b.dataset.v>0?1.2:1/1.2));return}
+  if(k==='img'){$('nbImgIn').click();return}
+  if(k==='xdel'){const box=b.closest('.nbx'),pg=nbPageOf(box);nbPush(pg);pg.items=pg.items.filter(i=>i.id!==box.dataset.iid);box.remove();nbSave(pg);return}
+  if(k==='sdel'){const s=NB.sel,pg=nbPg(s.pid);nbPush(pg);pg.strokes=pg.strokes.filter(S=>!s.strokes.has(S));pg.items=pg.items.filter(i=>!s.items.has(i.id));nbSelClear();nbAfter(pg);return}
+  if(k==='sdup'||k==='scopy'){const s=NB.sel,pg=nbPg(s.pid);const S=[...s.strokes].map(x=>({...x,pts:x.pts.slice(),bb:null})),I=pg.items.filter(i=>s.items.has(i.id)).map(i=>({...i,id:nbId()}));
+    if(k==='scopy'){NB.clip={S,I};toast('Kopyalandı — başka bir sayfanın ⋯ menüsünden yapıştır');return}
+    nbPush(pg);S.forEach(x=>{for(let i=0;i<x.pts.length;i+=3){x.pts[i]+=30;x.pts[i+1]+=30}delete x.a;delete x.t});I.forEach(i=>{i.x+=30;i.y+=30});pg.strokes.push(...S);pg.items.push(...I);NB.sel={pid:pg.id,strokes:new Set(S),items:new Set(I.map(i=>i.id))};nbSelBB();nbAfter(pg);return}
+  if(k==='scol'){nbMenu(b,`<div class="nbmenu-r">${NB_PEN.map(c=>`<button class="nb-sw" data-ne="scolv" data-v="${c}" style="background:${c}" aria-label="Renk"></button>`).join('')}</div>`);return}
+  if(k==='scolv'){NB.color=b.dataset.v;nbUiSave();nbSelColor();document.querySelectorAll('.nbmenu').forEach(m=>m.remove());return}
+  if(k==='soff'){nbSelClear();return}
+  if(k==='addpage'){const pg=await nbNewPage(bk.id,{type:b.dataset.v});nbBodyRender(true);setTimeout(()=>{const el=document.querySelector(`[data-pid="${pg.id}"]`);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},60);return}
+  if(k==='addpdf'){const i=document.createElement('input');i.type='file';i.accept='application/pdf,.pdf';i.onchange=async()=>{const f=i.files[0];if(!f)return;toast('PDF aktarılıyor…');try{await nbImportPdf(new Uint8Array(await f.arrayBuffer()),bk.id,(a,n)=>nbSaved(a+'/'+n+' sayfa'));nbSaved('');nbBodyRender(true)}catch(x){toast('PDF açılamadı')}};i.click();return}
+  if(k==='pmenu'){nbPageMenu(b.dataset.pid,b);return}
+  if(k==='pm'){nbPageAct(b.dataset.pid,b.dataset.v,b.dataset.x);return}
+  if(k==='pages'){nbPagesDlg();return}
+  if(k==='pjump'){msClose();const el=document.querySelector(`#nbPages [data-pid="${b.dataset.pid}"]`);if(el)el.scrollIntoView({block:'start'});return}
+  if(k==='side'){NB.side=!NB.side;$('nbEd').classList.toggle('side',NB.side);document.body.classList.toggle('nb-side',NB.side);setTimeout(()=>nbBodyRender(true),60);if(!NB.side&&st.sec==='notes')nbRender($('secHost'));return}
+  if(k==='export'){nbExport();return}
+  if(k==='rec'){if(NB.rec)nbRecStop();else nbRecStart();return}
+  if(k==='recs'){nbPlayer(true);return}
+  if(k==='play'){nbPlay(+b.dataset.v);return}
+  if(k==='pause'){if(NB.audio){if(NB.audio.paused)NB.audio.play();else NB.audio.pause();nbPlayer()}return}
+  if(k==='speed'){if(NB.audio){NB.audio.playbackRate=+b.dataset.v;nbPlayer()}return}
+  if(k==='skip'){if(NB.audio)NB.audio.currentTime=Math.max(0,NB.audio.currentTime+(+b.dataset.v));return}
+  if(k==='pclose'){nbStopAudio();$('nbPlayer').hidden=true;NB.playIdx=null;return}
+  if(k==='rdel'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Sil?';return}const i=+b.dataset.v;nbStopAudio();const recs=(bk.recs||[]).slice();recs[i]={...recs[i],gone:true};await nbSaveBook(bk,{recs});nbPlayer(true);return}
+  if(k==='tree'){$('nbEd').classList.toggle('tree-open');return}
+  if(k==='dpage'){NB.docPid=b.dataset.pid;bk.last=NB.docPid;nbSaveBook(bk,{});$('nbEd').classList.remove('tree-open');nbBodyRender();nbTools();return}
+  if(k==='dnew'){const pg=await nbNewPage(bk.id,{type:b.dataset.v||'text',title:'',icon:b.dataset.v==='ink'?'✍️':'📄',parent:b.dataset.parent||undefined,paper:b.dataset.v==='ink'?bk.paper||'grid':undefined});NB.docPid=pg.id;nbBodyRender();nbTools();setTimeout(()=>{const t=document.querySelector('.nbdoc-t');if(t)t.focus()},50);return}
+  if(k==='icon'){nbIconMenu(b);return}
+  if(k==='seticon'){const pg=nbPg(b.dataset.pid);pg.icon=b.dataset.v;nbSave(pg,1);document.querySelectorAll('.nbmenu').forEach(m=>m.remove());nbBodyRender(true);return}
+});
+document.addEventListener('keydown',e=>{if(!NB.bid||!(e.metaKey||e.ctrlKey))return;const ae=document.activeElement;if(ae&&(ae.isContentEditable||/INPUT|TEXTAREA|SELECT/.test(ae.tagName)))return;if(e.key.toLowerCase()==='z'){e.preventDefault();nbUndoRedo(e.shiftKey)}});
+function nbMenu(anchor,html){document.querySelectorAll('.nbmenu').forEach(m=>m.remove());const m=document.createElement('div');m.className='nbmenu';m.innerHTML=html;document.body.appendChild(m);
+  const r=anchor.getBoundingClientRect();const w=m.offsetWidth,h=m.offsetHeight;m.style.left=Math.max(8,Math.min(innerWidth-w-8,r.right-w))+'px';m.style.top=(r.bottom+h+8>innerHeight?Math.max(8,r.top-h-6):r.bottom+6)+'px';
+  setTimeout(()=>document.addEventListener('pointerdown',function f(ev){if(!m.contains(ev.target)){m.remove();document.removeEventListener('pointerdown',f,true)}},true),0);return m}
+function nbPageMenu(pid,anchor){const pg=nbPg(pid);if(!pg)return;const ink=pg.type!=='text';
+  nbMenu(anchor,`<button data-ne="pm" data-pid="${pid}" data-v="addink">＋ Altına boş sayfa</button><button data-ne="pm" data-pid="${pid}" data-v="addtext">＋ Altına yazı sayfası</button>
+   ${ink&&!pg.bg?`<div class="nbmenu-l">Kağıt</div><div class="nbmenu-r">${Object.entries(NB_PAPER).map(([k,l])=>`<button data-ne="pm" data-pid="${pid}" data-v="paper" data-x="${k}" aria-pressed="${(pg.paper||nbBook().paper)===k}">${l}</button>`).join('')}</div>
+   <div class="nbmenu-r">${NB_PC.map(c=>`<button class="nb-sw" data-ne="pm" data-pid="${pid}" data-v="pc" data-x="${c}" style="background:${c}" aria-label="Kağıt rengi"></button>`).join('')}</div>`:''}
+   ${ink&&NB.clip?`<button data-ne="pm" data-pid="${pid}" data-v="paste">📋 Kopyalananı yapıştır</button>`:''}
+   <button data-ne="pm" data-pid="${pid}" data-v="up">↑ Yukarı taşı</button><button data-ne="pm" data-pid="${pid}" data-v="down">↓ Aşağı taşı</button><button data-ne="pm" data-pid="${pid}" data-v="dup">⧉ Sayfayı çoğalt</button>
+   <button data-ne="pm" data-pid="${pid}" data-v="del" class="nbmenu-d">🗑 Sayfayı sil</button>`)}
+async function nbPageAct(pid,v,x){const pg=nbPg(pid),bk=nbBook();if(!pg||!bk)return;const P=nbPagesOf(bk.id),i=P.findIndex(p=>p.id===pid);const close=()=>document.querySelectorAll('.nbmenu').forEach(m=>m.remove());
+  if(v==='addink'||v==='addtext'){close();const nx=P[i+1];await nbNewPage(bk.id,{type:v==='addink'?'ink':'text',idx:nx?(pg.idx+nx.idx)/2:pg.idx+1,paper:pg.bg?undefined:pg.paper,pc:pg.pc,parent:pg.parent});nbBodyRender(true);return}
+  if(v==='paper'){pg.paper=x;nbSave(pg,1);close();nbRedraw(pid);return}
+  if(v==='pc'){pg.pc=x;nbSave(pg,1);close();nbBodyRender(true);return}
+  if(v==='paste'){close();const c=NB.clip;nbPush(pg);const S=c.S.map(s=>({...s,pts:s.pts.slice(),bb:null})),I=c.I.map(i=>({...i,id:nbId()}));pg.strokes.push(...S);pg.items.push(...I);NB.tool='lasso';nbTools();NB.sel={pid,strokes:new Set(S),items:new Set(I.map(i=>i.id))};nbSelBB();nbAfter(pg);return}
+  if(v==='up'||v==='down'){const j=v==='up'?i-1:i+1;close();if(j<0||j>=P.length)return;const o=nbPg(P[j].id);const t=pg.idx;pg.idx=o.idx;o.idx=t;if(pg.idx===o.idx)pg.idx+=v==='up'?-.5:.5;await nbFlush(pg.id);NB.pg[o.id]=o;NB.dirty.add(o.id);await nbFlush(o.id);nbBodyRender(true);return}
+  if(v==='dup'){close();const nx=P[i+1];const n=await nbNewPage(bk.id,{type:pg.type,idx:nx?(pg.idx+nx.idx)/2:pg.idx+1,paper:pg.paper,pc:pg.pc,h:pg.h,bg:pg.bg,title:pg.title,icon:pg.icon,parent:pg.parent,blocks:JSON.parse(JSON.stringify(pg.blocks||[]))});
+    n.strokes=pg.strokes.map(s=>({...s,pts:s.pts.slice(),a:undefined,t:undefined}));n.items=JSON.parse(JSON.stringify(pg.items||[]));await nbFlush(n.id);nbBodyRender(true);return}
+  if(v==='del'){const b=document.querySelector('.nbmenu .nbmenu-d');if(b&&!b.dataset.sure){b.dataset.sure=1;b.textContent='Emin misin? Tekrar bas';return}close();
+    if(P.length<=1){toast('Defterde en az bir sayfa kalmalı');return}for(const c of P.filter(p=>p.parent===pid))await nbPageAct(c.id,'reparent');
+    NB.dirty.delete(pid);clearTimeout(NB.saveT[pid]);await st.db.collection('npages').doc(pid).delete();delete NB.raw[pid];delete NB.pg[pid];if(NB.docPid===pid)NB.docPid=(P[i+1]||P[i-1]).id;nbBodyRender(true);nbTools();return}
+  if(v==='reparent'){pg.parent=undefined;await nbFlush(pid)}}
+function nbPagesDlg(){const P=nbPagesOf(NB.bid);msModal(`<div class="eyebrow">▦ Sayfalar (${P.length})</div><div class="nb-pgs">${P.map((p,i)=>`<button type="button" data-ne="pjump" data-pid="${p.id}">${p.type==='text'?`<div class="nb-pgt">📝 ${esc(p.title||'Yazı')}</div>`:`<canvas data-pth="${p.id}" width="160" height="226"></canvas>`}<span class="hint">${i+1}</span></button>`).join('')}</div>`,'wide');
+  document.querySelectorAll('canvas[data-pth]').forEach(cv=>{const pg=nbPg(cv.dataset.pth);const s=cv.width/1000;cv.height=Math.round((pg.h||NB_H)*s);nbDraw(cv.getContext('2d'),pg,s,{thumb:1})})}
+function nbIconMenu(b){const E=['📄','📝','✍️','📚','🎓','💡','⭐','❤️','🌸','🔖','📌','🗂','🧠','🎬','🌙','☕','🎨','🧪','📅','✅','💬','🔥','🌿','🦋'];nbMenu(b,`<div class="nbmenu-e">${E.map(x=>`<button data-ne="seticon" data-pid="${b.dataset.pid}" data-v="${x}">${x}</button>`).join('')}</div>`)}
+
+/* ===================== Ses kaydı ===================== */
+async function nbRecStart(){const bk=nbBook();if(!bk)return;if(!navigator.mediaDevices||!window.MediaRecorder){toast('Bu tarayıcı ses kaydını desteklemiyor');return}
+  let stream;try{stream=await navigator.mediaDevices.getUserMedia({audio:true})}catch(e){toast('Mikrofon izni verilmedi');return}
+  const mt=['audio/mp4','audio/webm;codecs=opus','audio/webm'].find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
+  const mr=new MediaRecorder(stream,mt?{mimeType:mt}:undefined);const chunks=[];mr.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+  NB.rec={mr,stream,chunks,t0:performance.now(),idx:(bk.recs||[]).length,bid:bk.id};mr.start(1000);nbStopAudio();
+  const btn=$('nbRecB');btn.classList.add('on');NB.rec.tick=setInterval(()=>{const s=Math.round((performance.now()-NB.rec.t0)/1000);btn.querySelector('span').textContent='Durdur '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0')},500);toast('🎙 Kayıt başladı — yazdıkların sesle eşleşiyor')}
+function nbRecStop(){const R=NB.rec;if(!R)return Promise.resolve();NB.rec=null;clearInterval(R.tick);const btn=$('nbRecB');if(btn){btn.classList.remove('on');btn.querySelector('span').textContent='Kayıt'}
+  return new Promise(res=>{R.mr.onstop=async()=>{R.stream.getTracks().forEach(t=>t.stop());const type0=(R.mr.mimeType||'audio/mp4').split(';')[0];const dur=Math.round((performance.now()-R.t0)/1000);
+    try{nbSaved('Ses kaydediliyor…');const blob=new Blob(R.chunks,{type:type0.replace('audio/','video/')});const a=await upl(blob,{type:blob.type});const bk=nbBook(R.bid);if(bk){const recs=(bk.recs||[]).slice();recs[R.idx]={id:a.id,dur,at:new Date().toISOString(),name:'Kayıt '+(R.idx+1)};for(let i=0;i<recs.length;i++)if(!recs[i])recs[i]={gone:true};await nbSaveBook(bk,{recs})}nbSaved('Ses kaydedildi ✓');toast('Ses kaydedildi — 🎧 ile dinle')}
+    catch(e){toast('Ses kaydedilemedi')}res()};R.mr.stop()})}
+async function nbFetch(id){return await LOCAL.fetchAsset(id)}
+function nbFmt(s){s=Math.max(0,Math.round(s||0));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function nbPlayer(open){const el=$('nbPlayer'),bk=nbBook();if(!el||!bk)return;if(open)el.hidden=false;if(el.hidden)return;const R=(bk.recs||[]).map((r,i)=>({...r,i})).filter(r=>r&&r.id&&!r.gone);
+  const A=NB.audio;
+  el.innerHTML=R.length?`${A?`<div class="nbpl-c"><button class="iconbtn" type="button" data-ne="skip" data-v="-10" aria-label="10 sn geri">⟲</button><button class="iconbtn" type="button" data-ne="pause" aria-label="Oynat/Duraklat">${A.paused?'▶':'⏸'}</button><button class="iconbtn" type="button" data-ne="skip" data-v="10" aria-label="10 sn ileri">⟳</button>
+     <input type="range" id="nbSeek" min="0" max="1000" value="0" aria-label="Konum"><span class="hint" id="nbTime">0:00</span><div class="seg">${[1,1.5,2].map(r=>`<button type="button" data-ne="speed" data-v="${r}" aria-pressed="${A.playbackRate===r}">${r}×</button>`).join('')}</div></div>`:''}
+    <div class="nbpl-l">${R.map(r=>`<span class="nbpl-i${NB.playIdx===r.i?' on':''}"><button type="button" class="chip" data-ne="play" data-v="${r.i}">▶ ${esc(r.name||'Kayıt')} <span class="hint">${nbFmt(r.dur)}</span></button><button type="button" class="nbpl-x" data-ne="rdel" data-v="${r.i}" aria-label="Kaydı sil">×</button></span>`).join('')}
+    <span class="hint">Dinlerken yazılar soluk görünür, sırası gelince belirir. Bir yazıya dokun → o ana atlar.</span><button class="iconbtn" type="button" data-ne="pclose" aria-label="Kapat" style="margin-left:auto">×</button></div>`
+   :`<div class="nbpl-l"><span class="hint">Henüz ses kaydı yok. 🎙 Kayıt'a bas, ders/sohbet kaydedilirken not al.</span><button class="iconbtn" type="button" data-ne="pclose" aria-label="Kapat" style="margin-left:auto">×</button></div>`;
+  const sk=$('nbSeek');if(sk&&A){sk.addEventListener('input',()=>{if(A.duration&&isFinite(A.duration))A.currentTime=sk.value/1000*A.duration})}}
+async function nbPlay(i,at){const bk=nbBook(),r=bk&&(bk.recs||[])[i];if(!r||!r.id)return;nbStopAudio();NB.playIdx=i;
+  try{const bl=await (await nbFetch(r.id)).blob();const A=new Audio(URL.createObjectURL(bl));NB.audio=A;A.onended=()=>{NB.play=null;nbRedrawAll();nbPlayer()};
+    if(at)A.currentTime=at;await A.play();nbPlayer();const loop=()=>{if(NB.audio!==A)return;const ms=A.currentTime*1000;const old=NB.play;NB.play=A.paused&&!A.currentTime?null:{idx:i,ms};
+      if(!old||Math.abs(old.ms-ms)>90){nbRedrawAll(i)}const t=$('nbTime'),sk=$('nbSeek');if(t)t.textContent=nbFmt(A.currentTime)+' / '+nbFmt(isFinite(A.duration)?A.duration:r.dur);if(sk&&A.duration&&isFinite(A.duration)&&document.activeElement!==sk)sk.value=Math.round(A.currentTime/A.duration*1000);requestAnimationFrame(loop)};requestAnimationFrame(loop)}
+  catch(e){toast('Ses açılamadı (bu cihaza henüz inmemiş olabilir)')}}
+function nbSeek(i,t){if(NB.playIdx===i&&NB.audio){NB.audio.currentTime=Math.max(0,(t-1500)/1000);if(NB.audio.paused)NB.audio.play();nbPlayer();return}nbPlay(i,Math.max(0,(t-1500)/1000))}
+function nbStopAudio(){if(NB.audio){try{NB.audio.pause();URL.revokeObjectURL(NB.audio.src)}catch(e){}NB.audio=null}if(NB.play){NB.play=null;nbRedrawAll()}}
+function nbRedrawAll(idx){NB.cvs.forEach((cv,pid)=>{const pg=NB.pg[pid];if(pg&&(idx==null||pg.strokes.some(s=>s.a===idx)))nbRedraw(pid)})}
+
+/* ===================== Notion gibi yazı sayfaları ===================== */
+const NBB=[['p','Metin','metin yazi paragraf','¶'],['h1','Başlık 1','baslik buyuk h1','H1'],['h2','Başlık 2','baslik orta h2','H2'],['h3','Başlık 3','baslik kucuk h3','H3'],['ul','Madde listesi','liste madde nokta','•'],['ol','Numaralı liste','liste numara sira','1.'],['todo','Yapılacaklar','yapilacak gorev checkbox todo','☑'],['quote','Alıntı','alinti quote','❝'],['callout','Bilgi kutusu','bilgi not kutu callout','💡'],['code','Kod','kod code','</>'],['hr','Ayırıcı çizgi','cizgi ayirici','—'],['img','Görsel','gorsel resim foto image','🖼'],['date','Bugünün tarihi','tarih bugun date','📅']];
+function nbSan(h){const t=document.createElement('template');t.innerHTML=h||'';const ok=/^(B|STRONG|I|EM|U|S|CODE|MARK|A|BR)$/;
+  const walk=n=>{[...n.childNodes].forEach(c=>{if(c.nodeType===1){walk(c);if(!ok.test(c.tagName)){c.replaceWith(...c.childNodes)}else{[...c.attributes].forEach(a=>{if(!(c.tagName==='A'&&a.name==='href'&&/^https?:/i.test(a.value)))c.removeAttribute(a.name)});if(c.tagName==='A'){c.setAttribute('target','_blank');c.setAttribute('rel','noopener')}}}else if(c.nodeType!==3)c.remove()})};walk(t.content);
+  let s=t.innerHTML;if(s==='<br>')s='';return s}
+function nbBlocksHtml(pg){let n=0;return (pg.blocks||[]).map(b=>{if(b.t==='ol')n++;else n=0;const ph=b.t==='p'?'Yazmaya başla, komutlar için / yaz':(NBB.find(x=>x[0]===b.t)||[0,''])[1];
+  const inner=b.t==='hr'?'<hr>':b.t==='img'?`<img src="${esc(assetSrcOf(b.src))}" alt="">`:`<div class="nbb-x" contenteditable="true" data-ph="${ph}" spellcheck="true">${nbSan(b.x)}</div>`;
+  return `<div class="nbb nbb-${b.t}${b.ck?' ck':''}" data-bid="${b.id}" data-t="${b.t}" ${b.ind?`style="--ind:${b.ind}"`:''}><div class="nbb-g"><button type="button" tabindex="-1" data-nt="add" aria-label="Altına blok ekle">＋</button><button type="button" tabindex="-1" data-nt="menu" aria-label="Blok seçenekleri">⋮⋮</button></div>${b.t==='todo'?`<input type="checkbox" data-nt="ck" ${b.ck?'checked':''} aria-label="Tamamlandı">`:''}${b.t==='ul'?'<span class="nbb-dot">•</span>':''}${b.t==='ol'?`<span class="nbb-num">${n}.</span>`:''}${b.t==='callout'?'<span class="nbb-ci">💡</span>':''}${inner}</div>`}).join('')}
+function nbTextPageHtml(pg,doc,num){return `<div class="nbpw nbtp${doc?' nbdoc':''}" data-pid="${pg.id}">${doc?'':`<div class="nbp-h"><span>Sayfa ${num} · yazı</span><button type="button" class="nbp-m" data-ne="pmenu" data-pid="${pg.id}" aria-label="Sayfa seçenekleri">⋯</button></div>`}
+   <div class="nbt-card"><div class="nbdoc-h">${doc?`<button class="nbdoc-ic" type="button" data-ne="icon" data-pid="${pg.id}">${esc(pg.icon||'📄')}</button>`:''}<div class="nbdoc-t" contenteditable="true" data-pt="${pg.id}" data-ph="Başlıksız">${esc(pg.title||'')}</div>${doc?`<button class="nbp-m" type="button" data-ne="pmenu" data-pid="${pg.id}" aria-label="Sayfa seçenekleri">⋯</button>`:''}</div>
+   <div class="nbt" data-pid="${pg.id}">${nbBlocksHtml(pg)}</div>${doc?nbChildren(pg):''}</div></div>`}
+function nbChildren(pg){const C=nbPagesOf(pg.book).filter(p=>p.parent===pg.id);return `<div class="nbdoc-sub">${C.map(c=>`<button type="button" data-ne="dpage" data-pid="${c.id}">${esc(c.icon||'📄')} ${esc(c.title||'Başlıksız')}</button>`).join('')}<button type="button" class="hint" data-ne="dnew" data-v="text" data-parent="${pg.id}">＋ Alt sayfa</button></div>`}
+function nbTree(){const el=$('nbTree');if(!el)return;const P=nbPagesOf(NB.bid);const ids=new Set(P.map(p=>p.id));
+  const row=(p,d)=>`<div class="nbtr${p.id===NB.docPid?' on':''}" style="--d:${d}"><button type="button" data-ne="dpage" data-pid="${p.id}">${esc(p.icon||(p.type==='ink'?'✍️':'📄'))} <span>${esc(p.title||'Başlıksız')}</span></button><button type="button" class="nbtr-a" data-ne="dnew" data-v="text" data-parent="${p.id}" aria-label="Alt sayfa ekle">＋</button></div>`+(d<4?P.filter(c=>c.parent===p.id).map(c=>row(c,d+1)).join(''):'');
+  el.innerHTML=`<div class="nbtr-h hint">Sayfalar</div>${P.filter(p=>!p.parent||!ids.has(p.parent)).map(p=>row(p,0)).join('')}<div class="nbtr-n"><button type="button" class="btn" data-ne="dnew" data-v="text">＋ Yeni sayfa</button><button type="button" class="btn" data-ne="dnew" data-v="ink">✍️ Çizim sayfası</button></div>`}
+function nbCollect(box){const pg=nbPg(box.dataset.pid);if(!pg)return null;const old=new Map((pg.blocks||[]).map(b=>[b.id,b]));
+  pg.blocks=[...box.querySelectorAll(':scope > .nbb')].map(el=>{const o=old.get(el.dataset.bid)||{};const b={...o,id:el.dataset.bid,t:el.dataset.t};const x=el.querySelector(':scope > .nbb-x');if(x)b.x=nbSan(x.innerHTML);const ck=el.querySelector(':scope > input[type=checkbox]');if(ck)b.ck=ck.checked;return b});return pg}
+function nbTSave(box,now){const pg=nbCollect(box);if(!pg)return;nbSave(pg,now)}
+function nbTRender(box,focusId,off){const pg=nbPg(box.dataset.pid);box.innerHTML=nbBlocksHtml(pg);if(focusId){const x=box.querySelector(`[data-bid="${focusId}"] .nbb-x`);if(x){x.focus();nbCaretSet(x,off??0)}}}
+function nbCaret(el){const s=getSelection();if(!s.rangeCount)return 0;const r=s.getRangeAt(0);if(!el.contains(r.startContainer))return 0;const p=r.cloneRange();p.selectNodeContents(el);p.setEnd(r.startContainer,r.startOffset);return p.toString().length}
+function nbCaretSet(el,off){const s=getSelection(),r=document.createRange();if(off===-1)off=el.textContent.length;let n=0;const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT);let t;while((t=w.nextNode())){if(n+t.length>=off){r.setStart(t,off-n);r.collapse(true);s.removeAllRanges();s.addRange(r);return}n+=t.length}r.selectNodeContents(el);r.collapse(false);s.removeAllRanges();s.addRange(r)}
+function nbTextBind(root){root.querySelectorAll('.nbdoc-t').forEach(t=>{t.addEventListener('input',()=>{const pg=nbPg(t.dataset.pt);pg.title=t.textContent.trim();nbSave(pg);if($('nbTree')){clearTimeout(nbTextBind.t);nbTextBind.t=setTimeout(nbTree,500)}});
+  t.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();const x=t.closest('.nbpw').querySelector('.nbb-x');if(x){x.focus();nbCaretSet(x,0)}}})})}
+function nbBlk(el){const b=el.closest('.nbb');return b&&{el:b,box:b.closest('.nbt'),id:b.dataset.bid,t:b.dataset.t}}
+document.addEventListener('keydown',e=>{const x=e.target.closest&&e.target.closest('.nbb-x');if(!x)return;const B=nbBlk(x);
+  const M=$('nbSlash');if(M){const it=[...M.querySelectorAll('button')];let i=it.findIndex(b=>b.classList.contains('on'));
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(!it.length)return;i=(i+(e.key==='ArrowDown'?1:-1)+it.length)%it.length;it.forEach((b,j)=>b.classList.toggle('on',j===i));it[i].scrollIntoView({block:'nearest'});return}
+    if(e.key==='Enter'){e.preventDefault();if(it[i])it[i].click();else M.remove();return}if(e.key==='Escape'){e.preventDefault();M.remove();return}}
+  if(B.t==='code'&&e.key==='Enter'&&!(e.metaKey||e.ctrlKey)){e.preventDefault();document.execCommand('insertLineBreak');return}
+  if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();const pg=nbCollect(B.box);const i=pg.blocks.findIndex(b=>b.id===B.id),cur=pg.blocks[i];
+    const list=['ul','ol','todo'].includes(cur.t);if(list&&!x.textContent.trim()){if(cur.ind){cur.ind--}else cur.t='p';nbTRender(B.box,cur.id,0);nbTSave(B.box);return}
+    const s=getSelection();let after='';if(s.rangeCount){const r=s.getRangeAt(0);r.deleteContents();const r2=document.createRange();r2.setStart(r.startContainer,r.startOffset);r2.setEnd(x,x.childNodes.length);const d=document.createElement('div');d.appendChild(r2.extractContents());after=nbSan(d.innerHTML)}
+    cur.x=nbSan(x.innerHTML);const nb={id:nbId(),t:list?cur.t:'p',x:after};if(cur.ind&&list)nb.ind=cur.ind;pg.blocks.splice(i+1,0,nb);nbTRender(B.box,nb.id,0);nbTSave(B.box);return}
+  if(e.key==='Backspace'&&nbCaret(x)===0&&getSelection().isCollapsed){const pg=nbCollect(B.box);const i=pg.blocks.findIndex(b=>b.id===B.id),cur=pg.blocks[i];
+    if(cur.ind){e.preventDefault();cur.ind--;nbTRender(B.box,cur.id,0);nbTSave(B.box);return}
+    if(cur.t!=='p'){e.preventDefault();cur.t='p';nbTRender(B.box,cur.id,0);nbTSave(B.box);return}
+    const prev=pg.blocks[i-1];if(!prev)return;e.preventDefault();if(prev.t==='hr'||prev.t==='img'){pg.blocks.splice(i-1,1);nbTRender(B.box,cur.id,0);nbTSave(B.box);return}
+    const tmp=document.createElement('div');tmp.innerHTML=prev.x||'';const off=tmp.textContent.length;prev.x=(prev.x||'')+(cur.x||'');pg.blocks.splice(i,1);nbTRender(B.box,prev.id,off);nbTSave(B.box);return}
+  if(e.key==='Tab'&&['ul','ol','todo'].includes(B.t)){e.preventDefault();const pg=nbCollect(B.box);const cur=pg.blocks.find(b=>b.id===B.id);const off=nbCaret(x);cur.ind=Math.max(0,Math.min(4,(cur.ind||0)+(e.shiftKey?-1:1)));if(!cur.ind)delete cur.ind;nbTRender(B.box,cur.id,off);nbTSave(B.box);return}
+  if(e.key==='ArrowUp'&&nbCaret(x)===0){const p=B.el.previousElementSibling;const px=p&&p.querySelector('.nbb-x');if(px){e.preventDefault();px.focus();nbCaretSet(px,-1)}return}
+  if(e.key==='ArrowDown'&&nbCaret(x)===x.textContent.length){const n=B.el.nextElementSibling;const nx=n&&n.querySelector('.nbb-x');if(nx){e.preventDefault();nx.focus();nbCaretSet(nx,0)}return}
+});
+document.addEventListener('input',e=>{const x=e.target.closest&&e.target.closest('.nbb-x');if(!x)return;const B=nbBlk(x);if(x.innerHTML==='<br>')x.innerHTML='';
+  const tx=x.textContent;const MD=[[/^#\s/,'h1'],[/^##\s/,'h2'],[/^###\s/,'h3'],[/^[-*•]\s/,'ul'],[/^1[.)]\s/,'ol'],[/^\[\s?\]\s/,'todo'],[/^>\s/,'quote'],[/^```$/,'code'],[/^---$/,'hr']];
+  if(B.t==='p'||B.t==='ul'&&false){for(const [re,t] of MD){const m=re.exec(tx.replace(/ /g,' '));if(m){const pg=nbCollect(B.box);const cur=pg.blocks.find(b=>b.id===B.id);
+    if(t==='hr'){cur.t='hr';delete cur.x;const nb={id:nbId(),t:'p',x:''};pg.blocks.splice(pg.blocks.indexOf(cur)+1,0,nb);nbTRender(B.box,nb.id,0)}else{cur.t=t;const tmp=document.createElement('div');tmp.innerHTML=cur.x;cur.x=esc(tmp.textContent.slice(m[0].length));nbTRender(B.box,cur.id,0)}nbTSave(B.box);return}}}
+  const off=nbCaret(x),before=tx.slice(0,off);const sm=/(^|\s)\/([^\s/]{0,16})$/.exec(before);if(sm)nbSlash(x,sm[2]);else{const M=$('nbSlash');if(M)M.remove()}
+  clearTimeout(nbTSave.t);nbTSave.t=setTimeout(()=>nbTSave(B.box),500)});
+document.addEventListener('focusout',e=>{const x=e.target.closest&&e.target.closest('.nbb-x');if(!x)return;const B=nbBlk(x);if(B&&B.box)nbTSave(B.box);setTimeout(()=>{const M=$('nbSlash');if(M&&!M.contains(document.activeElement)&&!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('.nbb-x')))M.remove()},200)});
+document.addEventListener('paste',e=>{const x=e.target.closest&&e.target.closest('.nbb-x');if(!x)return;const B=nbBlk(x);const cd=e.clipboardData;if(!cd)return;
+  const f=[...cd.files||[]].find(f=>/^image\//.test(f.type));if(f){e.preventDefault();nbAddImage(f,id=>{const pg=nbCollect(B.box);const i=pg.blocks.findIndex(b=>b.id===B.id);pg.blocks.splice(i+1,0,{id:nbId(),t:'img',src:id});nbTRender(B.box);nbTSave(B.box,1)});return}
+  const t=cd.getData('text/plain');if(!t)return;e.preventDefault();const L=t.replace(/\r/g,'').split(/\n/);document.execCommand('insertText',false,L[0]);if(L.length>1){const pg=nbCollect(B.box);let i=pg.blocks.findIndex(b=>b.id===B.id);let last=null;
+    for(const l of L.slice(1)){const m=/^\s*([-*•]|\d+[.)])\s+(.*)$/.exec(l);last={id:nbId(),t:m?(/\d/.test(m[1])?'ol':'ul'):'p',x:esc(m?m[2]:l)};pg.blocks.splice(++i,0,last)}nbTRender(B.box,last.id,-1);nbTSave(B.box)}});
+document.addEventListener('change',e=>{const c=e.target.closest&&e.target.closest('[data-nt="ck"]');if(!c)return;const B=nbBlk(c);B.el.classList.toggle('ck',c.checked);nbTSave(B.box,1)});
+function nbSlash(x,q){const qq=q.toLocaleLowerCase('tr-TR').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ı/g,'i');const L=NBB.filter(b=>!qq||b[2].includes(qq)||b[1].toLocaleLowerCase('tr-TR').startsWith(q.toLocaleLowerCase('tr-TR')));
+  let M=$('nbSlash');if(!L.length){if(M)M.remove();return}if(!M){M=document.createElement('div');M.id='nbSlash';M.className='nbmenu nbslash';document.body.appendChild(M)}
+  M.innerHTML=`<div class="nbmenu-l">Blok ekle</div>`+L.map((b,i)=>`<button type="button" class="${i?'':'on'}" data-slash="${b[0]}"><i>${b[3]}</i>${b[1]}</button>`).join('');
+  const r=getSelection().rangeCount?getSelection().getRangeAt(0).getBoundingClientRect():x.getBoundingClientRect();const rr=r.height?r:x.getBoundingClientRect();
+  M.style.left=Math.max(8,Math.min(innerWidth-M.offsetWidth-8,rr.left))+'px';M.style.top=(rr.bottom+M.offsetHeight+8>innerHeight?Math.max(8,rr.top-M.offsetHeight-6):rr.bottom+6)+'px';M.dataset.q=q;M._x=x}
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('[data-slash]');if(b)e.preventDefault()},true);
+document.addEventListener('click',async e=>{const s=e.target.closest('[data-slash]');if(s){const M=$('nbSlash'),x=M._x,q=M.dataset.q,t=s.dataset.slash;M.remove();const B=nbBlk(x);
+    const off=nbCaret(x);const txt=x.textContent;const start=off-q.length-1;
+    if(start>=0&&txt.slice(start,off)==='/'+q){x.focus();nbCaretSet(x,start);const sel=getSelection(),r=sel.getRangeAt(0);let n=0;const w=document.createTreeWalker(x,NodeFilter.SHOW_TEXT);let tn,endN,endO;while((tn=w.nextNode())){if(n+tn.length>=off){endN=tn;endO=off-n;break}n+=tn.length}if(endN){r.setEnd(endN,endO);r.deleteContents()}}
+    const pg=nbCollect(B.box);const i=pg.blocks.findIndex(b=>b.id===B.id),cur=pg.blocks[i];const empty=!x.textContent.trim();
+    if(t==='date'){x.focus();document.execCommand('insertText',false,new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric',weekday:'long'}));nbTSave(B.box);return}
+    if(t==='img'){nbImgPick(id=>{const pg2=nbCollect(B.box);const j=pg2.blocks.findIndex(b=>b.id===B.id);if(empty)pg2.blocks.splice(j,1,{id:B.id,t:'img',src:id},{id:nbId(),t:'p',x:''});else pg2.blocks.splice(j+1,0,{id:nbId(),t:'img',src:id});nbTRender(B.box);nbTSave(B.box,1)});return}
+    if(t==='hr'){const nb={id:nbId(),t:'p',x:''};if(empty){cur.t='hr';delete cur.x;pg.blocks.splice(i+1,0,nb)}else pg.blocks.splice(i+1,0,{id:nbId(),t:'hr'},nb);nbTRender(B.box,nb.id,0);nbTSave(B.box);return}
+    if(empty){cur.t=t;cur.x='';nbTRender(B.box,cur.id,0)}else{const nb={id:nbId(),t,x:''};pg.blocks.splice(i+1,0,nb);nbTRender(B.box,nb.id,0)}nbTSave(B.box);return}
+  const g=e.target.closest('[data-nt]');if(!g)return;const B=nbBlk(g);if(!B)return;
+  if(g.dataset.nt==='add'){const pg=nbCollect(B.box);const i=pg.blocks.findIndex(b=>b.id===B.id);const nb={id:nbId(),t:'p',x:'/'};pg.blocks.splice(i+1,0,nb);nbTRender(B.box,nb.id,1);const x=B.box.querySelector(`[data-bid="${nb.id}"] .nbb-x`);if(x)nbSlash(x,'');return}
+  if(g.dataset.nt==='menu'){nbMenu(g,`<div class="nbmenu-l">Dönüştür</div><div class="nbmenu-c">${NBB.filter(b=>!['img','date','hr'].includes(b[0])).map(b=>`<button data-nbm="turn" data-v="${b[0]}"><i>${b[3]}</i>${b[1]}</button>`).join('')}</div><button data-nbm="up">↑ Yukarı taşı</button><button data-nbm="down">↓ Aşağı taşı</button><button data-nbm="dup">⧉ Çoğalt</button><button data-nbm="del" class="nbmenu-d">🗑 Sil</button>`)._blk=B}});
+document.addEventListener('click',e=>{const m=e.target.closest('[data-nbm]');if(!m)return;const menu=m.closest('.nbmenu'),B=menu._blk;menu.remove();if(!B||!B.box.isConnected)return;const pg=nbCollect(B.box);const i=pg.blocks.findIndex(b=>b.id===B.id),cur=pg.blocks[i];const v=m.dataset.nbm;
+  if(v==='turn'){cur.t=m.dataset.v;if(cur.x==null)cur.x=''}else if(v==='up'&&i>0){pg.blocks.splice(i,1);pg.blocks.splice(i-1,0,cur)}else if(v==='down'&&i<pg.blocks.length-1){pg.blocks.splice(i,1);pg.blocks.splice(i+1,0,cur)}
+  else if(v==='dup'){pg.blocks.splice(i+1,0,{...cur,id:nbId()})}else if(v==='del'){pg.blocks.splice(i,1);if(!pg.blocks.length)pg.blocks.push({id:nbId(),t:'p',x:''})}
+  nbTRender(B.box,v==='del'?null:cur.id,-1);nbTSave(B.box,1)});
+function nbImgPick(cb){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=()=>{const f=i.files[0];if(f)nbAddImage(f,cb)};i.click()}
+
+/* ===================== PDF olarak kaydet ===================== */
+async function nbExport(){const bk=nbBook();if(!bk)return;await nbFlushAll();toast('PDF hazırlanıyor…');const P=nbPagesOf(bk.id).map(r=>nbPg(r.id));
+  const ids=new Set();P.forEach(pg=>{if(pg.bg)ids.add(pg.bg);(pg.items||[]).forEach(i=>{if(i.t==='img')ids.add(i.src)})});
+  await Promise.all([...ids].map(id=>new Promise(r=>{const o=nbImg(id);if(o)return r();const x=NB.imgs[id];x.img.addEventListener('load',r,{once:true});x.img.addEventListener('error',r,{once:true});setTimeout(r,8000)})));
+  const out=[];for(const pg of P){if(pg.type==='text'){out.push(`<section class="tp"><h1>${esc(pg.icon&&bk.kind==='doc'?pg.icon+' ':'')}${esc(pg.title||'')}</h1>${nbBlocksPrint(pg)}</section>`);continue}
+    const cv=document.createElement('canvas');cv.width=1240;cv.height=Math.round(1240*(pg.h||NB_H)/1000);const ctx=cv.getContext('2d');const sv=NB.sel;NB.sel=null;nbDraw(ctx,pg,1.24);NB.sel=sv;
+    ctx.setTransform(1.24,0,0,1.24,0,0);(pg.items||[]).filter(i=>i.t==='text').forEach(i=>{ctx.fillStyle=i.c||'#111';ctx.font=(i.fs||24)+'px -apple-system,Segoe UI,sans-serif';const lh=(i.fs||24)*1.35;let y=i.y+(i.fs||24)+4;
+      for(const para of (i.txt||'').split('\n')){let line='';for(const w of para.split(' ')){const tt=line?line+' '+w:w;if(ctx.measureText(tt).width>i.w-8&&line){ctx.fillText(line,i.x+4,y);y+=lh;line=w}else line=tt}ctx.fillText(line,i.x+4,y);y+=lh}});
+    out.push(`<img src="${cv.toDataURL('image/jpeg',.9)}">`);cv.width=cv.height=0}
+  const html=`<!doctype html><html><head><meta charset="utf-8"><title>${esc(bk.title||'Defter')}</title><style>@page{size:A4;margin:0}body{margin:0;font-family:Georgia,serif;color:#1d1d1f}img{width:210mm;display:block;page-break-after:always;break-after:page}
+   .tp{padding:20mm 18mm;page-break-after:always;break-after:page;font-size:12pt;line-height:1.6}.tp h1{font-size:22pt;margin:0 0 12pt}.tp h2{font-size:17pt}.tp h3{font-size:14pt}blockquote{border-left:3px solid #999;margin:0;padding-left:12px;color:#444}.co{background:#f4f1ea;padding:10px 12px;border-radius:8px}pre{background:#f3f3f3;padding:10px;white-space:pre-wrap;font-size:10pt}.ck{text-decoration:line-through;color:#888}.tp img{width:100%;page-break-after:auto}</style></head><body>${out.join('')}</body></html>`;
+  msOut(html,bk.title||'Defter','pdf')}
+function nbBlocksPrint(pg){let html='',lt='';const close=()=>{if(lt){html+=`</${lt}>`;lt=''}};
+  for(const b of pg.blocks||[]){const x=nbSan(b.x);const L=b.t==='ul'||b.t==='todo'?'ul':b.t==='ol'?'ol':'';if(L!==lt){close();if(L){html+=`<${L}>`;lt=L}}
+    if(b.t==='ul'||b.t==='ol')html+=`<li style="margin-left:${(b.ind||0)*18}px">${x}</li>`;else if(b.t==='todo')html+=`<li style="list-style:none;margin-left:${(b.ind||0)*18}px" class="${b.ck?'ck':''}">${b.ck?'☑':'☐'} ${x}</li>`;
+    else if(/^h[123]$/.test(b.t))html+=`<${b.t}>${x}</${b.t}>`;else if(b.t==='quote')html+=`<blockquote>${x}</blockquote>`;else if(b.t==='callout')html+=`<p class="co">💡 ${x}</p>`;else if(b.t==='code')html+=`<pre>${x}</pre>`;
+    else if(b.t==='hr')html+='<hr>';else if(b.t==='img'){const o=NB.imgs[b.src];if(o&&o.ok){try{const c=document.createElement('canvas');c.width=o.img.naturalWidth;c.height=o.img.naturalHeight;c.getContext('2d').drawImage(o.img,0,0);html+=`<img src="${c.toDataURL('image/jpeg',.85)}">`}catch(e){}}}
+    else html+=`<p>${x||'&nbsp;'}</p>`}
+  close();return html}
+
+/* ===================== Okuyucunun yanında defter ===================== */
+function nbReaderDlg(){const b=R.book;if(!b)return;const mine=NB.books.filter(n=>n.book===b.id);const others=NB.books.filter(n=>n.book!==b.id).sort((x,y)=>(y.opened||'').localeCompare(x.opened||'')).slice(0,6);
+  msModal(`<div class="eyebrow">📓 Kitabın yanında defter</div><p class="hint">Defter sağda açılır, kitap solda kalır. Telefonda alt alta görünür.</p>
+   ${mine.length?`<div class="nb-rl">${mine.map(n=>`<button class="btn primary" type="button" data-nb="bside" data-id="${n.id}">📓 ${esc(n.title)}</button>`).join('')}</div>`:''}
+   <div class="msm-acts"><button class="btn${mine.length?'':' primary'}" type="button" data-nb="rnew" data-v="ink">✍️ Bu kitap için yeni defter</button><button class="btn" type="button" data-nb="rnew" data-v="doc">📝 Yazı defteri (Notion gibi)</button>${R.epub?'':'<button class="btn" type="button" data-nb="rnew" data-v="pdf">📄 PDF sayfalarına yaz</button>'}</div>
+   ${others.length?`<div class="hint">Diğer defterlerim</div><div class="nb-rl">${others.map(n=>`<button class="chip" type="button" data-nb="bside" data-id="${n.id}">${esc(n.title)}</button>`).join('')}</div>`:''}`)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-nb="rnew"]');if(!b||!R.book)return;const v=b.dataset.v,bk=R.book;msClose();
+  nbNewDlg({kind:v,title:(v==='pdf'?'':'📖 ')+bk.title+(v==='pdf'?' (notlu)':' — notlar'),side:true,book:bk.id,lib:v==='pdf'?bk.id:undefined});
+  if(v==='pdf'){setTimeout(()=>{const s=$('nbNLib');if(s)s.value=bk.id},60)}});
+(function(){const rq=$('rQuote');if(rq&&!$('rNb')){const b=document.createElement('button');b.className='iconbtn';b.id='rNb';b.type='button';b.title='Defter (yan yana)';b.setAttribute('aria-label','Yanında defter aç');b.textContent='📓';rq.after(b);b.addEventListener('click',nbReaderDlg)}})();
+
 const SECS={
   home:{t:'Ana sayfa',tabs:[]},
   library:{t:'Kütüphanem',tabs:[]},
   academic:{t:'Akademik',tabs:[['makale','📄 Makaleler'],['lit','📊 Literatür tablosu'],['thesis','🎓 Tez planlayıcı'],['cards','🃏 Çalışma kartları']]},
+  notes:{t:'Defterlerim',tabs:[]},
   writer:{t:'Yazar köşesi',tabs:[['roman','📖 Romanlarım'],['room','✍️ Yazı odası'],['scenes','🎬 Sahne panosu'],['ideas','💡 Fikir defteri'],['chars','👤 Karakterler'],['rel','🕸 İlişki haritası'],['time','🕰 Zaman çizelgesi'],['world','🗺 Dünya'],['board','🎨 İlham panosu'],['write','📝 Yazım takibi'],['subs','📮 Yayınevleri']]},
   journal:{t:'Okuma günlüğüm',tabs:[['month','🗓 Aylık sayfa'],['readlist','📖 Okuma listesi'],['stats','📈 İstatistikler'],['bingo','🎯 Bingo'],['quotes','💬 Alıntı defteri'],['focus','⏱ Odak'],['year','🌟 Yılın özeti']]},
   settings:{t:'Ayarlar',tabs:[['theme','🎨 Görünüm'],['drive','☁️ Google Drive'],['bulk','📁 Klasörden ekle'],['storage','🧹 Depolama'],['backup','💾 Yedekle']]}
@@ -2931,7 +3635,7 @@ function goSec(sec,sub){if(R.book)closeReader();st.sec=sec;if(sub)st.secSub[sec]
   render();renderSection();window.scrollTo({top:0})}
 function applySec(){
   const sec=st.sec,sub=curSub(),body=document.body;
-  ['home','library','academic','writer','journal','settings'].forEach(k=>body.classList.toggle('sec-'+k,k===sec));
+  ['home','library','academic','writer','notes','journal','settings'].forEach(k=>body.classList.toggle('sec-'+k,k===sec));
   const listSub=sec==='library'||(sec==='academic'&&sub==='makale')||(sec==='writer'&&sub==='roman');
   body.classList.toggle('sec-list',listSub||sec==='home');body.classList.toggle('sec-page',!listSub&&sec!=='home');
   if(sec==='home'){st.view='panel'}
@@ -2948,6 +3652,7 @@ function renderSection(){
   if(R.book&&!$('reader').hidden)return;
   const sec=st.sec,sub=curSub();returnPanels();$('secHost').innerHTML='';
   if(!document.body.classList.contains('sec-page'))return;
+  if(sec==='notes'){nbRender($('secHost'));return}
   const toolMap={thesis:['thesis'],cards:['cards'],room:['writer','room'],rel:['writer','rel'],time:['writer','time'],world:['writer','world'],scenes:['writer','scenes'],bingo:['bingo'],month:['month'],readlist:['readlist'],ideas:['writer','ideas'],chars:['writer','chars'],board:['writer','board'],write:['writer','write'],subs:['writer','subs'],quotes:['quotes'],stats:['stats'],focus:['focus'],year:['year'],backup:['backup']};
   if(toolMap[sub]){TL.embedded=true;TL.cur=toolMap[sub][0];TL.sub=toolMap[sub][1]||null;if(TL.cur!=='cards')TL.study=TL.study;$('secHost').appendChild($('toolPanel'));renderTool();return}
   if(sub==='lit'){hostPanel('litVeil');litRender()}
@@ -3521,6 +4226,7 @@ render();
   db.collection('boards').onSnapshot(s_=>{const o={};s_.docs.forEach(d=>{o[d.id]=d.data()});TL.boards=o;const a=document.activeElement;if(!(a&&a.closest&&a.closest('.board')))rerenderTool()},()=>{});
   db.collection('chars').onSnapshot(s_=>{TL.chars=s_.docs.map(d=>({id:d.id,...d.data()}));rerenderTool()},()=>{});
   db.collection('subs').onSnapshot(s_=>{TL.subs=s_.docs.map(d=>({id:d.id,...d.data()}));rerenderTool()},()=>{});
+  try{nbListen(db)}catch(e){}
   db.collection('pubs').onSnapshot(s_=>{TL.pubs=s_.docs.map(d=>({id:d.id,...d.data()}));rerenderTool()},()=>{});
   db.doc('settings/thesis').onSnapshot(s_=>{if(s_.exists){const d={...s_.data()};delete d.updatedAt;if(JSON.stringify(d)!==JSON.stringify(TL.thesis)){TL.thesis=d;if(TL.cur!=='thesis')rerenderTool();if(st.view==='panel'&&st.sec==='home')renderList()}}},()=>{});
   db.doc('settings/writing').onSnapshot(s_=>{if(s_.exists){TL.writing=s_.data();if(TL.cur==='writer'&&TL.sub==='write'){}else rerenderTool()}},()=>{});
