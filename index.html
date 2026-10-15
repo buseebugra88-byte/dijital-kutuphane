@@ -4495,6 +4495,14 @@ const CALM_PAT={'446':['Rahatla','4 al · 4 tut · 6 ver',[['Nefes al',4,1],['Tu
  'sigh':['Çifte iç çekiş','2 al + 1 daha al · 6 ver',[['Burundan al',2,1],['Biraz daha al',1,1],['Ağızdan uzun ver',6,0]]],
  '55':['Dengeli nefes','5 al · 5 ver',[['Nefes al',5,1],['Nefes ver',5,0]]]};
 const CALM_YT=[['🌬','Rehberli nefes egzersizi (kaygı için)','rehberli nefes egzersizi kaygı'],['🌙','Uyku öncesi rahatlama meditasyonu','uyku öncesi rahatlama meditasyonu türkçe'],['💪','Progresif kas gevşetme','progresif kas gevşetme türkçe'],['🧘','Beden taraması (body scan)','beden taraması meditasyon türkçe'],['🔲','Kutu nefes tekniği','kutu nefes tekniği'],['⏱','5 dakikalık mindfulness','5 dakika mindfulness meditasyonu türkçe']];
+const CALM_REC=[
+ ['🎧','MOTALKS — Meditasyon Okulu','Apple Podcasts · kısa rehberli meditasyonlar, yeni başlayanlara uygun (500+ bölüm)','https://podcasts.apple.com/us/podcast/motalks/id1543595840'],
+ ['🎧','Psikopod — Kaygı sezonu','Apple Podcasts · 4 kısa bölüm: kaygı nedir, etkileri, nasıl anlaşılır','https://podcasts.apple.com/us/podcast/id1514954179'],
+ ['🎧','Daha Anlaşılır Psikoloji','Apple Podcasts · psikoloji araştırmalarını sade Türkçeyle anlatır','https://podcasts.apple.com/us/podcast/id1846374017'],
+ ['🎧','Zeynep İzgi ile Arınma Yolculuğu','Spotify · rehberli meditasyonlar (manevi bir dili var)','https://open.spotify.com/show/3jyDDJ2VfTSSJjbfZdFFtB'],
+ ['📱','Nefes21','Türkçe nefes ve meditasyon uygulaması (App Store)','https://apps.apple.com/us/app/nefes21-ki%C5%9Fisel-geli%C5%9Fim/id1573779696'],
+ ['📱','Meditopia','Türkçe meditasyon ve uyku uygulaması (bir kısmı ücretsiz)','https://meditopia.com/tr/meditasyon'],
+ ['📄','Nefes ve gevşeme egzersizleri (Gazi Üniversitesi)','Yazdırılabilir kısa rehber — PDF','https://webupload.gazi.edu.tr/upload/648/2023/4/12/70e59ed5-ae0b-4fae-8914-d06a37609f21-nefes-ve-gevseme-egzersizleri.pdf']];
 const CALM_POD=[['🎧','Meditasyon podcastleri','meditasyon'],['💬','Kaygı üzerine podcastler','kaygı'],['🌿','Nefes ve rahatlama','nefes rahatlama']];
 function calmCfg(){return LF.cfg.calm||{}}
 async function calmSet(patch){const c=calmCfg();await lfSet('lifecfg','calm',{...c,id:undefined,...patch})}
@@ -4515,9 +4523,10 @@ function lfCalm(){const c=calmCfg(),P=LF.bpat2||'446',items=c.items||[],links=c.
    ${tab==='listen'?`<div class="lf-two"><div class="lfc"><h4>⭐ Benim listem</h4><span class="hint">Doktorunun ya da senin beğendiğin videolar/podcastler. YouTube bağlantıları burada oynar.</span>
       ${links.map((l,i)=>`<div class="lf-mrow"><span>${ytId(l.u)?'▶️':'🎧'}</span><span class="lf-tt"><b>${esc(l.t||l.u)}</b>${l.n?`<br><small class="hint">${esc(l.n)}</small>`:''}</span><button class="btn" type="button" data-cm="play" data-i="${i}">${ytId(l.u)?'Oynat':'Aç'}</button><button class="lf-x" type="button" data-cm="ldel" data-i="${i}" aria-label="Sil">×</button></div>`).join('')||''}
       <input id="cmLU" placeholder="Bağlantıyı yapıştır (YouTube, Spotify…)"><input id="cmLT" placeholder="Adı (ör. 10 dk nefes — doktorumun önerisi)"><button class="btn primary" type="button" data-cm="ladd">＋ Listeme ekle</button></div>
+     <div class="lfc"><h4>💡 Önerilerim</h4><span class="hint">Türkçe, ücretsiz dinlenebilen kaynaklar. Beğendiğini listene ekle.</span>${CALM_REC.map((x,i)=>`<div class="lf-mrow"><span>${x[0]}</span><span class="lf-tt"><a href="${x[3]}" target="_blank" rel="noopener" style="color:inherit"><b>${esc(x[1])}</b> ↗</a><br><small class="hint">${esc(x[2])}</small></span>${(links||[]).some(l=>l.u===x[3])?'<span class="hint">✓</span>':`<button class="btn" type="button" data-cm="recadd" data-i="${i}">＋</button>`}</div>`).join('')}</div>
      <div class="lfc"><h4>🔎 Bul</h4><span class="hint">Bunlar arama sonuçlarını açar; beğendiğini “Benim listem”e ekle.</span>
       <div class="eyebrow" style="margin-top:6px">YouTube</div>${CALM_YT.map(([i,t,q])=>`<a class="calm-ln" href="https://www.youtube.com/results?search_query=${encodeURIComponent(q)}" target="_blank" rel="noopener">${i} ${t} ↗</a>`).join('')}
-      <div class="eyebrow" style="margin-top:6px">Podcast (Spotify)</div>${CALM_POD.map(([i,t,q])=>`<a class="calm-ln" href="https://open.spotify.com/search/${encodeURIComponent(q)}/podcasts" target="_blank" rel="noopener">${i} ${t} ↗</a>`).join('')}</div></div><div id="cmPlayer"></div>`:''}
+      <div class="eyebrow" style="margin-top:6px">Apple Podcasts</div>${CALM_POD.map(([i,t,q])=>`<a class="calm-ln" href="https://podcasts.apple.com/search?term=${encodeURIComponent(q)}" target="_blank" rel="noopener">${i} ${t} ↗</a>`).join('')}<div class="eyebrow" style="margin-top:6px">Spotify</div>${CALM_POD.map(([i,t,q])=>`<a class="calm-ln" href="https://open.spotify.com/search/${encodeURIComponent(q)}/podcasts" target="_blank" rel="noopener">${i} ${t} ↗</a>`).join('')}</div></div><div id="cmPlayer"></div>`:''}
    ${tab==='worry'?`<div class="lf-two"><div class="lfc"><h4>📝 Aklımı kurcalayan şey</h4><textarea id="cmW" rows="3" placeholder="Endişeni olduğu gibi yaz…"></textarea>
       <label class="hint">Gerçekleşme ihtimali sence ne kadar? <b id="cmPv">50%</b></label><input type="range" id="cmP" min="0" max="100" step="5" value="50">
       <textarea id="cmR" rows="2" placeholder="Daha gerçekçi bir bakış ne olurdu?"></textarea><textarea id="cmA" rows="2" placeholder="Elimde olan küçük bir adım var mı?"></textarea>
@@ -4553,6 +4562,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-cm]'
   if(k==='stop'){lfBStop();return}
   if(k==='after'){const S=[...(c.sessions||[])];const last=S[S.length-1];if(last&&v!==''){last.after=+v;await calmSet({sessions:S});if(last.before!=null){const d=last.before-last.after;toast(d>0?`Kaygın ${d} puan azaldı 🌿`:'Kaydettim. Bazen hemen değişmez; bu da normal.')}}LF.bState=null;LF.before=null;lfRender();return}
   if(k==='ladd'){const u=lfV('cmLU');if(!/^https?:\/\//i.test(u)){toast('Geçerli bir bağlantı yapıştır');return}await calmSet({links:[...(c.links||[]),{u,t:lfV('cmLT')||(ytId(u)?'YouTube videosu':'Bağlantı'),at:new Date().toISOString()}]});setTimeout(lfForce,150);return}
+  if(k==='recadd'){const x=CALM_REC[+b.dataset.i];await calmSet({links:[...(c.links||[]),{u:x[3],t:x[1],n:x[2],at:new Date().toISOString()}]});toast('Listene eklendi ⭐');setTimeout(lfForce,150);return}
   if(k==='ldel'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='?';return}await calmSet({links:(c.links||[]).filter((_,i)=>i!==+b.dataset.i)});return}
   if(k==='play'){const l=(c.links||[])[+b.dataset.i];if(!l)return;const id=ytId(l.u);if(!id){window.open(l.u,'_blank','noopener');return}const p=$('cmPlayer');if(p){p.innerHTML=`<div class="lfc calm-yt"><div class="lf-gh"><h4>▶️ ${esc(l.t)}</h4><button class="lf-x" type="button" data-cm="pclose" aria-label="Kapat">×</button></div><div class="calm-fr"><iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="${esc(l.t)}"></iframe></div><a class="lf-lnk" href="${esc(l.u)}" target="_blank" rel="noopener">YouTube'da aç ↗</a></div>`;p.scrollIntoView({behavior:'smooth',block:'start'})}return}
   if(k==='pclose'){const p=$('cmPlayer');if(p)p.innerHTML='';return}
@@ -4569,7 +4579,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v25';
+const DK_VER='v26';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
