@@ -757,6 +757,9 @@ body.nb-open .qc-fab,body.nb-open .gs-btn,body:has(#reader:not([hidden])) .qc-fa
 .calm-fr{position:relative;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000}.calm-fr iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .calm-w{display:grid;gap:3px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}.calm-w.done{opacity:.75}.calm-out{color:var(--accent)}
 .lf-calm .lf-br{gap:12px}
+
+.dk-share{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 70px);z-index:70;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:min(680px,calc(100vw - 24px));background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:10px 14px;box-shadow:0 14px 30px -12px rgba(0,0,0,.4);font-size:14px}
+.dk-ver{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:50%;transform:translateX(-50%);z-index:96;border:0;border-radius:999px;background:var(--accent);color:#fff;font:inherit;font-size:14px;font-weight:600;padding:10px 18px;box-shadow:0 10px 24px -10px rgba(0,0,0,.5);cursor:pointer}
 </style>
 
 </head><body>
@@ -2499,7 +2502,7 @@ async function stoScan(){try{const r=await st.assets.list();STO.usage=r.usage;co
 STO.items=[];
 function stoBooks(){return st.books.filter(b=>!b.source&&b.fileType!=='epub'&&bookAssetIds(b).length).sort((a,b)=>(b.fileSize||0)-(a.fileSize||0))}
 function stoHtml(){const u=STO.usage,L=stoBooks(),mb=x=>(x/1048576).toFixed(x>1e8?0:1)+' MB';
-  return `<div class="panel sto" id="stoPanel"><h2 style="margin:0">Depolama</h2><div class="msm-acts" style="margin:8px 0"><button class="btn" type="button" data-ms="dedupe">📚 Aynı kitapları bul ve temizle</button></div>
+  return `<div class="panel sto" id="stoPanel"><h2 style="margin:0">Depolama</h2><div class="msm-acts" style="margin:8px 0"><button class="btn" type="button" data-ms="dedupe">📚 Aynı kitapları bul ve temizle</button>${typeof LOCAL!=='undefined'&&typeof GAUTH!=='undefined'?`<button class="btn" type="button" data-dk="shareall">☁️ Kitaplarımı tüm cihazlarda aç</button>`:''}</div>
     ${u?`<div class="sto-bar"><i style="width:${Math.min(100,u.bytes/u.maxBytes*100).toFixed(1)}%"></i></div><span class="hint">${mb(u.bytes)} / ${mb(u.maxBytes)} kullanılıyor · ${u.files} dosya</span>`:'<span class="hint">Kullanım bilgisi alınamadı.</span>'}
     <p class="hint" style="font-size:14px;margin:4px 0 0">Taranmış (fotoğraf gibi) PDF'ler sıkıştırılınca genelde yarı yarıya küçülür, okunurluk bozulmaz. Metinli PDF'lerde yalnızca içindeki resimler küçültülür, metin aynen kalır. Sıkıştırma bitince eski dosya silinir; kitabın kaydı, kapağı ve ayracı aynı kalır.</p>
     <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="button" data-sto="top" ${STO.busy?'disabled':''}>🗜 En büyük 15 kitabı sıkıştır</button>${STO.busy?'<button class="btn" type="button" data-sto="stop">Durdur</button>':''}${STO.orph&&STO.orph.length?`<button class="btn" type="button" data-sto="orph">Boşta kalan ${STO.orph.length} dosyayı sil (${mb(STO.orph.reduce((a,x)=>a+x.sizeBytes,0))})</button>`:''}</div>
@@ -4565,6 +4568,44 @@ document.addEventListener('change',async e=>{const t=e.target;if(!t.dataset)retu
 document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');if(o)o.textContent=e.target.value+'%'}});
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
+/* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
+const DK_VER='v25';
+function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
+function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
+async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
+  const j=await (await gfetch(GD+'?q='+q+'&pageSize=1&fields='+encodeURIComponent('files(id)'))).json();id=j.files&&j.files[0]&&j.files[0].id;
+  if(!id)id=(await (await gfetch(GD+'?fields=id',1,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'Dijital Kütüphanem — kitaplar',mimeType:'application/vnd.google-apps.folder'})})).json()).id;dbkSet('bookfolder',id);return id}
+async function dkShareBook(b,onP){if(typeof GAUTH==='undefined'||!GAUTH.configured())throw{ui:'Google Drive bağlantısı yok.'};if(!dkHere(b))throw{ui:'Bu kitabın dosyası bu cihazda değil.'};
+  await GAUTH.token();const blob=await (await LOCAL.fetchAsset(b.assetId)).blob();const folder=await dkBookFolder();const name=(b.fileName||((b.title||'kitap')+'.pdf')).replace(/[\\/]/g,'-');const type='application/pdf';
+  if(onP)onP('Drive\'a yükleniyor ('+(blob.size/1048576).toFixed(1)+' MB)…');let id='';
+  try{const init=await gfetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id',1,{method:'POST',headers:{'Content-Type':'application/json; charset=UTF-8','X-Upload-Content-Type':type,'X-Upload-Content-Length':String(blob.size)},body:JSON.stringify({name,parents:[folder]})});
+    const loc=init.headers.get('Location');if(loc){const r=await fetch(loc,{method:'PUT',headers:{'Content-Type':type},body:blob});if(r.ok)id=(await r.json()).id}}catch(e){}
+  if(!id){const bd='dkp'+Date.now();const body=new Blob(['--'+bd+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify({name,parents:[folder]})+'\r\n--'+bd+'\r\nContent-Type: '+type+'\r\n\r\n',blob,'\r\n--'+bd+'--']);
+    id=(await (await gfetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',1,{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+bd},body})).json()).id}
+  if(!id)throw{ui:'Drive\'a yüklenemedi.'};
+  try{const C=await caches.open('dk-books');await C.put('https://dk-offline/drive/'+encodeURIComponent(id),new Response(blob,{headers:{'Content-Type':'application/octet-stream'}}))}catch(e){}
+  await st.db.collection('books').doc(b.id).update({source:'drive',driveId:id,fileType:'pdf'});Object.assign(b,{source:'drive',driveId:id});return id}
+function dkMissingDlg(b){const drive=typeof GAUTH!=='undefined'&&GAUTH.configured&&GAUTH.configured();
+  msModal(`<div class="eyebrow">📄 PDF bu cihazda yok</div><b>${esc(b.title)}</b>
+   <p class="hint" style="margin:0">Bu kitabı başka bir cihazından (Mac ya da iPhone) eklemişsin; PDF dosyası orada duruyor, bu cihaza gelmedi.</p>
+   <div class="lfc"><b>En kolayı:</b><ol class="lf-ol" style="margin:4px 0"><li>Kitabı eklediğin cihazda uygulamayı aç.</li><li>Bu kitabı aç → çıkan <b>“☁️ Tüm cihazlarda aç”</b>a bas<br><span class="hint">ya da Ayarlar → Depolama → “Kitaplarımı tüm cihazlarda aç”.</span></li><li>Burada kitap kendiliğinden açılır.</li></ol></div>
+   <div class="lfc"><b>Ya da</b> PDF bu cihazda da varsa (Dosyalar'da) şimdi seç:<input type="file" id="dkMF" accept="application/pdf,.pdf"><span class="hint" id="dkMM"></span></div>
+   ${drive?'':'<span class="hint">Not: Tüm cihazlarda açmak için Ayarlar → Google Drive\'a bağlanman gerekir.</span>'}`);
+  $('dkMF').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;$('dkMM').textContent='Ekleniyor…';try{await LOCAL.assets.putId(b.assetId,new Blob([await f.arrayBuffer()],{type:'application/pdf'}));msClose();toast('PDF bu cihaza eklendi ✓');openReader(b)}catch(x){$('dkMM').textContent='Eklenemedi'}})}
+function dkShareBar(b){const old=$('dkShareBar');if(old)old.remove();if(!dkHere(b)||typeof GAUTH==='undefined'||!GAUTH.configured())return;try{if(localStorage.getItem('dk-share-no-'+b.id))return}catch(e){}
+  const d=document.createElement('div');d.id='dkShareBar';d.className='dk-share';d.innerHTML=`<span>☁️ Bu kitap şu an sadece bu cihazda. iPad'inde ve telefonunda da açılsın mı?</span><button class="btn primary" type="button" id="dkSY">Tüm cihazlarda aç</button><button class="btn" type="button" id="dkSN">Şimdi değil</button>`;
+  document.body.appendChild(d);$('dkSN').onclick=()=>{try{localStorage.setItem('dk-share-no-'+b.id,'1')}catch(e){}d.remove()};
+  $('dkSY').onclick=async()=>{const y=$('dkSY');y.disabled=true;try{await dkShareBook(b,m=>{y.textContent=m});d.innerHTML='<span>✓ Artık tüm cihazlarında açılır.</span>';setTimeout(()=>d.remove(),2500)}catch(e){y.disabled=false;y.textContent='Tekrar dene';toast((e&&e.ui)||'Olmadı')}}}
+async function dkShareAll(btn){const L=st.books.filter(dkHere);if(!L.length){toast('Tüm kitapların zaten her cihazda açılıyor 👏');return}
+  const mb=L.reduce((a,b)=>a+(+b.fileSize||0),0)/1048576;if(!btn.dataset.sure){btn.dataset.sure=1;btn.textContent=`${L.length} kitap · ~${mb.toFixed(0)} MB yüklenecek — başlat`;return}
+  btn.disabled=true;let n=0;for(const b of L){btn.textContent=`Yükleniyor ${n+1}/${L.length}: ${b.title.slice(0,24)}…`;try{await dkShareBook(b);n++}catch(e){toast((e&&e.ui)||'Bir kitap yüklenemedi');if(e&&/Drive bağlantısı/.test(e.ui||''))break}}
+  btn.textContent=`✓ ${n} kitap artık tüm cihazlarda`;btn.disabled=false}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-dk="shareall"]');if(b)dkShareAll(b)});
+/* sürüm kontrolü */
+async function dkVerCheck(){if(typeof LOCAL==='undefined'||DK_VER.startsWith('__'))return;try{const t=await (await fetch('sw.js?'+Date.now(),{cache:'no-store'})).text();const m=/kutuphane-(v\d+)/.exec(t);if(m&&m[1]!==DK_VER&&!$('dkVer')){const d=document.createElement('button');d.id='dkVer';d.type='button';d.className='dk-ver';d.textContent='✨ Yeni sürüm hazır — dokun, yenilensin';
+  d.onclick=async()=>{d.textContent='Yenileniyor…';try{const r=await navigator.serviceWorker.getRegistration();if(r)await r.update()}catch(x){}try{const ks=await caches.keys();await Promise.all(ks.filter(k=>k.startsWith('kutuphane-')).map(k=>caches.delete(k)))}catch(x){}location.reload()};document.body.appendChild(d)}}catch(e){}}
+setTimeout(dkVerCheck,3000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)dkVerCheck()});setInterval(dkVerCheck,10*60000);
+
 const SECS={
   home:{t:'Ana sayfa',tabs:[]},
   life:{t:'Hayatım',tabs:[['today','☀️ Bugün'],['week','📆 Haftam'],['cal','🗓 Takvim'],['tasks','✅ Görevler'],['habits','🔁 Alışkanlıklar'],['mood','🌿 Günlük'],['calm','🫧 Sakinleş & destek'],['goals','🎯 Hedefler'],['money','💰 Bütçe'],['lists','📋 Listeler'],['food','🍲 Yemek'],['days','🎂 Önemli günler'],['year','✨ Yılım']]},
@@ -4982,7 +5023,7 @@ async function pdfLib(){
 }
 function rMsg(html){$('rStage').innerHTML=`<div class="rmsg">${html}</div>`}
 async function openReader(b){
-  if(!hasFile(b))return;
+  if(!hasFile(b))return;if(dkLocalOnly(b)&&!LOCAL.has(b.assetId)){dkMissingDlg(b);return}setTimeout(()=>{if(R.book&&R.book.id===b.id&&!$('reader').hidden)dkShareBar(b)},1800);
   Object.assign(R,{book:b,doc:null,epub:null,page:Math.max(1,b.currentPage||1),lastSaved:b.currentPage||0,pos:b.epubPos||0,lastPos:b.epubPos||0});
   $('rPageLbl').textContent=b.fileType==='epub'?'Bölüm':'Sayfa';$('rInkBtn').hidden=b.fileType==='epub';$('rSum').hidden=!(st.sample&&b.fileType!=='epub'&&(b.kind==='makale'||b.kind==='pdf'));$('rCards').hidden=!(st.sample&&b.fileType!=='epub'&&b.kind!=='roman');$('ttsBar').hidden=true;$('ttsBar').dataset.open='0';$('inkBar').hidden=true;
   try{const z=parseFloat(localStorage.getItem('dk-zoom'));if(z)R.scale=z}catch(e){}
@@ -5131,7 +5172,7 @@ async function saveMark(force){
   try{await st.db.collection('books').doc(b.id).update(upd);R.lastSaved=page;logReading(page>prevSaved?page-prevSaved:0,b);if(R.book===b)$('rSaved').textContent='🔖 Ayraç '+(R.epub?'bölüm ':'s. ')+page+' kaydedildi'}
   catch(e){if(R.book===b)$('rSaved').textContent='Ayraç kaydedilemedi'}
 }
-async function closeReader(){await saveMark();if(typeof ttsStop==='function')ttsStop();$('ttsBar').hidden=true;$('ttsBar').dataset.open='0';$('inkBar').hidden=true;INK.canvas=null;INK.key='';if(R.epub){Object.values(R.epub.urls).forEach(u=>URL.revokeObjectURL(u))}R.book=null;R.doc=null;R.epub=null;R.firstEpub=null;SCR.key='';SCR.io&&SCR.io.disconnect();$('rStage').classList.remove('scrollflow');$('reader').classList.remove('bars-off');$('reader').hidden=true;document.body.style.overflow='';$('rStage').innerHTML='';renderSection()}
+async function closeReader(){{const sb=document.getElementById('dkShareBar');if(sb)sb.remove()}await saveMark();if(typeof ttsStop==='function')ttsStop();$('ttsBar').hidden=true;$('ttsBar').dataset.open='0';$('inkBar').hidden=true;INK.canvas=null;INK.key='';if(R.epub){Object.values(R.epub.urls).forEach(u=>URL.revokeObjectURL(u))}R.book=null;R.doc=null;R.epub=null;R.firstEpub=null;SCR.key='';SCR.io&&SCR.io.disconnect();$('rStage').classList.remove('scrollflow');$('reader').classList.remove('bars-off');$('reader').hidden=true;document.body.style.overflow='';$('rStage').innerHTML='';renderSection()}
 $('rPrev').addEventListener('click',()=>goPage(R.page-1));
 $('rNext').addEventListener('click',()=>goPage(R.page+1));
 $('rPage').addEventListener('change',e=>goPage(parseInt(e.target.value)||1));
