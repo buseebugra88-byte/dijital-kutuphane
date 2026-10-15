@@ -760,6 +760,8 @@ body.nb-open .qc-fab,body.nb-open .gs-btn,body:has(#reader:not([hidden])) .qc-fa
 
 .dk-share{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 70px);z-index:70;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:min(680px,calc(100vw - 24px));background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:10px 14px;box-shadow:0 14px 30px -12px rgba(0,0,0,.4);font-size:14px}
 .dk-ver{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:50%;transform:translateX(-50%);z-index:96;border:0;border-radius:999px;background:var(--accent);color:#fff;font:inherit;font-size:14px;font-weight:600;padding:10px 18px;box-shadow:0 10px 24px -10px rgba(0,0,0,.5);cursor:pointer}
+
+#bulkIos[hidden]{display:none !important}
 </style>
 
 </head><body>
@@ -934,9 +936,10 @@ body.nb-open .qc-fab,body.nb-open .gs-btn,body:has(#reader:not([hidden])) .qc-fa
     <h2 id="bulkTitle">Klasörden toplu ekle</h2>
     <p class="hint" style="font-size:14px;margin:0">Kütüphane klasörünü seç. Alt klasör adları raf olur (ör. Distopya, Romantik), daha alttakiler seri etiketi olur. Ad ve yazar dosya adından, kapak ve sayfa sayısı PDF'in kendisinden alınır. Rafta zaten olan dosyalar atlanır, böylece klasöre yeni kitap ekledikçe tekrar seçebilirsin.</p>
     <div style="display:flex;flex-wrap:wrap;gap:8px">
-      <label class="btn" for="bulkDir">Klasör seç</label><input id="bulkDir" type="file" webkitdirectory multiple hidden>
+      <label class="btn" for="bulkDir" id="bulkDirBtn">Klasör seç</label><input id="bulkDir" type="file" webkitdirectory multiple hidden>
       <label class="btn" for="bulkFiles">Dosya seç</label><input id="bulkFiles" type="file" accept="application/pdf,.pdf,application/epub+zip,.epub" multiple hidden>
     </div>
+    <div class="bk-ban" id="bulkIos" hidden style="display:grid;gap:4px"><b>📱 iPhone ve iPad'de klasör seçilemiyor</b><span>Apple buna izin vermiyor; ama kitapları <b>toplu</b> seçebilirsin:</span><ol class="lf-ol" style="margin:0"><li><b>Kitapları seç</b>'e bas → <b>Gözat</b>.</li><li>Kitapların olduğu klasöre gir, sağ üstte <b>⋯ → Seç</b>'e dokun.</li><li>Kitapları işaretle (ya da hepsini) → <b>Aç</b>.</li></ol><span class="hint">Klasör adları raf olarak gelmez; eklendikten sonra rafını seçebilirsin. Klasörlerinle birlikte eklemek istersen Mac'ten “Klasör seç”i kullan ya da kitapları Drive'a koyup Ayarlar → Google Drive'dan tara.</span></div>
     <p class="hint" hidden style="margin:0;font-size:13px">Drive'da olup 6 MB'tan büyük olduğu için açılamayan kitaplar, burada seçersen <b>uygulamaya taşınır</b>; kayıtları, rafları ve ayraçları aynı kalır.</p>
     <div class="f" id="bulkDestBox" hidden><label>Büyük Drive kitaplarını nereye taşıyayım?</label><div class="seg" id="bulkDest"><button type="button" data-dest="drive" aria-pressed="true">☁️ Drive'a parça parça (sınırsız)</button><button type="button" data-dest="app" aria-pressed="false">📦 Uygulamanın deposuna</button></div><span class="hint" style="font-size:12px">Drive seçeneğinde kitap 3-4 MB'lık parçalara bölünüp Drive'ındaki "Kütüphanem · parçalar" klasörüne kaydedilir; okuyucu onları tek kitap gibi açar.</span></div>
     <label class="hint" style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" id="bulkSqueeze" checked> 8 MB'tan büyük taranmış PDF'leri eklerken otomatik sıkıştır</label>
@@ -4579,7 +4582,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v26';
+const DK_VER='v27';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -4615,6 +4618,9 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-dk="sharea
 async function dkVerCheck(){if(typeof LOCAL==='undefined'||DK_VER.startsWith('__'))return;try{const t=await (await fetch('sw.js?'+Date.now(),{cache:'no-store'})).text();const m=/kutuphane-(v\d+)/.exec(t);if(m&&m[1]!==DK_VER&&!$('dkVer')){const d=document.createElement('button');d.id='dkVer';d.type='button';d.className='dk-ver';d.textContent='✨ Yeni sürüm hazır — dokun, yenilensin';
   d.onclick=async()=>{d.textContent='Yenileniyor…';try{const r=await navigator.serviceWorker.getRegistration();if(r)await r.update()}catch(x){}try{const ks=await caches.keys();await Promise.all(ks.filter(k=>k.startsWith('kutuphane-')).map(k=>caches.delete(k)))}catch(x){}location.reload()};document.body.appendChild(d)}}catch(e){}}
 setTimeout(dkVerCheck,3000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)dkVerCheck()});setInterval(dkVerCheck,10*60000);
+
+/* iOS: klasör seçici yok */
+(function(){const ios=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);if(!ios)return;const b=$('bulkDirBtn'),h=$('bulkIos');if(b)b.hidden=true;if(h)h.hidden=false;const f=$('bulkFiles');if(f){const l=document.querySelector('label[for="bulkFiles"]');if(l)l.textContent='📂 Kitapları seç (birden fazla)'}})();
 
 const SECS={
   home:{t:'Ana sayfa',tabs:[]},
