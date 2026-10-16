@@ -889,6 +889,17 @@ body.sec-notes{background-image:none!important}
 .nbc-star{position:absolute;top:8px;right:8px;font-size:14px;z-index:2}
 
 .nbt-stab{display:inline-flex;align-items:center;gap:2px;background:color-mix(in srgb,var(--ink) 6%,transparent);border-radius:999px;padding:2px 2px 2px 10px;flex:none}.nbt-stab .hint{font-size:12px;margin-right:4px}.nbt-stab button{border:0;background:none;border-radius:999px;padding:6px 10px;font:inherit;font-size:12.5px;color:var(--ink);cursor:pointer}.nbt-stab button[aria-pressed="true"]{background:var(--paper);box-shadow:0 0 0 1.5px var(--ink)}
+
+.fm-free .fm-fl{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin-top:8px}
+.fm-fl a{display:grid;gap:2px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink);background:var(--paper)}.fm-fl a:hover{border-color:var(--accent)}
+.fm-hh{display:grid;gap:2px}.fm-cats{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 6px}.fm-hv{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.fm-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.fm-c{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:6px;background:var(--paper);align-content:start}.fm-c p{margin:0;font-size:13.5px;line-height:1.5}
+.fm-a{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.fm-l{font-size:12.5px;padding:5px 9px;border:1px solid var(--line);border-radius:999px;text-decoration:none;color:var(--ink)}.fm-l:hover{border-color:var(--accent)}
+.fm-a .btn{min-height:30px;padding:0 10px;font-size:13px}.pill.fm-w{background:#f8e1dd;color:#9b3b2e}
+.fm-list{display:grid;gap:8px;margin-top:8px}.fm-r{border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:6px}.fm-rt{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.fm-st{margin-left:auto;display:inline-flex}.fm-s{border:0;background:none;font-size:20px;color:color-mix(in srgb,var(--muted) 50%,transparent);cursor:pointer;padding:0 1px}.fm-s.on{color:#e0a43a}
+:root:not(#_) textarea.fm-n{min-height:54px!important}
 </style>
 
 </head><body>
@@ -3064,14 +3075,14 @@ async function saveFile(name,data){
   try{const dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;if(!dl){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toast('Dosya indirildi');return}await dl.save({filename:name,data});toast('Dosya kaydedildi')}
   catch(e){toast(e&&e.code==='declined'?'İndirme iptal edildi':e&&e.code==='rate_limited'?'Biraz bekleyip tekrar dene':'Bu görünümde dosya indirilemiyor')}}
 async function backupData(){const get=async col=>{try{const s_=await st.db.collection(col).get();return s_.docs.map(d=>({id:d.id,...d.data()}))}catch(e){return []}};
-  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),nfolders:await get('nfolders'),nbooks:await get('nbooks'),npages:await get('npages'),cal:await get('cal'),tasks:await get('tasks'),moods:await get('moods'),habits:await get('habits'),money:await get('money'),lists:await get('lists'),recipes:await get('recipes'),goals:await get('goals'),lifecfg:await get('lifecfg'),weeks:await get('weeks'),worries:await get('worries'),mems:await get('mems'),chtrash:await get('chtrash'),
+  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),nfolders:await get('nfolders'),nbooks:await get('nbooks'),npages:await get('npages'),cal:await get('cal'),tasks:await get('tasks'),moods:await get('moods'),habits:await get('habits'),money:await get('money'),lists:await get('lists'),recipes:await get('recipes'),goals:await get('goals'),lifecfg:await get('lifecfg'),weeks:await get('weeks'),worries:await get('worries'),mems:await get('mems'),films:await get('films'),chtrash:await get('chtrash'),
     settings:{ui:UI,thesis:TL.thesis,writing:TL.writing,log:st.log,bingo:TL.bingo,journal:TL.journal,widgets:TL.widgets,stickers:{items:STK.items,emblem:STK.emblem}}}}
 function csvBooks(){const H=['Başlık','Yazar','Tür','Raf','Etiketler','Durum','Sayfa','Kaldığı sayfa','Bitirme','Puan','Yıl','Dergi','DOI','Dosya'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   return '﻿'+[H.map(q).join(','),...st.books.map(b=>[b.title,b.author,{kitap:'Kitap',pdf:'PDF',roman:'Romanım',makale:'Makale'}[b.kind]||b.kind,b.shelf,(b.tags||[]).join('; '),STATUS_LABEL[b.status]||b.status,b.pages||'',b.currentPage||'',b.finishedAt||'',b.rating||'',b.year||'',b.journal||'',b.doi||'',b.fileName||''].map(q).join(','))].join('\r\n')}
 async function restore(file,quiet){const m=$('bkMsg')||{textContent:''};try{const d=JSON.parse(await file.text());if(!d||d.app!=='Dijital Kütüphanem')throw 0;let n=0;
   if(d.blobs&&typeof LOCAL!=='undefined'){const ids=Object.keys(d.blobs);let k=0;for(const id of ids){if(!LOCAL.has(id)){const x=d.blobs[id];try{await LOCAL.assets.putId(id,new Blob([b64dec(x.b64)],{type:x.type||'image/jpeg'}))}catch(e){}}if(++k%20===0)m.textContent='Görseller: '+k+'/'+ids.length}}
-  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages],['cal',d.cal],['tasks',d.tasks],['moods',d.moods],['habits',d.habits],['money',d.money],['lists',d.lists],['recipes',d.recipes],['goals',d.goals],['lifecfg',d.lifecfg],['weeks',d.weeks],['worries',d.worries],['mems',d.mems],['chtrash',d.chtrash]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
+  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages],['cal',d.cal],['tasks',d.tasks],['moods',d.moods],['habits',d.habits],['money',d.money],['lists',d.lists],['recipes',d.recipes],['goals',d.goals],['lifecfg',d.lifecfg],['weeks',d.weeks],['worries',d.worries],['mems',d.mems],['films',d.films],['chtrash',d.chtrash]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
   if(d.settings){if(d.settings.thesis)await st.db.doc('settings/thesis').set(d.settings.thesis);if(d.settings.writing)await st.db.doc('settings/writing').set(d.settings.writing);if(d.settings.log)await st.db.doc('settings/log').set(d.settings.log);if(d.settings.bingo)await st.db.doc('settings/bingo').set(d.settings.bingo);if(d.settings.journal)await st.db.doc('settings/journal').set(d.settings.journal);if(d.settings.widgets)await st.db.doc('settings/widgets').set(d.settings.widgets);if(d.settings.stickers&&Array.isArray(d.settings.stickers.items)){const it=d.settings.stickers.items.filter(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(it.length||!STK.items.length)await st.db.doc('settings/stickers').set({items:it,emblem:it.some(x=>x.id===d.settings.stickers.emblem)?d.settings.stickers.emblem:'',updatedAt:new Date().toISOString()})}if(d.settings.ui){const u={...d.settings.ui};const hasStk=d.settings.stickers&&(d.settings.stickers.items||[]).some(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(u.art==='custom'&&!hasStk)u.art='fairy';setUI(u)}}
   m.textContent=`Geri yükleme tamam: ${n} kayıt.`+(typeof LOCAL!=='undefined'?' Şimdi Ayarlar → Klasörden ekle ile kitap klasörünü seç; dosyalar kayıtlarına kendiliğinden bağlanır.':'')}catch(e){m.textContent='Bu dosya bir Dijital Kütüphanem yedeği gibi görünmüyor.';if(quiet)throw e}}
 /* Drive ile otomatik eşitleme: açılışta/girişte Drive'daki daha yeni yedeği alır, değişiklikleri Drive'a yazar */
@@ -4082,7 +4093,7 @@ async function kyAuto(){if(KY.auto||KY.busy||!st.db||!navigator.onLine)return;co
 
 /* ===================== 🌿 Hayatım ===================== */
 const LF={cal:[],tasks:[],moods:[],habits:[],money:[],lists:[],recipes:[],goals:[],cfg:{},mon:null,sel:null,tv:'today',lsel:null,mm:null,rsel:null,breath:null,focus:null};
-const LFC=['cal','tasks','moods','habits','money','lists','recipes','goals','lifecfg','weeks','worries','mems'];LF.weeks=[];LF.worries=[];LF.mems=[];
+const LFC=['cal','tasks','moods','habits','money','lists','recipes','goals','lifecfg','weeks','worries','mems','films'];LF.weeks=[];LF.worries=[];LF.mems=[];LF.films=[];
 const lfK=(d=new Date())=>todayKey(d);
 const lfD=k=>new Date(k+'T12:00:00');
 const lfAdd=(k,n)=>{const d=lfD(k);d.setDate(d.getDate()+n);return lfK(d)};
@@ -4111,7 +4122,7 @@ function lfItems(k){const out=[];
   return out.sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'))}
 
 /* ---- render ---- */
-function lfRender(){const host=$('secHost');if(!host||st.sec!=='life')return;const sub=curSub();const f={week:lfWeekView,today:lfToday,cal:lfCal,tasks:lfTasks,habits:lfHabits,mood:lfMood,calm:lfCalm,goals:lfGoals,money:lfMoney,lists:lfLists,food:lfFood,days:lfDays,mem:lfMem,year:lfYear}[sub]||lfToday;
+function lfRender(){const host=$('secHost');if(!host||st.sec!=='life')return;const sub=curSub();const f={week:lfWeekView,today:lfToday,cal:lfCal,tasks:lfTasks,habits:lfHabits,mood:lfMood,calm:lfCalm,goals:lfGoals,money:lfMoney,lists:lfLists,food:lfFood,days:lfDays,mem:lfMem,film:lfFilm,year:lfYear}[sub]||lfToday;
   host.innerHTML=`<div class="lf lf-${sub}">${f()}</div>`;if(LF.focus){const e=$(LF.focus);if(e)e.focus();LF.focus=null}}
 const lfFaces=['','😞','😕','😐','🙂','😄'],lfFaceC=['','#8fa3c7','#a8b8d8','#e2d6b8','#a8d5a2','#6fc28b'];
 function lfTodayBox(compact){const k=lfK(),items=lfItems(k),T=lfTaskList('today').slice(0,compact?5:20),H=LF.habits.filter(h=>!h.off),md=LF.moods.find(m=>m.id===k);
@@ -4815,7 +4826,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v41';
+const DK_VER='v42';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -5186,9 +5197,99 @@ function nbStabEnd(S,c){const lv=nbStab();if(!lv)return;const p=S.pts;
 document.addEventListener('click',e=>{const b=e.target.closest('[data-nstab]');if(!b)return;e.preventDefault();e.stopPropagation();try{localStorage.setItem('dk-stab',b.dataset.nstab)}catch(x){}
   b.parentNode.querySelectorAll('[data-nstab]').forEach(x=>x.setAttribute('aria-pressed',x===b));toast(['Sabitleme kapalı','Sabitleme: az','Sabitleme: orta','Sabitleme: çok'][+b.dataset.nstab])},true);
 
+/* ===================== 🎬 Film köşesi ===================== */
+const FILM_CAT=[['psy','🧩 Psikolojik gerilim & hafıza'],['rom','💞 Yavaş yanan romantizm'],['mus','🎻 Müzik & dans'],['neu','🧠 Beyin & zihin'],['dys','🌒 Distopya & bilim kurgu'],['aca','📚 Karanlık akademi'],['tr','🇹🇷 Türk sineması'],['old','🏛 Ücretsiz klasikler']];
+const FILM_REC=[
+['Memento',2000,'psy','Kısa süreli hafızası olmayan bir adam, notlarla ve dövmelerle kendi geçmişinin izini sürüyor. Hafıza ve güven sorusu Kör Labirent\'e çok yakın.'],
+['Eternal Sunshine of the Spotless Mind',2004,'psy','Bir ilişkinin anıları birer birer siliniyor. Silinen anılar ve yeniden seçilen sevgi.'],
+['Shutter Island',2010,'psy','Bir adada kayıp bir hastayı arayan dedektif; gerçek ile zihin arasındaki çizgi giderek kayboluyor.','agir'],
+['Inception',2010,'psy','Rüyaların içinde katman katman kurulmuş bir soygun; zihnin mimarisi üzerine.'],
+['The Prestige',2006,'psy','İki sihirbazın takıntılı rekabeti; sonuna kadar saklanan bir sır.'],
+['Gone Girl',2014,'psy','Kaybolan bir kadın ve güvenilmez anlatıcılar; okurla oynayan bir kurgu.','agir'],
+['Prisoners',2013,'psy','Kaybolan iki çocuk ve sınırları zorlanan bir baba; karanlık ve ağır bir polisiye.','agir'],
+['Zodiac',2007,'psy','Gerçek bir seri katil davasını yıllarca takıntıyla kovalayan insanlar; ipuçları ve belirsizlik.'],
+['The Silence of the Lambs',1991,'psy','Genç bir FBI ajanı ile zeki bir mahkûm arasındaki zihin oyunu.','agir'],
+['Enemy',2013,'psy','Kendisine birebir benzeyen bir adamı keşfeden öğretmen; tedirgin edici, düşündüren bir film.'],
+['Coherence',2013,'psy','Bir akşam yemeği, bir kuyruklu yıldız ve kendi kopyalarıyla karşılaşan arkadaşlar. Az bütçeyle kurulmuş zekice bir bulmaca.'],
+['Pride & Prejudice',2005,'rom','Austen uyarlaması; bakışlar ve söylenmeyen cümlelerle ilerleyen klasik bir yavaş yanma.','sakin'],
+['Before Sunrise',1995,'rom','Trende tanışan iki yabancı, Viyana\'da tek bir gece boyunca yürüyüp konuşuyor.','sakin'],
+['Past Lives',2023,'rom','Çocukluk aşkı, göç ve hiç yaşanmamış hayatlar; sessiz ve derin.','sakin'],
+['Portrait of a Lady on Fire',2019,'rom','Bir ressam ve resmini yaptığı kadın; bakışın kendisinin aşka dönüştüğü bir film.'],
+['Atonement',2007,'rom','Bir yanlış anlamanın iki hayatı değiştirmesi; savaş, suçluluk ve yazarlık.'],
+['About Time',2013,'rom','Zamanda yolculuk yapabilen bir adamın aşkı ve ailesi; sıcak ve hüzünlü.','sakin'],
+['Silver Linings Playbook',2012,'rom','Ruh sağlığıyla mücadele eden iki insan bir dans yarışmasına hazırlanıyor.'],
+['Normal People',2020,'rom','Sally Rooney uyarlaması dizi; iki gencin yıllara yayılan, sessiz ve gerçekçi ilişkisi.'],
+['Whiplash',2014,'mus','Genç bir davulcu ve acımasız hocası; mükemmeliyetçiliğin bedeli.'],
+['La La Land',2016,'mus','Bir caz piyanisti ve bir oyuncu adayı; hayaller ile aşk arasında seçim.'],
+['Begin Again',2013,'mus','New York sokaklarında kaydedilen bir albüm ve yeniden başlayan iki hayat.','sakin'],
+['Once',2007,'mus','Dublin\'de bir sokak müzisyeni ile bir piyanist; şarkılarla kurulan bağ.','sakin'],
+['Black Swan',2010,'mus','Kuğu Gölü\'nde baş rolü alan bir balerinin zihni çözülüyor. Rhys ve Rosalie\'nin dünyasının karanlık yüzü.','agir'],
+['Billy Elliot',2000,'mus','Maden kasabasında baleye tutulan bir çocuk; cesaret ve aile.','sakin'],
+['Dirty Dancing',1987,'mus','Bir yaz tatilinde dans dersleriyle başlayan aşk; partnere güvenmek üzerine.','sakin'],
+['Pina',2011,'mus','Wim Wenders\'ın koreograf Pina Bausch için çektiği dans belgeseli.','sakin'],
+['Awakenings',1990,'neu','Oliver Sacks\'ın gerçek vakalarından: yıllarca donuk kalan hastaların yeni bir ilaçla uyanışı.'],
+['The Diving Bell and the Butterfly',2007,'neu','Felç sonrası yalnızca göz kapağını oynatabilen bir editörün gerçek hikâyesi; kitabını göz kırparak yazdırıyor.'],
+['Still Alice',2014,'neu','Erken başlangıçlı Alzheimer tanısı alan bir dilbilim profesörü.'],
+['A Beautiful Mind',2001,'neu','Matematikçi John Nash\'in hayatından esinlenen, zihin ve gerçeklik üzerine bir film.'],
+['The Theory of Everything',2014,'neu','Stephen Hawking ve Jane Hawking\'in hikâyesi; ALS ile geçen bir hayat.'],
+['Inside Out',2015,'neu','Bir çocuğun zihnindeki duygular; anıların nasıl oluştuğuna dair tatlı bir anlatım.','sakin'],
+['Rain Man',1988,'neu','Olağanüstü hafızaya sahip otistik bir adam ve kardeşinin yol hikâyesi.'],
+['My Octopus Teacher',2020,'neu','Bir dalgıç ile bir ahtapotun bir yıllık dostluğu; omurgasız bir beynin zekâsı.','sakin'],
+['Gattaca',1997,'dys','Genlerin geleceği belirlediği bir dünyada kimliğini saklayan bir adam.'],
+['Never Let Me Go',2010,'dys','Kazuo Ishiguro uyarlaması; bir yatılı okulun sakladığı korkunç bir gerçek.'],
+['Ex Machina',2014,'dys','Bir yapay zekâ ile yapılan test; kim kimi test ediyor?'],
+['Arrival',2016,'dys','Dilbilimci bir kadın uzaylılarla iletişim kurmaya çalışırken zamanı başka türlü algılamaya başlıyor.'],
+['The Lobster',2015,'dys','Yalnızların hayvana dönüştürüldüğü tuhaf bir distopya; kara mizah.'],
+['Her',2013,'rom','Bir adamın işletim sistemine âşık oluşu; yalnızlık ve bağ.','sakin'],
+['Dead Poets Society',1989,'aca','Katı bir okulda öğrencilerine şiiri ve kendisi olmayı öğreten bir öğretmen.'],
+['Kill Your Darlings',2013,'aca','Genç Allen Ginsberg ve Columbia\'da bir cinayet; edebiyat ve tutku.'],
+['Bir Zamanlar Anadolu\'da',2011,'tr','Bir gece boyunca bozkırda ceset arayan bir ekip; Nuri Bilge Ceylan\'ın yavaş polisiyesi.'],
+['Kış Uykusu',2014,'tr','Kapadokya\'da bir otel sahibi ve çevresindekiler; uzun, derin konuşmalar. Cannes\'da Altın Palmiye.'],
+['Babam ve Oğlum',2005,'tr','Bir baba ile oğulun kırgınlığı ve köydeki aile; çok duygusal.'],
+['Ayla',2017,'tr','Kore Savaşı\'nda bir Türk askerinin bulduğu küçük kız; gerçek bir hikâyeden.'],
+['Mustang',2015,'tr','Karadeniz\'de beş kız kardeşin özgürlük arayışı.'],
+['Kurak Günler',2022,'tr','Küçük bir kasabaya atanan genç savcı ve yozlaşmış bir düzen; gerilimli bir dram.'],
+['Metropolis',1927,'old','Fritz Lang\'ın sessiz bilim kurgu başyapıtı; distopyanın atası.','arsiv'],
+['Nosferatu',1922,'old','Sessiz sinemanın ünlü vampir filmi; gölgelerle kurulmuş bir korku.','arsiv'],
+['The Kid',1921,'old','Chaplin ve sokakta bulduğu çocuk; komik ve dokunaklı.','arsiv sakin'],
+['The General',1926,'old','Buster Keaton\'ın tren takibi komedisi; sessiz sinemanın en iyilerinden.','arsiv sakin'],
+['His Girl Friday',1940,'old','Hızlı konuşan gazeteciler ve eski eşler; zekâ dolu bir romantik komedi.','arsiv sakin'],
+['Charade',1963,'old','Audrey Hepburn ve Cary Grant; Paris\'te gizem ve romantizm.','arsiv sakin'],
+];
+const FILM_FREE=[['tabii','https://www.tabii.com','TRT\'nin ücretsiz platformu'],['TRT İzle','https://www.trtizle.com','Türk filmleri, diziler'],['Internet Archive','https://archive.org/details/feature_films','Telif süresi dolmuş klasikler'],['YouTube','https://www.youtube.com/results?search_query=full+movie+official','Yapımcıların yasal yüklemeleri']];
+const FM={cat:'psy',mood:'',rate:null};
+function fmQ(t,y){return encodeURIComponent(t+' '+y)}
+function fmLinks(t,y,arch){return `<a class="fm-l" href="https://www.google.com/search?q=${fmQ(t,y)}%20izle%20nerede" target="_blank" rel="noopener">🔎 Nerede izlerim?</a><a class="fm-l" href="https://www.youtube.com/results?search_query=${fmQ(t,y)}%20trailer" target="_blank" rel="noopener">▶ Fragman</a>${arch?`<a class="fm-l" href="https://archive.org/search?query=${encodeURIComponent(t)}&and[]=mediatype%3A%22movies%22" target="_blank" rel="noopener">🏛 Ücretsiz izle</a>`:''}`}
+function fmHave(t){return (LF.films||[]).find(f=>trLow(f.title)===trLow(t))}
+function lfFilm(){const F=LF.films||[],W=F.filter(f=>f.st!=='done').sort((a,b)=>(b.at||'').localeCompare(a.at||'')),D=F.filter(f=>f.st==='done').sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  let R=FILM_REC.filter(r=>!fmHave(r[0]));if(FM.mood==='sakin')R=R.filter(r=>/sakin/.test(r[4]||''));else R=R.filter(r=>r[2]===FM.cat);if(FM.mood!=='sakin'&&FM.cat!=='old'&&FM.hideHeavy)R=R.filter(r=>!/agir/.test(r[4]||''));
+  const star=(n,id)=>[1,2,3,4,5].map(i=>`<button type="button" class="fm-s${i<=(n||0)?' on':''}" data-film="rate" data-id="${id}" data-v="${i}" aria-label="${i} yıldız">★</button>`).join('');
+  return `<div class="lf-hd"><h2>🎬 Film köşesi</h2></div>
+  <div class="lfc fm-free"><b>Yasal ve ücretsiz izleyebileceğin yerler</b><div class="fm-fl">${FILM_FREE.map(([n,u,d])=>`<a href="${u}" target="_blank" rel="noopener"><b>${n}</b><span class="hint">${d}</span></a>`).join('')}</div></div>
+  <div class="lfc"><div class="fm-hh"><h4>✨ Sana göre öneriler</h4><span class="hint">Okuduğun ve yazdığın türlere göre seçtim: psikolojik gerilim, yavaş yanan aşk, müzik ve dans, beyin.</span></div>
+   <div class="fm-cats">${FILM_CAT.map(([k,l])=>`<button type="button" class="chip" data-film="cat" data-v="${k}" aria-pressed="${!FM.mood&&FM.cat===k}">${l}</button>`).join('')}<button type="button" class="chip" data-film="mood" data-v="sakin" aria-pressed="${FM.mood==='sakin'}">🫧 Sakin bir akşam için</button></div>
+   <label class="hint fm-hv"><input type="checkbox" data-film="heavy" ${FM.hideHeavy?'checked':''}> Ağır / gergin filmleri gizle</label>
+   <div class="fm-g">${R.map(r=>`<div class="fm-c"><div class="fm-t"><b>${esc(r[0])}</b> <span class="hint">${r[1]}</span>${/agir/.test(r[4]||'')?' <span class="pill fm-w">ağır</span>':''}${/sakin/.test(r[4]||'')?' <span class="pill">sakin</span>':''}</div><p>${esc(r[3])}</p><div class="fm-a">${fmLinks(r[0],r[1],/arsiv/.test(r[4]||''))}<button type="button" class="btn" data-film="add" data-t="${esc(r[0])}" data-y="${r[1]}">＋ Listeme</button></div></div>`).join('')||'<span class="hint">Bu gruptakilerin hepsini listene eklemişsin 🎉</span>'}</div></div>
+  <div class="lfc"><h4>📋 İzleyeceklerim (${W.length})</h4>
+   <div class="lf-row"><input id="fmT" placeholder="Film ya da dizi adı" style="flex:1;min-width:160px"><input id="fmY" placeholder="Yıl" inputmode="numeric" style="width:90px"><button class="btn primary" type="button" data-film="addown">Ekle</button></div>
+   <div class="fm-list">${W.map(f=>`<div class="fm-r"><div class="fm-rt"><b>${esc(f.title)}</b> <span class="hint">${esc(f.year||'')}</span></div><div class="fm-a">${fmLinks(f.title,f.year||'')}<button type="button" class="btn primary" data-film="done" data-id="${f.id}">✓ İzledim</button><button type="button" class="lf-x" data-film="del" data-id="${f.id}" aria-label="Sil">×</button></div></div>`).join('')||'<span class="hint">Önerilerden “＋ Listeme” de, ya da kendin ekle.</span>'}</div></div>
+  <div class="lfc"><h4>✅ İzlediklerim (${D.length})</h4><div class="fm-list">${D.map(f=>`<div class="fm-r"><div class="fm-rt"><b>${esc(f.title)}</b> <span class="hint">${esc(f.year||'')}${f.date?' · '+esc(fmtTR(f.date)):''}</span><span class="fm-st">${star(f.rate,f.id)}</span></div>
+     <textarea class="fm-n" data-film-note="${f.id}" rows="2" placeholder="Kısa notun, sevdiğin sahne, kiminle izledin…">${esc(f.note||'')}</textarea><div class="fm-a"><button type="button" class="btn" data-film="idea" data-id="${f.id}">💡 Fikir defterine gönder</button><button type="button" class="lf-x" data-film="del" data-id="${f.id}" aria-label="Sil">×</button></div></div>`).join('')||'<span class="hint">İzlediklerin burada birikir; puanlayıp not alabilirsin.</span>'}</div></div>`}
+async function fmAdd(t,y,src){if(!t)return;if(fmHave(t)){toast('Zaten listende');return}await st.db.collection('films').doc().set({title:t,year:y?String(y):'',st:'want',src:src||'me',at:new Date().toISOString()});toast('“'+t+'” izleyeceklerine eklendi 🎬')}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-film]');if(!b)return;const k=b.dataset.film,id=b.dataset.id;if(k==='heavy')return;
+  if(k==='cat'){FM.cat=b.dataset.v;FM.mood='';return lfRender()}if(k==='mood'){FM.mood=FM.mood?'':'sakin';return lfRender()}
+  if(k==='add')return fmAdd(b.dataset.t,b.dataset.y,'oneri');
+  if(k==='addown'){const t=$('fmT').value.trim();if(!t){toast('Film adını yaz');return}await fmAdd(t,$('fmY').value.trim());return}
+  if(k==='done'){await lfUpd('films',id,{st:'done',date:todayKey()});toast('İzlediklerine taşındı — puan verebilirsin');return}
+  if(k==='rate'){await lfUpd('films',id,{rate:+b.dataset.v});return}
+  if(k==='del'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Sil?';return}await lfDel('films',id);return}
+  if(k==='idea'){const f=(LF.films||[]).find(x=>x.id===id);if(!f)return;try{await st.db.collection('ideas').doc().set({text:`🎬 ${f.title}${f.year?' ('+f.year+')':''}${f.note?' — '+f.note:''}`,raw:f.note||'',tags:['film'],novel:'',at:new Date().toISOString()});toast('Fikir defterine eklendi 💡')}catch(x){toast('Eklenemedi')}}});
+document.addEventListener('change',e=>{const t=e.target;if(t.dataset&&t.dataset.film==='heavy'){FM.hideHeavy=t.checked;lfRender()}if(t.dataset&&t.dataset.filmNote){lfUpd('films',t.dataset.filmNote,{note:t.value})}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.target.id==='fmT'||e.target.id==='fmY')){e.preventDefault();const b=document.querySelector('[data-film="addown"]');b&&b.click()}});
+
 const SECS={
   home:{t:'Ana sayfa',tabs:[]},
-  life:{t:'Hayatım',tabs:[['today','☀️ Bugün'],['week','📆 Haftam'],['cal','🗓 Takvim'],['tasks','✅ Görevler'],['habits','🔁 Alışkanlıklar'],['mood','🌿 Günlük'],['calm','🫧 Sakinleş & destek'],['goals','🎯 Hedefler'],['money','💰 Bütçe'],['lists','📋 Listeler'],['food','🍲 Yemek'],['days','🎂 Önemli günler'],['mem','🗃 Anı kutusu'],['year','✨ Yılım']]},
+  life:{t:'Hayatım',tabs:[['today','☀️ Bugün'],['week','📆 Haftam'],['cal','🗓 Takvim'],['tasks','✅ Görevler'],['habits','🔁 Alışkanlıklar'],['mood','🌿 Günlük'],['calm','🫧 Sakinleş & destek'],['goals','🎯 Hedefler'],['money','💰 Bütçe'],['lists','📋 Listeler'],['food','🍲 Yemek'],['days','🎂 Önemli günler'],['mem','🗃 Anı kutusu'],['film','🎬 Filmler'],['year','✨ Yılım']]},
   library:{t:'Kütüphanem',tabs:[]},
   academic:{t:'Akademik',tabs:[['makale','📄 Makaleler'],['lit','📊 Literatür tablosu'],['thesis','🎓 Tez planlayıcı'],['cards','🃏 Çalışma kartları'],['kaynak','📑 Kaynakça'],['nb','📓 Defterlerim']]},
   notes:{t:'Defterlerim',tabs:[]},
