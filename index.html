@@ -916,6 +916,12 @@ body.sec-notes{background-image:none!important}
 .ai-t{display:grid;gap:8px}.ai-o{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;cursor:pointer}.ai-o span{display:grid;gap:2px}.ai-o input{margin-top:4px}.ai-o:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 8%,transparent)}
 
 .ci{display:grid;gap:12px}.ci-card{display:grid;gap:12px}.ci-cats{display:flex;flex-wrap:wrap;gap:6px}.ci-q h3{margin:6px 0 0;font:600 22px/1.35 var(--display)}.ci-tr{display:grid;gap:10px;margin-top:10px}.ci-r{position:relative;padding:10px 36px 10px 12px;border-left:3px solid var(--accent);background:var(--paper);border-radius:0 10px 10px 0}.ci-r p{margin:6px 0 0;line-height:1.6}.ci-r .lf-x{position:absolute;top:6px;right:6px}
+
+.ns{display:grid;gap:12px}.ns-a{display:grid;gap:10px}.ns-a h3{margin:2px 0 0;font:600 24px/1.3 var(--display)}.ns-a p{margin:0;line-height:1.7;font-size:15.5px}
+.ns-m{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.ns-b{background:color-mix(in srgb,var(--accent) 8%,var(--paper));border-radius:12px;padding:12px 14px;display:grid;gap:4px}.ns-p{background:color-mix(in srgb,#7fb3a6 14%,var(--paper))}
+.ns-r ol{margin:8px 0 0;padding-left:20px;font-size:13px;line-height:1.55;color:var(--muted)}
+.ns-l{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin-top:10px}.ns-li{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;text-align:left;border:1px solid var(--line);border-radius:12px;background:var(--paper);padding:10px 12px;cursor:pointer;font:inherit;color:var(--ink)}.ns-li span:first-child{grid-row:span 2;font-size:20px}.ns-li.on{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 25%,transparent)}
+.ns-home .ns-hc{display:grid;gap:6px;justify-items:start}.ns-hc p{margin:0;line-height:1.6}
 </style>
 
 </head><body>
@@ -4045,7 +4051,7 @@ function homeSimple(){document.body.classList.add('home-simple');
   return `<div class="hs">
    <section class="hs-hello"><div><div class="eyebrow">${esc(trDate(t))}</div><h2>${greet}${name?', '+esc(name):''}</h2></div><div class="hs-acts"><button class="btn primary" type="button" data-hs="add">＋ Yeni ekle</button><button class="btn" type="button" data-hs="idea">💡 Fikir</button></div></section>
    ${bkBanner()}${wkNudge()}
-   <section class="hs-today2"><h3 class="hs-h">☀️ Bugün <button class="lf-lnk" type="button" data-lf="go" data-v="today" style="font-size:13px;margin-left:6px">Hayatım →</button></h3>${lfTodayBox(true)}<div style="margin-top:12px">${expCard(true)}</div></section>
+   ${nsHomeCard()}<section class="hs-today2"><h3 class="hs-h">☀️ Bugün <button class="lf-lnk" type="button" data-lf="go" data-v="today" style="font-size:13px;margin-left:6px">Hayatım →</button></h3>${lfTodayBox(true)}<div style="margin-top:12px">${expCard(true)}</div></section>
    ${cards.length?`<section><h3 class="hs-h">Kaldığın yerler</h3><div class="hs-cont">${cards.join('')}</div></section>`:`<section class="hs-empty"><b>Hoş geldin 🌿</b><span class="hint">Bir kitap ekleyerek ya da Defterlerim'den bir defter açarak başla.</span></section>`}
    <section class="hs-today"><div class="hs-g"><span>📖 Bugün okuma</span><b>${pg} <small>/ ${pgGoal} sayfa</small></b>${bar(pg,pgGoal)}<span class="hint">${pg>=pgGoal?'Hedef tamam 🎉':rs>1?rs+' gündür okuyorsun 🌿':'Okuyucuda sayfa çevirdikçe dolar'}</span></div>
      <div class="hs-g"><span>✍️ Bugün yazma</span><b>${wt.toLocaleString('tr-TR')} <small>/ ${wGoal.toLocaleString('tr-TR')} kelime</small></b>${bar(wt,wGoal)}<span class="hint">${wt>=wGoal?'Hedef tamam 🎉':ws>1?ws+' gündür yazıyorsun 🔥':'Yazı odasında yazdıkça dolar'}</span></div></section>
@@ -4842,7 +4848,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v45';
+const DK_VER='v46';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -5438,12 +5444,325 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-ci]'
   if(k==='copy'){await aiCopy(`${c.name} ile röportaj\n\n${txt}`);toast('Kopyalandı');return}
   if(k==='tochar'){await st.db.collection('chars').doc(c.id).update({desc:((c.desc||'')+'\n\n🎙 Röportajdan:\n'+A.map(x=>`• ${x.q} — ${x.a}`).join('\n')).trim()});toast('Karakter kartına eklendi');return}});
 document.addEventListener('change',e=>{if(e.target.id==='ciC'){CI.char=e.target.value;CI.i=0;renderTool()}if(e.target.id==='wNovelCi'){TL.novel=e.target.value;CI.char=null;renderTool()}});
+const NS_CAT={haf:'🧠 Hafıza',fiz:'🦴 Fizyoterapi & hareket',har:'🗺 Beyin haritaları',kes:'🔬 Büyük keşifler',duy:'💗 Duygu & karar',bil:'🌙 Bilinç & uyku',pla:'🌱 Nöroplastisite',dil:'💬 Dil & algı'};
+const NS=[
+{t:'Hafızasını bir ameliyatta kaybeden adam',y:1953,c:'haf',w:'Henry Molaison (H.M.), William Scoville, Brenda Milner',
+s:['1953\'te 27 yaşındaki Henry Molaison ağır epilepsi nöbetleri yüzünden ameliyat oldu. Cerrah William Scoville, nöbetlerin kaynağı olduğunu düşündüğü iki taraflı medial temporal bölgeyi, hipokampusun büyük kısmıyla birlikte çıkardı. Nöbetler azaldı ama Henry o günden sonra yeni hiçbir anı oluşturamadı: tanıştığı birini birkaç dakika sonra hatırlamıyordu.',
+'Psikolog Brenda Milner onu yıllarca inceledi. Henry\'den bir yıldızın çizgilerini aynaya bakarak takip etmesini istedi. Henry her gün daha iyi yaptı, ama her seferinde görevi ilk kez gördüğünü söyledi. Demek ki "nasıl yapılır" bilgisi, "ne oldu" bilgisinden ayrı bir sistemde tutuluyordu.',
+'Henry 2008\'de öldü. Beyni ince kesitlere ayrılıp dijital olarak arşivlendi; bugün hâlâ araştırmacılar tarafından inceleniyor.'],
+n:'Hafızanın tek bir yerde durmadığını, farklı hafıza türlerinin farklı beyin sistemlerine dayandığını gösteren en önemli vaka.',
+p:'Henry\'nin yeni motor beceriler öğrenebilmesi, amnezik ya da bilişsel bozukluğu olan hastalarda bile tekrar ve pratiğe dayalı motor öğrenmenin işe yarayabileceğini düşündürür.',
+r:['Scoville WB, Milner B. Loss of recent memory after bilateral hippocampal lesions. J Neurol Neurosurg Psychiatry. 1957;20:11–21.']},
+{t:'Kafasından demir çubuk geçen işçi',y:1848,c:'duy',w:'Phineas Gage, John Harlow',
+s:['13 Eylül 1848\'de Vermont\'ta demiryolu ustabaşı Phineas Gage patlayıcı yerleştirirken bir kıvılım kazaya yol açtı. Bir metreden uzun demir bir çubuk sol yanağından girip kafatasının tepesinden çıktı. Gage bilincini kaybetmedi, birkaç dakika sonra konuşuyordu.',
+'Hekimi John Harlow onu iyileştirdi ama arkadaşları değiştiğini söyledi: eskiden ölçülü ve planlı olan adam sabırsız, kaba ve kararsız biri olmuştu. Harlow\'un raporuna göre çevresindekiler "Gage artık Gage değil" diyordu.',
+'Gage 1860\'ta öldü. Kafatası ve çubuk bugün Harvard\'daki bir müzede duruyor. Modern araştırmacılar kafatasından hasarın yerini yeniden hesaplayarak frontal lobun rolünü tartışmaya devam ediyor.'],
+n:'Kişiliğin ve sosyal davranışın beynin belirli bölgelerine, özellikle frontal loba bağlı olduğunu düşündüren ilk ünlü vaka. Hikâye zamanla abartılmış olsa da önemi büyük.',
+r:['Harlow JM. Recovery from the passage of an iron bar through the head. Publ Mass Med Soc. 1868;2:327–347.','Damasio H ve ark. The return of Phineas Gage: clues about the brain from the skull of a famous patient. Science. 1994;264:1102–1105.']},
+{t:'Sadece "tan" diyebilen hasta',y:1861,c:'dil',w:'Louis Victor Leborgne, Paul Broca',
+s:['Paris\'te Louis Victor Leborgne yıllardır hastanedeydi. Söylenenleri anlıyor, jest ve tonlamayla derdini anlatmaya çalışıyordu ama ağzından çıkan tek hece "tan" idi. Hastanede herkes ona "Tan" diyordu.',
+'Leborgne 1861\'de öldüğünde cerrah Paul Broca beynini inceledi ve sol frontal lobun alt kısmında bir hasar buldu. Benzer hastalarla birlikte bu bulgu, konuşma üretiminin beynin sol tarafındaki belirli bir bölgeye bağlı olduğu fikrini doğurdu. Bu bölge bugün Broca alanı olarak anılıyor.',
+'Leborgne\'nin beyni Paris\'te hâlâ saklanıyor. 2007\'de yapılan MR incelemesi, hasarın Broca\'nın tarif ettiğinden daha derine uzandığını gösterdi.'],
+n:'Bir zihinsel işlevin beynin belirli bir yerine bağlanabileceğini gösteren ilk güçlü kanıtlardan biri: nörolojide "lokalizasyon" fikrinin başlangıcı.',
+r:['Broca P. Remarques sur le siège de la faculté du langage articulé. Bull Soc Anat Paris. 1861.','Dronkers NF ve ark. Paul Broca\'s historic cases: high resolution MR imaging of the brains of Leborgne and Lelong. Brain. 2007;130:1432–1441.']},
+{t:'Hafızası birkaç saniye süren müzisyen',y:1985,c:'haf',w:'Clive Wearing',
+s:['İngiliz müzikolog ve şef Clive Wearing 1985\'te herpes virüsünün beyinde yol açtığı bir iltihap geçirdi. Hastalık hipokampusunu ve çevresini ağır şekilde hasara uğrattı. Clive yeni bir şey hatırlayamıyor, geçmişinin büyük kısmını da kaybetmişti.',
+'Günlüğüne dakikalar arayla "Şimdi gerçekten uyandım" yazıp bir önceki satırın üstünü çiziyordu. Eşi Deborah odaya her girdiğinde onu yıllardır görmemiş gibi sevinçle karşılıyordu.',
+'Ama piyanonun başına oturduğunda ya da bir koroyu yönettiğinde müzik bütünüyle geri geliyordu. Nerede olduğunu bilmeden bir eseri baştan sona çalabiliyordu.'],
+n:'Olayların hafızası (epizodik) ile becerilerin ve müziğin hafızası (prosedürel) arasındaki ayrımın en etkileyici örneklerinden biri. Sevgi ve duygusal bağın da hafızadan bağımsız sürebildiğini gösteriyor.',
+r:['Wilson BA, Baddeley AD, Kapur N. Dense amnesia in a professional musician following herpes simplex virus encephalitis. J Clin Exp Neuropsychol. 1995;17:668–681.','Wearing D. Forever Today. 2005.']},
+{t:'Rüyada gelen Nobel deneyi',y:1921,c:'kes',w:'Otto Loewi',
+s:['1921\'de farmakolog Otto Loewi, sinirlerin organlarla elektrikle mi yoksa kimyasal bir madde aracılığıyla mı konuştuğunu merak ediyordu. Kendi anlatımına göre bir gece rüyasında deneyin nasıl yapılacağını gördü, uyanıp not aldı ama sabah kendi yazısını okuyamadı.',
+'Ertesi gece rüya geri geldi. Bu kez gece yarısı laboratuvara gitti. Bir kurbağa kalbinin vagus sinirini uyardı, kalp yavaşladı. Sonra o kalbin çevresindeki sıvıyı ikinci bir kalbe aktardı: ikinci kalp de yavaşladı. Sinir, bir kimyasal madde salgılamıştı. Loewi ona "Vagusstoff" dedi; bugün asetilkolin olarak biliyoruz.',
+'Loewi bu buluşla 1936\'da Henry Dale ile birlikte Nobel Ödülü aldı.'],
+n:'Sinir hücrelerinin kimyasal haberciler (nörotransmitterler) kullanarak iletişim kurduğunu gösteren ilk deney. Bugünkü ilaçların çoğu bu fikre dayanır.',
+r:['Loewi O. Über humorale Übertragbarkeit der Herznervenwirkung. Pflügers Arch. 1921;189:239–242.']},
+{t:'Aynı Nobel\'i paylaşan iki rakip',y:1906,c:'kes',w:'Santiago Ramón y Cajal, Camillo Golgi',
+s:['İtalyan hekim Camillo Golgi 1873\'te sinir dokusunu gümüşle boyayan bir yöntem buldu: "siyah reaksiyon". Boya rastgele birkaç hücreyi bütün dallarıyla siyaha boyuyor, beyin dokusunun içinde tek tek nöronlar ortaya çıkıyordu.',
+'İspanyol Santiago Ramón y Cajal aynı yöntemi kullanıp binlerce çizim yaptı ve beynin birbirine kaynaşmış bir ağ değil, ayrı ayrı hücrelerden oluştuğunu savundu. Golgi ise ağ fikrinde ısrar etti.',
+'1906\'da Nobel Ödülü\'nü birlikte aldılar ve Stockholm\'deki konuşmalarında birbirlerine karşı çıktılar. Sonunda haklı çıkan Cajal oldu; çizimleri bugün hâlâ ders kitaplarında ve sanat sergilerinde.'],
+n:'"Nöron doktrini": beynin temel birimi tek tek sinir hücreleridir. Modern nörobilimin temeli.',
+r:['Nobel Prize in Physiology or Medicine 1906 — Golgi C, Ramón y Cajal S.']},
+{t:'Bir cam slaytın kenarı',y:1959,c:'har',w:'David Hubel, Torsten Wiesel',
+s:['1950\'lerin sonunda David Hubel ve Torsten Wiesel kedilerin görme korteksindeki tek tek hücrelerin neye tepki verdiğini bulmaya çalışıyordu. Ekrana nokta ışıklar yansıttılar ama hücreler pek ilgilenmiyordu.',
+'Bir gün projektöre cam bir slaytı yerleştirirken, slaytın kenarı ekranda ince bir gölge çizgisi olarak kaydı. Hücre birden ateşlenmeye başladı. Hücreyi heyecanlandıran nokta değil, belirli bir açıdaki kenardı.',
+'Böylece görme korteksindeki hücrelerin çizgileri ve yönleri ayrıştırdığını, görüntünün basit parçalardan adım adım kurulduğunu keşfettiler. 1981\'de Nobel Ödülü aldılar.'],
+n:'Beynin dünyayı nasıl "inşa ettiğini" gösteren temel keşif; görme bozukluklarının tedavisinden yapay zekâdaki görüntü tanıma ağlarına kadar etkisi var.',
+r:['Hubel DH, Wiesel TN. Receptive fields of single neurones in the cat\'s striate cortex. J Physiol. 1959;148:574–591.']},
+{t:'Uyanık hastanın beyin haritası',y:1937,c:'har',w:'Wilder Penfield',
+s:['Montreal\'de beyin cerrahı Wilder Penfield, epilepsi hastalarını ameliyat ederken hastaları uyanık tutuyordu; beynin kendisi ağrı hissetmez. Korteksin farklı noktalarına hafif elektrik vererek hastaya ne hissettiğini soruyordu.',
+'Bir nokta uyarıldığında el kıpırdıyor, bir başkasında hasta yanağında karıncalanma hissediyordu. Penfield bu cevapları tek tek işaretleyerek vücudun beyin yüzeyindeki haritasını çıkardı. Ünlü "homunculus" çizimi buradan doğdu: el, dudaklar ve dil haritada kocamandır, sırt ise küçük.',
+'Bazı hastalar uyarılınca eski bir şarkı duyduğunu ya da bir anıyı yeniden yaşadığını da anlattı.'],
+n:'Motor ve duyusal korteksin vücut haritası; bugün hâlâ nöroloji ve rehabilitasyonun temel kavramlarından.',
+p:'Haritada bir bölgenin büyüklüğü o bölgenin ne kadar ince kontrol edildiğini yansıtır. Rehabilitasyonda el ve yüz egzersizlerinin geniş kortikal temsil üzerinden etkili olabilmesi bu haritayla ilişkilidir.',
+r:['Penfield W, Boldrey E. Somatic motor and sensory representation in the cerebral cortex of man as studied by electrical stimulation. Brain. 1937;60:389–443.']},
+{t:'Londra taksicilerinin büyüyen hipokampusu',y:2000,c:'pla',w:'Eleanor Maguire',
+s:['Londra\'da taksici olmak için "The Knowledge" denen sınavı geçmek gerekir: binlerce sokağı ve yeri ezbere bilmek. Hazırlık yıllar sürer.',
+'Eleanor Maguire ve ekibi taksicilerin beyinlerini taradı. Hipokampusun arka kısmı, taksici olmayanlara göre daha büyüktü ve meslekte geçirilen yıl arttıkça büyüklük de artıyordu.',
+'Bunun önceden var olan bir farklılık olup olmadığını anlamak için 2011\'de aday taksicileri yıllarca takip ettiler. Sınavı geçenlerde hipokampusun arka kısmı büyümüştü; geçemeyenlerde ya da bırakanlarda bu değişim görülmedi.'],
+n:'Yetişkin beyninin yoğun öğrenmeyle fiziksel olarak değişebildiğini gösteren en bilinen çalışmalardan.',
+r:['Maguire EA ve ark. Navigation-related structural change in the hippocampi of taxi drivers. PNAS. 2000;97:4398–4403.','Woollett K, Maguire EA. Acquiring "the Knowledge" of London\'s layout drives structural brain changes. Curr Biol. 2011;21:2109–2114.']},
+{t:'Beynin içindeki GPS',y:1971,c:'har',w:'John O\'Keefe, May-Britt ve Edvard Moser',
+s:['1971\'de John O\'Keefe sıçanların hipokampusunda ilginç hücreler buldu: hayvan odanın belirli bir yerine geldiğinde ateşleniyor, başka yerde susuyorlardı. Bunlara "yer hücreleri" dedi.',
+'Yaklaşık otuz yıl sonra Norveç\'te May-Britt ve Edvard Moser, entorinal kortekste daha da şaşırtıcı hücreler keşfetti: hayvan yürürken bu hücreler, zemini görünmez bir altıgen ızgara gibi bölen düzenli noktalarda ateşleniyordu. Bunlara "ızgara hücreleri" dendi.',
+'Üçü 2014\'te Nobel Ödülü\'nü paylaştı. Alzheimer\'da yön bulma sorunlarının erken başlaması da bu bölgenin erken etkilenmesiyle ilişkilendiriliyor.'],
+n:'Beynin mekânı nasıl temsil ettiğini, yani iç haritamızı gösteren keşif.',
+r:['O\'Keefe J, Dostrovsky J. The hippocampus as a spatial map. Brain Res. 1971;34:171–175.','Hafting T ve ark. Microstructure of a spatial map in the entorhinal cortex. Nature. 2005;436:801–806.']},
+{t:'"Jennifer Aniston nöronu"',y:2005,c:'haf',w:'Rodrigo Quian Quiroga, Itzhak Fried',
+s:['Epilepsi ameliyatı bekleyen bazı hastaların beynine, nöbetlerin kaynağını bulmak için ince elektrotlar yerleştirilir. Bu hastalar gönüllü olarak deneylere de katılabilir.',
+'Rodrigo Quian Quiroga ve ekibi hastalara yüzlerce fotoğraf gösterdi. Bir hastada tek bir nöron, oyuncu Jennifer Aniston\'ın farklı fotoğraflarının hepsine tepki verdi, başka kimseye vermedi. Başka bir hastadaki bir hücre ise Halle Berry\'nin fotoğraflarına, kostümlü bir resmine, hatta yazılı adına bile tepki veriyordu.',
+'Bu hücreler tek bir görüntüye değil, bir kişinin ya da kavramın fikrine tepki veriyor gibiydi.'],
+n:'Medial temporal lobdaki bazı nöronların soyut kavramları temsil ettiğini gösterdi; hafızanın nasıl kavramlara bağlandığına dair önemli bir ipucu.',
+r:['Quian Quiroga R ve ark. Invariant visual representation by single neurons in the human brain. Nature. 2005;435:1102–1107.']},
+{t:'İki yarıya ayrılmış beyin',y:1962,c:'bil',w:'Roger Sperry, Michael Gazzaniga',
+s:['Ağır epilepsi hastalarında nöbetin bir yarıküreden ötekine yayılmasını önlemek için iki yarımküreyi bağlayan korpus kallozum kesilebiliyordu. Hastalar günlük hayatta şaşırtıcı derecede normal görünüyordu.',
+'Roger Sperry ve Michael Gazzaniga, görüntüyü yalnızca bir yarıküreye göstererek test ettiler. Sol yarıküreye gösterilen nesneyi hasta adlandırabiliyor, sağa gösterileni adlandıramıyor ama sol eliyle doğru nesneyi seçebiliyordu.',
+'En ünlü deneylerden birinde sol yarıküreye bir tavuk ayağı, sağa karlı bir manzara gösterildi. Hasta sağ eliyle tavuğu, sol eliyle bir kürek seçti. Nedenini sorunca konuşan sol yarıküre hemen bir açıklama uydurdu: "Tavuk kümesini temizlemek için kürek lazım."'],
+n:'Yarıkürelerin uzmanlaşmasını ve sol beynin olayları anlamlandırmak için hikâye uyduran bir "yorumcu" gibi çalıştığını gösterdi. Sperry 1981\'de Nobel aldı.',
+r:['Gazzaniga MS, Bogen JE, Sperry RW. Some functional effects of sectioning the cerebral commissures in man. PNAS. 1962;48:1765–1769.','Gazzaniga MS, LeDoux JE. The Integrated Mind. 1978.']},
+{t:'Ayna kutusu ve hayalet kol',y:1996,c:'fiz',w:'V. S. Ramachandran',
+s:['Kolunu kaybeden pek çok kişi, artık olmayan kolunu hâlâ hisseder; bazen de bu hayalet kolda sıkışmış, kramp girmiş gibi şiddetli ağrı duyar.',
+'Nörolog V. S. Ramachandran basit bir düzenek yaptı: ortasında ayna olan bir kutu. Hasta sağlam kolunu aynanın bir yanına koyuyor, aynadaki yansıma kayıp kolun yerinde duruyormuş gibi görünüyordu. Hasta sağlam elini açıp kapattığında, beyin kayıp elin de hareket ettiğini "görüyordu".',
+'Bazı hastalarda bu görsel geri bildirim, sıkışma hissini ve ağrıyı azalttı.'],
+n:'Görmenin vücut algısını ve ağrıyı değiştirebildiğini gösterdi. Ayna terapisi bugün inme rehabilitasyonunda ve kompleks bölgesel ağrı sendromunda da araştırılıyor ve kullanılıyor.',
+p:'Ayna terapisi; hayalet uzuv ağrısı, inme sonrası üst ekstremite rehabilitasyonu ve KBAS gibi durumlarda kanıtları değişken düzeylerde de olsa klinikte kullanılan bir yöntem. Etkisi, beynin görsel bilgiyle vücut şemasını güncellemesine dayanıyor.',
+r:['Ramachandran VS, Rogers-Ramachandran D. Synaesthesia in phantom limbs induced with mirrors. Proc R Soc Lond B. 1996;263:377–386.','Altschuler EL ve ark. Rehabilitation of hemiparesis after stroke with a mirror. Lancet. 1999;353:2035–2036.']},
+{t:'Kronik bel ağrısında değişen beyin haritası',y:1997,c:'fiz',w:'Herta Flor; Henry Tsao, Paul Hodges',
+s:['Herta Flor ve ekibi, kronik bel ağrısı olan hastaların sırtına dokunulduğunda beynin duyusal korteksinde oluşan tepkiyi ölçtü. Sırtın beyindeki temsili ağrısız kişilere göre kaymış ve genişlemişti; değişimin büyüklüğü ağrının süresiyle ilişkiliydi.',
+'2008\'de Henry Tsao, Mary Galea ve Paul Hodges motor kortekse bakarak tekrarlayan bel ağrısı olan kişilerde transversus abdominis kasının motor korteksteki temsilinin yer değiştirdiğini gösterdi. Bu değişim, kasın postüral görevlerde gecikerek devreye girmesiyle ilişkiliydi.',
+'Yani bel ağrısı yalnızca bel bölgesinde değil, beynin vücudu temsil etme ve kontrol etme biçiminde de iz bırakıyor.'],
+n:'Kronik ağrının bir "beyin haritası" sorunu da olabileceğini gösteren temel çalışmalar.',
+p:'Motor kontrol eğitiminin, beyindeki bu temsili yeniden düzenleyebildiğini gösteren çalışmalar da var. Kronik bel ağrısında motor korteks reorganizasyonu ve beta salınımları üzerine düşündüğün derleme için bu iki makale iyi birer başlangıç noktası.',
+r:['Flor H ve ark. Extensive reorganization of primary somatosensory cortex in chronic back pain patients. Neurosci Lett. 1997;224:5–8.','Tsao H, Galea MP, Hodges PW. Reorganization of the motor cortex is associated with postural control deficits in recurrent low back pain. Brain. 2008;131:2161–2171.']},
+{t:'Sırtını "göremeyen" hastalar',y:2008,c:'fiz',w:'Lorimer Moseley',
+s:['Avustralyalı ağrı araştırmacısı Lorimer Moseley, kronik bel ağrısı olan hastalardan sırtlarının dış hatlarını çizmelerini istedi.',
+'Hastaların bir kısmı ağrıyan bölgeyi eksik, silik ya da biçimsiz çizdi; bazıları o bölgenin sınırlarını hissetmekte zorlandığını söyledi. Aynı hastalarda o bölgede iki noktayı ayırt etme duyarlılığı da azalmıştı.',
+'Sonuç: ağrı yalnızca dokuda değil, beynin vücut imgesinde de bir bozulmayla birlikte gidebiliyordu.'],
+n:'"Vücut şeması" ve ağrı arasındaki bağlantıyı klinik dile taşıyan çalışmalardan; ağrı nörobilimi eğitiminin gelişmesine katkı sağladı.',
+p:'İki nokta ayrımı ve taktil keskinlik eğitimi, bazı kronik ağrı programlarında duyusal yeniden eğitim olarak kullanılıyor.',
+r:['Moseley GL. I can\'t find it! Distorted body image and tactile dysfunction in patients with chronic back pain. Pain. 2008;140:239–243.']},
+{t:'Ağrının kapısı',y:1965,c:'fiz',w:'Ronald Melzack, Patrick Wall',
+s:['Çarptığımız bir yeri neden ovuştururuz? 1965\'te Ronald Melzack ve Patrick Wall bunun için bir açıklama önerdi.',
+'Omurilikte, ağrı sinyallerinin beyne ulaşıp ulaşmayacağını ayarlayan bir "kapı" mekanizması olduğunu ileri sürdüler. Kalın sinir liflerinden gelen dokunma ve basınç bilgisi bu kapıyı kısmen kapatıp ince liflerle gelen ağrı sinyalini azaltabiliyordu. Beyinden inen sinyaller de kapıyı açıp kapatabiliyordu: dikkat, duygu ve beklenti ağrıyı değiştirebiliyordu.',
+'Ayrıntıları sonradan değişse de bu teori, ağrıyı basit bir alarm hattı olarak gören eski anlayışı yıktı.'],
+n:'Ağrının beynin ve omuriliğin aktif olarak düzenlediği bir deneyim olduğunu gösteren dönüm noktası.',
+p:'TENS uygulamasının mantığı büyük ölçüde bu teoriye dayanır. Kronik ağrıda psikolojik ve bilişsel faktörlerin dikkate alınmasının da teorik temellerinden biridir.',
+r:['Melzack R, Wall PD. Pain mechanisms: a new theory. Science. 1965;150:971–979.']},
+{t:'Plastik elin hissettiği dokunuş',y:1998,c:'fiz',w:'Matthew Botvinick, Jonathan Cohen',
+s:['Deneyde katılımcının bir eli bir perdenin arkasına saklanıyor, önüne gerçekçi bir plastik el konuyor. Araştırmacı iki fırçayla hem gerçek eli hem de plastik eli aynı anda, aynı yerden okşuyor.',
+'Birkaç dakika sonra pek çok kişi dokunuşu plastik elde hissettiğini söylüyor. Bazıları plastik ele bir çekiç yaklaştırıldığında irkiliyor.',
+'Beyin, görme ve dokunmanın uyumlu olduğu yere "bu benim elim" diyor.'],
+n:'Vücut sahipliği duygusunun sabit olmadığını, duyuların birleşimiyle sürekli kurulduğunu gösteren klasik deney.',
+p:'Vücut algısının duyusal girdiyle değiştirilebilmesi; protez kullanımı, ayna terapisi ve sanal gerçeklikle yapılan rehabilitasyon yaklaşımlarının arkasındaki fikirlerden biri.',
+r:['Botvinick M, Cohen J. Rubber hands "feel" touch that eyes see. Nature. 1998;391:756.']},
+{t:'Kısıtlayarak iyileştirmek',y:2006,c:'fiz',w:'Edward Taub, Steven Wolf',
+s:['Psikolog Edward Taub, inme sonrası hastaların etkilenen kollarını kullanmamayı "öğrendiğini" ileri sürdü: kol başta gerçekten zayıftır, hasta her denemede başarısız olur ve sağlam koluyla idare etmeye alışır. Buna "öğrenilmiş kullanmama" dedi.',
+'Önerdiği tedavi basitti ama zorluydu: sağlam kolu günün büyük kısmında bir eldivenle kısıtlamak ve etkilenen kolla yoğun, tekrarlı görev pratiği yaptırmak.',
+'2006\'da yayımlanan çok merkezli EXCITE çalışması, inmeden 3-9 ay sonra uygulanan bu tedavinin kol işlevini anlamlı şekilde iyileştirdiğini gösterdi.'],
+n:'Kullanıma bağlı plastisitenin rehabilitasyona doğrudan uygulanmasının en bilinen örneği: Constraint-Induced Movement Therapy (CIMT).',
+p:'CIMT ve onun daha kısa, daha uygulanabilir modifiye versiyonları inme rehabilitasyonunda kanıta dayalı yöntemler arasında.',
+r:['Wolf SL ve ark. Effect of constraint-induced movement therapy on upper extremity function 3 to 9 months after stroke: the EXCITE randomized clinical trial. JAMA. 2006;296:2095–2104.']},
+{t:'Kemancıların büyüyen sol eli',y:1995,c:'pla',w:'Thomas Elbert, Edward Taub',
+s:['Keman, viyola ya da çello çalan biri sol elinin parmaklarıyla telleri yıllarca, inanılmaz bir incelikle kontrol eder. Sağ el ise yayı tutar.',
+'Thomas Elbert ve ekibi yaylı çalgı çalanların beyinlerinde sol el parmaklarının duyusal temsilini ölçtü. Temsil, müzisyen olmayanlara göre daha genişti; çalmaya küçük yaşta başlayanlarda fark daha da büyüktü.',
+'Yani bir çellistin beyninde, parmaklarına ayrılmış alan gerçekten daha büyük olabilir.'],
+n:'Yoğun ve uzun süreli pratiğin beynin vücut haritasını yeniden şekillendirdiğini gösteren klasik çalışma.',
+p:'Between the Notes\'taki Lucien\'in sol eli, beyninde de büyük bir yer kaplıyor olabilir.',
+r:['Elbert T ve ark. Increased cortical representation of the fingers of the left hand in string players. Science. 1995;270:305–307.']},
+{t:'Korkuyu hissetmeyen kadın',y:2011,c:'duy',w:'Hasta S.M., Justin Feinstein',
+s:['S.M. olarak bilinen kadın, nadir görülen bir hastalık nedeniyle iki taraflı amigdala hasarına sahip. Araştırmacılar onu yılan ve örümceklerin olduğu bir dükkâna, perili ev gezisine götürdü, korku filmleri izletti. S.M. merak etti, heyecanlandı ama korku belirtisi göstermedi.',
+'Ancak 2013\'te ilginç bir şey oldu: S.M. ve benzer hastalara karbondioksit oranı yüksek bir hava solutulduğunda, hayatlarında ilk kez yoğun bir panik yaşadılar.',
+'Dışarıdan gelen tehditler için amigdala gerekliydi; ama bedenin içinden gelen boğulma hissine karşı korku başka yollarla da oluşabiliyordu.'],
+n:'Amigdalanın dış tehdit korkusundaki merkezi rolünü ve iç (interoseptif) korkunun farklı bir yol izleyebileceğini gösterdi.',
+r:['Feinstein JS ve ark. The human amygdala and the induction and experience of fear. Curr Biol. 2011;21:34–38.','Feinstein JS ve ark. Fear and panic in humans with bilateral amygdala damage. Nat Neurosci. 2013;16:270–272.']},
+{t:'Nefes ile sakinlik arasındaki köprü',y:2017,c:'duy',w:'Kevin Yackle, Mark Krasnow, Jack Feldman',
+s:['Nefes ritmimiz beyin sapındaki "preBötzinger kompleksi" denen küçük bir hücre grubunca üretilir.',
+'2017\'de Kevin Yackle ve ekibi farelerde bu bölgedeki küçük bir nöron alt grubunun, beynin uyanıklık ve alarm durumunu ayarlayan locus coeruleus\'a bağlandığını buldu. Bu nöronları susturduklarında fareler normal nefes almaya devam etti ama belirgin şekilde daha sakin davrandı ve daha uzun süre dinlendi.',
+'Nefes ile zihinsel durum arasında doğrudan bir sinir yolu olabileceğini düşündüren bir bulgu.'],
+n:'Yavaş nefes egzersizlerinin neden sakinleştirici olabileceğine dair biyolojik bir ipucu. Fare çalışması olduğu için insanlara doğrudan genellenemez.',
+r:['Yackle K ve ark. Breathing control center neurons that promote arousal in mice. Science. 2017;355:1411–1415.']},
+{t:'Kararsız kalan adam: Elliot',y:1994,c:'duy',w:'Antonio Damasio',
+s:['Nörolog Antonio Damasio\'nun "Elliot" adını verdiği hastası, frontal lobun alt kısmına yakın bir tümörden ameliyat oldu. Zekâ testleri normaldi, hafızası iyiydi, mantıklı konuşuyordu.',
+'Ama hayatı dağıldı. Bir randevu tarihini seçmek için uzun uzun artı ve eksileri sayıyor, karar veremiyordu. Kötü yatırımlar yaptı. En dikkat çekici olanı, kendi trajedisini anlatırken hiçbir duygu göstermemesiydi.',
+'Damasio, duyguların karar vermede bir "pusula" görevi gördüğünü ileri sürdü: bedenin verdiği sinyaller seçenekleri hızla işaretler.'],
+n:'"Somatik işaretçi" hipotezi: duygu ve akıl birbirinin karşıtı değil, ortağıdır. Iowa Kumar Testi bu fikirden doğdu.',
+r:['Damasio AR. Descartes\' Error: Emotion, Reason, and the Human Brain. 1994.','Bechara A ve ark. Insensitivity to future consequences following damage to human prefrontal cortex. Cognition. 1994;50:7–15.']},
+{t:'Sıçanların durmadan bastığı kol',y:1954,c:'duy',w:'James Olds, Peter Milner',
+s:['1954\'te James Olds ve Peter Milner bir sıçanın beynine elektrot yerleştirdiler. Elektrot planladıkları yere değil, biraz başka bir bölgeye gitmişti.',
+'Sıçan, elektrik verildiği köşeye tekrar tekrar dönüyordu. Ardından sıçanlara kendi beyinlerini uyarabilecekleri bir kol verildi: bazıları saatte binlerce kez bastı, yemeği ve suyu bile göz ardı etti.',
+'Bu, beyinde ödül ve motivasyonla ilgili devrelerin varlığını gösteren ilk büyük kanıttı.'],
+n:'Ödül sisteminin keşfi; bağımlılık ve motivasyon araştırmalarının başlangıcı.',
+r:['Olds J, Milner P. Positive reinforcement produced by electrical stimulation of septal area and other regions of rat brain. J Comp Physiol Psychol. 1954;47:419–427.']},
+{t:'Dopamin: "beklediğimden iyi"',y:1997,c:'duy',w:'Wolfram Schultz',
+s:['Wolfram Schultz maymunlara bir ışık yandıktan sonra meyve suyu verdi ve dopamin nöronlarını kaydetti.',
+'Başta nöronlar suyun kendisine tepki veriyordu. Maymun ışığın suyu haber verdiğini öğrenince, tepki ışığa kaydı; su geldiğinde artık sessizdiler. Işık yandığı hâlde su gelmediğinde ise tam suyun gelmesi gereken anda aktiviteleri düştü.',
+'Dopamin "zevk" değil, beklenti ile gerçek arasındaki farkı bildiriyordu: tahmin hatası.'],
+n:'Öğrenmenin nasıl işlediğine dair en etkili modellerden; yapay zekâdaki pekiştirmeli öğrenme algoritmalarıyla da birebir örtüşüyor.',
+r:['Schultz W, Dayan P, Montague PR. A neural substrate of prediction and reward. Science. 1997;275:1593–1599.']},
+{t:'Kalamarın dev aksonu',y:1952,c:'kes',w:'Alan Hodgkin, Andrew Huxley',
+s:['Bir sinir sinyalinin, yani aksiyon potansiyelinin nasıl oluştuğunu ölçmek için içine elektrot sokabilecek kadar kalın bir sinir lifi gerekiyordu. Çözüm kalamardan geldi: kalamarın kaçış refleksini taşıyan aksonu neredeyse bir milimetre kalınlığındadır.',
+'Alan Hodgkin ve Andrew Huxley bu aksonda sodyum ve potasyum iyonlarının hücre zarından nasıl geçtiğini ölçtü ve sinyali matematiksel denklemlerle tarif etti. Hesapları bilgisayardan önce, büyük ölçüde mekanik hesap makineleriyle yapıldı.',
+'1963\'te Nobel aldılar.'],
+n:'Sinir sinyalinin fiziği. Lokal anesteziklerden epilepsi ilaçlarına kadar pek çok tedavi bu mekanizmayı hedefler.',
+r:['Hodgkin AL, Huxley AF. A quantitative description of membrane current and its application to conduction and excitation in nerve. J Physiol. 1952;117:500–544.']},
+{t:'Hafızanın izi: Aplysia',y:2000,c:'haf',w:'Eric Kandel',
+s:['Eric Kandel hafızayı anlamak için insan beyni yerine çok daha basit bir canlıyı seçti: deniz salyangozu Aplysia. Bu hayvanın az sayıda ama çok büyük nöronu var.',
+'Salyangozun solungacına dokunulduğunda geri çekme refleksini inceledi. Tekrarlanan dokunuşlarda refleks zayıflıyor (alışma), kuyruğa verilen bir uyarıdan sonra güçleniyordu (duyarlılaşma). Kandel bu öğrenmenin sinapslardaki kimyasal değişikliklerle, uzun süreli hafızanın ise yeni proteinler ve yeni sinaptik bağlantılarla oluştuğunu gösterdi.',
+'2000\'de Nobel Ödülü aldı.'],
+n:'Hafızanın moleküler temeli: kısa süreli ve uzun süreli hafıza farklı mekanizmalara dayanıyor.',
+r:['Kandel ER. The molecular biology of memory storage: a dialogue between genes and synapses. Science. 2001;294:1030–1038.']},
+{t:'Birlikte ateşlenen hücreler',y:1949,c:'pla',w:'Donald Hebb',
+s:['Kanadalı psikolog Donald Hebb 1949\'da yazdığı kitapta cesur bir fikir öne sürdü: bir hücre başka bir hücreyi tekrar tekrar ateşlemeye katılırsa, ikisi arasındaki bağlantı güçlenir.',
+'Hebb bunu kanıtlayacak araçlara sahip değildi. Kanıt 1973\'te geldi: Tim Bliss ve Terje Lømo, tavşan hipokampusunda kısa bir yüksek frekanslı uyarının sinaptik bağlantıyı saatlerce güçlendirdiğini gösterdi. Buna uzun süreli güçlenme (LTP) dendi.',
+'"Birlikte ateşlenen hücreler birbirine bağlanır" cümlesi Hebb\'e ait değil; yıllar sonra nörobilimci Carla Shatz\'ın özetinden yayıldı.'],
+n:'Öğrenmenin sinaps düzeyindeki temel kuralı; nöroplastisitenin kalbi.',
+p:'Tekrar, yoğunluk ve zamanlama ilkeleri, rehabilitasyonda motor öğrenmenin de temel prensipleridir.',
+r:['Hebb DO. The Organization of Behavior. 1949.','Bliss TVP, Lømo T. Long-lasting potentiation of synaptic transmission in the dentate area of the anaesthetized rabbit. J Physiol. 1973;232:331–356.']},
+{t:'Görmediğini sanan ama görebilen',y:1974,c:'bil',w:'Lawrence Weiskrantz, Beatrice de Gelder',
+s:['Görme korteksi hasar gören bazı hastalar, görme alanlarının bir kısmında hiçbir şey görmediklerini söyler. Lawrence Weiskrantz ve ekibi böyle bir hastadan, kör olduğu alanda bir ışığın yerini "tahmin etmesini" istedi.',
+'Hasta itiraz etti, hiçbir şey görmüyordu. Ama tahminleri şansın çok üzerinde doğruydu. Buna "kör görme" (blindsight) dendi.',
+'2008\'de iki taraflı görme korteksi hasarı olan T.N. adlı hasta, kendisine engellerle dolu bir koridorda yürümesi söylendiğinde, engellerin hepsinin etrafından dolaştı; neyi nasıl yaptığını açıklayamadı.'],
+n:'Bilinçli görme ile görsel bilginin işlenmesinin ayrı olabileceğini gösterdi; bilinç araştırmalarının önemli bir parçası.',
+r:['Weiskrantz L ve ark. Visual capacity in the hemianopic field following a restricted occipital ablation. Brain. 1974;97:709–728.','de Gelder B ve ark. Intact navigation skills after bilateral loss of striate cortex. Curr Biol. 2008;18:R1128–R1129.']},
+{t:'Hiçbir şeyi unutamayan adam',y:1968,c:'haf',w:'Solomon Shereshevsky, Alexander Luria',
+s:['Bir Moskova gazetesinde çalışan Solomon Shereshevsky, toplantılarda hiç not almıyordu. Editörü ona kızınca, söylenen her şeyi kelimesi kelimesine tekrar etti.',
+'Psikolog Alexander Luria onu yaklaşık otuz yıl inceledi. Shereshevsky uzun sayı ve kelime listelerini bir kez dinleyip ezberliyor, yıllar sonra bile hatırlayabiliyordu. Duyuları birbirine karışıyordu: sesleri renkli, sayıları kişilikli algılıyordu (sinestezi).',
+'Ama soyut düşünmekte ve unutmak istediklerini unutmakta zorlanıyordu.'],
+n:'Olağanüstü hafızanın bir bedeli olabileceğini, unutmanın da sağlıklı zihnin bir parçası olduğunu gösteren klasik vaka.',
+r:['Luria AR. The Mind of a Mnemonist. 1968.']},
+{t:'Yetişkin beyninde yeni nöronlar mı?',y:1998,c:'pla',w:'Peter Eriksson, Fred Gage',
+s:['Uzun yıllar boyunca yetişkin insan beyninin yeni nöron üretemeyeceği kabul edildi.',
+'1998\'de Peter Eriksson ve Fred Gage, kanser tedavisi sırasında tümör büyümesini izlemek için yeni bölünen hücreleri işaretleyen bir madde almış hastaların ölümden sonra bağışlanan beyinlerini inceledi. Hipokampusta yeni oluşmuş nöronlar buldular.',
+'Konu hâlâ tartışmalı: 2018\'de bir ekip yetişkinlerde bu nöronların neredeyse hiç bulunmadığını, aynı yıl başka bir ekip ise yaşlılıkta bile sürdüğünü bildirdi.'],
+n:'Bilimin kesin cevapları değil, tartışmalarla ilerlediğine dair güzel bir örnek. Egzersizin hipokampus sağlığına etkisi bu tartışmanın da içinde.',
+r:['Eriksson PS ve ark. Neurogenesis in the adult human hippocampus. Nat Med. 1998;4:1313–1317.','Sorrells SF ve ark. Nature. 2018; Boldrini M ve ark. Cell Stem Cell. 2018.']},
+{t:'Işıkla açılıp kapanan nöronlar',y:2005,c:'kes',w:'Karl Deisseroth, Ed Boyden',
+s:['Bazı yosunlar ışığa yönelmek için ışıkla açılan iyon kanalları kullanır. 2005\'te Ed Boyden, Feng Zhang, Karl Deisseroth ve meslektaşları bu kanalın genini nöronlara yerleştirdi.',
+'Sonuç: mavi ışık yakıldığında nöron milisaniye hassasiyetle ateşleniyordu. Belirli hücre gruplarını ışıkla açıp kapamak artık mümkündü.',
+'Bu yöntem, optogenetik, yalnızca birkaç yıl içinde dünya çapında laboratuvarlara yayıldı.'],
+n:'Hangi hücrenin hangi davranıştan sorumlu olduğunu doğrudan test etmeyi sağlayan devrimci araç.',
+r:['Boyden ES ve ark. Millisecond-timescale, genetically targeted optical control of neural activity. Nat Neurosci. 2005;8:1263–1268.']},
+{t:'Bir anıyı ışıkla geri çağırmak',y:2012,c:'haf',w:'Susumu Tonegawa, Steve Ramirez, Xu Liu',
+s:['1950\'de psikolog Karl Lashley, anıların beyindeki fiziksel izini, yani "engram"ı aramak için yıllarca uğraştığını ve bulamadığını yazdı.',
+'2012\'de Susumu Tonegawa\'nın laboratuvarında Xu Liu ve Steve Ramirez, farelerin bir ortamda korku öğrenirken aktif olan hipokampus hücrelerini işaretledi. Sonra fareleri bambaşka, güvenli bir kutuya koyup sadece o hücreleri ışıkla uyardılar.',
+'Fareler o anda donup kaldı, korku anısını hatırlıyor gibi davrandılar.'],
+n:'Bir anının belirli bir hücre topluluğunda depolandığına dair güçlü kanıt; Lashley\'nin aradığı engram.',
+p:'Kör Labirent\'teki "silinen yollar" fikrinin gerçek bilimdeki en yakın karşılığı.',
+r:['Liu X ve ark. Optogenetic stimulation of a hippocampal engram activates fear memory recall. Nature. 2012;484:381–385.','Lashley KS. In search of the engram. Symp Soc Exp Biol. 1950;4:454–482.']},
+{t:'Uykuda tekrar edilen gün',y:1994,c:'bil',w:'Matthew Wilson, Bruce McNaughton',
+s:['Matthew Wilson ve Bruce McNaughton, sıçanlar bir pistte koşarken hipokampustaki yer hücrelerinin hangi sırayla ateşlendiğini kaydetti.',
+'Sonra sıçanlar uyurken aynı hücreleri dinlediler. Gün içinde birlikte ateşlenen hücreler, uykuda da birlikte ateşleniyordu; sonraki çalışmalar bu "tekrarın" çoğu zaman hızlandırılmış hâlde olduğunu gösterdi.',
+'Beyin, gün boyu yaşadıklarını uykuda yeniden oynatıyor gibiydi.'],
+n:'Uykunun hafızayı pekiştirmedeki rolüne dair önemli kanıt.',
+r:['Wilson MA, McNaughton BL. Reactivation of hippocampal ensemble memories during sleep. Science. 1994;265:676–679.']},
+{t:'Uyurken temizlenen beyin',y:2013,c:'bil',w:'Maiken Nedergaard',
+s:['Vücudun geri kalanında atıkları lenf sistemi toplar; beyinde ise klasik bir lenf ağı yoktur. Maiken Nedergaard ve ekibi beyin omurilik sıvısının beyin dokusunun içinden akıp atıkları taşıdığı bir sistem tarif etti; buna "glimfatik sistem" dediler.',
+'2013\'te fareler uyurken hücreler arası boşluğun belirgin şekilde genişlediğini ve atıkların, Alzheimer\'la ilişkili beta-amiloid dahil, uyanıklığa göre çok daha hızlı temizlendiğini gösterdiler.',
+'Uyku, beynin bakım zamanı olabilir.'],
+n:'Uykunun neden hayati olduğuna dair yeni bir açıklama getirdi; insanlarda ayrıntılar hâlâ araştırılıyor.',
+r:['Xie L ve ark. Sleep drives metabolite clearance from the adult brain. Science. 2013;342:373–377.']},
+{t:'Parmaklarıyla gören beyin',y:1996,c:'pla',w:'Norihiro Sadato, Leonardo Cohen',
+s:['Doğuştan görme engelli kişiler Braille okurken beyinlerinin hangi bölgeleri çalışıyor? Norihiro Sadato ve ekibi bunu görüntüledi.',
+'Şaşırtıcı biçimde görme korteksi aktifti. Görme bilgisi gelmeyen bu bölge, dokunma bilgisini işlemeye başlamıştı.',
+'Bir yıl sonra Leonardo Cohen ve ekibi bu bölgeyi geçici olarak manyetik uyarıyla bozdu; görme engelli katılımcıların Braille okuması da bozuldu. Yani görme korteksi gerçekten okumaya katkı veriyordu.'],
+n:'Bir beyin bölgesinin işlevinin deneyimle tamamen değişebileceğini gösteren çapraz-modal plastisite örneği.',
+r:['Sadato N ve ark. Activation of the primary visual cortex by Braille reading in blind subjects. Nature. 1996;380:526–528.','Cohen LG ve ark. Functional relevance of cross-modal plasticity in blind humans. Nature. 1997;389:180–183.']},
+{t:'Sırtıyla görmeyi öğrenenler',y:1969,c:'pla',w:'Paul Bach-y-Rita',
+s:['1969\'da nörobilimci Paul Bach-y-Rita bir dişçi koltuğunu bir kameraya ve sırta dayanan yüzlerce titreşimli pime bağladı. Kamera görüntüyü sırtta bir titreşim desenine çeviriyordu.',
+'Görme engelli katılımcılar pratikle bu desenlerden nesneleri, yüzleri ve hareketi ayırt etmeyi öğrendi. Bazıları nesneleri sırtlarında değil, önlerindeki boşlukta "algıladıklarını" söyledi.',
+'Bach-y-Rita\'nın ünlü sözü buydu: Biz gözümüzle değil, beynimizle görürüz.'],
+n:'Duyusal yerine koyma (sensory substitution): beyin bilgiyi hangi kanaldan gelirse gelsin anlamlandırmayı öğrenebiliyor.',
+p:'Denge bozukluğu olan hastalarda vestibüler bilginin dil üzerindeki uyarılarla verildiği cihazlar da bu fikrin devamı.',
+r:['Bach-y-Rita P ve ark. Vision substitution by tactile image projection. Nature. 1969;221:963–964.']},
+{t:'Düşünceyle hareket eden robot kol',y:2012,c:'fiz',w:'Leigh Hochberg, BrainGate',
+s:['Boyundan aşağısı felçli Matthew Nagle\'ın motor korteksine 2004\'te küçük bir elektrot dizisi yerleştirildi. 2006\'da yayımlanan çalışmada, yalnızca hareketi düşünerek bilgisayar imlecini oynatabildiği bildirildi.',
+'2012\'de beyin sapı inmesi geçirip yıllardır kollarını kullanamayan Cathy Hutchinson, aynı tür bir sistemle bir robot kolu yönetti ve kendi başına bir şişeden kahve içti. Bunu yaklaşık 15 yıldır ilk kez yapıyordu.',
+'Motor korteks, yıllar sonra bile hareketin "niyetini" taşıyordu.'],
+n:'Beyin-bilgisayar arayüzlerinin klinikte mümkün olduğunu gösteren dönüm noktaları.',
+p:'Felçli hastalarda motor korteksin hareket niyetini yıllarca koruması, rehabilitasyonda motor imgeleme ve hareket gözlemi yaklaşımlarının da dayanaklarından biri.',
+r:['Hochberg LR ve ark. Neuronal ensemble control of prosthetic devices by a human with tetraplegia. Nature. 2006;442:164–171.','Hochberg LR ve ark. Reach and grasp by people with tetraplegia using a neurally controlled robotic arm. Nature. 2012;485:372–375.']},
+{t:'Karar vermeden önce karar veren beyin?',y:1983,c:'bil',w:'Benjamin Libet',
+s:['Benjamin Libet katılımcılardan istedikleri an bileklerini bükmelerini ve karar verdikleri anı özel bir saatte işaretlemelerini istedi. Bu sırada beyindeki "hazırlık potansiyeli"ni ölçtü.',
+'Beyindeki hazırlık, kişinin karar verdiğini fark ettiği andan yaklaşık üçte bir saniye önce başlıyordu.',
+'Bu bulgu yıllarca özgür irade tartışmalarına yakıt oldu. 2012\'de bir ekip, hazırlık potansiyelinin aslında bir karar değil, beyindeki rastgele dalgalanmaların birikimi olabileceğini önerdi; tartışma sürüyor.'],
+n:'Bilinçli niyetin zamanlamasına dair en çok tartışılan deney. Bilimde tek bir deneyin her şeyi çözmediğine de güzel bir örnek.',
+r:['Libet B ve ark. Time of conscious intention to act in relation to onset of cerebral activity (readiness-potential). Brain. 1983;106:623–642.','Schurger A, Sitt JD, Dehaene S. An accumulator model for spontaneous neural activity prior to self-initiated movement. PNAS. 2012;109:E2904–E2913.']},
+{t:'Karısını şapka sanan adam',y:1985,c:'dil',w:'Oliver Sacks',
+s:['Nörolog Oliver Sacks\'ın anlattığı Dr. P. yetenekli bir müzisyen ve öğretmendi. Gözleri sağlıklıydı ama gördüklerini bir bütün olarak tanıyamıyordu.',
+'Bir eldiveni "beş uzantılı, kendi üstüne katlanan bir yüzey" diye tarif ediyor ama ne olduğunu söyleyemiyordu. Muayene bitince karısının başını şapkası sanıp kaldırmaya çalıştı.',
+'Buna rağmen hayatını müzikle sürdürüyordu: giyinmeyi, yemek yemeyi kendi kendine şarkı söyleyerek yapıyordu.'],
+n:'Görsel agnozinin en bilinen anlatımı; algının parçalardan nasıl anlam kurduğunu gösteriyor. Sacks\'ın kitabı nörolojiyi hikâyeyle anlatmanın en güzel örneklerinden.',
+r:['Sacks O. The Man Who Mistook His Wife for a Hat. 1985.']},
+{t:'Annesini sahtekâr sanan genç',y:1997,c:'duy',w:'V. S. Ramachandran, William Hirstein',
+s:['Bir trafik kazasından sonra genç bir adam, annesinin ve babasının görünüş olarak aynı ama aslında birer sahtekâr olduğunu söylemeye başladı. Bu duruma Capgras sanrısı denir.',
+'Garip olan, telefonda annesinin sesini duyduğunda onu sorunsuz tanımasıydı.',
+'Ramachandran ve Hirstein, yüz tanıma ile duygusal tepki arasındaki bağlantının koptuğunu öne sürdü: yüz tanınıyordu ama tanıdık yüzün uyandırması gereken sıcaklık gelmiyordu. Beyin bu çelişkiyi "bu o değil" diye açıklıyordu. Gerçekten de hastanın tanıdık yüzlere verdiği deri iletkenliği tepkisi azalmıştı.'],
+n:'Tanımanın yalnızca görsel değil, duygusal bir süreç olduğunu gösteriyor.',
+r:['Hirstein W, Ramachandran VS. Capgras syndrome: a novel probe for understanding the neural representation of the identity and familiarity of persons. Proc R Soc Lond B. 1997;264:437–444.']},
+{t:'İzlerken ateşlenen hücreler',y:1992,c:'fiz',w:'Giacomo Rizzolatti',
+s:['İtalya\'nın Parma kentinde Giacomo Rizzolatti\'nin ekibi maymunların premotor korteksinde, el ile yakalama hareketlerine tepki veren nöronları kaydediyordu.',
+'Bazı nöronların yalnızca maymun bir şeyi yakaladığında değil, deneyi yapan araştırmacının aynı hareketi yaptığını izlediğinde de ateşlendiğini fark ettiler. Bunlara "ayna nöronlar" dendi. (Bu keşfin bir dondurmayla başladığı hikâyesi popüler ama büyük ihtimalle süslenmiş bir anekdot.)',
+'Ayna nöronların empati ve dil gibi işlevlerdeki rolü konusunda bazı iddialar abartılı bulunsa da, hareket gözleminin motor sistemi devreye soktuğu iyi destekleniyor.'],
+n:'Başkasının hareketini anlamanın kendi motor sistemimizi kullandığını düşündüren keşif.',
+p:'Hareket gözlemi tedavisi (action observation) ve motor imgeleme, inme ve ortopedik rehabilitasyonda bu fikirden yararlanan yaklaşımlar.',
+r:['di Pellegrino G ve ark. Understanding motor events: a neurophysiological study. Exp Brain Res. 1992;91:176–180.','Gallese V ve ark. Action recognition in the premotor cortex. Brain. 1996;119:593–609.']},
+{t:'Kaybolan parmağın yerini alan komşular',y:1984,c:'pla',w:'Michael Merzenich',
+s:['Michael Merzenich ve ekibi, maymunlarda bir parmağın beyindeki duyusal haritasını çıkardı. Ardından tedavi amaçlı bir parmak amputasyonundan sonra haritaya yeniden baktılar.',
+'Kaybolan parmağa ait bölge boş kalmamıştı: komşu parmakların temsili oraya yayılmıştı.',
+'Yetişkin beyninin haritalarının sabit olmadığını, kullanıma göre sürekli yeniden düzenlendiğini gösteren ilk güçlü kanıtlardandı.'],
+n:'Yetişkin kortikal plastisitesinin temeli; hayalet uzuv ve kronik ağrı araştırmalarına da kapı açtı.',
+r:['Merzenich MM ve ark. Somatosensory cortical map changes following digit amputation in adult monkeys. J Comp Neurol. 1984;224:591–605.']},
+{t:'Hayalet uzuvlar ve bir iç savaş hekimi',y:1871,c:'fiz',w:'Silas Weir Mitchell',
+s:['Amerikan İç Savaşı\'nda sayısız asker kolunu ya da bacağını kaybetti. Hekim Silas Weir Mitchell bu askerlerin pek çoğunun kayıp uzuvlarını hâlâ hissettiğini, bazılarının orada ağrı duyduğunu kaydetti.',
+'1871\'de bu deneyimi anlatan yazısında "hayalet uzuv" (phantom limb) ifadesini kullandı. O dönem pek çok hekim bu anlatıları ciddiye almıyordu.',
+'Bugün hayalet uzuv ağrısı, beyindeki vücut haritasının uzuv kaybından sonra yeniden düzenlenmesiyle ilişkili gerçek bir sorun olarak biliniyor.'],
+n:'Vücudumuzun beyindeki temsilinin, vücudun kendisinden daha kalıcı olabileceğini gösteren tarihsel gözlem.',
+p:'Amputasyon sonrası rehabilitasyonda hayalet ağrı için ayna terapisi, dereceli motor imgeleme ve protez kullanımı birlikte değerlendirilir.',
+r:['Mitchell SW. Phantom limbs. Lippincott\'s Magazine. 1871.']},
+{t:'Beynin yarısını uyutan test',y:1949,c:'dil',w:'Juhn Wada',
+s:['Epilepsi cerrahisi öncesinde, konuşmanın hangi yarıkürede olduğunu bilmek hayati önemdedir. Japon nörolog Juhn Wada bunun için bir yöntem geliştirdi.',
+'Boyundaki atardamarlardan birine kısa etkili bir uyuşturucu ilaç veriliyor ve o tarafın yarıküresi birkaç dakikalığına "uyuyor". Hasta bu sırada saymaya, konuşmaya, nesneleri adlandırmaya çalışıyor. Konuşma susuyorsa, dil o yarıküredeydi.',
+'Wada testi onlarca yıl boyunca epilepsi cerrahisinin standart bir parçası oldu; bugün yerini giderek fonksiyonel görüntülemeye bırakıyor.'],
+n:'Dil ve hafızanın yarıkürelerdeki dağılımını hasta özelinde belirleyen ilk yöntem.',
+r:['Wada J, Rasmussen T. Intracarotid injection of sodium amytal for the lateralization of cerebral speech dominance. J Neurosurg. 1960;17:266–282.']},
+{t:'Kurbağa bacakları ve hayvansal elektrik',y:1791,c:'kes',w:'Luigi Galvani',
+s:['Bolonyalı hekim Luigi Galvani, 1780\'lerde kurbağa bacaklarıyla deneyler yaparken, bacak sinirine iki farklı metal dokunduğunda bacağın seğirdiğini gördü.',
+'Galvani bunun canlı dokunun kendi içinde taşıdığı "hayvansal elektrik"ten kaynaklandığını savundu. Alessandro Volta ise elektriğin metallerden geldiğini düşündü; bu tartışma Volta\'nın pili icat etmesine yol açtı.',
+'İkisi de kısmen haklıydı: sinirler gerçekten elektrik sinyalleriyle çalışıyordu.'],
+n:'Elektrofizyolojinin doğuşu. Galvani\'nin adı bugün "galvanik" kelimesinde, Volta\'nınki "volt"ta yaşıyor.',
+r:['Galvani L. De viribus electricitatis in motu musculari commentarius. 1791.']}
+];
+const NSV={i:null,cat:'',view:'today'};
+function nsToday(){const d=Math.floor((Date.now()-new Date(2026,0,1).getTime())/864e5);const ord=NS.map((_,i)=>i).sort((a,b)=>((a*37+11)%NS.length)-((b*37+11)%NS.length));return ord[((d%NS.length)+NS.length)%NS.length]}
+function nsCfg(){return (LF.cfg&&LF.cfg.ns)||{}}
+function nsCard(x,i,full){const c=nsCfg(),fav=(c.fav||[]).includes(i);
+  return `<article class="ns-a"><div class="ns-m"><span class="pill">${NS_CAT[x.c]}</span><span class="hint">${x.y}${x.w?' · '+esc(x.w):''}</span></div><h3>${esc(x.t)}</h3>
+   ${x.s.map(p=>`<p>${esc(p)}</p>`).join('')}
+   <div class="ns-b"><b>Neden önemli?</b><p>${esc(x.n)}</p></div>
+   ${x.p?`<div class="ns-b ns-p"><b>🦴 Fizyoterapist gözüyle</b><p>${esc(x.p)}</p></div>`:''}
+   <details class="ns-r"><summary class="hint">📚 Kaynaklar (${x.r.length})</summary><ol>${x.r.map(r=>`<li>${esc(r)}</li>`).join('')}</ol></details>
+   <div class="fm-a"><button class="btn" type="button" data-ns="fav" data-v="${i}">${fav?'★ Kaydedildi':'☆ Kaydet'}</button><button class="btn" type="button" data-ns="cite" data-v="${i}">📋 Kaynağı kopyala</button><button class="btn" type="button" data-ns="search" data-v="${i}">🔎 Makaleyi bul</button>${full?'':''}</div></article>`}
+function nsRender(host){host=host||$('secHost');const t=nsToday();if(NSV.i==null)NSV.i=t;const c=nsCfg(),fav=c.fav||[];
+  let L=NS.map((x,i)=>[x,i]);if(NSV.cat==='fav')L=L.filter(([,i])=>fav.includes(i));else if(NSV.cat)L=L.filter(([x])=>x.c===NSV.cat);
+  host.innerHTML=`<div class="ns"><div class="lf-hd"><h2>🧠 Nörobilim hikâyeleri</h2><span class="hint">Her gün gerçek bir vaka ya da keşif · ${NS.length} hikâye</span></div>
+   <div class="lfc ns-today"><div class="lf-row" style="align-items:center"><span class="eyebrow">${NSV.i===t?'☀️ Günün hikâyesi':'📖 Hikâye '+(NSV.i+1)+' / '+NS.length}</span><span class="pm-sp"></span><button class="iconbtn" type="button" data-ns="go" data-v="${(NSV.i-1+NS.length)%NS.length}" aria-label="Önceki">‹</button>${NSV.i!==t?`<button class="btn" type="button" data-ns="go" data-v="${t}">Bugüne dön</button>`:''}<button class="iconbtn" type="button" data-ns="go" data-v="${(NSV.i+1)%NS.length}" aria-label="Sonraki">›</button></div>${nsCard(NS[NSV.i],NSV.i,true)}</div>
+   <div class="lfc"><h4>Tüm hikâyeler</h4><div class="fm-cats"><button type="button" class="chip" data-ns="cat" data-v="" aria-pressed="${!NSV.cat}">Tümü</button>${Object.entries(NS_CAT).map(([k,l])=>`<button type="button" class="chip" data-ns="cat" data-v="${k}" aria-pressed="${NSV.cat===k}">${l}</button>`).join('')}<button type="button" class="chip" data-ns="cat" data-v="fav" aria-pressed="${NSV.cat==='fav'}">★ Kaydettiklerim ${fav.length||''}</button></div>
+    <div class="ns-l">${L.map(([x,i])=>`<button type="button" class="ns-li${i===NSV.i?' on':''}" data-ns="go" data-v="${i}"><span>${NS_CAT[x.c].split(' ')[0]}</span><b>${esc(x.t)}</b><span class="hint">${x.y}${(c.read||[]).includes(i)?' · okundu':''}</span></button>`).join('')||'<span class="hint">Henüz bir şey yok.</span>'}</div></div></div>`;
+  const rd=c.read||[];if(!rd.includes(NSV.i))lfSet('lifecfg','ns',{...c,id:undefined,read:[...rd,NSV.i]}).catch(()=>{})}
+function nsHomeCard(){const i=nsToday(),x=NS[i];return `<section class="ns-home"><h3 class="hs-h">🧠 Günün nörobilim hikâyesi</h3><div class="lfc ns-hc"><span class="pill">${NS_CAT[x.c]}</span><b>${esc(x.t)}</b><span class="hint">${x.y}</span><p>${esc(x.s[0].slice(0,190))}${x.s[0].length>190?'…':''}</p><div><button class="btn primary" type="button" data-ns="open">Devamını oku</button></div></div></section>`}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-ns]');if(!b)return;const k=b.dataset.ns,v=+b.dataset.v;
+  if(k==='open'){NSV.i=nsToday();goSec('academic','neuro');return}
+  if(k==='go'){NSV.i=v;nsRender();const t=document.querySelector('.ns-today');t&&t.scrollIntoView({block:'start',behavior:'smooth'});return}
+  if(k==='cat'){NSV.cat=b.dataset.v;return nsRender()}
+  if(k==='fav'){const c=nsCfg(),f=c.fav||[];await lfSet('lifecfg','ns',{...c,id:undefined,fav:f.includes(v)?f.filter(x=>x!==v):[...f,v]});toast(f.includes(v)?'Kaydedilenlerden çıkarıldı':'★ Kaydedildi');setTimeout(()=>nsRender(),250);return}
+  if(k==='cite'){await aiCopy(NS[v].r.join('\n'));toast('Kaynak kopyalandı — Kaynakça\'ya yapıştırabilirsin');return}
+  if(k==='search'){const r=NS[v].r[0];const m=r.match(/\.\s([^.]{12,}?)\.\s/);window.open('https://scholar.google.com/scholar?q='+encodeURIComponent(m?m[1]:r),'_blank','noopener');return}});
 
 const SECS={
   home:{t:'Ana sayfa',tabs:[]},
   life:{t:'Hayatım',tabs:[['today','☀️ Bugün'],['week','📆 Haftam'],['cal','🗓 Takvim'],['tasks','✅ Görevler'],['habits','🔁 Alışkanlıklar'],['mood','🌿 Günlük'],['calm','🫧 Sakinleş & destek'],['goals','🎯 Hedefler'],['money','💰 Bütçe'],['lists','📋 Listeler'],['food','🍲 Yemek'],['days','🎂 Önemli günler'],['mem','🗃 Anı kutusu'],['film','🎬 Filmler'],['songs','🎵 Şarkılarım'],['year','✨ Yılım']]},
   library:{t:'Kütüphanem',tabs:[]},
-  academic:{t:'Akademik',tabs:[['makale','📄 Makaleler'],['lit','📊 Literatür tablosu'],['thesis','🎓 Tez planlayıcı'],['cards','🃏 Çalışma kartları'],['kaynak','📑 Kaynakça'],['nb','📓 Defterlerim']]},
+  academic:{t:'Akademik',tabs:[['makale','📄 Makaleler'],['lit','📊 Literatür tablosu'],['thesis','🎓 Tez planlayıcı'],['cards','🃏 Çalışma kartları'],['kaynak','📑 Kaynakça'],['neuro','🧠 Nörobilim'],['nb','📓 Defterlerim']]},
   notes:{t:'Defterlerim',tabs:[]},
   writer:{t:'Yazar köşesi',tabs:[['roman','📖 Romanlarım'],['room','✍️ Yazı odası'],['scenes','🎬 Sahne panosu'],['ideas','💡 Fikir defteri'],['chars','👤 Karakterler'],['rel','🕸 İlişki haritası'],['time','🕰 Zaman çizelgesi'],['world','🗺 Dünya'],['board','🎨 İlham panosu'],['music','🎧 Müzik listesi'],['iv','🎙 Karakter röportajı'],['write','📝 Yazım takibi'],['subs','📮 Yayınevleri']]},
   journal:{t:'Okuma günlüğüm',tabs:[['month','🗓 Aylık sayfa'],['readlist','📖 Okuma listesi'],['stats','📈 İstatistikler'],['bingo','🎯 Bingo'],['quotes','💬 Alıntı defteri'],['focus','⏱ Odak'],['year','🌟 Yılın özeti']]},
@@ -5476,6 +5795,7 @@ function renderSection(){
   if(sec==='life'){lfBStop();lfRender();return}
   if(sub==='parts'){$('secHost').innerHTML=partsHtml();return}
   if(sub==='kaynak'){kyRender($('secHost'));kyAutoQ();return}
+  if(sub==='neuro'){nsRender($('secHost'));return}
   const toolMap={thesis:['thesis'],cards:['cards'],room:['writer','room'],rel:['writer','rel'],time:['writer','time'],world:['writer','world'],scenes:['writer','scenes'],bingo:['bingo'],month:['month'],readlist:['readlist'],ideas:['writer','ideas'],chars:['writer','chars'],board:['writer','board'],music:['writer','music'],iv:['writer','iv'],write:['writer','write'],subs:['writer','subs'],quotes:['quotes'],stats:['stats'],focus:['focus'],year:['year'],backup:['backup']};
   if(toolMap[sub]){TL.embedded=true;TL.cur=toolMap[sub][0];TL.sub=toolMap[sub][1]||null;if(TL.cur!=='cards')TL.study=TL.study;$('secHost').appendChild($('toolPanel'));renderTool();return}
   if(sub==='lit'){hostPanel('litVeil');litRender()}
