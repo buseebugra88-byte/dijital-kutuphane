@@ -1036,6 +1036,25 @@ html body .lf-hd h2,html body .tool-head h2{letter-spacing:-.01em}
 .sb-q{margin:0;font:italic 17px/1.5 var(--display);color:color-mix(in srgb,var(--ink) 85%,var(--muted));max-width:380px}.sb-q cite{display:block;margin-top:6px;font:normal 12px var(--body);color:var(--muted)}
 .sb-ns{border:0;background:none;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;display:flex;gap:6px;align-items:center}.sb-ns span{text-decoration:underline;text-underline-offset:3px}
 @media(max-width:640px){.wg-box .cl-row3,.co .cl-row3{grid-template-columns:1fr 1fr}.wg-box .cl-row3 .btn,.co .cl-row3 .btn{grid-column:1/-1}.co-f{grid-template-columns:1fr auto}.co-f span{grid-column:1}.rc-lane{grid-template-columns:70px 1fr auto}}
+
+html body .btn{white-space:nowrap}
+html body .chargrid{grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:14px}
+html body .charcard{grid-template-columns:64px minmax(0,1fr);grid-template-rows:auto 1fr auto;column-gap:14px;row-gap:6px;padding:14px;border-radius:20px;background:var(--paper);border:1px solid color-mix(in srgb,var(--line) 80%,transparent);box-shadow:var(--sw-sh);align-items:start}
+html body .charcard>img,html body .charcard>.charph{grid-row:1/3;width:64px;height:80px;border-radius:16px}
+html body .charph{background:linear-gradient(160deg,var(--accent-soft),color-mix(in srgb,var(--brass-soft) 70%,var(--paper)));color:color-mix(in srgb,var(--ink) 75%,var(--accent));font-size:28px}
+html body .cc-h{display:grid;gap:2px;min-width:0}.cc-h b{font:600 18px/1.2 var(--display);overflow-wrap:anywhere}
+.cc-role{font-size:12px;color:var(--muted);line-height:1.35}
+html body .charcard p{grid-column:2;margin:0;font-size:13px;line-height:1.45;-webkit-line-clamp:3}
+.cc-a{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;padding-top:8px;border-top:1px dashed color-mix(in srgb,var(--line) 85%,transparent)}
+html body .cc-a .btn{padding:5px 12px;font-size:12.5px}html body .cc-a .cc-x{margin-left:auto;padding:5px 10px}
+
+html body #secHost select,html body #secHost input:not([type=checkbox]):not([type=radio]),html body #secHost textarea{max-width:100%}
+.co,.cl{grid-template-columns:minmax(0,1fr)}.co .cl-btns select{flex:1 1 220px;min-width:0;text-overflow:ellipsis}
+
+.cl-bkbtn{border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cl-bkbtn small{color:var(--muted)}.cl-bkbtn:hover{text-decoration:underline;text-underline-offset:3px}
+.cl-pick{display:grid;gap:8px}.cl-pk{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:8px 8px 8px 12px}.cl-pk.on{border-color:var(--brass);background:var(--brass-soft)}
+.cl-pkb{border:0;background:none;text-align:left;display:grid;gap:2px;cursor:pointer;font:inherit;color:inherit;padding:0;min-width:0}.cl-pkb b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.co,.cl{grid-template-columns:minmax(0,1fr)}.co .cl-btns select{flex:1 1 220px;min-width:0;text-overflow:ellipsis}
 </style>
 
 </head><body>
@@ -3184,7 +3203,7 @@ function tWriter(){
   else if(tab==='chars'){const cs=TL.chars.filter(c=>c.novel===TL.novel);
     body=`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${nsel('wNovel')}<button class="btn primary" type="button" data-act="chnew">+ Karakter ekle</button></div>
       ${TL.editChar?charForm(TL.editChar):''}
-      <div class="chargrid">${cs.map(c=>`<div class="charcard">${c.img?`<img src="${esc(assetSrcOf(c.img))}" alt="">`:`<div class="charph">${esc((c.name||'?')[0])}</div>`}<div><b>${esc(c.name)}</b>${c.role?`<span class="pill">${esc(c.role)}</span>`:''}<p>${esc(c.desc||'')}</p><div style="display:flex;gap:6px"><button class="btn" type="button" data-chedit="${c.id}">Düzenle</button><button class="btn" type="button" data-aich="${c.id}">✨ Yapay zekâ</button><button class="btn" type="button" data-chrm="${c.id}">Sil</button></div></div></div>`).join('')||'<p class="hint">Bu romanda henüz karakter yok.</p>'}</div>`}
+      <div class="chargrid">${cs.map(c=>`<div class="charcard">${c.img?`<img src="${esc(assetSrcOf(c.img))}" alt="">`:`<div class="charph">${esc((c.name||'?')[0])}</div>`}<div class="cc-h"><b>${esc(c.name)}</b>${c.role?`<span class="cc-role">${esc(c.role)}</span>`:''}</div>${c.desc?`<p>${esc(c.desc)}</p>`:''}<div class="cc-a"><button class="btn" type="button" data-chedit="${c.id}">✎ Düzenle</button><button class="btn" type="button" data-aich="${c.id}" title="Yapay zekâ ile konuş">✨ Yapay zekâ</button><button class="btn cc-x" type="button" data-chrm="${c.id}" aria-label="${esc(c.name)} karakterini sil" title="Sil">🗑</button></div></div>`).join('')||'<p class="hint">Bu romanda henüz karakter yok.</p>'}</div>`}
   else if(tab==='write'){const W=TL.writing||{sessions:[],goal:500},ses=W.sessions||[];const per={};ses.forEach(s=>{per[s.novel]=(per[s.novel]||0)+(+s.words||0)});
     const days={};ses.forEach(s=>{days[s.date]=(days[s.date]||0)+(+s.words||0)});let streak=0;for(let i=0;i<365;i++){const d=new Date();d.setDate(d.getDate()-i);if(days[todayKey(d)])streak++;else if(i>0)break}
     const last=[...Array(14)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-13+i);return [todayKey(d),days[todayKey(d)]||0]}),mx=Math.max(W.goal||500,...last.map(x=>x[1]));
@@ -4986,7 +5005,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v51';
+const DK_VER='v52';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -5912,7 +5931,10 @@ const clOn=d=>!!(d&&(d.p||d.m||d.s));
 function clStreak(get){let n=0,k=lfK();if(!clOn(get(k)))k=lfAdd(k,-1);while(n<400){if(!clOn(get(k)))break;n++;k=lfAdd(k,-1)}return n}
 const CL_AV=['cat','pengu','bunny','frog'];const clAv=(a,w)=>stampSvg(CL_AV.includes(a)?a:'cat',w);
 const clFget=f=>k=>{const v=(f.days||{})[k];return v?{p:+v.p||0,m:+v.m||0,b:v.b||[],s:!!v.s}:{p:0,m:0,b:[],s:false}};
-function clReading(){return st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'&&b.status==='okunuyor').slice(0,8)}
+function clReading(){const pin=clCfg().pin,lim=Date.now()-21*864e5;const L=st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'&&b.status==='okunuyor'&&(b.id===pin||!b.lastReadAt||Date.parse(b.lastReadAt)>lim)).sort((a,b)=>(b.id===pin)-(a.id===pin)||(b.lastReadAt||'').localeCompare(a.lastReadAt||''));return L.slice(0,6)}
+function clPickDlg(){const pin=clCfg().pin,L=st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'&&b.status==='okunuyor').sort((a,b)=>(b.lastReadAt||'').localeCompare(a.lastReadAt||''));
+  msModal(`<div class="eyebrow">📖 Şu an ne okuyorsun?</div><p class="hint" style="margin:0">Seçtiğin kitap kulüpte ve arkadaşının vitrininde en üstte görünür. Yanlışlıkla "okunuyor" olan kitabı okunacaklara geri alabilirsin.</p>
+   <div class="cl-pick">${L.map(b=>`<div class="cl-pk${b.id===pin?' on':''}"><button type="button" class="cl-pkb" data-cl="pin" data-id="${b.id}"><b>${esc(b.title)}</b><span class="hint">${esc([b.author,b.lastReadAt?'son okuma '+lfShort(b.lastReadAt.slice(0,10)):''].filter(Boolean).join(' · '))}</span></button><button class="btn" type="button" data-cl="unread" data-id="${b.id}">Okumuyorum</button></div>`).join('')||'<span class="hint">"Okunuyor" durumunda kitabın yok.</span>'}</div>`)}
 function clPayload(c){const days={};for(let i=0;i<21;i++){const k=lfAdd(lfK(),-i),d=clDay(k);if(clOn(d))days[k]=[d.p,d.m,d.b.slice(0,3),d.s?1:0]}
   const Y=String(new Date().getFullYear());
   const P={v:1,id:c.uid,n:(c.name||'').slice(0,30),e:c.emoji||'📚',a:c.av||'cat',at:Date.now(),d:days,
@@ -5970,7 +5992,7 @@ function clHeat(get){const t=lfK(),dow=(lfD(t).getDay()+6)%7,start=lfAdd(t,-dow-
 function clWeekSum(get){const t=lfK(),dow=(lfD(t).getDay()+6)%7;let n=0;for(let i=0;i<=dow;i++)n+=get(lfAdd(t,-i)).p;return n}
 function clMemHtml(o){const d=o.get(lfK()),on=clOn(d),st_=clStreak(o.get);
   const line=on?(d.p?`Bugün ${d.p} sayfa okudu${o.me?'n':''}`:d.m?`Bugün ${d.m} dakika okudu${o.me?'n':''}`:`Bugün okudu${o.me?'n':''}`):`Bugün henüz okumadı${o.me?'n':''}`;
-  return `<div class="cl-mem${on?' on':''}"><span class="cl-av">${clAv(o.av,54)}</span><div class="cl-mi"><b>${esc(o.name)}${o.me&&o.name!=='Sen'?' <small>(sen)</small>':''}</b>${o.book?`<span class="cl-bkname">📖 ${esc(o.book)}</span>`:''}<span class="hint">${line}${st_?' · 🔥 '+st_+' gün seri':''}${o.ago?' · '+o.ago:''}</span></div><span class="cl-mst${on?'':' off'}">${on?clStampSvg(lfK(),54):'<span>—</span>'}</span></div>`}
+  return `<div class="cl-mem${on?' on':''}"><span class="cl-av">${clAv(o.av,54)}</span><div class="cl-mi"><b>${esc(o.name)}${o.me&&o.name!=='Sen'?' <small>(sen)</small>':''}</b>${o.book?(o.me?`<button type="button" class="cl-bkname cl-bkbtn" data-cl="pick" title="Değiştir">📖 ${esc(o.book)} <small>✎</small></button>`:`<span class="cl-bkname">📖 ${esc(o.book)}</span>`):(o.me?`<button type="button" class="cl-bkname cl-bkbtn" data-cl="pick">📖 Ne okuyorsun? <small>✎</small></button>`:'')}<span class="hint">${line}${st_?' · 🔥 '+st_+' gün seri':''}${o.ago?' · '+o.ago:''}</span></div><span class="cl-mst${on?'':' off'}">${on?clStampSvg(lfK(),54):'<span>—</span>'}</span></div>`}
 function clHtml(){const c=clCfg(),F=clFriends(),T=lfK(),today=clDay(T),on=clOn(today),sk=clStreak(clDay);
   const books=st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'&&b.status!=='okundu').map(b=>b.title).filter(Boolean);
   const phys=st.books.filter(b=>b.kind==='kitap').sort((a,b)=>({okunuyor:0,okunacak:1,okundu:2}[a.status]??3)-({okunuyor:0,okunacak:1,okundu:2}[b.status]??3));
@@ -6038,6 +6060,9 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-cl]'
   if(k==='emo'){document.querySelectorAll('#clEmo [data-cl]').forEach(x=>x.setAttribute('aria-pressed',x===b));return}
   if(k==='savename'){const n=(($('clName')||{}).value||'').trim();if(!n){$('clName').focus();return}const em=document.querySelector('#clEmo [aria-pressed="true"]');await clMe();await clSaveCfg({name:n,av:em?em.dataset.v:'cat'});msClose();const f=CL.then;CL.then=null;setTimeout(()=>{f&&f();clRender()},250);return}
   if(k==='share'){clShare(b.dataset.v);return}
+  if(k==='pick'){clPickDlg();return}
+  if(k==='pin'){await clSaveCfg({pin:b.dataset.id});msClose();toast('📖 Şu an okuduğun güncellendi');setTimeout(()=>clRender(),250);return}
+  if(k==='unread'){try{await st.db.collection('books').doc(b.dataset.id).update({status:'okunacak'})}catch(x){}if(clCfg().pin===b.dataset.id)await clSaveCfg({pin:''});toast('Okunacaklara alındı');setTimeout(()=>{if($('msModal'))clPickDlg();clRender()},400);return}
   if(k==='stamp'){if(clOn(clDay(lfK()))){return}CL.anim=true;await lfSet('club',null,{type:'log',date:lfK(),stamp:true,book:'',pages:0,mins:0,at:new Date().toISOString()});toast('Damgan basıldı 🌿');return}
   if(k==='accept'){const o=CL.pending;if(!o)return;b.disabled=true;const ok=await clAccept(o);msClose();CL.pending=null;if(ok){toast((o.n||'Arkadaşın')+' kulübünde 👭');CL.show='f_'+o.id.replace(/[^a-z0-9]/gi,'').slice(0,20);goSec('journal','club')}return}
   if(k==='paste'){const o=clParse(($('clPaste')||{}).value);if(!o){toast('Bu bir kulüp linki değil gibi');return}clIncomingDlg(o);return}
@@ -6655,7 +6680,7 @@ async function pdfLib(){
 function rMsg(html){$('rStage').innerHTML=`<div class="rmsg">${html}</div>`}
 async function openReader(b){
   if(!hasFile(b))return;if(dkLocalOnly(b)&&!LOCAL.has(b.assetId)){dkMissingDlg(b);return}setTimeout(()=>{if(R.book&&R.book.id===b.id&&!$('reader').hidden)dkShareBar(b)},1800);
-  Object.assign(R,{book:b,doc:null,epub:null,page:Math.max(1,b.currentPage||1),lastSaved:b.currentPage||0,pos:b.epubPos||0,lastPos:b.epubPos||0});
+  Object.assign(R,{sess:0,book:b,doc:null,epub:null,page:Math.max(1,b.currentPage||1),lastSaved:b.currentPage||0,pos:b.epubPos||0,lastPos:b.epubPos||0});
   $('rPageLbl').textContent=b.fileType==='epub'?'Bölüm':'Sayfa';$('rInkBtn').hidden=b.fileType==='epub';$('rSum').hidden=!(st.sample&&b.fileType!=='epub'&&(b.kind==='makale'||b.kind==='pdf'));$('rCards').hidden=!(st.sample&&b.fileType!=='epub'&&b.kind!=='roman');$('ttsBar').hidden=true;$('ttsBar').dataset.open='0';$('inkBar').hidden=true;
   try{const z=parseFloat(localStorage.getItem('dk-zoom'));if(z)R.scale=z}catch(e){}
   $('rTitle').textContent=b.title;$('rSaved').textContent='';$('rTotal').textContent='';$('rPage').value=R.page;
@@ -6798,8 +6823,8 @@ function queueSave(){clearTimeout(R.saveT);$('rSaved').textContent='';R.saveT=se
 async function saveMark(force){
   clearTimeout(R.saveT);const b=R.book;if(!b||!st.db||(R.page===R.lastSaved&&!(R.epub&&Math.abs(R.pos-R.lastPos)>0.02)))return;
   const page=R.page,upd={currentPage:page,lastReadAt:new Date().toISOString()};if(R.epub){upd.epubPos=R.pos;R.lastPos=R.pos}
-  if(b.status==='okunacak')upd.status='okunuyor';
-  const prevSaved=R.lastSaved||0;
+  const prevSaved=R.lastSaved||0;R.sess=(R.sess||0)+(page>prevSaved&&prevSaved?page-prevSaved:0);
+  if(b.status==='okunacak'&&(R.epub?R.sess>=1:R.sess>=5))upd.status='okunuyor';
   try{await st.db.collection('books').doc(b.id).update(upd);R.lastSaved=page;logReading(page>prevSaved?page-prevSaved:0,b);if(R.book===b)$('rSaved').textContent='🔖 Ayraç '+(R.epub?'bölüm ':'s. ')+page+' kaydedildi'}
   catch(e){if(R.book===b)$('rSaved').textContent='Ayraç kaydedilemedi'}
 }
