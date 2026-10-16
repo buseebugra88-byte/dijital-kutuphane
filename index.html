@@ -887,6 +887,8 @@ body.sec-notes{background-image:none!important}
 .nbh-trash:hover{color:var(--ink)}
 .pm-trash{display:grid;gap:8px}.pm-tr{display:flex;gap:8px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;flex-wrap:wrap}
 .nbc-star{position:absolute;top:8px;right:8px;font-size:14px;z-index:2}
+
+.nbt-stab{display:inline-flex;align-items:center;gap:2px;background:color-mix(in srgb,var(--ink) 6%,transparent);border-radius:999px;padding:2px 2px 2px 10px;flex:none}.nbt-stab .hint{font-size:12px;margin-right:4px}.nbt-stab button{border:0;background:none;border-radius:999px;padding:6px 10px;font:inherit;font-size:12.5px;color:var(--ink);cursor:pointer}.nbt-stab button[aria-pressed="true"]{background:var(--paper);box-shadow:0 0 0 1.5px var(--ink)}
 </style>
 
 </head><body>
@@ -3643,7 +3645,7 @@ function nbMove(e){const c=NB.cur,d=NB.drag;if(!c&&!d)return;const el=NB.down&&N
   if(c.er){for(const ev of evs){const [a,b]=nbLogical(ev,el);nbErase(nbPg(c.pid),a,b)}return}
   if(c.lasso){for(const ev of evs){const [a,b]=nbLogical(ev,el);c.lasso.push(a,b)}const ctx=nbLive(el);if(!ctx)return;ctx.strokeStyle='#3b82f6';ctx.lineWidth=2;ctx.setLineDash([7,6]);ctx.beginPath();ctx.moveTo(c.lasso[0],c.lasso[1]);for(let i=2;i<c.lasso.length;i+=2)ctx.lineTo(c.lasso[i],c.lasso[i+1]);ctx.stroke();ctx.setLineDash([]);return}
   const S=c.S;if(c.snapped)return;let moved=false;
-  for(const ev of evs){const [a,b]=nbLogical(ev,el);const p=S.pts,lx=p[p.length-3],ly=p[p.length-2];if(Math.hypot(a-lx,b-ly)<.9/NB.zoom)continue;p.push(a,b,ev.pointerType==='pen'?Math.max(.1,ev.pressure||.5):.5);if(Math.hypot(a-lx,b-ly)>2.5)moved=true}
+  for(const ev of evs){let [a,b]=nbLogical(ev,el);const _k=NB_STK[nbStab()];if(_k<1&&S.k==='pen'){if(c.sx==null){c.sx=S.pts[0];c.sy=S.pts[1]}c.rx=a;c.ry=b;c.sx+=(a-c.sx)*_k;c.sy+=(b-c.sy)*_k;a=c.sx;b=c.sy}const p=S.pts,lx=p[p.length-3],ly=p[p.length-2];if(Math.hypot(a-lx,b-ly)<.9/NB.zoom)continue;p.push(a,b,ev.pointerType==='pen'?Math.max(.1,ev.pressure||.5):.5);if(Math.hypot(a-lx,b-ly)>2.5)moved=true}
   if(moved)nbHold();
   const cv=NB.cvs.get(c.pid);if(!cv)return;
   if(S.k==='hl'){const ctx=nbLive(el);if(ctx)nbStroke(ctx,S);return}
@@ -3663,7 +3665,7 @@ function nbUp(e){clearTimeout(NB.holdT);const c=NB.cur,d=NB.drag,dn=NB.down;NB.c
   if(NB.playIdx!=null&&dn&&performance.now()-dn.t<320&&S.pts.length<=12){const [x,y]=[dn.x,dn.y];let best=null,bd=28;for(const T of pg.strokes){if(T.a==null)continue;const b=nbBB(T);if(x<b.x-bd||x>b.x+b.w+bd||y<b.y-bd||y>b.y+b.h+bd)continue;for(let i=0;i<T.pts.length;i+=3){const dd=Math.hypot(T.pts[i]-x,T.pts[i+1]-y);if(dd<bd){bd=dd;best=T}}}
     nbRedraw(pg.id);if(best){nbSeek(best.a,best.t);return}}
   if(S.k==='pen'&&S.pts.length>=9){const sm=[S.pts[0],S.pts[1],S.pts[2]];for(let i=3;i<S.pts.length-3;i+=3){sm.push((S.pts[i-3]+4*S.pts[i]+S.pts[i+3])/6,(S.pts[i-2]+4*S.pts[i+1]+S.pts[i+4])/6,S.pts[i+2])}sm.push(...S.pts.slice(-3));if(!c.snapped)S.pts=sm}
-  nbPush(pg);pg.strokes.push(S);if(S.k==='hl'&&NB.live){const x=NB.live.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,NB.live.width,NB.live.height)}nbRedraw(pg.id);nbSave(pg)}
+  if(S.k==='pen')nbStabEnd(S,c);nbPush(pg);pg.strokes.push(S);if(S.k==='hl'&&NB.live){const x=NB.live.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,NB.live.width,NB.live.height)}nbRedraw(pg.id);nbSave(pg)}
 function nbErase(pg,x,y){const r=11/NB.zoom;const n0=pg.strokes.length;pg.strokes=pg.strokes.filter(S=>{const b=nbBB(S);if(x<b.x-r||x>b.x+b.w+r||y<b.y-r||y>b.y+b.h+r)return true;const p=S.pts,rr=r+S.w/2;
     for(let i=0;i<p.length;i+=3){const ax=p[i],ay=p[i+1],bx=p[i+3]??ax,by=p[i+4]??ay;const dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy;let t=l?((x-ax)*dx+(y-ay)*dy)/l:0;t=Math.max(0,Math.min(1,t));if(Math.hypot(ax+t*dx-x,ay+t*dy-y)<rr)return false}return true});
   if(pg.strokes.length!==n0){NB.cur.hit=1;nbRedraw(pg.id)}}
@@ -4637,7 +4639,7 @@ function nbMove(e){const c=NB.cur,d=NB.drag;if(!c&&!d)return;const el=NB.down&&N
   if(c.er){for(const ev of evs){const [a,b]=nbLogical(ev,el);nbEraseAt(nbPg(c.pid),a,b,el)}return}
   if(c.lasso){for(const ev of evs){const [a,b]=nbLogical(ev,el);c.lasso.push(a,b)}const ctx=nbLive(el);if(!ctx)return;ctx.strokeStyle='#3b82f6';ctx.lineWidth=2;ctx.setLineDash([7,6]);ctx.beginPath();ctx.moveTo(c.lasso[0],c.lasso[1]);for(let i=2;i<c.lasso.length;i+=2)ctx.lineTo(c.lasso[i],c.lasso[i+1]);ctx.stroke();ctx.setLineDash([]);return}
   const S=c.S;if(c.snapped)return;let moved=false;
-  for(const ev of evs){const [a,b]=nbLogical(ev,el);const p=S.pts,lx=p[p.length-3],ly=p[p.length-2];const dd=Math.hypot(a-lx,b-ly);if(dd<.5/NB.zoom)continue;p.push(a,b,nbPress(ev));if(dd>2.5)moved=true}
+  for(const ev of evs){let [a,b]=nbLogical(ev,el);const _k=NB_STK[nbStab()];if(_k<1&&S.k==='pen'){if(c.sx==null){c.sx=S.pts[0];c.sy=S.pts[1]}c.rx=a;c.ry=b;c.sx+=(a-c.sx)*_k;c.sy+=(b-c.sy)*_k;a=c.sx;b=c.sy}const p=S.pts,lx=p[p.length-3],ly=p[p.length-2];const dd=Math.hypot(a-lx,b-ly);if(dd<.5/NB.zoom)continue;p.push(a,b,nbPress(ev));if(dd>2.5)moved=true}
   if(moved)nbHold();if(!NB.liveRaf)NB.liveRaf=requestAnimationFrame(nbLiveDraw)}
 function nbLiveClear(){if(NB.live){const x=NB.live.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,NB.live.width,NB.live.height)}}
 function nbUp(e){clearTimeout(NB.holdT);if(NB.liveRaf){cancelAnimationFrame(NB.liveRaf);NB.liveRaf=0}const c=NB.cur,d=NB.drag,dn=NB.down;NB.cur=null;NB.drag=null;
@@ -4651,7 +4653,7 @@ function nbUp(e){clearTimeout(NB.holdT);if(NB.liveRaf){cancelAnimationFrame(NB.l
   const S=c.S;if(e&&e.type==='pointercancel'&&S.pts.length<6){nbLiveClear();return}
   if(NB.playIdx!=null&&dn&&performance.now()-dn.t<320&&S.pts.length<=12){const [x,y]=[dn.x,dn.y];let best=null,bd=28;for(const T of pg.strokes){if(T.a==null)continue;const b=nbBB(T);if(x<b.x-bd||x>b.x+b.w+bd||y<b.y-bd||y>b.y+b.h+bd)continue;for(let i=0;i<T.pts.length;i+=3){const dd=Math.hypot(T.pts[i]-x,T.pts[i+1]-y);if(dd<bd){bd=dd;best=T}}}
     if(best){nbLiveClear();nbSeek(best.a,best.t);return}}
-  nbPush(pg);pg.strokes.push(S);const cv=NB.cvs.get(pg.id);
+  if(S.k==='pen')nbStabEnd(S,c);nbPush(pg);pg.strokes.push(S);const cv=NB.cvs.get(pg.id);
   if(cv){const ctx=cv.getContext('2d');ctx.setTransform(cv.width/1000,0,0,cv.width/1000,0,0);nbStroke(ctx,S);ctx.setTransform(1,0,0,1,0,0)}nbLiveClear();nbSave(pg)}
 
 /* ---- silgi: tüm çizgi ya da parça ---- */
@@ -4702,7 +4704,7 @@ function nbTools(){const el=$('nbTools');if(!el)return;const t=NB.tool,hl=t==='h
   const cols=`<div class="nbt-cols">${pal.map(c=>`<button type="button" class="nb-col" data-ne="col" data-v="${c}" style="--c:${c}" aria-pressed="${c===cur}" aria-label="Renk"></button>`).join('')}<label class="nb-col nb-colx" title="Başka renk" style="--c:${cur}"><input type="color" id="nbColX" value="${cur}"></label></div>`;
   const sizes=`<div class="nbt-sz">${NB_W[hl?'hl':'pen'].map((w,i)=>`<button type="button" data-ne="w" data-v="${i}" aria-pressed="${NB.w===i}" aria-label="Kalınlık ${i+1}"><i style="width:${Math.min(22,hl?6+i*4:2+w*1.6)}px;height:${Math.min(22,hl?6+i*4:2+w*1.6)}px;background:${cur}"></i></button>`).join('')}</div>`;
   let opts='';
-  if(t==='pen')opts=`<div class="nbt-pt">${Object.entries(NB_PT).map(([k,[l,h]])=>`<button type="button" data-n3="pt" data-v="${k}" aria-pressed="${NB.pt===k}" title="${h}"><svg viewBox="0 0 60 16"><path d="M4 11 C14 2, 22 2, 30 8 S 46 14, 56 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="${k==='ball'?2.4:k==='brush'?4.5:3}" ${k==='pencil'?'stroke-dasharray="1.5 1" opacity=".75"':''}/></svg><span>${l}</span></button>`).join('')}</div>${cols}${sizes}<button type="button" class="chip" data-ne="shape" aria-pressed="${NB.shape}" title="Çizip kalemi bekletince düzgün şekle dönüşür">${nbIco('shape')} Şekil düzelt</button>`;
+  if(t==='pen')opts=`<div class="nbt-pt">${Object.entries(NB_PT).map(([k,[l,h]])=>`<button type="button" data-n3="pt" data-v="${k}" aria-pressed="${NB.pt===k}" title="${h}"><svg viewBox="0 0 60 16"><path d="M4 11 C14 2, 22 2, 30 8 S 46 14, 56 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="${k==='ball'?2.4:k==='brush'?4.5:3}" ${k==='pencil'?'stroke-dasharray="1.5 1" opacity=".75"':''}/></svg><span>${l}</span></button>`).join('')}</div>${cols}${sizes}<button type="button" class="chip" data-ne="shape" aria-pressed="${NB.shape}" title="Çizip kalemi bekletince düzgün şekle dönüşür">${nbIco('shape')} Şekil düzelt</button><span class="nbt-stab" title="Titremeyi azaltır, çizgileri yumuşatır"><span class="hint">Sabitleme</span>${['Kapalı','Az','Orta','Çok'].map((l,i)=>`<button type="button" data-nstab="${i}" aria-pressed="${nbStab()===i}">${l}</button>`).join('')}</span>`;
   else if(hl)opts=cols+sizes;
   else if(t==='er')opts=`<div class="seg"><button type="button" data-n3="em" data-v="stroke" aria-pressed="${NB.em==='stroke'}">Tüm çizgiyi sil</button><button type="button" data-n3="em" data-v="part" aria-pressed="${NB.em==='part'}">Dokunduğun yeri sil</button></div><div class="nbt-sz">${[0,1,2].map(i=>`<button type="button" data-n3="ew" data-v="${i}" aria-pressed="${NB.ew===i}" aria-label="Silgi boyu ${i+1}"><i style="width:${[8,13,20][i]}px;height:${[8,13,20][i]}px;background:transparent;border:1.5px solid currentColor"></i></button>`).join('')}</div><button type="button" class="chip" data-n3="clear">🗑 Sayfayı temizle</button>`;
   else if(t==='lasso')opts=`<span class="hint">Seçmek istediğin yazının etrafını çiz → sürükle, köşeden büyüt, rengini değiştir ya da sil.</span>`;
@@ -4813,7 +4815,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v40';
+const DK_VER='v41';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -5172,6 +5174,17 @@ function nbListen(db){
     if(NB.bid&&changed.length){const ae=document.activeElement;if(!(ae&&ae.closest&&ae.closest('#nbEd [contenteditable]'))&&!NB.cur&&!NB.drag)nbBodyRender(true)}
     nbHomeRe()},()=>{});
 }
+
+/* ===== yazı sabitleme (stabilizasyon) ===== */
+const NB_STK=[1,.6,.4,.26];
+function nbStab(){try{const v=localStorage.getItem('dk-stab');return v==null?1:+v}catch(e){return 1}}
+function nbStabEnd(S,c){const lv=nbStab();if(!lv)return;const p=S.pts;
+  if(c&&c.rx!=null){const lx=p[p.length-3],ly=p[p.length-2],q=p[p.length-1];const n=Math.min(6,Math.ceil(Math.hypot(c.rx-lx,c.ry-ly)/2));for(let i=1;i<=n;i++){p.push(lx+(c.rx-lx)*i/n,ly+(c.ry-ly)*i/n,q)}}
+  const W=[0,1,2,3][lv],n=p.length/3;if(n<5)return;const o=p.slice();
+  for(let pass=0;pass<(lv>2?2:1);pass++){for(let i=1;i<n-1;i++){let sx=0,sy=0,k=0;for(let j=Math.max(0,i-W);j<=Math.min(n-1,i+W);j++){sx+=o[j*3];sy+=o[j*3+1];k++}p[i*3]=sx/k;p[i*3+1]=sy/k}for(let i=0;i<p.length;i++)o[i]=p[i]}
+  S.bb=null}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-nstab]');if(!b)return;e.preventDefault();e.stopPropagation();try{localStorage.setItem('dk-stab',b.dataset.nstab)}catch(x){}
+  b.parentNode.querySelectorAll('[data-nstab]').forEach(x=>x.setAttribute('aria-pressed',x===b));toast(['Sabitleme kapalı','Sabitleme: az','Sabitleme: orta','Sabitleme: çok'][+b.dataset.nstab])},true);
 
 const SECS={
   home:{t:'Ana sayfa',tabs:[]},
