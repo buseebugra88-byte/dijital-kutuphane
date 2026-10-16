@@ -975,6 +975,30 @@ body.pat-waves{background-image:radial-gradient(circle at 50% 120%,transparent 1
 .cl-avpick{display:flex;gap:10px;flex-wrap:wrap}.cl-avpick button{background:none;border:2px solid transparent;border-radius:14px;padding:4px;cursor:pointer;line-height:0}.cl-avpick button[aria-pressed="true"]{border-color:var(--brass);background:var(--brass-soft)}
 .cl-inav{display:flex;justify-content:center;margin:4px 0 -4px}
 @media(max-width:640px){.cl-hero{grid-template-columns:1fr}.cl-pad{border-right:0;border-bottom:1px dashed color-mix(in srgb,var(--brass) 40%,var(--line))}.cl-today{padding:16px}.cl-row3{grid-template-columns:1fr 1fr}.cl-row3 .btn{grid-column:1/-1}.cl-sec,.cl-vit{padding:14px}.cl-mem{gap:10px}}
+
+/* ===== Tatlı görünüm katmanı ===== */
+:root{--sw-r:22px;--sw-sh:0 1px 0 color-mix(in srgb,#fff 55%,transparent) inset,0 14px 30px -22px color-mix(in srgb,var(--ink) 55%,transparent),0 2px 6px -4px color-mix(in srgb,var(--ink) 18%,transparent);--sw-soft:color-mix(in srgb,var(--paper) 86%,var(--brass-soft))}
+html body .lfc,html body .hs-c,html body .hs-g,html body .dcard,html body .wg,html body .bj-box,html body #secHost>.panel,html body .panel.tool,html body .panel.ky,html body .bk-ban{border-radius:var(--sw-r);box-shadow:var(--sw-sh);border-color:color-mix(in srgb,var(--line) 80%,transparent)}
+html body .lfc{padding:16px 18px}
+html body #secTitle{display:flex;align-items:center;gap:12px;letter-spacing:-.01em}
+.sec-st{display:inline-block;line-height:0;transform:rotate(-7deg);filter:drop-shadow(0 4px 6px color-mix(in srgb,var(--ink) 18%,transparent));transition:transform .3s}.sec-st:hover{transform:rotate(3deg) scale(1.05)}.sec-st .stamp{margin:0}
+html body #secTabs{background:color-mix(in srgb,var(--paper) 55%,transparent);border-color:color-mix(in srgb,var(--line) 70%,transparent);padding:4px;gap:2px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+html body #secTabs button{padding:7px 14px;border-radius:999px;transition:background .2s,color .2s}
+html body #secTabs button:hover{color:var(--ink);background:color-mix(in srgb,var(--paper) 70%,transparent)}
+html body #secTabs button[aria-pressed="true"]{background:var(--paper);color:var(--ink);font-weight:700;box-shadow:0 6px 14px -8px color-mix(in srgb,var(--ink) 45%,transparent),inset 0 0 0 1px color-mix(in srgb,var(--brass) 30%,var(--line))}
+html body .seg button[aria-pressed="true"]:not(#secTabs button){box-shadow:0 4px 10px -6px color-mix(in srgb,var(--ink) 40%,transparent)}
+html body .btn{transition:transform .15s,box-shadow .2s,filter .2s,background .2s}
+html body .btn:active{transform:scale(.97)}
+html body .btn.primary{background-image:linear-gradient(180deg,color-mix(in srgb,#fff 16%,transparent),transparent);box-shadow:0 8px 16px -10px color-mix(in srgb,var(--brass) 85%,#000),inset 0 -1px 0 color-mix(in srgb,#000 8%,transparent)}
+html body .btn:not(.primary){background:color-mix(in srgb,var(--paper) 92%,var(--bg))}
+html body .sn-item{border-radius:999px;transition:background .2s,color .2s}
+html body .sn-item[aria-current="page"]{background:var(--paper);color:var(--ink);box-shadow:0 6px 14px -9px color-mix(in srgb,var(--ink) 45%,transparent),inset 0 0 0 1px color-mix(in srgb,var(--brass) 25%,var(--line))}
+html body .sn-item[aria-current="page"] svg,html body .sn-item[aria-current="page"] .sn-ic{color:var(--brass)}
+html body .panel{border-radius:26px;box-shadow:0 30px 60px -30px color-mix(in srgb,var(--ink) 60%,transparent)}
+html body .msm-box{border-radius:26px}
+html body .nbh-empty{gap:6px}
+html body .lf-hd h2,html body .tool-head h2{letter-spacing:-.01em}
+@media (prefers-reduced-motion:reduce){.sec-st,html body .btn{transition:none}}
 </style>
 
 </head><body>
@@ -3520,7 +3544,7 @@ function nbGrid(){const g=$('nbGrid');if(!g)return;const F=NB.folders,q=NB.q.tri
     const prev=b.kind==='doc'?`<div class="nbc-doc">${P.slice(0,4).map(p=>`<div>${esc(p.icon||'📄')} ${esc(p.title||'Başlıksız')}</div>`).join('')||'<div class="hint">Boş</div>'}</div>`:`<canvas data-th="${b.id}" width="300" height="424"></canvas>`;
     return `<div class="nbc" data-nb="open" data-id="${b.id}" role="button" tabindex="0"><div class="nbc-th" style="--c:${b.color||NB_COV[0]}">${prev}${b.star?'<span class="nbc-star">⭐</span>':''}<span class="nbc-k">${b.kind==='doc'?'📝':b.pdf?'📄':'✍️'}</span>${(b.recs||[]).length?'<span class="nbc-r">🎙</span>':''}</div>
       <div class="nbc-m"><b>${esc(b.title||'Adsız defter')}</b><span class="hint">${P.length} sayfa${f&&NB.fsel==='all'?' · '+esc(f.name):''}</span></div>
-      <button class="iconbtn nbc-x" type="button" data-nb="bmenu" data-id="${b.id}" aria-label="Defter seçenekleri">⋯</button></div>`}).join(''):`<div class="nbh-empty"><div style="font-size:42px">📓</div><b>${q?'Bulunamadı':'Henüz defter yok'}</b><span class="hint">${q?'Başka bir kelime dene':'＋ Yeni defter ile başla'}</span></div>`);
+      <button class="iconbtn nbc-x" type="button" data-nb="bmenu" data-id="${b.id}" aria-label="Defter seçenekleri">⋯</button></div>`}).join(''):`<div class="nbh-empty"><div style="font-size:42px;line-height:0">${UI.shelfDeco!=='off'?stampSvg('bunny',84):'📓'}</div><b>${q?'Bulunamadı':'Henüz defter yok'}</b><span class="hint">${q?'Başka bir kelime dene':'＋ Yeni defter ile başla'}</span></div>`);
   g.querySelectorAll('canvas[data-th]').forEach(cv=>nbThumb(cv,cv.dataset.th))}
 function nbThumb(cv,bid){const P=nbPagesOf(bid);const r=P.find(p=>p.type!=='text');const ctx=cv.getContext('2d');
   if(!r){ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);const t=P[0];if(t){ctx.fillStyle='#333';ctx.font='bold 22px sans-serif';ctx.fillText((t.title||'').slice(0,18),20,46)}return}
@@ -4925,7 +4949,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v49';
+const DK_VER='v50';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6019,7 +6043,7 @@ function applySec(){
   if(sec==='home'){st.view='panel'}
   else if(listSub){if(st.view==='panel')st.view=st.libView;st.tab=sec==='academic'?'makale':sec==='writer'?'roman':(['all','kitap','pdf'].includes(st.tab)?st.tab:'all')}
   document.querySelectorAll('.sn-item').forEach(b=>b.setAttribute('aria-current',b.dataset.sec===sec?'page':'false'));
-  $('secTitle').textContent=SECS[sec].t;
+  $('secTitle').innerHTML=(UI.shelfDeco!=='off'&&sec!=='home'?`<span class="sec-st">${stampSvg(({life:'bunny',library:'pengu',academic:'frog',notes:'bunny',writer:'cat',journal:'frog',settings:'pengu'})[sec]||'cat',44)}</span>`:'')+esc(SECS[sec].t);
   partsApply();$('secTabs').innerHTML=secTabs(sec).map(([k,l])=>`<button type="button" data-sub="${k}" aria-pressed="${sub===k}">${l}</button>`).join('');$('secTabs').hidden=!SECS[sec].tabs.length;
   $('secAdd').hidden=!(listSub);
 }
