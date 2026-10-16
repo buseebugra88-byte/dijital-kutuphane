@@ -781,6 +781,8 @@ body.nb-open .qc-fab,body.nb-open .gs-btn,body:has(#reader:not([hidden])) .qc-fa
 .wr-trash{margin-top:12px}.wr-trash summary{cursor:pointer;color:var(--muted);font-size:14px;padding:6px 2px}.wr-tr{display:flex!important;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;padding:8px 4px;grid-template-columns:none!important}.wr-tr>span:first-child{flex:1 1 200px;min-width:0}.wr-tr .wr-mv{display:flex!important;flex-direction:row!important;gap:6px;width:auto!important}.wr-tr .wr-mv .btn{min-height:34px;padding:0 12px;font-size:13px}.btn.danger,.iconbtn.danger{background:#e03131;color:#fff;border-color:#e03131;width:auto;padding:0 10px}
 
 .rm-bar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}.empty .rm-bar{justify-content:center;margin:10px 0}.rm-cv{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:16px;align-items:start}.rm-prev canvas{width:100%;height:auto;border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.18)}.rm-f{display:grid;gap:10px}.rm-f label{display:grid;gap:4px;font-size:13px;color:var(--muted)}.rm-ch{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.rm-ch .chip[aria-pressed=true]{background:var(--accent,#7a9a6b);color:#fff}.rm-sw{width:40px;height:40px;border-radius:8px;border:1px solid var(--line);font:600 14px Georgia,serif;cursor:pointer}@media(max-width:620px){.rm-cv{grid-template-columns:minmax(0,1fr)}.rm-prev{max-width:200px;margin:0 auto}}
+
+.rmp-l{display:grid;gap:8px;max-height:50vh;overflow:auto}.rmp-r{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:12px}.rmp-r input{margin-top:4px}
 </style>
 
 </head><body>
@@ -4629,7 +4631,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v32';
+const DK_VER='v33';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -4765,7 +4767,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-chx]
   if(b.dataset.chgone){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Kalıcı silinsin mi? Tekrar bas';return}try{await st.db.collection('chtrash').doc(b.dataset.chgone).delete()}catch(x){}return}},true);
 
 /* ===================== Romanlarım: toplu ekleme + kapak tasarlayıcı ===================== */
-function rmBar(){if(st.tab!=='roman')return '';return `<div class="rm-bar"><button class="btn" type="button" data-rm="bulk">＋ Romanlarımı topluca ekle</button><button class="btn" type="button" data-rm="cover">🎨 Kapak tasarla</button></div>`}
+function rmBar(){if(st.tab!=='roman')return '';return `<div class="rm-bar"><button class="btn" type="button" data-rm="bulk">＋ Romanlarımı topluca ekle</button><button class="btn" type="button" data-rm="cover">🎨 Kapak tasarla</button><button class="btn" type="button" data-rm="pack">📦 Roman bilgilerini içe aktar</button></div>`}
 function rmNorm(t){return (t||'').toLocaleLowerCase('tr').replace(/[^a-zçğıöşü0-9]+/g,' ').trim()}
 function rmBulkDlg(){msModal(`<div class="eyebrow">📖 Romanlarımı topluca ekle</div>
   <p class="hint" style="margin:0">Her satıra bir roman adı yaz. İstersen <b>|</b> işaretinden sonra kısa bir not ekle (ör. <i>Roman adı | psikolojik gerilim</i>). Zaten rafta olanlar atlanır.</p>
@@ -4832,6 +4834,39 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-rm],
   const k=b.dataset.rm;if(k==='bulk')return rmBulkDlg();if(k==='bulkgo'){b.disabled=true;await rmBulkGo();return}if(k==='cover')return rmCoverDlg();
   if(k==='cdl'){const a=document.createElement('a');a.download=(RMC.title||'kapak')+'.jpg';a.href=RMC.cv.toDataURL('image/jpeg',.92);a.click();return}
   if(k==='csave'){if(!st.assets){toast('Bu görünümde kaydedilemiyor');return}b.disabled=true;b.textContent='Kaydediliyor…';try{await rmSave(RMC.id,RMC.cv);msClose();toast('Kapak kaydedildi 🎨')}catch(x){b.disabled=false;b.textContent='Tekrar dene';toast('Kaydedilemedi')}}});
+
+/* ===================== Roman bilgi paketi içe aktarma ===================== */
+function rmFold(t){return rmNorm(t).replace(/ç/g,'c').replace(/ğ/g,'g').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ş/g,'s').replace(/ü/g,'u').replace(/\s+/g,' ')}
+const RMP={pack:null};
+function rmPackPick(){let i=$('rmPackIn');if(!i){i=document.createElement('input');i.type='file';i.id='rmPackIn';i.accept='.json,application/json';i.hidden=true;document.body.appendChild(i);
+  i.addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{const p=JSON.parse(await f.text());if(!p||!p.dkpack||!Array.isArray(p.novels))throw 0;RMP.pack=p;rmPackDlg()}catch(x){toast('Bu dosya bir roman bilgi paketi değil')}})}i.click()}
+function rmPackFind(t){const k=rmFold(t);return st.books.find(b=>b.kind==='roman'&&rmFold(b.title)===k)}
+function rmPackDlg(){const P=RMP.pack;
+  msModal(`<div class="eyebrow">📦 Roman bilgilerini içe aktar</div>
+   <p class="hint" style="margin:0">Seçtiğin romanların Yazar köşesi sayfaları doldurulacak. Zaten olan karakter, sahne, olay ve kayıtlar <b>tekrar eklenmez</b>; senin yazdıkların silinmez.</p>
+   <div class="rmp-l">${P.novels.map((n,i)=>{const b=rmPackFind(n.title);const hasCh=b&&(TL.chapters||[]).some(c=>c.novel===b.id);
+     return `<label class="rmp-r"><input type="checkbox" data-rmpn="${i}" checked><span><b>${esc(n.title)}</b> ${b?'<span class="pill">rafta var</span>':'<span class="pill">rafa eklenecek</span>'}<br><small class="hint">👤 ${n.chars.length} karakter · 🕸 ${n.rels.length} ilişki · 🎬 ${n.scenes.length} sahne · 🕰 ${n.events.length} olay · 🗺 ${n.lore.length} dünya kaydı · ✍️ ${n.chapters.length} bölüm${hasCh?' (Yazı odasında zaten bölüm var, bölümler eklenmeyecek)':''}</small></span></label>`}).join('')}</div>
+   <label class="hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="rmpCh" checked> Bölüm metinlerini de Yazı odasına ekle</label>
+   <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn" type="button" data-ms="close">Vazgeç</button><button class="btn primary" type="button" data-rm="packgo">İçe aktar</button></div><span class="hint" id="rmpM"></span>`)}
+async function rmPackGo(){const P=RMP.pack,sel=[...document.querySelectorAll('[data-rmpn]')].filter(x=>x.checked).map(x=>P.novels[+x.dataset.rmpn]);if(!sel.length){toast('En az bir roman seç');return}
+  const withCh=$('rmpCh').checked,M=t=>{const m=$('rmpM');if(m)m.textContent=t};const now=()=>new Date().toISOString();const tot={c:0,r:0,s:0,e:0,l:0,b:0};let last=null;
+  const add=async(col,data)=>{const ref=st.db.collection(col).doc();await ref.set(data);return ref.id||(ref.path||'').split('/').pop()};
+  for(const n of sel){M(n.title+' hazırlanıyor…');let b=rmPackFind(n.title),id;
+    if(b)id=b.id;else{id=await add('books',{kind:'roman',title:n.title,author:(UI&&UI.name)||'',status:'tamamlandi',shelf:'Kendi yazdıklarım',tags:n.genre?[n.genre]:[],note:'',pages:0,currentPage:0,finishedAt:'',assetId:'',parts:[],fileName:'',fileSize:0,coverId:'',autoCover:false,lastReadAt:'',addedAt:now()})}
+    last=id;const map={};
+    M(n.title+': karakterler…');for(const c of n.chars){const ex=(TL.chars||[]).find(x=>x.novel===id&&trLow(x.name||'')===trLow(c.name));
+      if(ex){map[c.key]=ex.id;const up={};if(!ex.role&&c.role)up.role=c.role;if(!ex.desc&&c.desc)up.desc=c.desc;if(Object.keys(up).length)try{await st.db.collection('chars').doc(ex.id).update(up)}catch(e){}}
+      else{map[c.key]=await add('chars',{novel:id,name:c.name,role:c.role||'',desc:c.desc||'',img:'',at:now()});tot.c++}}
+    M(n.title+': ilişkiler…');for(const r of n.rels){const a=map[r.a],c=map[r.b];if(!a||!c)continue;if((TL.rels||[]).some(x=>x.novel===id&&x.a===a&&x.b===c&&x.type===r.type))continue;await add('rels',{novel:id,a,b:c,type:r.type,label:r.label||'',note:r.note||'',at:now()});tot.r++}
+    M(n.title+': sahneler…');let o=(TL.scenes||[]).filter(x=>x.novel===id).length;for(const s of n.scenes){if((TL.scenes||[]).some(x=>x.novel===id&&trLow(x.title||'')===trLow(s.title)&&(x.ch||0)===s.ch))continue;
+      await add('scenes',{novel:id,title:s.title,ch:s.ch,pov:s.pov||'',st:s.st||'taslak',ten:s.ten||0,sum:s.sum||'',chars:(s.chars||[]).map(k=>map[k]).filter(Boolean),ord:o++,at:now()});tot.s++}
+    M(n.title+': zaman çizelgesi…');let eo=(TL.events||[]).filter(x=>x.novel===id).length;for(const e of n.events){if((TL.events||[]).some(x=>x.novel===id&&trLow(x.title||'')===trLow(e.title)))continue;await add('events',{novel:id,title:e.title,when:e.when||'',ch:e.ch||0,chars:e.chars||[],note:e.note||'',ord:eo++,at:now()});tot.e++}
+    M(n.title+': dünya…');for(const l of n.lore){if((TL.lore||[]).some(x=>x.novel===id&&trLow(x.name||'')===trLow(l.name)))continue;await add('lore',{novel:id,name:l.name,cat:l.cat||'diger',desc:l.desc||'',at:now()});tot.l++}
+    if(withCh&&!(TL.chapters||[]).some(c=>c.novel===id)){M(n.title+': bölümler…');for(const c of n.chapters){await add('chapters',{novel:id,no:c.no,title:c.title,text:c.text,words:c.words||String(c.text||'').split(/\s+/).filter(Boolean).length,updatedAt:now()});tot.b++}}
+  }
+  RMP.pack=null;msClose();if(last)TL.novel=last;
+  msModal(`<div class="eyebrow">✓ İçe aktarıldı</div><p style="margin:0">${sel.map(n=>'<b>'+esc(n.title)+'</b>').join(', ')}</p><p class="hint" style="margin:0">👤 ${tot.c} karakter · 🕸 ${tot.r} ilişki · 🎬 ${tot.s} sahne · 🕰 ${tot.e} olay · 🗺 ${tot.l} dünya kaydı · ✍️ ${tot.b} bölüm eklendi.</p><p class="hint" style="margin:0">Yazar köşesindeki sekmelerde üstteki seçiciden romanı değiştirerek hepsine bakabilirsin. Özetler Claude'un okuyup çıkardıkları — yanlış ya da eksik gördüğün yeri düzenleyebilirsin.</p><div style="display:flex;justify-content:flex-end"><button class="btn primary" type="button" data-ms="close">Tamam</button></div>`)}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-rm="pack"],[data-rm="packgo"]');if(!b)return;if(b.dataset.rm==='pack')return rmPackPick();b.disabled=true;b.textContent='Aktarılıyor…';try{await rmPackGo()}catch(x){toast('Bir şey ters gitti: '+errText(x));b.disabled=false;b.textContent='İçe aktar'}});
 
 const SECS={
   home:{t:'Ana sayfa',tabs:[]},
