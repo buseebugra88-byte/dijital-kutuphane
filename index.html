@@ -926,6 +926,23 @@ body.sec-notes{background-image:none!important}
 body.pat-stars{background-image:radial-gradient(color-mix(in srgb,var(--check) 95%,var(--ink) 10%) 1.2px,transparent 1.6px),radial-gradient(color-mix(in srgb,var(--check) 95%,var(--ink) 10%) 1px,transparent 1.4px);background-size:46px 46px,29px 29px;background-position:0 0,13px 17px}
 body.pat-diag{background-image:repeating-linear-gradient(45deg,color-mix(in srgb,var(--check) 85%,transparent) 0 2px,transparent 2px 22px)}
 body.pat-waves{background-image:radial-gradient(circle at 50% 120%,transparent 18px,color-mix(in srgb,var(--check) 80%,transparent) 19px 21px,transparent 22px);background-size:40px 24px}
+
+.cl{display:grid;gap:14px}.cl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.cl-hh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}.cl-hh h4{margin:0}
+.cl-big{display:grid;grid-template-columns:repeat(3,auto 1fr);align-items:baseline;gap:4px 6px}.cl-big b{font-size:26px;font-family:var(--serif,inherit)}.cl-big span{color:var(--muted);font-size:13px}
+.cl-form{display:grid;gap:8px}.cl-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}.cl-row>*{min-width:0}
+.cl-chk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}.cl-chk input[type=checkbox]{width:auto}
+.cl-btns{display:flex;gap:8px;flex-wrap:wrap}.cl-paste{display:flex;gap:8px}.cl-paste input{flex:1;min-width:0}
+.cl-tw{overflow-x:auto;-webkit-overflow-scrolling:touch}.cl-t{border-collapse:separate;border-spacing:3px;width:100%;font-size:13px}
+.cl-t th{font-weight:600;text-align:center;color:var(--muted);white-space:nowrap}.cl-t tbody th{text-align:left;color:var(--ink);padding-right:8px;max-width:150px;overflow:hidden;text-overflow:ellipsis}.cl-t tbody th small{display:block;font-weight:400;color:var(--muted);font-size:11px}
+.cl-t td{text-align:center;padding:7px 2px;font-variant-numeric:tabular-nums;border-radius:8px;background:color-mix(in srgb,var(--line) 45%,transparent);color:var(--muted);min-width:30px}
+.cl-t td.on{background:color-mix(in srgb,var(--accent) 22%,var(--paper));color:var(--ink);font-weight:700}.cl-t td.sum{background:none;font-weight:700;color:var(--ink)}.cl-t tr.me th{color:var(--accent)}
+.cl-vit summary{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;cursor:pointer;list-style:none}.cl-vit summary::-webkit-details-marker{display:none}.cl-vit h5{margin:6px 0 0;font-size:13px;color:var(--muted)}
+.cl-bk{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:8px}.cl-bk>div{border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:grid;gap:2px;position:relative;overflow:hidden}
+.cl-bk i{display:block;height:4px;border-radius:4px;background:var(--line);margin-top:4px;position:relative}.cl-bk i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--accent);border-radius:4px}
+.cl-logs .cl-li{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;align-items:center;font-size:13px;padding:2px 0}.cl-logs .cl-li b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cl-hi{border-color:var(--accent)}
+@media(max-width:520px){.cl-t{font-size:12px;border-spacing:2px}.cl-t td{min-width:24px;padding:6px 1px}.cl-t tbody th{max-width:96px}}
 </style>
 
 </head><body>
@@ -1011,7 +1028,7 @@ body.pat-waves{background-image:radial-gradient(circle at 50% 120%,transparent 1
   <form class="panel" id="form" novalidate>
     <h2 id="formTitle">Yeni ekle</h2>
     <div class="kinds" role="radiogroup" aria-label="Tür">
-      <label><input type="radio" name="kind" value="kitap" id="kind-kitap" checked><span>Kitap</span></label>
+      <label><input type="radio" name="kind" value="kitap" id="kind-kitap" checked><span>📗 Basılı kitap</span></label>
       <label><input type="radio" name="kind" value="pdf" id="kind-pdf"><span>PDF</span></label>
       <label><input type="radio" name="kind" value="makale" id="kind-makale"><span>Makale</span></label>
       <label><input type="radio" name="kind" value="roman" id="kind-roman"><span>Kendi romanım</span></label>
@@ -3125,14 +3142,14 @@ async function saveFile(name,data){
   try{const dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;if(!dl){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toast('Dosya indirildi');return}await dl.save({filename:name,data});toast('Dosya kaydedildi')}
   catch(e){toast(e&&e.code==='declined'?'İndirme iptal edildi':e&&e.code==='rate_limited'?'Biraz bekleyip tekrar dene':'Bu görünümde dosya indirilemiyor')}}
 async function backupData(){const get=async col=>{try{const s_=await st.db.collection(col).get();return s_.docs.map(d=>({id:d.id,...d.data()}))}catch(e){return []}};
-  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),nfolders:await get('nfolders'),nbooks:await get('nbooks'),npages:await get('npages'),cal:await get('cal'),tasks:await get('tasks'),moods:await get('moods'),habits:await get('habits'),money:await get('money'),lists:await get('lists'),recipes:await get('recipes'),goals:await get('goals'),lifecfg:await get('lifecfg'),weeks:await get('weeks'),worries:await get('worries'),mems:await get('mems'),films:await get('films'),songs:await get('songs'),plists:await get('plists'),cint:await get('cint'),chtrash:await get('chtrash'),
+  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),nfolders:await get('nfolders'),nbooks:await get('nbooks'),npages:await get('npages'),cal:await get('cal'),tasks:await get('tasks'),moods:await get('moods'),habits:await get('habits'),money:await get('money'),lists:await get('lists'),recipes:await get('recipes'),goals:await get('goals'),lifecfg:await get('lifecfg'),weeks:await get('weeks'),worries:await get('worries'),mems:await get('mems'),films:await get('films'),songs:await get('songs'),plists:await get('plists'),cint:await get('cint'),club:await get('club'),chtrash:await get('chtrash'),
     settings:{ui:UI,thesis:TL.thesis,writing:TL.writing,log:st.log,bingo:TL.bingo,journal:TL.journal,widgets:TL.widgets,stickers:{items:STK.items,emblem:STK.emblem}}}}
 function csvBooks(){const H=['Başlık','Yazar','Tür','Raf','Etiketler','Durum','Sayfa','Kaldığı sayfa','Bitirme','Puan','Yıl','Dergi','DOI','Dosya'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   return '﻿'+[H.map(q).join(','),...st.books.map(b=>[b.title,b.author,{kitap:'Kitap',pdf:'PDF',roman:'Romanım',makale:'Makale'}[b.kind]||b.kind,b.shelf,(b.tags||[]).join('; '),STATUS_LABEL[b.status]||b.status,b.pages||'',b.currentPage||'',b.finishedAt||'',b.rating||'',b.year||'',b.journal||'',b.doi||'',b.fileName||''].map(q).join(','))].join('\r\n')}
 async function restore(file,quiet){const m=$('bkMsg')||{textContent:''};try{const d=JSON.parse(await file.text());if(!d||d.app!=='Dijital Kütüphanem')throw 0;let n=0;
   if(d.blobs&&typeof LOCAL!=='undefined'){const ids=Object.keys(d.blobs);let k=0;for(const id of ids){if(!LOCAL.has(id)){const x=d.blobs[id];try{await LOCAL.assets.putId(id,new Blob([b64dec(x.b64)],{type:x.type||'image/jpeg'}))}catch(e){}}if(++k%20===0)m.textContent='Görseller: '+k+'/'+ids.length}}
-  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages],['cal',d.cal],['tasks',d.tasks],['moods',d.moods],['habits',d.habits],['money',d.money],['lists',d.lists],['recipes',d.recipes],['goals',d.goals],['lifecfg',d.lifecfg],['weeks',d.weeks],['worries',d.worries],['mems',d.mems],['films',d.films],['songs',d.songs],['plists',d.plists],['cint',d.cint],['chtrash',d.chtrash]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
+  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages],['cal',d.cal],['tasks',d.tasks],['moods',d.moods],['habits',d.habits],['money',d.money],['lists',d.lists],['recipes',d.recipes],['goals',d.goals],['lifecfg',d.lifecfg],['weeks',d.weeks],['worries',d.worries],['mems',d.mems],['films',d.films],['songs',d.songs],['plists',d.plists],['cint',d.cint],['club',d.club],['chtrash',d.chtrash]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
   if(d.settings){if(d.settings.thesis)await st.db.doc('settings/thesis').set(d.settings.thesis);if(d.settings.writing)await st.db.doc('settings/writing').set(d.settings.writing);if(d.settings.log)await st.db.doc('settings/log').set(d.settings.log);if(d.settings.bingo)await st.db.doc('settings/bingo').set(d.settings.bingo);if(d.settings.journal)await st.db.doc('settings/journal').set(d.settings.journal);if(d.settings.widgets)await st.db.doc('settings/widgets').set(d.settings.widgets);if(d.settings.stickers&&Array.isArray(d.settings.stickers.items)){const it=d.settings.stickers.items.filter(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(it.length||!STK.items.length)await st.db.doc('settings/stickers').set({items:it,emblem:it.some(x=>x.id===d.settings.stickers.emblem)?d.settings.stickers.emblem:'',updatedAt:new Date().toISOString()})}if(d.settings.ui){const u={...d.settings.ui};const hasStk=d.settings.stickers&&(d.settings.stickers.items||[]).some(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(u.art==='custom'&&!hasStk)u.art='fairy';setUI(u)}}
   m.textContent=`Geri yükleme tamam: ${n} kayıt.`+(typeof LOCAL!=='undefined'?' Şimdi Ayarlar → Klasörden ekle ile kitap klasörünü seç; dosyalar kayıtlarına kendiliğinden bağlanır.':'')}catch(e){m.textContent='Bu dosya bir Dijital Kütüphanem yedeği gibi görünmüyor.';if(quiet)throw e}}
 /* Drive ile otomatik eşitleme: açılışta/girişte Drive'daki daha yeni yedeği alır, değişiklikleri Drive'a yazar */
@@ -4143,7 +4160,7 @@ async function kyAuto(){if(KY.auto||KY.busy||!st.db||!navigator.onLine)return;co
 
 /* ===================== 🌿 Hayatım ===================== */
 const LF={cal:[],tasks:[],moods:[],habits:[],money:[],lists:[],recipes:[],goals:[],cfg:{},mon:null,sel:null,tv:'today',lsel:null,mm:null,rsel:null,breath:null,focus:null};
-const LFC=['cal','tasks','moods','habits','money','lists','recipes','goals','lifecfg','weeks','worries','mems','films','songs','plists','cint'];LF.weeks=[];LF.worries=[];LF.mems=[];LF.films=[];LF.songs=[];LF.plists=[];LF.cint=[];
+const LFC=['cal','tasks','moods','habits','money','lists','recipes','goals','lifecfg','weeks','worries','mems','films','songs','plists','cint','club'];LF.club=null;LF.weeks=[];LF.worries=[];LF.mems=[];LF.films=[];LF.songs=[];LF.plists=[];LF.cint=[];
 const lfK=(d=new Date())=>todayKey(d);
 const lfD=k=>new Date(k+'T12:00:00');
 const lfAdd=(k,n)=>{const d=lfD(k);d.setDate(d.getDate()+n);return lfK(d)};
@@ -4152,7 +4169,7 @@ const lfDay=k=>lfD(k).toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',m
 const lfShort=k=>lfD(k).toLocaleDateString('tr-TR',{day:'numeric',month:'short'});
 function lfListen(db){LFC.forEach(c=>db.collection(c).onSnapshot(s=>{const a=s.docs.map(d=>({id:d.id,...d.data()}));if(c==='lifecfg'){LF.cfg={};a.forEach(x=>LF.cfg[x.id]=x)}else LF[c]=a;lfRe()},()=>{}));setInterval(lfTick,30000);setTimeout(lfTick,4000)}
 function lfRe(){clearTimeout(lfRe.t);lfRe.t=setTimeout(()=>{const ae=document.activeElement,typing=ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName)&&ae.type!=='checkbox';
-  if(st.sec==='life'&&!typing&&!LF.breath)lfRender();if(st.sec==='home'&&st.view==='panel'&&!typing&&!UI.homeFull)renderList()},120)}
+  if(st.sec==='life'&&!typing&&!LF.breath)lfRender();try{clRe()}catch(e){}if(st.sec==='home'&&st.view==='panel'&&!typing&&!UI.homeFull)renderList()},120)}
 async function lfSet(c,id,d){id=id||nbId();try{await st.db.collection(c).doc(id).set(nbClean(d))}catch(e){toast('Kaydedilemedi')}return id}
 async function lfUpd(c,id,d){try{await st.db.collection(c).doc(id).update(d)}catch(e){toast('Kaydedilemedi')}}
 async function lfDel(c,id){try{await st.db.collection(c).doc(id).delete()}catch(e){}}
@@ -4876,7 +4893,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v47';
+const DK_VER='v48';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -5786,6 +5803,154 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-ns]'
   if(k==='cite'){await aiCopy(NS[v].r.join('\n'));toast('Kaynak kopyalandı — Kaynakça\'ya yapıştırabilirsin');return}
   if(k==='search'){const r=NS[v].r[0];const m=r.match(/\.\s([^.]{12,}?)\.\s/);window.open('https://scholar.google.com/scholar?q='+encodeURIComponent(m?m[1]:r),'_blank','noopener');return}});
 
+/* ---------- Okuma kulübü + vitrin ---------- */
+const CL={pending:null,sure:null,show:null};
+const CL_EMO=['📚','🌸','🦊','🐱','🌙','☕','🍓','🦋','🌿','⭐'];
+const CL_URL='https://buseebugra88-byte.github.io/dijital-kutuphane/';
+function clCfg(){return (LF.cfg&&LF.cfg.club)||{}}
+async function clSaveCfg(p){const c={...clCfg(),...p};delete c.id;await lfSet('lifecfg','club',c);return c}
+async function clMe(){let c=clCfg();if(!c.uid){c=await clSaveCfg({uid:'u'+Math.random().toString(36).slice(2,10),emoji:CL_EMO[Math.floor(Math.random()*CL_EMO.length)]})}return c}
+const clRows=()=>(LF.club||[]);
+const clLogs=()=>clRows().filter(x=>x.type==='log');
+const clFriends=()=>clRows().filter(x=>x.type==='friend').sort((a,b)=>(a.name||'').localeCompare(b.name||'','tr'));
+function clDay(k){const L=(st.log&&st.log.days)||{},M=(st.log&&st.log.minutes)||{},lg=clLogs().filter(x=>x.date===k);
+  return {p:(+L[k]||0)+lg.reduce((a,x)=>a+(+x.pages||0),0),m:(+M[k]||0)+lg.reduce((a,x)=>a+(+x.mins||0),0),b:[...new Set(lg.map(x=>x.book).filter(Boolean))]}}
+function clStreak(get){let n=0,k=lfK();if(!(get(k).p||get(k).m))k=lfAdd(k,-1);while(n<400){const d=get(k);if(!(d.p||d.m))break;n++;k=lfAdd(k,-1)}return n}
+function clReading(){return st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'&&b.status==='okunuyor').slice(0,8)}
+function clPayload(c){const days={};for(let i=0;i<21;i++){const k=lfAdd(lfK(),-i),d=clDay(k);if(d.p||d.m)days[k]=[d.p,d.m,d.b.slice(0,3)]}
+  const Y=String(new Date().getFullYear());
+  const P={v:1,id:c.uid,n:(c.name||'').slice(0,30),e:c.emoji||'📚',at:Date.now(),d:days,
+    r:clReading().map(b=>[(b.title||'').slice(0,70),(b.author||'').slice(0,40),b.kind==='kitap'?1:0,b.currentPage||0,b.pages||0])};
+  if(c.vit!==false)P.f=st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'&&b.status==='okundu'&&(b.finishedAt||'').startsWith(Y)).sort((a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||'')).slice(0,30).map(b=>[(b.title||'').slice(0,70),(b.author||'').slice(0,40),b.rating||0]);
+  return P}
+function clEnc(o){const u=new TextEncoder().encode(JSON.stringify(o));let s='';for(let i=0;i<u.length;i+=4096)s+=String.fromCharCode.apply(null,u.subarray(i,i+4096));return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+function clDec(t){t=t.replace(/-/g,'+').replace(/_/g,'/');while(t.length%4)t+='=';const b=atob(t),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return JSON.parse(new TextDecoder().decode(u))}
+function clParse(txt){const m=String(txt||'').match(/club=([A-Za-z0-9_\-]+)/);if(!m)return null;try{const o=clDec(m[1]);return o&&o.v===1&&o.id?o:null}catch(e){return null}}
+async function clLink(){const c=await clMe();return CL_URL+'#club='+clEnc(clPayload(c))}
+async function clShare(kind){const c=await clMe();if(!c.name){clNameDlg(()=>clShare(kind));return}
+  const url=await clLink(),d=clDay(lfK()),rd=clReading()[0];
+  const T={today:d.p||d.m?`📚 Bugün ${d.p?d.p+' sayfa':''}${d.p&&d.m?' · ':''}${d.m?d.m+' dk':''} okudum${d.b[0]?' ('+d.b[0]+')':rd?' ('+rd.title+')':''}. Sıra sende! 💪`:`📚 Bugün henüz okumadım ama birazdan başlıyorum. Sen ne okuyorsun?`,
+    poke:`👋 Bugün okudun mu? Hadi 20 sayfa! Okuma kulübümüze bak 📖`,
+    invite:`📚 Okuma kulübüme katıl! Linke dokun, Dijital Kütüphanem'de beni kulübüne ekle. Sonra sen de Okuma günlüğüm → Okuma kulübü'nden bana kendi linkini gönder.`}[kind]||'';
+  const text=`${T}\n\n${c.emoji||'📚'} ${c.name} · okuma kulübü linkim:`;
+  await clSaveCfg({lastShare:Date.now()});
+  if(navigator.share){try{await navigator.share({text,url});return}catch(e){if(e&&e.name==='AbortError')return}}
+  msModal(`<div class="eyebrow">📣 Arkadaşına gönder</div><p class="hint">Mesajı WhatsApp'tan gönderebilir ya da kopyalayıp istediğin yere yapıştırabilirsin.</p>
+   <textarea readonly rows="5" style="width:100%">${esc(text+'\n'+url)}</textarea>
+   <div class="msm-acts"><a class="btn primary" href="https://wa.me/?text=${encodeURIComponent(text+'\n'+url)}" target="_blank" rel="noopener">WhatsApp'ta aç</a><button class="btn" type="button" data-cl="copy">Kopyala</button></div>`);
+  CL.copy=text+'\n'+url}
+function clNameDlg(then){const c=clCfg();CL.then=then;
+  msModal(`<div class="eyebrow">👭 Okuma kulübü</div><h3>Arkadaşların seni nasıl görsün?</h3>
+   <div class="f"><label for="clName">Adın</label><input id="clName" maxlength="30" value="${esc(c.name||'')}" placeholder="ör. Buse"></div>
+   <div class="chips" id="clEmo">${CL_EMO.map(e=>`<button type="button" class="chip" data-cl="emo" data-v="${e}" aria-pressed="${(c.emoji||'📚')===e}">${e}</button>`).join('')}</div>
+   <div class="msm-acts"><button class="btn primary" type="button" data-cl="savename">Kaydet</button></div>`);setTimeout(()=>{const i=$('clName');i&&i.focus()},50)}
+async function clAccept(o){const c=await clMe();if(o.id===c.uid){toast('Bu senin kendi linkin 🙂');return false}
+  const id='f_'+o.id.replace(/[^a-z0-9]/gi,'').slice(0,20),cur=clRows().find(x=>x.id===id)||{},days={...(cur.days||{})};
+  for(const [k,v] of Object.entries(o.d||{}))days[k]={p:+v[0]||0,m:+v[1]||0,b:(v[2]||[]).slice(0,3)};
+  const keys=Object.keys(days).sort().reverse();keys.slice(90).forEach(k=>delete days[k]);
+  await lfSet('club',id,{type:'friend',fid:o.id,name:o.n||cur.name||'Arkadaşım',emoji:o.e||'📚',days,reading:o.r||[],fin:o.f||null,sentAt:o.at||Date.now(),gotAt:Date.now(),addedAt:cur.addedAt||Date.now()});
+  return true}
+function clIncomingDlg(o){const d=Object.entries(o.d||{}).sort((a,b)=>b[0].localeCompare(a[0]))[0];const known=clFriends().some(f=>f.fid===o.id);
+  const sa=!(matchMedia('(display-mode: standalone)').matches||navigator.standalone)&&/iPhone|iPad|Android/i.test(navigator.userAgent);
+  CL.pending=o;msModal(`<div class="eyebrow">👭 Okuma kulübü</div><h3>${esc(o.e||'📚')} ${esc(o.n||'Arkadaşın')} ${known?'yeni okumalarını gönderdi':'seni okuma kulübüne çağırıyor'}</h3>
+   ${d?`<p>Son kaydı: <b>${esc(lfShort(d[0]))}</b> · ${d[1][0]?d[1][0]+' sayfa':''}${d[1][0]&&d[1][1]?' · ':''}${d[1][1]?d[1][1]+' dk':''}${(d[1][2]||[])[0]?' · '+esc(d[1][2][0]):''}</p>`:''}
+   ${(o.r||[]).length?`<p class="hint">Şu an okuyor: ${o.r.slice(0,3).map(r=>esc(r[0])).join(', ')}</p>`:''}
+   ${sa?`<p class="hint" style="background:var(--field,#f6f2ea);padding:8px 10px;border-radius:10px">Uygulamayı ana ekrandan kullanıyorsan bu sayfa ayrı bir tarayıcı penceresi olabilir. O zaman mesajdaki linki kopyala, ana ekrandaki uygulamada <b>Okuma günlüğüm → Okuma kulübü → 📥 Gelen linki yapıştır</b>'a yapıştır.</p>`:''}
+   <div class="msm-acts"><button class="btn primary" type="button" data-cl="accept">${known?'Güncelle':'Kulübüme ekle'}</button><button class="btn" type="button" data-ms="close">Şimdi değil</button></div>`)}
+function clCheckHash(){const o=clParse(location.hash);if(!o)return;try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+  let n=0;const t=setInterval(()=>{if(st.db&&LF.cfg&&Array.isArray(LF.club)&&n>2){clearInterval(t);clIncomingDlg(o)}if(++n>80)clearInterval(t)},400)}
+function clWeek(){const out=[];for(let i=6;i>=0;i--)out.push(lfAdd(lfK(),-i));return out}
+function clCell(d){const v=d.p?d.p:d.m?d.m+'′':'';return `<td class="${d.p||d.m?'on':''}" title="${d.p?d.p+' sayfa':''}${d.m?' · '+d.m+' dk':''}${d.b&&d.b[0]?' · '+esc(d.b[0]):''}">${v||'·'}</td>`}
+function clHtml(){const c=clCfg(),W=clWeek(),me=clDay,F=clFriends(),today=clDay(lfK());
+  const fget=f=>k=>{const v=(f.days||{})[k];return v?{p:+v.p||0,m:+v.m||0,b:v.b||[]}:{p:0,m:0,b:[]}};
+  const sum=g=>W.reduce((a,k)=>a+g(k).p,0);
+  const rows=[{n:(c.emoji||'📚')+' Sen',g:me,me:1},...F.map(f=>({n:(f.emoji||'📚')+' '+f.name,g:fget(f),f}))];
+  const days=W.map(k=>lfD(k).toLocaleDateString('tr-TR',{weekday:'short'}));
+  const books=st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'&&b.status!=='okundu').map(b=>b.title).filter(Boolean);
+  const phys=st.books.filter(b=>b.kind==='kitap').sort((a,b)=>({okunuyor:0,okunacak:1,okundu:2}[a.status]??3)-({okunuyor:0,okunacak:1,okundu:2}[b.status]??3));
+  const logs=clLogs().sort((a,b)=>(b.date+b.at).localeCompare(a.date+a.at)).slice(0,12);
+  return `<div class="cl"><div class="lf-hd"><h2>👭 Okuma kulübü</h2><span class="hint">Ne kadar okuduğunuzu birbirinize gönderin · PDF'ler paylaşılmaz</span></div>
+  ${!c.name?`<div class="lfc cl-hi"><b>Kulübünü kur</b><p class="hint" style="margin:0">Önce adını yaz, sonra arkadaşına davet linki gönder. Arkadaşın linke dokununca seni kulübüne ekler; o da sana kendi linkini gönderince yan yana görünürsünüz.</p><div><button class="btn primary" type="button" data-cl="name">Adımı yaz</button></div></div>`:''}
+  <div class="cl-grid">
+   <div class="lfc"><div class="cl-hh"><h4>Bugün</h4><span class="hint">${esc(lfDay(lfK()))}</span></div>
+    <div class="cl-big"><b>${today.p}</b><span>sayfa</span><b>${today.m}</b><span>dakika</span><b>🔥 ${clStreak(me)}</b><span>gün seri</span></div>
+    <p class="hint" style="margin:0">Uygulamada okuduğun sayfalar ve odak süren kendiliğinden eklenir. Basılı kitap okuduysan aşağıya yaz.</p>
+    <form id="clLogF" class="cl-form" onsubmit="return false">
+     <input id="clBook" list="clBooks" placeholder="Kitabın adı" maxlength="90"><datalist id="clBooks">${books.map(t=>`<option value="${esc(t)}">`).join('')}</datalist>
+     <div class="cl-row"><input id="clPages" type="number" min="0" inputmode="numeric" placeholder="Sayfa"><input id="clMins" type="number" min="0" inputmode="numeric" placeholder="Dakika"></div>
+     <label class="hint cl-chk"><input type="checkbox" id="clPhys" checked> Kütüphanemde yoksa basılı kitap olarak ekle</label>
+     <button class="btn primary" type="button" data-cl="log">Kaydet</button></form>
+    ${logs.length?`<details class="cl-logs"><summary class="hint">Elle girdiklerin (${clLogs().length})</summary>${logs.map(x=>`<div class="cl-li"><span>${esc(lfShort(x.date))}</span><b>${esc(x.book||'—')}</b><span>${x.pages?x.pages+' s.':''}${x.mins?' '+x.mins+' dk':''}</span><button class="iconbtn" type="button" data-cl="dellog" data-id="${x.id}" aria-label="Sil">×</button></div>`).join('')}</details>`:''}
+   </div>
+   <div class="lfc"><div class="cl-hh"><h4>📣 Haber ver</h4></div>
+    <p class="hint" style="margin:0">Mesaj, WhatsApp ya da Mesajlar'dan gider. İçindeki link arkadaşının kulüp sayfasını günceller.</p>
+    <div class="cl-btns"><button class="btn primary" type="button" data-cl="share" data-v="today">📚 Bugün ne okudum</button><button class="btn" type="button" data-cl="share" data-v="poke">👋 Arkadaşımı dürt</button><button class="btn" type="button" data-cl="share" data-v="invite">💌 Davet et</button></div>
+    <div class="cl-paste"><input id="clPaste" placeholder="📥 Gelen linki yapıştır"><button class="btn" type="button" data-cl="paste">Ekle</button></div>
+    <label class="hint cl-chk"><input type="checkbox" id="clRemOn" ${c.remOn?'checked':''}> Her gün hatırlat, saat <input id="clRem" type="time" value="${esc(c.rem||'21:00')}" style="width:auto;min-width:0"></label>
+    <p class="hint" style="margin:0;font-size:12px">Hatırlatma, uygulama açıkken ya da arka planda dururken gelir. Uygulamanın sunucusu olmadığı için kapalıyken bildirim gönderemez.</p>
+   </div>
+  </div>
+  <div class="lfc"><div class="cl-hh"><h4>Bu hafta</h4><span class="hint">sayfa (′ = sadece dakika)</span></div>
+   <div class="cl-tw"><table class="cl-t"><thead><tr><th></th>${days.map(d=>`<th>${esc(d)}</th>`).join('')}<th>Toplam</th></tr></thead><tbody>
+   ${rows.map(r=>`<tr class="${r.me?'me':''}"><th>${esc(r.n)}${r.f?`<small>🔥 ${clStreak(r.g)} · ${clAgo(r.f.sentAt)}</small>`:''}</th>${W.map(k=>clCell(r.g(k))).join('')}<td class="sum">${sum(r.g)}</td></tr>`).join('')}
+   </tbody></table></div>
+   ${!F.length?`<p class="hint" style="margin:0">Henüz arkadaş yok. "💌 Davet et" ile linkini gönder; arkadaşın kendi linkini sana gönderince burada görünür.</p>`:''}
+  </div>
+  ${F.map(f=>`<details class="lfc cl-vit"${CL.show===f.id?' open':''}><summary><b>🪟 Vitrin · ${esc(f.emoji||'📚')} ${esc(f.name)}</b><span class="hint">${(f.reading||[]).length} okunuyor${f.fin?' · bu yıl '+f.fin.length+' kitap':''}</span></summary>
+    ${(f.reading||[]).length?`<h5>Şu an okuyor</h5><div class="cl-bk">${f.reading.map(r=>`<div><b>${esc(r[0])}</b><span class="hint">${esc([r[1],r[2]?'📗 basılı':'',r[3]&&r[4]?r[3]+'/'+r[4]:''].filter(Boolean).join(' · '))}</span>${r[3]&&r[4]?`<i style="--w:${Math.min(100,Math.round(r[3]/r[4]*100))}%"></i>`:''}</div>`).join('')}</div>`:''}
+    ${f.fin&&f.fin.length?`<h5>Bu yıl bitirdikleri</h5><div class="cl-bk">${f.fin.map(r=>`<div><b>${esc(r[0])}</b><span class="hint">${esc([r[1],r[2]?'★'.repeat(r[2]):''].filter(Boolean).join(' · '))}</span></div>`).join('')}</div>`:''}
+    <div><button class="btn" type="button" data-cl="rmf" data-id="${f.id}">${CL.sure===f.id?'Emin misin? Tekrar bas':'Kulüpten çıkar'}</button></div></details>`).join('')}
+  <details class="lfc cl-vit"><summary><b>🪟 Benim vitrinim</b><span class="hint">Arkadaşlarının gördüğü</span></summary>
+   <p class="hint" style="margin:0">Linkinde yalnızca şunlar gider: adın, son 3 haftanın sayfa/dakika sayıları, şu an okuduğun kitapların adı ve ilerlemesi${c.vit!==false?', bu yıl bitirdiklerin ve puanların':''}. Günlüğün, notların, bütçen ve dosyaların asla gitmez.</p>
+   <label class="hint cl-chk"><input type="checkbox" id="clVit" ${c.vit!==false?'checked':''}> Bu yıl bitirdiğim kitapları da göster</label>
+   <div class="cl-bk">${clReading().map(b=>`<div><b>${esc(b.title)}</b><span class="hint">${esc([b.author,b.kind==='kitap'?'📗 basılı':''].filter(Boolean).join(' · '))}</span></div>`).join('')||'<span class="hint">Şu an "Okunuyor" durumunda kitabın yok.</span>'}</div>
+  </details>
+  <div class="lfc"><div class="cl-hh"><h4>📗 Basılı kitaplarım</h4><span class="hint">${phys.length} kitap · dosya yüklemeden</span></div>
+   <form id="clPhF" class="cl-form" onsubmit="return false"><div class="cl-row"><input id="clPT" placeholder="Kitabın adı" maxlength="120"><input id="clPA" placeholder="Yazar" maxlength="80"></div>
+    <div class="cl-row"><input id="clPP" type="number" min="0" inputmode="numeric" placeholder="Sayfa sayısı"><select id="clPS"><option value="okunuyor">Okunuyor</option><option value="okunacak">Okunacak</option><option value="okundu">Okundu</option></select></div>
+    <button class="btn primary" type="button" data-cl="phys">Rafa ekle</button></form>
+   ${phys.length?`<div class="cl-bk">${phys.slice(0,40).map(b=>`<div><b>${esc(b.title)}</b><span class="hint">${esc([b.author,STATUS_LABEL[b.status],b.pages?(b.currentPage||0)+'/'+b.pages:''].filter(Boolean).join(' · '))}</span>${b.pages?`<i style="--w:${Math.min(100,Math.round((b.currentPage||0)/b.pages*100))}%"></i>`:''}</div>`).join('')}</div>`:''}
+   <p class="hint" style="margin:0;font-size:12px">Basılı kitaba okuma kaydı girdiğinde kaldığın sayfa kendiliğinden ilerler. Hepsini Kütüphanem'de "Kitaplar" altında da görürsün.</p>
+  </div></div>`}
+function clAgo(t){if(!t)return '';const m=Math.round((Date.now()-t)/60000);return m<60?m+' dk önce':m<1440?Math.round(m/60)+' sa önce':Math.round(m/1440)+' gün önce'}
+function clRender(host){host=host||$('secHost');if(curSub()!=='club'||st.sec!=='journal')return;const y=window.scrollY;host.innerHTML=clHtml();window.scrollTo(0,y)}
+function clRe(){if(st.sec==='journal'&&curSub()==='club'){const ae=document.activeElement;if(ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName)&&ae.type!=='checkbox'&&$('secHost').contains(ae))return;clRender()}}
+async function clAddPhys(t,a,p,s){const data={kind:'kitap',title:t,author:a||'',status:s||'okunuyor',shelf:'',series:'',seriesNo:0,tags:[],pages:+p||0,finishedAt:s==='okundu'?lfK():'',rating:0,review:'',year:'',journal:'',volume:'',issue:'',pagesRange:'',doi:'',ozet:null,note:'',coverId:'',autoCover:false,currentPage:0,lastReadAt:'',assetId:'',parts:[],fileName:'',fileSize:0,fileType:'',source:'',driveId:'',driveUrl:'',physical:true,addedAt:new Date().toISOString()};
+  const ref=st.db.collection('books').doc();await ref.set(data);return ref.id}
+document.addEventListener('change',async e=>{const t=e.target;if(!t.closest||!t.closest('.cl'))return;
+  if(t.id==='clRemOn'){if(t.checked&&'Notification' in window&&Notification.permission==='default'){try{await Notification.requestPermission()}catch(x){}}await clSaveCfg({remOn:t.checked,rem:($('clRem')||{}).value||'21:00'});toast(t.checked?'Her gün '+(($('clRem')||{}).value||'21:00')+' hatırlatacağım':'Hatırlatma kapandı')}
+  if(t.id==='clRem'){await clSaveCfg({rem:t.value||'21:00'})}
+  if(t.id==='clVit'){await clSaveCfg({vit:t.checked})}});
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-cl]');if(!b)return;const k=b.dataset.cl;
+  if(k==='copy'){if(await aiCopy(CL.copy||''))toast('Kopyalandı');return}
+  if(k==='name'){clNameDlg(()=>clRender());return}
+  if(k==='emo'){document.querySelectorAll('#clEmo [data-cl]').forEach(x=>x.setAttribute('aria-pressed',x===b));return}
+  if(k==='savename'){const n=(($('clName')||{}).value||'').trim();if(!n){$('clName').focus();return}const em=document.querySelector('#clEmo [aria-pressed="true"]');await clMe();await clSaveCfg({name:n,emoji:em?em.dataset.v:'📚'});msClose();const f=CL.then;CL.then=null;setTimeout(()=>{f&&f();clRender()},250);return}
+  if(k==='share'){clShare(b.dataset.v);return}
+  if(k==='accept'){const o=CL.pending;if(!o)return;b.disabled=true;const ok=await clAccept(o);msClose();CL.pending=null;if(ok){toast((o.n||'Arkadaşın')+' kulübünde 👭');CL.show='f_'+o.id.replace(/[^a-z0-9]/gi,'').slice(0,20);goSec('journal','club')}return}
+  if(k==='paste'){const o=clParse(($('clPaste')||{}).value);if(!o){toast('Bu bir kulüp linki değil gibi');return}clIncomingDlg(o);return}
+  if(k==='log'){const bk=(($('clBook')||{}).value||'').trim(),p=parseInt(($('clPages')||{}).value)||0,m=parseInt(($('clMins')||{}).value)||0;
+    if(!p&&!m){toast('Sayfa ya da dakika yaz');$('clPages').focus();return}
+    let lib=bk?st.books.find(x=>x.kind!=='roman'&&(x.title||'').toLocaleLowerCase('tr')===bk.toLocaleLowerCase('tr')):null;
+    if(bk&&!lib&&$('clPhys')&&$('clPhys').checked){try{const id=await clAddPhys(bk,'',0,'okunuyor');lib={id,kind:'kitap'};toast('📗 '+bk+' rafa eklendi')}catch(x){}}
+    await lfSet('club',null,{type:'log',date:lfK(),book:bk,bookId:lib?lib.id:'',pages:p,mins:m,at:new Date().toISOString()});
+    if(lib&&lib.kind==='kitap'&&p){const cur=st.books.find(x=>x.id===lib.id);try{await st.db.collection('books').doc(lib.id).update({currentPage:Math.min((cur&&cur.pages)||1e6,((cur&&cur.currentPage)||0)+p),lastReadAt:new Date().toISOString(),...(cur&&cur.status==='okunacak'?{status:'okunuyor'}:{})})}catch(x){}}
+    toast('Kaydedildi 📚');['clBook','clPages','clMins'].forEach(i=>{const x=$(i);if(x)x.value=''});setTimeout(()=>clRender(),300);return}
+  if(k==='dellog'){await lfDel('club',b.dataset.id);return}
+  if(k==='rmf'){const id=b.dataset.id;if(CL.sure!==id){CL.sure=id;clRender();setTimeout(()=>{if(CL.sure===id){CL.sure=null;clRender()}},5000);return}CL.sure=null;await lfDel('club',id);toast('Kulüpten çıkarıldı');return}
+  if(k==='phys'){const t=(($('clPT')||{}).value||'').trim();if(!t){$('clPT').focus();return}
+    if(st.books.some(x=>(x.title||'').toLocaleLowerCase('tr')===t.toLocaleLowerCase('tr')&&x.kind!=='roman')){toast('Bu kitap zaten rafında');return}
+    try{await clAddPhys(t,(($('clPA')||{}).value||'').trim(),($('clPP')||{}).value,($('clPS')||{}).value);toast('📗 Rafa eklendi');['clPT','clPA','clPP'].forEach(i=>{const x=$(i);if(x)x.value=''})}catch(x){toast('Kaydedilemedi')}return}
+});
+function clTick(){const c=clCfg();if(!c.remOn)return;const now=new Date(),k=lfK(now),[h,m]=(c.rem||'21:00').split(':').map(Number);
+  if(now.getHours()*60+now.getMinutes()<h*60+m)return;let last='';try{last=localStorage.getItem('cl-rem')||''}catch(e){}if(last===k)return;
+  try{localStorage.setItem('cl-rem',k)}catch(e){}const d=clDay(k);if(d.p||d.m)return;
+  const F=clFriends().map(f=>[f,(f.days||{})[k]]).filter(x=>x[1]&&(x[1].p||x[1].m));
+  lfNotify('📚 Bugün okudun mu?',F.length?`${F[0][0].name} bugün ${F[0][1].p||F[0][1].m+' dk'} ${F[0][1].p?'sayfa':''} okudu. 10 sayfa da senden?`:'Kısa bir okuma molası: 10 sayfa yeter 🌙')}
+setInterval(clTick,60000);setTimeout(clTick,6000);
+clCheckHash();window.addEventListener('hashchange',clCheckHash);
+window.__cl={link:clLink,parse:clParse};
+
 const SECS={
   home:{t:'Ana sayfa',tabs:[]},
   life:{t:'Hayatım',tabs:[['today','☀️ Bugün'],['week','📆 Haftam'],['cal','🗓 Takvim'],['tasks','✅ Görevler'],['habits','🔁 Alışkanlıklar'],['mood','🌿 Günlük'],['calm','🫧 Sakinleş & destek'],['goals','🎯 Hedefler'],['money','💰 Bütçe'],['lists','📋 Listeler'],['food','🍲 Yemek'],['days','🎂 Önemli günler'],['mem','🗃 Anı kutusu'],['film','🎬 Filmler'],['songs','🎵 Şarkılarım'],['year','✨ Yılım']]},
@@ -5793,7 +5958,7 @@ const SECS={
   academic:{t:'Akademik',tabs:[['makale','📄 Makaleler'],['lit','📊 Literatür tablosu'],['thesis','🎓 Tez planlayıcı'],['cards','🃏 Çalışma kartları'],['kaynak','📑 Kaynakça'],['neuro','🧠 Nörobilim'],['nb','📓 Defterlerim']]},
   notes:{t:'Defterlerim',tabs:[]},
   writer:{t:'Yazar köşesi',tabs:[['roman','📖 Romanlarım'],['room','✍️ Yazı odası'],['scenes','🎬 Sahne panosu'],['ideas','💡 Fikir defteri'],['chars','👤 Karakterler'],['rel','🕸 İlişki haritası'],['time','🕰 Zaman çizelgesi'],['world','🗺 Dünya'],['board','🎨 İlham panosu'],['music','🎧 Müzik listesi'],['iv','🎙 Karakter röportajı'],['write','📝 Yazım takibi'],['subs','📮 Yayınevleri']]},
-  journal:{t:'Okuma günlüğüm',tabs:[['month','🗓 Aylık sayfa'],['readlist','📖 Okuma listesi'],['stats','📈 İstatistikler'],['bingo','🎯 Bingo'],['quotes','💬 Alıntı defteri'],['focus','⏱ Odak'],['year','🌟 Yılın özeti']]},
+  journal:{t:'Okuma günlüğüm',tabs:[['month','🗓 Aylık sayfa'],['readlist','📖 Okuma listesi'],['club','👭 Okuma kulübü'],['stats','📈 İstatistikler'],['bingo','🎯 Bingo'],['quotes','💬 Alıntı defteri'],['focus','⏱ Odak'],['year','🌟 Yılın özeti']]},
   settings:{t:'Ayarlar',tabs:[['theme','🎨 Görünüm'],['drive','☁️ Google Drive'],['bulk','📁 Klasörden ekle'],['storage','🧹 Depolama'],['backup','💾 Yedekle'],['parts','🧩 Bölümler']]}
 };
 function curSub(){const S=SECS[st.sec];if(!S.tabs.length)return '';const T=secTabs(st.sec);const v=st.secSub[st.sec];return T.some(t=>t[0]===v)?v:(T[0]||S.tabs[0])[0]}
@@ -5824,6 +5989,7 @@ function renderSection(){
   if(sub==='parts'){$('secHost').innerHTML=partsHtml();return}
   if(sub==='kaynak'){kyRender($('secHost'));kyAutoQ();return}
   if(sub==='neuro'){nsRender($('secHost'));return}
+  if(sub==='club'){clRender($('secHost'));return}
   const toolMap={thesis:['thesis'],cards:['cards'],room:['writer','room'],rel:['writer','rel'],time:['writer','time'],world:['writer','world'],scenes:['writer','scenes'],bingo:['bingo'],month:['month'],readlist:['readlist'],ideas:['writer','ideas'],chars:['writer','chars'],board:['writer','board'],music:['writer','music'],iv:['writer','iv'],write:['writer','write'],subs:['writer','subs'],quotes:['quotes'],stats:['stats'],focus:['focus'],year:['year'],backup:['backup']};
   if(toolMap[sub]){TL.embedded=true;TL.cur=toolMap[sub][0];TL.sub=toolMap[sub][1]||null;if(TL.cur!=='cards')TL.study=TL.study;$('secHost').appendChild($('toolPanel'));renderTool();return}
   if(sub==='lit'){hostPanel('litVeil');litRender()}
