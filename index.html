@@ -800,6 +800,14 @@ body.nb-open .qc-fab,body.nb-open .gs-btn,body:has(#reader:not([hidden])) .qc-fa
 .rm-bar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}.empty .rm-bar{justify-content:center;margin:10px 0}.rm-cv{display:grid;grid-template-columns:minmax(0,260px) minmax(0,1fr);gap:16px;align-items:start}.rm-prev canvas{width:100%;height:auto;border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.18)}.rm-f{display:grid;gap:10px}.rm-f label{display:grid;gap:4px;font-size:13px;color:var(--muted)}.rm-ch{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.rm-ch .chip[aria-pressed=true]{background:var(--accent,#7a9a6b);color:#fff}.rm-sw{width:40px;height:40px;border-radius:8px;border:1px solid var(--line);font:600 14px Georgia,serif;cursor:pointer}@media(max-width:620px){.rm-cv{grid-template-columns:minmax(0,1fr)}.rm-prev{max-width:200px;margin:0 auto}}
 
 .rmp-l{display:grid;gap:8px;max-height:50vh;overflow:auto}.rmp-r{display:flex;gap:10px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:12px}.rmp-r input{margin-top:4px}
+
+/* tutarlı form alanları (tema renkleriyle) */
+:where(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=color]),textarea,select){font:inherit;font-size:15px;color:var(--ink);background:var(--paper,var(--bg));border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-sizing:border-box;max-width:100%;transition:border-color .15s,box-shadow .15s}
+:where(input,textarea,select)::placeholder{color:var(--muted);opacity:.85}
+:where(input:not([type=checkbox]):not([type=radio]),textarea,select):focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+:root{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){color-scheme:dark}}
 </style>
 
 </head><body>
@@ -4720,7 +4728,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v34';
+const DK_VER='v35';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
