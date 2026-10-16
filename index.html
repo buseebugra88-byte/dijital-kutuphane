@@ -764,6 +764,19 @@ body.nb-open .qc-fab,body.nb-open .gs-btn,body:has(#reader:not([hidden])) .qc-fa
 #bulkIos[hidden]{display:none !important}
 
 #inkBar.ink3{flex-direction:column;align-items:stretch;gap:4px;padding:6px 10px;width:min(100% - 16px,900px)}#inkBar.ink3 .nbt-main,#inkBar.ink3 .nbt-opts{max-width:100%}
+
+/* ilişki haritası v2 + sahne görünümleri */
+.rel-map2{height:min(72vh,640px);overflow:hidden;background:radial-gradient(circle at 50% 40%,var(--paper),var(--bg))}.rel-map2 svg{width:100%;height:100%;display:block;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.rel-tools{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.rel-tools .iconbtn{width:34px;height:34px}
+.rel-n2{cursor:grab}.rel-n2:active{cursor:grabbing}.rel-l2{font-size:13px;font-weight:600;font-family:var(--body);paint-order:stroke;stroke:var(--paper);stroke-width:5px;stroke-linejoin:round}
+.rel-nm{font-size:15px;font-weight:600;fill:var(--ink);font-family:var(--body);paint-order:stroke;stroke:var(--bg);stroke-width:4px}.rel-rl{font-size:12px;fill:var(--muted);font-family:var(--body);paint-order:stroke;stroke:var(--bg);stroke-width:3px}.rel-i2{font-family:var(--display);fill:var(--ink)}
+.sc-views{flex-wrap:wrap;margin-bottom:8px}
+.sc-strip{display:grid;gap:8px;overflow-x:auto;padding:6px 2px}.sc-sch{display:grid;grid-template-columns:78px minmax(0,1fr);gap:8px;align-items:stretch}.sc-chl{font-size:12px;color:var(--muted);align-self:center}
+.sc-row{display:flex;gap:4px;min-width:0}.sc-blk{flex:1 1 0;min-width:90px;border:0;border-radius:10px;background:color-mix(in srgb,var(--pov) 55%,var(--paper));border-bottom:5px solid var(--st);padding:8px;text-align:left;cursor:pointer;display:grid;gap:2px;font:inherit;color:var(--ink);font-size:12.5px}.sc-blk b{font-size:13px;line-height:1.25;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.sc-blk span{font-size:11px;opacity:.8}
+.sc-curve{overflow-x:auto;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:8px}.sc-curve svg{height:320px;display:block}.sc-cvl{font-size:11px;fill:var(--muted)}.sc-cvt{font-size:10.5px;fill:var(--ink)}
+.sc-mx{overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:8px;max-height:60vh}.sc-mx table{border-collapse:collapse;font-size:12.5px}.sc-mx th,.sc-mx td{padding:3px;text-align:center}.sc-mx tbody th{text-align:right;padding-right:10px;white-space:nowrap;position:sticky;left:0;background:var(--paper)}.sc-mx thead th{color:var(--muted);font-weight:500;position:sticky;top:0;background:var(--paper)}
+.sc-mx td{width:24px;height:24px;border-left:1px solid color-mix(in srgb,var(--line) 50%,transparent)}.sc-mx td i{display:inline-block;width:12px;height:12px;border-radius:50%}.sc-mx td i.pov{width:18px;height:18px;box-shadow:0 0 0 2px var(--ink)}
+.sc-mxk{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px}
 </style>
 
 </head><body>
@@ -2434,7 +2447,7 @@ function scenesHtml(ns,nsel){
   const id=TL.novel,L=scList(id),E=SC.edit;const by={};L.forEach(s=>{(by[s.ch||0]=by[s.ch||0]||[]).push(s)});
   const povs=[...new Set(L.map(s=>s.pov).filter(Boolean))],stc=SCST.map(([k,l])=>[l,L.filter(s=>s.st===k).length]);
   const form=E?`<div class="sc-form"><div class="row"><div class="f"><label for="scTitle">Sahne</label><input id="scTitle" value="${esc(E.title||'')}" placeholder="ör. Kütüphanede ilk karşılaşma"></div><div class="f" style="max-width:110px"><label for="scCh">Bölüm</label><input id="scCh" type="number" min="0" value="${E.ch||''}"></div></div>
-    <div class="row"><div class="f"><label for="scPov">Kimin gözünden</label><input id="scPov" list="scPovs" value="${esc(E.pov||'')}" placeholder="ör. Aria"><datalist id="scPovs">${[...new Set([...povs,...TL.chars.filter(c=>c.novel===id).map(c=>c.name)])].map(p=>`<option value="${esc(p)}">`).join('')}</datalist></div><div class="f"><label for="scSt">Durum</label><select id="scSt">${SCST.map(([k,l])=>`<option value="${k}"${(E.st||'fikir')===k?' selected':''}>${l}</option>`).join('')}</select></div></div>
+    <div class="row"><div class="f"><label for="scPov">Kimin gözünden</label><input id="scPov" list="scPovs" value="${esc(E.pov||'')}" placeholder="ör. Aria"><datalist id="scPovs">${[...new Set([...povs,...TL.chars.filter(c=>c.novel===id).map(c=>c.name)])].map(p=>`<option value="${esc(p)}">`).join('')}</datalist></div><div class="f"><label for="scSt">Durum</label><select id="scSt">${SCST.map(([k,l])=>`<option value="${k}"${(E.st||'fikir')===k?' selected':''}>${l}</option>`).join('')}</select></div><div class="f" style="max-width:150px"><label for="scTen">Gerilim</label><select id="scTen"><option value="0">—</option>${[1,2,3,4,5].map(t=>`<option value="${t}"${E.ten===t?' selected':''}>${t} ${['','sakin','hafif','orta','yüksek','doruk'][t]}</option>`).join('')}</select></div></div>
     <div class="f"><label for="scSum">Kısa özet</label><textarea id="scSum" rows="3" placeholder="Ne oluyor, ne değişiyor?">${esc(E.sum||'')}</textarea></div>
     <div style="display:flex;gap:8px"><button class="btn primary" type="button" data-act="scsave">Kaydet</button><button class="btn" type="button" data-act="sccancel">Vazgeç</button></div></div>`:'';
   return `<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${nsel('wNovel5')}<button class="btn primary" type="button" data-act="scnew">+ Sahne</button><span class="hint">${L.length} sahne · ${stc.filter(x=>x[1]).map(x=>x[1]+' '+x[0].toLowerCase()).join(' · ')}</span></div>
@@ -2880,7 +2893,7 @@ function tWriter(){
   else if(tab==='rel'){body=relHtml(nsel)}
   else if(tab==='time'){body=timeHtml(nsel)}
   else if(tab==='world'){body=worldHtml(nsel)}
-  else if(tab==='scenes'){body=scenesHtml(ns,nsel)}
+  else if(tab==='scenes'){body=scViewHtml(ns,nsel)}
   else if(tab==='board'){body=boardHtml(nsel)}
   else if(tab==='chars'){const cs=TL.chars.filter(c=>c.novel===TL.novel);
     body=`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${nsel('wNovel')}<button class="btn primary" type="button" data-act="chnew">+ Karakter ekle</button></div>
@@ -3098,7 +3111,7 @@ $('toolPanel').addEventListener('click',async e=>{
   const loc=t.closest('[data-locat]');if(loc){LR.cat=loc.dataset.locat;return renderTool()}
   if(act==='wrnew')return wrNew();const wro=t.closest('[data-wropen]');if(wro)return wrOpen(wro.dataset.wropen);
   if(act==='scnew'){SC.edit={novel:TL.novel,st:'fikir',ch:(scList(TL.novel).slice(-1)[0]||{}).ch||''};return renderTool()}if(act==='sccancel'){SC.edit=null;return renderTool()}
-  if(act==='scsave'){const E=SC.edit,title=$('scTitle').value.trim();if(!title){toast('Sahneye bir ad ver');return}const L=scList(TL.novel);const data={novel:E.novel||TL.novel,title,ch:parseInt($('scCh').value)||0,pov:$('scPov').value.trim(),st:$('scSt').value,sum:$('scSum').value.trim(),ord:E.id?E.ord:L.length,at:E.at||new Date().toISOString()};
+  if(act==='scsave'){const E=SC.edit,title=$('scTitle').value.trim();if(!title){toast('Sahneye bir ad ver');return}const L=scList(TL.novel);const data={novel:E.novel||TL.novel,title,ch:parseInt($('scCh').value)||0,pov:$('scPov').value.trim(),st:$('scSt').value,ten:parseInt(($('scTen')||{}).value)||0,sum:$('scSum').value.trim(),ord:E.id?E.ord:L.length,at:E.at||new Date().toISOString()};
     try{if(E.id)await st.db.collection('scenes').doc(E.id).set(data);else await st.db.collection('scenes').doc().set(data);SC.edit=null;toast('Sahne kaydedildi 🎬');renderTool()}catch(err){toast('Kaydedilemedi')}return}
   const sce=t.closest('[data-scedit]');if(sce){SC.edit={...(TL.scenes||[]).find(x=>x.id===sce.dataset.scedit)};return renderTool()}
   const scm=t.closest('[data-scmv]');if(scm){const [i,d]=scm.dataset.scmv.split('|');return scMove(i,+d)}
@@ -4612,7 +4625,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v29';
+const DK_VER='v30';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -4651,6 +4664,90 @@ setTimeout(dkVerCheck,3000);document.addEventListener('visibilitychange',()=>{if
 
 /* iOS: klasör seçici yok */
 (function(){const ios=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);if(!ios)return;const b=$('bulkDirBtn'),h=$('bulkIos');if(b)b.hidden=true;if(h)h.hidden=false;const f=$('bulkFiles');if(f){const l=document.querySelector('label[for="bulkFiles"]');if(l)l.textContent='📂 Kitapları seç (birden fazla)'}})();
+
+/* ===================== İlişki haritası v2: kendiliğinden yerleşen, sürüklenebilir ===================== */
+const RW=1000,RH=680;RL.vb=null;
+function relLayout(cs,rs){const P={},n=cs.length;cs.forEach((c,i)=>{if(c.rx!=null&&c.ry!=null)P[c.id]={x:c.rx*RW,y:c.ry*RH,fix:true};else{const a=-Math.PI/2+i*2*Math.PI/Math.max(1,n);P[c.id]={x:RW/2+260*Math.cos(a),y:RH/2+220*Math.sin(a)}}});
+  if(cs.every(c=>P[c.id].fix))return P;const k=Math.sqrt(RW*RH/Math.max(1,n))*.62;
+  for(let it=0;it<350;it++){const T=Math.max(2,60*(1-it/350));const D={};cs.forEach(c=>D[c.id]={x:0,y:0});
+    for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){const a=P[cs[i].id],b=P[cs[j].id];let dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy)||.1;const f=k*k/d;dx/=d;dy/=d;D[cs[i].id].x+=dx*f;D[cs[i].id].y+=dy*f;D[cs[j].id].x-=dx*f;D[cs[j].id].y-=dy*f}
+    for(const r of rs){const a=P[r.a],b=P[r.b];if(!a||!b||r.a===r.b)continue;let dx=a.x-b.x,dy=a.y-b.y,d=Math.hypot(dx,dy)||.1;const f=d*d/k;dx/=d;dy/=d;D[r.a].x-=dx*f;D[r.a].y-=dy*f;D[r.b].x+=dx*f;D[r.b].y+=dy*f}
+    cs.forEach(c=>{const p=P[c.id];if(p.fix)return;const d=D[c.id];d.x+=(RW/2-p.x)*.02*k/10;d.y+=(RH/2-p.y)*.02*k/10;const L=Math.hypot(d.x,d.y)||1;p.x+=d.x/L*Math.min(L,T);p.y+=d.y/L*Math.min(L,T);p.x=Math.max(70,Math.min(RW-70,p.x));p.y=Math.max(60,Math.min(RH-70,p.y))})}
+  return P}
+function relSvg(){const id=TL.novel,cs=TL.chars.filter(c=>c.novel===id),rs=(TL.rels||[]).filter(r=>r.novel===id&&r.a!==r.b),T=k=>RELT.find(x=>x[0]===k)||RELT[RELT.length-1];
+  if(!RL.pos||RL.posKey!==id+cs.length+'|'+rs.length){RL.pos=relLayout(cs,rs);RL.posKey=id+cs.length+'|'+rs.length}const P=RL.pos;cs.forEach(c=>{if(!P[c.id])P[c.id]={x:RW/2,y:RH/2}});
+  const deg={};rs.forEach(r=>{deg[r.a]=(deg[r.a]||0)+1;deg[r.b]=(deg[r.b]||0)+1});const rad=c=>24+Math.min(16,(deg[c]||0)*3);
+  const pair={};rs.forEach(r=>{const k=[r.a,r.b].sort().join('|');(pair[k]=pair[k]||[]).push(r)});
+  const edges=rs.map(r=>{const A=P[r.a],B=P[r.b];if(!A||!B)return '';const t=T(r.type),k=[r.a,r.b].sort().join('|'),grp=pair[k],i=grp.indexOf(r),m=grp.length;const dim=RL.focus&&r.a!==RL.focus&&r.b!==RL.focus;
+    const dx=B.x-A.x,dy=B.y-A.y,L=Math.hypot(dx,dy)||1,ux=dx/L,uy=dy/L,sgn=r.a<r.b?1:-1,off=(m>1?(i-(m-1)/2)*46:0)*sgn;
+    const cx=(A.x+B.x)/2-uy*off,cy=(A.y+B.y)/2+ux*off;const ra=rad(r.a)+4,rb=rad(r.b)+(t[3]?8:4);
+    const a1=Math.atan2(cy-A.y,cx-A.x),b1=Math.atan2(cy-B.y,cx-B.x);const x1=A.x+Math.cos(a1)*ra,y1=A.y+Math.sin(a1)*ra,x2=B.x+Math.cos(b1)*rb,y2=B.y+Math.sin(b1)*rb;
+    const lx=.25*x1+.5*cx+.25*x2,ly=.25*y1+.5*cy+.25*y2;
+    return `<g class="rel-e" opacity="${dim?.12:1}"><path d="M${x1.toFixed(1)} ${y1.toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}" fill="none" stroke="${t[2]}" stroke-width="2.6" ${t[0]==='sir'||t[0]==='ask'?'stroke-dasharray="7 5"':''} ${t[3]?`marker-end="url(#ar2-${t[0]})"`:''}/><text x="${lx.toFixed(1)}" y="${(ly+4).toFixed(1)}" text-anchor="middle" class="rel-l2" fill="${t[2]}">${esc(r.label||t[1])}</text></g>`}).join('');
+  const nodes=cs.map(c=>{const p=P[c.id],r=rad(c.id),on=RL.focus===c.id,dim=RL.focus&&!on&&!rs.some(x=>(x.a===RL.focus&&x.b===c.id)||(x.b===RL.focus&&x.a===c.id));const col=c.color||POVC[hashStr(c.name||'')%POVC.length];
+    return `<g class="rel-n2" data-relf="${c.id}" data-reld="${c.id}" opacity="${dim?.25:1}" transform="translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})"><circle r="${r+5}" fill="${col}" opacity=".35"/><circle r="${r}" fill="var(--paper)" stroke="${on?'var(--accent)':col}" stroke-width="${on?4:2.5}"/>
+      ${c.img?`<clipPath id="rc2-${c.id}"><circle r="${r-3}"/></clipPath><image href="${esc(assetSrcOf(c.img))}" x="${-(r-3)}" y="${-(r-3)}" width="${2*(r-3)}" height="${2*(r-3)}" preserveAspectRatio="xMidYMid slice" clip-path="url(#rc2-${c.id})"/>`:`<text y="${r*.32}" text-anchor="middle" class="rel-i2" style="font-size:${r*.85}px">${esc((c.name||'?')[0].toLocaleUpperCase('tr-TR'))}</text>`}
+      <text y="${r+19}" text-anchor="middle" class="rel-nm">${esc(c.name||'')}</text>${c.role?`<text y="${r+33}" text-anchor="middle" class="rel-rl">${esc(c.role)}</text>`:''}</g>`}).join('');
+  const vb=RL.vb||[0,0,RW,RH];
+  return `<svg id="relSvg2" viewBox="${vb.map(v=>v.toFixed(1)).join(' ')}" role="img" aria-label="Karakter ilişki haritası"><defs>${RELT.filter(t=>t[3]).map(t=>`<marker id="ar2-${t[0]}" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${t[2]}"/></marker>`).join('')}</defs><rect class="rel-bg" x="-5000" y="-5000" width="10000" height="10000" fill="transparent"/>${edges}${nodes}</svg>`}
+function relHtml(nsel){const id=TL.novel,cs=TL.chars.filter(c=>c.novel===id),rs=(TL.rels||[]).filter(r=>r.novel===id),T=k=>RELT.find(x=>x[0]===k)||RELT[RELT.length-1];
+  const opt=sel=>cs.map(c=>`<option value="${c.id}"${sel===c.id?' selected':''}>${esc(c.name)}</option>`).join('');
+  return `<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${nsel('wNovel6')}${st.sample?'<button class="btn" type="button" data-act="relai">✨ Claude romandan çıkarsın</button>':''}<span class="hint">${cs.length} karakter · ${rs.length} bağ</span></div>
+    ${prBox('rel',x=>`<b>${esc(x.a)}</b> → <b>${esc(x.b)}</b> · ${esc(T(x.type)[1])}${x.label&&x.label!==T(x.type)[1]?' ('+esc(x.label)+')':''}${x.note?` <span class="hint">— ${esc(x.note)}</span>`:''}${x.newChar?' <span class="pill">yeni karakter</span>':''}`)}
+    ${cs.length<2?`<p class="hint">Haritayı görmek için en az iki karakter gerek. Karakterler sekmesinden ya da buradan ekle: <input id="relQuick" placeholder="Karakter adı" style="padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--bg)"> <button class="btn" type="button" data-act="relqc">+ Ekle</button></p>`:''}
+    ${cs.length?`<div class="rel-tools"><button class="iconbtn" type="button" data-rv="in" aria-label="Yakınlaştır">+</button><button class="iconbtn" type="button" data-rv="out" aria-label="Uzaklaştır">−</button><button class="btn" type="button" data-rv="fit">Ortala</button><button class="btn" type="button" data-rv="auto">✨ Yeniden yerleştir</button><button class="btn" type="button" data-rv="png">⬇ Resim olarak kaydet</button><span class="hint">Karakterleri sürükleyerek yerleştir · birine dokun: sadece onun bağları</span></div>
+    <div class="rel-map rel-map2" id="relWrap">${relSvg()}</div>
+    <div class="chips rel-key">${RELT.map(t=>`<span class="chip"><i class="povdot" style="background:${t[2]}"></i>${t[1]}${t[3]?' →':''}</span>`).join('')}</div>`:''}
+    ${cs.length>=2?`<div class="rel-form"><select id="relA">${opt(RL.focus)}</select><select id="relT">${RELT.map(t=>`<option value="${t[0]}">${t[1]}</option>`).join('')}</select><select id="relB">${opt(cs.find(c=>c.id!==RL.focus)?.id)}</select><input id="relN" placeholder="Not (isteğe bağlı)"><button class="btn primary" type="button" data-act="reladd">+ Bağ ekle</button><input id="relQuick" placeholder="Yeni karakter" style="max-width:150px"><button class="btn" type="button" data-act="relqc">+</button></div>`:''}
+    <div class="rel-list">${rs.filter(r=>!RL.focus||r.a===RL.focus||r.b===RL.focus).map(r=>{const a=cs.find(c=>c.id===r.a),b=cs.find(c=>c.id===r.b),t=T(r.type);return a&&b?`<div class="rel-row"><i class="povdot" style="background:${t[2]}"></i><b>${esc(a.name)}</b> ${t[3]?'→':'—'} <b>${esc(b.name)}</b> <span class="hint">${esc(r.label||t[1])}${r.note?' · '+esc(r.note):''}</span><button class="iconbtn" type="button" data-relrm="${r.id}" aria-label="Sil">✕</button></div>`:''}).join('')}</div>`}
+function relRe(){const w=$('relWrap');if(w)w.innerHTML=relSvg()}
+function relPt(e){const sv=$('relSvg2');const r=sv.getBoundingClientRect(),vb=RL.vb||[0,0,RW,RH];const s=Math.max(vb[2]/r.width,vb[3]/r.height),ox=(r.width-vb[2]/s)/2,oy=(r.height-vb[3]/s)/2;return [vb[0]+(e.clientX-r.left-ox)*s,vb[1]+(e.clientY-r.top-oy)*s]}
+document.addEventListener('pointerdown',e=>{const sv=e.target.closest&&e.target.closest('#relSvg2');if(!sv)return;const n=e.target.closest('[data-reld]');const [x,y]=relPt(e);
+  if(n){const P=RL.pos[n.dataset.reld];RL.dr={id:n.dataset.reld,dx:P.x-x,dy:P.y-y,sx:e.clientX,sy:e.clientY,moved:false}}else RL.dr={pan:true,sx:e.clientX,sy:e.clientY,vb:(RL.vb||[0,0,RW,RH]).slice(),moved:false};
+  try{sv.setPointerCapture(e.pointerId)}catch(x){}e.preventDefault()});
+document.addEventListener('pointermove',e=>{const d=RL.dr;if(!d)return;if(Math.hypot(e.clientX-d.sx,e.clientY-d.sy)>4)d.moved=true;if(!d.moved)return;
+  if(d.pan){const sv=$('relSvg2');if(!sv)return;const r=sv.getBoundingClientRect(),s=Math.max(d.vb[2]/r.width,d.vb[3]/r.height);RL.vb=[d.vb[0]-(e.clientX-d.sx)*s,d.vb[1]-(e.clientY-d.sy)*s,d.vb[2],d.vb[3]]}
+  else{const [x,y]=relPt(e);const P=RL.pos[d.id];P.x=Math.max(40,Math.min(RW-40,x+d.dx));P.y=Math.max(40,Math.min(RH-50,y+d.dy));P.fix=true}
+  if(!RL.raf)RL.raf=requestAnimationFrame(()=>{RL.raf=0;relRe()})});
+document.addEventListener('pointerup',async e=>{const d=RL.dr;if(!d)return;RL.dr=null;if(!d.moved)return;RL.noClick=Date.now();
+  if(d.id){const P=RL.pos[d.id];try{await st.db.collection('chars').doc(d.id).update({rx:Math.round(P.x/RW*1000)/1000,ry:Math.round(P.y/RH*1000)/1000})}catch(x){}}});
+document.addEventListener('click',e=>{if(RL.noClick&&Date.now()-RL.noClick<300&&e.target.closest&&e.target.closest('#relSvg2')){e.stopPropagation();e.preventDefault()}},true);
+document.addEventListener('wheel',e=>{const sv=e.target.closest&&e.target.closest('#relSvg2');if(!sv)return;e.preventDefault();const [x,y]=relPt(e),vb=(RL.vb||[0,0,RW,RH]),f=e.deltaY>0?1.12:1/1.12;RL.vb=[x-(x-vb[0])*f,y-(y-vb[1])*f,vb[2]*f,vb[3]*f];relRe()},{passive:false});
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-rv]');if(!b)return;const v=b.dataset.rv,vb=RL.vb||[0,0,RW,RH];
+  if(v==='in'||v==='out'){const f=v==='in'?1/1.25:1.25,cx=vb[0]+vb[2]/2,cy=vb[1]+vb[3]/2;RL.vb=[cx-vb[2]*f/2,cy-vb[3]*f/2,vb[2]*f,vb[3]*f];relRe();return}
+  if(v==='fit'){RL.vb=null;relRe();return}
+  if(v==='auto'){const cs=TL.chars.filter(c=>c.novel===TL.novel);b.disabled=true;for(const c of cs){if(c.rx!=null){delete c.rx;delete c.ry;try{await st.db.collection('chars').doc(c.id).update({rx:null,ry:null})}catch(x){}}}RL.pos=null;RL.vb=null;b.disabled=false;relRe();return}
+  if(v==='png'){const sv=$('relSvg2');if(!sv)return;const cl=sv.cloneNode(true);const cs=getComputedStyle(document.documentElement);cl.setAttribute('viewBox',`0 0 ${RW} ${RH}`);cl.setAttribute('width',RW*2);cl.setAttribute('height',RH*2);
+    cl.setAttribute('xmlns','http://www.w3.org/2000/svg');let x=new XMLSerializer().serializeToString(cl);x=x.replace(/var\((--[a-z-]+)\)/g,(m,n)=>cs.getPropertyValue(n).trim()||'#888');
+    const sty=`<style>.rel-l2{font:600 13px sans-serif;paint-order:stroke;stroke:${cs.getPropertyValue('--paper')};stroke-width:5px}.rel-nm{font:600 15px sans-serif;fill:${cs.getPropertyValue('--ink')}}.rel-rl{font:12px sans-serif;fill:#888}.rel-i2{font-family:Georgia,serif;fill:${cs.getPropertyValue('--ink')}}</style>`;const gt=x.indexOf('>')+1;x=x.slice(0,gt)+sty+x.slice(gt);
+    const im=new Image();im.onload=async()=>{const c=document.createElement('canvas');c.width=RW*2;c.height=RH*2;const g=c.getContext('2d');g.fillStyle=cs.getPropertyValue('--bg')||'#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);c.toBlob(async bl=>{const nv=st.books.find(b=>b.id===TL.novel);await saveFile(`iliski-haritasi-${(nv&&nv.title||'roman').replace(/\s+/g,'-')}.png`,bl)},'image/png')};im.onerror=()=>toast('Resim oluşturulamadı');im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(x);return}});
+
+/* ===================== Sahneleri görselleştir ===================== */
+SC.view=SC.view||'board';
+function scChars(s,cs){const t=((s.title||'')+' '+(s.sum||'')+' '+(s.pov||'')).toLocaleLowerCase('tr-TR');return cs.filter(c=>{if((s.chars||[]).includes(c.id))return true;const nm=(c.name||'').trim();if(!nm)return false;const first=nm.split(/\s+/)[0].toLocaleLowerCase('tr-TR');return first.length>=3&&new RegExp('(^|[^a-zçğıöşü])'+first.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i').test(t)})}
+function scViewHtml(ns,nsel){const v=SC.view,id=TL.novel,L=scList(id);const seg=`<div class="seg sc-views">${[['board','🗂 Pano'],['strip','🎞 Şerit'],['curve','📈 Gerilim'],['matrix','👥 Kim nerede']].map(([k,l])=>`<button type="button" data-scv="${k}" aria-pressed="${v===k}">${l}</button>`).join('')}</div>`;
+  if(v==='board'||!L.length)return seg+scenesHtml(ns,nsel);
+  const cs=TL.chars.filter(c=>c.novel===id),pc=p=>p?POVC[hashStr(p)%POVC.length]:'var(--line)',stc={fikir:'#c9c3b8',taslak:'#e6c86e',yazildi:'#9cc6cf',duzenlendi:'#7fa66a'};
+  const head=`<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${nsel('wNovel5')}<button class="btn primary" type="button" data-act="scnew">+ Sahne</button><span class="hint">${L.length} sahne</span></div>`;
+  if(v==='strip'){const by={};L.forEach(s=>{(by[s.ch||0]=by[s.ch||0]||[]).push(s)});const povs=[...new Set(L.map(s=>s.pov).filter(Boolean))];
+    return seg+head+`<div class="chips">${povs.map(p=>`<span class="chip"><i class="povdot" style="background:${pc(p)}"></i>${esc(p)} · ${L.filter(s=>s.pov===p).length}</span>`).join('')}</div>
+     <div class="sc-strip">${Object.keys(by).sort((a,b)=>a-b).map(ch=>`<div class="sc-sch"><div class="sc-chl">${+ch?'Bölüm '+ch:'—'}</div><div class="sc-row">${by[ch].map(s=>{const w=Math.max(1,(s.sum||'').length/90);return `<button type="button" class="sc-blk" data-scedit="${s.id}" style="--pov:${pc(s.pov)};--st:${stc[s.st||'fikir']};flex-grow:${w.toFixed(2)}" title="${esc((s.title||'')+(s.sum?' — '+s.sum:''))}"><b>${esc(s.title||'Sahne')}</b>${s.pov?`<span>👁 ${esc(s.pov)}</span>`:''}${s.ten?`<span>${'●'.repeat(s.ten)}</span>`:''}</button>`}).join('')}</div></div>`).join('')}</div>
+     <div class="chips rel-key">${SCST.map(([k,l])=>`<span class="chip"><i class="povdot" style="background:${stc[k]}"></i>${l}</span>`).join('')}</div><p class="hint">Her blok bir sahne; renk kimin gözünden olduğu, alttaki çizgi durumu. Dokununca düzenlersin.</p>`}
+  if(v==='curve'){const W=Math.max(640,L.length*60+120),H=320,px=i=>110+i*(W-150)/Math.max(1,L.length-1),py=t=>H-90-(t-1)*(H-130)/4;const has=L.filter(s=>s.ten).length;
+    const pts=L.map((s,i)=>[px(i),py(s.ten||3),s]);const path=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+    let chLines='';let last=null;pts.forEach(([x,,s])=>{if((s.ch||0)!==last){chLines+=`<line x1="${x-14}" y1="20" x2="${x-14}" y2="${H-80}" stroke="var(--line)" stroke-dasharray="3 4"/><text x="${x-10}" y="16" class="sc-cvl">B${s.ch||0}</text>`;last=s.ch||0}});
+    return seg+head+(has?'':'<p class="ms-alert">Sahnelerine henüz gerilim puanı vermemişsin; şimdilik hepsi ortada. Sahneyi düzenle → <b>Gerilim</b> (1–5).</p>')+`<div class="sc-curve"><svg viewBox="0 0 ${W} ${H}" style="min-width:${W}px">${[1,2,3,4,5].map(t=>`<line x1="30" y1="${py(t)}" x2="${W-20}" y2="${py(t)}" stroke="var(--line)" opacity=".5"/><text x="6" y="${py(t)+4}" class="sc-cvl">${t}</text>`).join('')}${chLines}
+      <path d="${path}" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linejoin="round"/>${pts.map(([x,y,s])=>`<g data-scedit="${s.id}" style="cursor:pointer"><circle cx="${x}" cy="${y}" r="9" fill="${pc(s.pov)}" stroke="var(--paper)" stroke-width="2.5"/><title>${esc((s.title||'')+(s.pov?' · '+s.pov:''))}</title></g>`).join('')}
+      ${pts.map(([x,,s])=>`<text x="${x}" y="${H-62}" text-anchor="end" transform="rotate(-35 ${x} ${H-62})" class="sc-cvt">${esc((s.title||'').slice(0,18))}</text>`).join('')}</svg></div>
+      <p class="hint">Romanın nabzı: iniş-çıkışlar okuru tutar. Uzun düz çizgiler = belki tempo düşüyor; tepeler bölüm sonlarına denk geliyorsa kancaların güçlü.</p>`}
+  if(v==='matrix'){const M=L.map(s=>scChars(s,cs));const cnt=cs.map(c=>M.filter(m=>m.includes(c)).length);
+    return seg+head+(cs.length?`<div class="sc-mx"><table><thead><tr><th></th>${L.map((s,i)=>`<th title="${esc(s.title||'')}"><span>${i+1}</span></th>`).join('')}<th>Σ</th></tr></thead><tbody>${cs.map((c,ci)=>`<tr><th>${esc(c.name)}</th>${L.map((s,i)=>{const inn=M[i].includes(c),pov=s.pov&&s.pov.toLocaleLowerCase('tr-TR')===(c.name||'').toLocaleLowerCase('tr-TR');return `<td>${inn?`<i style="background:${pc(c.name)}" class="${pov?'pov':''}" title="${esc(s.title||'')}"></i>`:''}</td>`}).join('')}<td><b>${cnt[ci]}</b></td></tr>`).join('')}</tbody></table></div>
+      <div class="sc-mxk">${L.map((s,i)=>`<span><b>${i+1}</b> ${esc(s.title||'Sahne')}${s.ch?` <span class="hint">B${s.ch}</span>`:''}</span>`).join('')}</div>
+      <p class="hint">Bir karakter sahnenin adında, özetinde ya da bakış açısında geçiyorsa işaretlenir (büyük daire = onun gözünden). Uzun boşluklar: o karakter okurun aklından çıkıyor olabilir.</p>`:'<p class="hint">Önce Karakterler sekmesinden karakter ekle.</p>')}
+  return seg+scenesHtml(ns,nsel)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-scv]');if(!b)return;SC.view=b.dataset.scv;renderTool()});
+
+document.addEventListener('click',e=>{const b=e.target.closest('[data-scedit],[data-act="scnew"]');if(b&&SC.view!=='board')SC.view='board'},true);
 
 const SECS={
   home:{t:'Ana sayfa',tabs:[]},
