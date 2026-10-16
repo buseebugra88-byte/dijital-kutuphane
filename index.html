@@ -904,8 +904,9 @@ body.nb-open .qc-fab,body.nb-open .gs-btn,body:has(#reader:not([hidden])) .qc-fa
   <div class="rbar"><button class="iconbtn" id="rClose" type="button" aria-label="Okuyucuyu kapat">←</button><h2 id="rTitle"></h2>
     <button class="iconbtn" id="rFocus" type="button" aria-label="Odak zamanlayıcısı" title="Odak zamanlayıcısı">⏱</button><button class="iconbtn" id="rTts" type="button" aria-label="Sesli okuma" title="Sesli okuma">🔊</button><button class="iconbtn" id="rQuote" type="button" aria-label="Alıntı kaydet" title="Alıntı kaydet">💬</button><button class="iconbtn" id="rCards" type="button" aria-label="Çalışma kartları" title="Çalışma kartları" hidden>🃏</button><button class="iconbtn" id="rSum" type="button" aria-label="Makaleyi özetle" title="Makaleyi Claude ile özetle" hidden>📝</button><button class="iconbtn" id="rInkBtn" type="button" aria-label="Kalem araçları" title="Kalem araçları (Apple Pencil)" aria-expanded="false">✏️</button><button class="iconbtn" id="rAsk" type="button" aria-label="Claude'a sor" title="Bu sayfa hakkında Claude'a sor" hidden>✨</button><button class="iconbtn" id="rModeBtn" type="button" aria-label="Okuma ayarları" title="Okuma ayarları" aria-expanded="false">Aa</button><button class="iconbtn" id="rZoomOut" type="button" aria-label="Uzaklaştır">−</button><button class="iconbtn" id="rZoomIn" type="button" aria-label="Yakınlaştır">+</button></div>
   <div class="inkbar" id="ttsBar" hidden><button class="btn primary" type="button" id="ttsPlay">▶ Bu sayfayı oku</button><button class="btn" type="button" id="ttsStopB" hidden>■ Durdur</button>
-    <label class="hint" style="font-size:12px">Hız <select id="ttsRate"><option value="0.8">0.8×</option><option value="1" selected>1×</option><option value="1.2">1.2×</option><option value="1.4">1.4×</option></select></label>
-    <label class="hint" style="display:flex;gap:6px;align-items:center;font-size:12px"><input type="checkbox" id="ttsAuto" checked> Sonraki sayfaya geç</label></div>
+    <label class="hint" style="font-size:12px">Hız <select id="ttsRate"><option value="0.8">0.8×</option><option value="0.95" selected>1×</option><option value="1.2">1.2×</option><option value="1.4">1.4×</option></select></label>
+    <label class="hint" style="display:flex;gap:6px;align-items:center;font-size:12px"><input type="checkbox" id="ttsAuto" checked> Sonraki sayfaya geç</label>
+    <label class="hint" style="font-size:12px">Ses <select id="ttsVoiceSel" style="max-width:190px"></select></label><button class="btn" type="button" id="ttsHelp" style="font-size:12px;padding:5px 10px">✨ Daha doğal ses</button><button class="btn" type="button" id="ttsHide" style="font-size:12px;padding:5px 10px">Bu düğmeyi gizle</button></div>
   <div class="inkbar" id="inkBar" hidden>
     <div class="seg" id="inkTools"><button type="button" data-tool="pen" aria-pressed="true">✒️ Kalem</button><button type="button" data-tool="hl">🖍 Fosforlu</button><button type="button" data-tool="er">🧽 Silgi</button></div>
     <div class="inkcolors" id="inkColors"></div>
@@ -1989,8 +1990,20 @@ function tFocus(){
 }
 
 /* ---------- 🔊 Sesli okuma ---------- */
-const TTS={on:false,paused:false,rate:1,chunks:[],i:0};
-function ttsVoice(){const vs=speechSynthesis.getVoices();return vs.find(v=>/^tr/i.test(v.lang))||null}
+const TTS={on:false,paused:false,rate:.95,chunks:[],i:0};
+function ttsRank(v){const n=(v.name||'')+' '+(v.voiceURI||'');return (/premium/i.test(n)?0:/enhanced|gelişmiş|geliştirilmiş/i.test(n)?1:/natural|neural|online|google/i.test(n)?2:/compact|eloquence|espeak/i.test(n)?9:5)}
+function ttsVoices(){try{return speechSynthesis.getVoices().filter(v=>/^tr/i.test(v.lang)).sort((a,b)=>ttsRank(a)-ttsRank(b)||a.name.localeCompare(b.name))}catch(e){return []}}
+function ttsVoice(){const L=ttsVoices();let want='';try{want=localStorage.getItem('dk-ttsv')||''}catch(e){}return L.find(v=>v.voiceURI===want||v.name===want)||L[0]||null}
+function ttsFill(){const s=$('ttsVoiceSel');if(!s)return;const L=ttsVoices(),cur=ttsVoice();s.innerHTML=L.length?L.map(v=>`<option value="${esc(v.voiceURI||v.name)}" ${cur&&v===cur?'selected':''}>${esc(v.name)}${ttsRank(v)<=1?' ✨':ttsRank(v)===9?' (basit)':''}</option>`).join(''):'<option>Türkçe ses yok</option>'}
+try{speechSynthesis.onvoiceschanged=ttsFill}catch(e){}setTimeout(ttsFill,800);
+$('ttsVoiceSel').addEventListener('change',e=>{try{localStorage.setItem('dk-ttsv',e.target.value)}catch(x){}if(TTS.on){const i=TTS.i;speechSynthesis.cancel();TTS.i=i;ttsNext()}else{try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance('Merhaba, ben bu sesle okuyacağım.');const v=ttsVoice();if(v){u.voice=v;u.lang=v.lang}speechSynthesis.speak(u)}catch(x){}}});
+$('ttsHelp').addEventListener('click',()=>{const ios=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),mac=!ios&&/Mac/.test(navigator.platform);
+  msModal(`<div class="eyebrow">✨ Daha doğal bir ses</div><p class="hint" style="margin:0">Sesi uygulama değil, cihazın kendisi üretiyor. Cihazına Türkçe'nin <b>gelişmiş</b> sesini indirirsen çok daha doğal okur — ücretsiz.</p>
+   ${ios||!mac?`<div class="lfc"><b>📱 iPad / iPhone</b><ol class="lf-ol" style="margin:4px 0"><li><b>Ayarlar</b> → <b>Erişilebilirlik</b> → <b>Sesli İçerik</b> → <b>Sesler</b></li><li><b>Türkçe</b> → <b>Yelda</b> (ya da başka bir ses)</li><li><b>Gelişmiş</b> ya da <b>Premium</b> sürümün yanındaki ⬇ ile indir (Wi-Fi'de)</li><li>Uygulamayı kapatıp aç → 🔊 → <b>Ses</b> listesinden ✨ işaretli olanı seç</li></ol></div>`:''}
+   ${mac||!ios?`<div class="lfc"><b>💻 Mac</b><ol class="lf-ol" style="margin:4px 0"><li><b>Sistem Ayarları</b> → <b>Erişilebilirlik</b> → <b>Sesli İçerik</b></li><li><b>Sistem sesi</b> → <b>Sesleri Yönet…</b> → <b>Türkçe</b></li><li>Gelişmiş/Premium sesi indir, tarayıcıyı yeniden aç</li></ol></div>`:''}
+   <span class="hint">Şu an seçili ses: <b>${esc((ttsVoice()||{}).name||'yok')}</b></span>`)});
+$('ttsHide').addEventListener('click',()=>{ttsStop();setUI({noTts:true});$('ttsBar').hidden=true;$('ttsBar').dataset.open='0';ttsApply();toast('Sesli okuma gizlendi — Ayarlar → Bölümler’den geri açabilirsin')});
+function ttsApply(){const b=$('rTts');if(b)b.hidden=!!UI.noTts}setTimeout(ttsApply,300);
 async function ttsStart(){
   if(!('speechSynthesis' in window)){toast('Bu tarayıcı sesli okumayı desteklemiyor');return}
   let txt=(await pageText()).replace(/\[(Önceki|Şu anki) sayfa\]\n?/g,'');if(!R.epub){const parts=txt.split(/\n\n/);txt=parts[parts.length-1]}
@@ -1999,12 +2012,12 @@ async function ttsStart(){
 }
 function ttsNext(){
   if(!TTS.on)return;if(TTS.i>=TTS.chunks.length){if(R.doc&&R.page<R.doc.numPages&&$('ttsAuto').checked){goPage(R.page+1);setTimeout(()=>{if(TTS.on)ttsStart()},900)}else ttsStop();return}
-  const u=new SpeechSynthesisUtterance(TTS.chunks[TTS.i]);const v=ttsVoice();if(v)u.voice=v;u.lang=v?v.lang:'tr-TR';u.rate=TTS.rate;u.onend=()=>{TTS.i++;ttsNext()};u.onerror=()=>{TTS.i++;ttsNext()};speechSynthesis.speak(u);
+  const u=new SpeechSynthesisUtterance(TTS.chunks[TTS.i]);const v=ttsVoice();if(v)u.voice=v;u.lang=v?v.lang:'tr-TR';u.rate=TTS.rate;u.pitch=1;u.onend=()=>{TTS.i++;ttsNext()};u.onerror=()=>{TTS.i++;ttsNext()};speechSynthesis.speak(u);
 }
 function ttsPause(){if(!TTS.on)return;if(TTS.paused){speechSynthesis.resume();TTS.paused=false}else{speechSynthesis.pause();TTS.paused=true}ttsUI()}
 function ttsStop(){TTS.on=false;TTS.paused=false;try{speechSynthesis.cancel()}catch(e){}ttsUI()}
 function ttsUI(){$('ttsBar').hidden=!TTS.on&&$('ttsBar').dataset.open!=='1';$('ttsPlay').textContent=TTS.on?(TTS.paused?'▶ Devam':'⏸ Duraklat'):'▶ Bu sayfayı oku';$('ttsStopB').hidden=!TTS.on}
-$('rTts').addEventListener('click',()=>{const o=$('ttsBar').dataset.open==='1';$('ttsBar').dataset.open=o?'0':'1';$('ttsBar').hidden=o&&!TTS.on;ttsUI()});
+$('rTts').addEventListener('click',()=>{ttsFill();const o=$('ttsBar').dataset.open==='1';$('ttsBar').dataset.open=o?'0':'1';$('ttsBar').hidden=o&&!TTS.on;ttsUI()});
 $('ttsPlay').addEventListener('click',()=>{TTS.on?ttsPause():ttsStart()});$('ttsStopB').addEventListener('click',ttsStop);
 $('ttsRate').addEventListener('change',e=>{TTS.rate=+e.target.value;if(TTS.on){const i=TTS.i;speechSynthesis.cancel();TTS.i=i;ttsNext()}});
 if('speechSynthesis' in window)speechSynthesis.onvoiceschanged=()=>{};
@@ -4208,8 +4221,9 @@ function secTabs(s){return SECS[s].tabs.filter(t=>!subHidden(s,t[0]))}
 function partsApply(){document.querySelectorAll('.sn-item').forEach(b=>{b.hidden=secHidden(b.dataset.sec)})}
 function partsHtml(){const S=Object.entries(SECS).filter(([k])=>k!=='settings'&&k!=='home');
   return `<div class="panel lf"><div><h2 style="margin:0">🧩 Kullandığım bölümler</h2><p class="hint" style="margin:4px 0 0">Kullanmadıklarını kapat; menü sadeleşir. Hiçbir veri silinmez, istediğinde geri açarsın.</p></div>
+   <div class="lfc"><label class="parts-h"><input type="checkbox" data-opt="tts" ${UI.noTts?'':'checked'}> <b>🔊 Kitaplarda sesli okuma düğmesi</b></label></div>
    <div class="parts">${S.map(([k,s])=>`<div class="lfc"><label class="parts-h"><input type="checkbox" data-part="${k}" ${secHidden(k)?'':'checked'}> <b>${esc(s.t)}</b></label>${s.tabs.length?`<div class="parts-t">${s.tabs.map(([t,l])=>`<label><input type="checkbox" data-part="${k}" data-sub="${t}" ${subHidden(k,t)?'':'checked'} ${secHidden(k)?'disabled':''}> ${l}</label>`).join('')}</div>`:''}</div>`).join('')}</div></div>`}
-document.addEventListener('change',e=>{const c=e.target;if(!c.dataset||!c.dataset.part)return;const s=c.dataset.part,t=c.dataset.sub;
+document.addEventListener('change',e=>{const c=e.target;if(c.dataset&&c.dataset.opt==='tts'){setUI({noTts:!c.checked});ttsApply();return}if(!c.dataset||!c.dataset.part)return;const s=c.dataset.part,t=c.dataset.sub;
   if(!t){const H=new Set(UI.hideSec||[]);c.checked?H.delete(s):H.add(s);setUI({hideSec:[...H]})}
   else{const all={...(UI.hideSub||{})},H=new Set(all[s]||[]);c.checked?H.delete(t):H.add(t);if(H.size>=SECS[s].tabs.length){c.checked=true;toast('En az bir sekme açık kalmalı');return}all[s]=[...H];setUI({hideSub:all})}
   partsApply();$('secHost').innerHTML=partsHtml()});
@@ -4582,7 +4596,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v27';
+const DK_VER='v28';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
