@@ -762,6 +762,8 @@ body.nb-open .qc-fab,body.nb-open .gs-btn,body:has(#reader:not([hidden])) .qc-fa
 .dk-ver{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:50%;transform:translateX(-50%);z-index:96;border:0;border-radius:999px;background:var(--accent);color:#fff;font:inherit;font-size:14px;font-weight:600;padding:10px 18px;box-shadow:0 10px 24px -10px rgba(0,0,0,.5);cursor:pointer}
 
 #bulkIos[hidden]{display:none !important}
+
+#inkBar.ink3{flex-direction:column;align-items:stretch;gap:4px;padding:6px 10px;width:min(100% - 16px,900px)}#inkBar.ink3 .nbt-main,#inkBar.ink3 .nbt-opts{max-width:100%}
 </style>
 
 </head><body>
@@ -1668,51 +1670,65 @@ applyUI();
 const INK={tool:'pen',color:'#2b2b2b',w:2,finger:false,cur:null,strokes:[],key:'',saveT:null,ctx:null,canvas:null,dpr:1};
 const INKCOL={pen:['#2b2b2b','#d9534a','#3b6fb6','#4f8a5b','#7b6cb3'],hl:['#f7d84a','#f2a7c3','#a7e3a1','#a8d0f0']};
 try{const c=JSON.parse(localStorage.getItem('kt-ink')||'null');if(c){INK.tool=c.tool||'pen';INK.color=c.color||'#2b2b2b';INK.w=c.w||2;INK.finger=!!c.finger}}catch(e){}
-function inkPrefs(){try{localStorage.setItem('kt-ink',JSON.stringify({tool:INK.tool,color:INK.color,w:INK.w,finger:INK.finger}))}catch(e){}}
-function inkUI(){
-  $('inkTools').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tool===INK.tool));
-  $('inkSizes').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.w===INK.w));
-  const set=INK.tool==='hl'?INKCOL.hl:INKCOL.pen;if(INK.tool!=='er'&&!set.includes(INK.color))INK.color=set[0];
-  $('inkColors').innerHTML=INK.tool==='er'?'':set.map(c=>`<button type="button" data-c="${c}" style="background:${c}" aria-label="Renk ${c}" aria-pressed="${c===INK.color}"></button>`).join('');
-  $('inkFinger').checked=INK.finger;document.body.classList.toggle('ink-finger',INK.finger);
-}
+INK.pt=INK.pt||'fountain';INK.em=INK.em||'stroke';INK.ew=INK.ew??1;INK.redo=[];INK.undo=[];
+try{const c=JSON.parse(localStorage.getItem('kt-ink2')||'null');if(c){INK.pt=c.pt||INK.pt;INK.em=c.em||INK.em;INK.ew=c.ew??INK.ew;if(c.w2!=null)INK.w2=c.w2}}catch(e){}
+if(INK.w2==null)INK.w2=1;
+function inkPrefs(){try{localStorage.setItem('kt-ink',JSON.stringify({tool:INK.tool,color:INK.color,w:INK.w,finger:INK.finger}));localStorage.setItem('kt-ink2',JSON.stringify({pt:INK.pt,em:INK.em,ew:INK.ew,w2:INK.w2}))}catch(e){}}
+function inkUI(){const bar=$('inkBar');if(!bar)return;const t=INK.tool,hl=t==='hl',pal=hl?NB_HL:NB_PEN;if(t!=='er'&&!pal.includes(INK.color)&&!INK.custom)INK.color=pal[0];const cur=INK.color;
+  const tb=(k,ic,l)=>`<button type="button" class="nbt-b${t===k?' on':''}" data-ik="tool" data-v="${k}">${nbIco(ic)}<span>${l}</span></button>`;
+  const cols=`<div class="nbt-cols">${pal.map(c=>`<button type="button" class="nb-col" data-ik="col" data-v="${c}" style="--c:${c}" aria-pressed="${c===cur}" aria-label="Renk"></button>`).join('')}<label class="nb-col nb-colx" style="--c:${cur}"><input type="color" id="inkColX" value="${cur}"></label></div>`;
+  const sizes=`<div class="nbt-sz">${NB_W[hl?'hl':'pen'].map((w,i)=>`<button type="button" data-ik="w" data-v="${i}" aria-pressed="${INK.w2===i}" aria-label="Kalınlık ${i+1}"><i style="width:${Math.min(22,hl?6+i*4:2+w*1.6)}px;height:${Math.min(22,hl?6+i*4:2+w*1.6)}px;background:${cur}"></i></button>`).join('')}</div>`;
+  let opts='';
+  if(t==='pen')opts=`<div class="nbt-pt">${Object.entries(NB_PT).map(([k,[l]])=>`<button type="button" data-ik="pt" data-v="${k}" aria-pressed="${INK.pt===k}"><svg viewBox="0 0 60 16"><path d="M4 11 C14 2, 22 2, 30 8 S 46 14, 56 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="${k==='ball'?2.4:k==='brush'?4.5:3}" ${k==='pencil'?'stroke-dasharray="1.5 1" opacity=".75"':''}/></svg><span>${l}</span></button>`).join('')}</div>${cols}${sizes}`;
+  else if(hl)opts=cols+sizes;
+  else opts=`<div class="seg"><button type="button" data-ik="em" data-v="stroke" aria-pressed="${INK.em==='stroke'}">Tüm çizgiyi sil</button><button type="button" data-ik="em" data-v="part" aria-pressed="${INK.em==='part'}">Dokunduğun yeri sil</button></div><div class="nbt-sz">${[0,1,2].map(i=>`<button type="button" data-ik="ew" data-v="${i}" aria-pressed="${INK.ew===i}" aria-label="Silgi boyu"><i style="width:${[8,13,20][i]}px;height:${[8,13,20][i]}px;background:transparent;border:1.5px solid currentColor"></i></button>`).join('')}</div><button type="button" class="chip" data-ik="clear">🗑 Bu sayfadaki çizimleri temizle</button>`;
+  bar.classList.add('ink3');bar.innerHTML=`<div class="nbt-main">${tb('pen','pen','Kalem')}${tb('hl','hl','Fosforlu')}${tb('er','er','Silgi')}<span class="nbt-sep"></span><button type="button" class="nbt-b" data-ik="undo">${nbIco('undo')}<span>Geri al</span></button><button type="button" class="nbt-b" data-ik="redo">${nbIco('redo')}<span>Yinele</span></button><span class="nbt-sep"></span><button type="button" class="nbt-b${INK.finger?' on':''}" data-ik="finger">${nbIco('hand')}<span>${INK.finger?'Parmak yazar':'Parmak kaydırır'}</span></button><span class="hint" id="inkSaved" style="font-size:12px;align-self:center"></span></div><div class="nbt-opts">${opts}</div>`;
+  document.body.classList.toggle('ink-finger',INK.finger);const cx=$('inkColX');if(cx)cx.addEventListener('input',()=>{INK.color=cx.value;INK.custom=true;inkPrefs();inkUI()})}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ik]');if(!b)return;const k=b.dataset.ik,v=b.dataset.v;
+  if(k==='tool'){INK.tool=v;INK.custom=false}else if(k==='col'){INK.color=v;INK.custom=false;if(INK.tool==='er')INK.tool='pen'}else if(k==='w')INK.w2=+v;else if(k==='pt'){INK.pt=v;INK.tool='pen'}else if(k==='em')INK.em=v;else if(k==='ew')INK.ew=+v;
+  else if(k==='finger'){INK.finger=!INK.finger;toast(INK.finger?'Parmakla da çizebilirsin':'Parmak sayfayı kaydırır, kalem yazar')}
+  else if(k==='undo'){const u=INK.undo.pop();if(!u){toast('Geri alınacak bir şey yok');return}INK.redo.push(INK.strokes.slice());INK.strokes=u;inkRedraw();inkQueueSave();return}
+  else if(k==='redo'){const u=INK.redo.pop();if(!u)return;INK.undo.push(INK.strokes.slice());INK.strokes=u;inkRedraw();inkQueueSave();return}
+  else if(k==='clear'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Emin misin? Tekrar bas';return}inkPush();INK.strokes=[];inkRedraw();inkQueueSave()}
+  inkPrefs();inkUI()});
+function inkPush(){INK.undo.push(INK.strokes.slice());if(INK.undo.length>60)INK.undo.shift();INK.redo=[]}
+function inkWidth(s,cw){if(s.v===2)return (NB_W[s.t==='hl'?'hl':'pen'][s.w]||2)/1000*cw;const base=s.t==='hl'?[0,0.012,0.02,0.03][s.w||2]:[0,0.0016,0.0028,0.0045][s.w||2];return base*cw}
+function inkPx(s,cw,ch){const p=s.p,q=[];for(let i=0;i<p.length;i+=3)q.push(p[i]*cw,p[i+1]*ch,p[i+2]);return {k:s.t==='hl'?'hl':'pen',c:s.c,w:inkWidth(s,cw)/(s.v===2?1:1),pts:q,pt:s.pt||'fountain'}}
+function inkDrawStroke(ctx,s,cw,ch){if(!s.p||!s.p.length)return;nbStroke(ctx,inkPx(s,cw,ch))}
+function inkRedraw(){const cv=INK.canvas;if(!cv)return;let C=INK.cache;if(!C||C.width!==cv.width||C.height!==cv.height){C=INK.cache=document.createElement('canvas');C.width=cv.width;C.height=cv.height}
+  const x=C.getContext('2d');x.clearRect(0,0,C.width,C.height);INK.strokes.forEach(s=>inkDrawStroke(x,s,cv.width,cv.height));inkBlit()}
+function inkBlit(){INK.raf=0;const cv=INK.canvas;if(!cv)return;const ctx=cv.getContext('2d');ctx.clearRect(0,0,cv.width,cv.height);if(INK.cache)ctx.drawImage(INK.cache,0,0);if(INK.cur)inkDrawStroke(ctx,INK.cur,cv.width,cv.height);if(INK.erR){ctx.save();ctx.strokeStyle='rgba(120,120,140,.85)';ctx.lineWidth=1.5*INK.dpr;ctx.beginPath();ctx.arc(INK.erR[0],INK.erR[1],INK.erR[2],0,7);ctx.stroke();ctx.restore()}}
+function inkAttach(cv,b,page,dpr){
+  INK.canvas=cv;INK.dpr=dpr;INK.strokes=[];INK.cur=null;INK.undo=[];INK.redo=[];INK.cache=null;INK.key=b?`${b.id}__p${page}`:'';
+  if(st.db&&INK.key){const key=INK.key;st.db.collection('ink').doc(key).get().then(sn=>{if(INK.key!==key)return;INK.strokes=(sn.exists&&sn.data().strokes)||[];inkRedraw()}).catch(()=>{})}
+  const pos=e=>{const r=cv.getBoundingClientRect();return [(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height]};
+  const can=e=>e.pointerType==='pen'||e.pointerType==='mouse'&&e.button===0&&INK.finger||(INK.finger&&e.pointerType==='touch');
+  const prs=e=>e.pointerType==='pen'?Math.max(.05,e.pressure||.5):.5;
+  cv.addEventListener('touchstart',e=>{if([...e.touches].some(t=>t.touchType==='stylus'))e.preventDefault()},{passive:false});
+  cv.addEventListener('touchmove',e=>{if(INK.cur||INK.erasing||[...e.touches].some(t=>t.touchType==='stylus'))e.preventDefault()},{passive:false});
+  cv.addEventListener('pointerdown',e=>{if(!can(e)||$('inkBar').hidden)return;e.preventDefault();try{cv.setPointerCapture(e.pointerId)}catch(x){}const [x,y]=pos(e);
+    if(INK.tool==='er'){inkPush();INK.erasing=true;INK.erHit=false;inkErase(x,y);return}
+    INK.cur={t:INK.tool,c:INK.color,w:INK.w2,v:2,pt:INK.tool==='pen'?INK.pt:undefined,p:[x,y,prs(e)]};if(!INK.cache)inkRedraw();inkBlit()});
+  cv.addEventListener('pointermove',e=>{if(!INK.cur&&!INK.erasing)return;e.preventDefault();const evs=e.getCoalescedEvents&&e.getCoalescedEvents().length?e.getCoalescedEvents():[e];
+    if(INK.erasing){for(const ev of evs){const [a,b]=pos(ev);inkErase(a,b)}return}
+    const p=INK.cur.p,r=cv.getBoundingClientRect();for(const ev of evs){const [a,b]=pos(ev);const lx=p[p.length-3],ly=p[p.length-2];if(Math.hypot((a-lx)*r.width,(b-ly)*r.height)<.6)continue;p.push(a,b,prs(ev))}
+    if(!INK.raf)INK.raf=requestAnimationFrame(inkBlit)});
+  const end=e=>{if(INK.raf){cancelAnimationFrame(INK.raf);INK.raf=0}if(INK.erasing){INK.erasing=false;INK.erR=null;if(!INK.erHit)INK.undo.pop();else inkQueueSave();inkBlit();return}if(!INK.cur)return;
+    const S=INK.cur;INK.cur=null;if(e&&e.type==='pointercancel'&&S.p.length<6){inkBlit();return}inkPush();
+    S.p=S.p.map((v,i)=>i%3===2?Math.round(v*100)/100:Math.round(v*100000)/100000);INK.strokes.push(S);
+    if(INK.cache)inkDrawStroke(INK.cache.getContext('2d'),S,cv.width,cv.height);inkBlit();inkQueueSave()};
+  cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+  inkRedraw()}
+function inkErase(x,y){const cv=INK.canvas;if(!cv)return;const cw=cv.width,ch=cv.height,X=x*cw,Y=y*ch,r=[8,14,28][INK.ew]*INK.dpr;INK.erR=[X,Y,r];let changed=false;const out=[];
+  for(const s of INK.strokes){const S=inkPx(s,cw,ch),p=S.pts,rr=r+S.w/2;let hit=false;for(let i=0;i<p.length;i+=3){const ax=p[i],ay=p[i+1],bx=p[i+3]??ax,by=p[i+4]??ay;const dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy;let t=l?((X-ax)*dx+(Y-ay)*dy)/l:0;t=Math.max(0,Math.min(1,t));if(Math.hypot(ax+t*dx-X,ay+t*dy-Y)<rr){hit=true;break}}
+    if(!hit){out.push(s);continue}changed=true;if(INK.em!=='part')continue;
+    const D=[];for(let i=0;i<p.length;i+=3){D.push(p[i],p[i+1],p[i+2]);const nx=p[i+3],ny=p[i+4];if(nx===undefined)break;const d=Math.hypot(nx-p[i],ny-p[i+1]),st2=Math.max(1,r/3);for(let k=1;k*st2<d;k++){const f=k*st2/d;D.push(p[i]+(nx-p[i])*f,p[i+1]+(ny-p[i+1])*f,p[i+2])}}
+    let run=[];const fl=()=>{if(run.length>=6)out.push({...s,p:run});run=[]};for(let i=0;i<D.length;i+=3){if(Math.hypot(D[i]-X,D[i+1]-Y)<r+S.w*.35)fl();else run.push(D[i]/cw,D[i+1]/ch,D[i+2])}fl()}
+  if(changed){INK.strokes=out;INK.erHit=true;inkRedraw()}else inkBlit()}
+setTimeout(inkUI,0);
 $('rInkBtn').addEventListener('click',()=>{const h=!$('inkBar').hidden;$('inkBar').hidden=h;$('rInkBtn').setAttribute('aria-expanded',!h);$('rPop').hidden=true;$('rAskBox').hidden=true;inkUI();barsShow();if(RS.flow==='scroll'&&R.doc&&!R.epub){SCR.key='';renderPage()}});
-$('inkTools').addEventListener('click',e=>{const b=e.target.closest('[data-tool]');if(b){INK.tool=b.dataset.tool;inkPrefs();inkUI()}});
-$('inkSizes').addEventListener('click',e=>{const b=e.target.closest('[data-w]');if(b){INK.w=+b.dataset.w;inkPrefs();inkUI()}});
-$('inkColors').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(b){INK.color=b.dataset.c;inkPrefs();inkUI()}});
-$('inkFinger').addEventListener('change',e=>{INK.finger=e.target.checked;inkPrefs();inkUI()});
-$('inkUndo').addEventListener('click',()=>{if(!INK.strokes.length)return;INK.strokes.pop();inkRedraw();inkQueueSave()});
-function inkWidth(s,cw){const base=s.t==='hl'?[0,0.012,0.02,0.03][s.w||2]:[0,0.0016,0.0028,0.0045][s.w||2];return base*cw}
-function inkDrawStroke(ctx,s,cw,ch){
-  const p=s.p;if(!p||p.length<3)return;ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=s.c;
-  if(s.t==='hl'){ctx.globalAlpha=.38;ctx.globalCompositeOperation='multiply';ctx.lineWidth=inkWidth(s,cw);ctx.beginPath();ctx.moveTo(p[0]*cw,p[1]*ch);for(let i=3;i<p.length;i+=3)ctx.lineTo(p[i]*cw,p[i+1]*ch);ctx.stroke()}
-  else{for(let i=3;i<p.length;i+=3){const pr=(p[i+2]||0.5);ctx.lineWidth=inkWidth(s,cw)*(0.45+pr*1.1);ctx.beginPath();ctx.moveTo(p[i-3]*cw,p[i-2]*ch);ctx.lineTo(p[i]*cw,p[i+1]*ch);ctx.stroke()}
-    if(p.length===3){ctx.fillStyle=s.c;ctx.beginPath();ctx.arc(p[0]*cw,p[1]*ch,inkWidth(s,cw)/2,0,7);ctx.fill()}}
-  ctx.restore();
-}
-function inkRedraw(){const cv=INK.canvas;if(!cv)return;const ctx=cv.getContext('2d');ctx.clearRect(0,0,cv.width,cv.height);INK.strokes.forEach(s=>inkDrawStroke(ctx,s,cv.width,cv.height));if(INK.cur)inkDrawStroke(ctx,INK.cur,cv.width,cv.height)}
 function inkQueueSave(){clearTimeout(INK.saveT);$('inkSaved').textContent='';const key=INK.key,strokes=INK.strokes.slice();INK.saveT=setTimeout(async()=>{
   if(!st.db||!key)return;try{await st.db.collection('ink').doc(key).set({book:key.split('__')[0],page:+key.split('__p')[1],strokes,updatedAt:new Date().toISOString()});if(INK.key===key)$('inkSaved').textContent='Notlar kaydedildi ✓'}catch(e){$('inkSaved').textContent=e&&e.code==='invalid_argument'?'Bu sayfada çok fazla çizim var':'Kaydedilemedi'}},700)}
-function inkAttach(cv,b,page,dpr){
-  INK.canvas=cv;INK.dpr=dpr;INK.strokes=[];INK.cur=null;INK.key=b?`${b.id}__p${page}`:'';
-  if(st.db&&INK.key){const key=INK.key;st.db.collection('ink').doc(key).get().then(sn=>{if(INK.key!==key)return;INK.strokes=(sn.exists&&sn.data().strokes)||[];inkRedraw()}).catch(()=>{})}
-  const pos=e=>{const r=cv.getBoundingClientRect();return [Math.round((e.clientX-r.left)/r.width*10000)/10000,Math.round((e.clientY-r.top)/r.height*10000)/10000]};
-  const can=e=>e.pointerType==='pen'||(INK.finger&&(e.pointerType==='touch'||e.pointerType==='mouse'));
-  cv.addEventListener('touchstart',e=>{if(e.touches[0]&&e.touches[0].touchType==='stylus')e.preventDefault()},{passive:false});
-  cv.addEventListener('touchmove',e=>{if(e.touches[0]&&e.touches[0].touchType==='stylus')e.preventDefault()},{passive:false});
-  cv.addEventListener('pointerdown',e=>{if(!can(e))return;e.preventDefault();cv.setPointerCapture(e.pointerId);const [x,y]=pos(e);
-    if(INK.tool==='er'){INK.erasing=true;inkErase(x,y);return}
-    INK.cur={t:INK.tool,c:INK.color,w:INK.w,p:[x,y,Math.round((e.pressure||0.5)*100)/100]};inkRedraw()});
-  cv.addEventListener('pointermove',e=>{if(!can(e))return;const [x,y]=pos(e);
-    if(INK.erasing){inkErase(x,y);return}
-    if(!INK.cur)return;e.preventDefault();const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e];
-    for(const ev of evs){const [a,b]=pos(ev);const p=INK.cur.p,lx=p[p.length-3],ly=p[p.length-2];if(Math.abs(a-lx)+Math.abs(b-ly)<0.0015)continue;p.push(a,b,Math.round((ev.pressure||0.5)*100)/100)}
-    const ctx=cv.getContext('2d'),p=INK.cur.p,n=p.length;if(n>=6&&INK.cur.t!=='hl'){const s={...INK.cur,p:p.slice(n-6)};inkDrawStroke(ctx,s,cv.width,cv.height)}else inkRedraw()});
-  const end=e=>{if(INK.erasing){INK.erasing=false;inkQueueSave();return}if(!INK.cur)return;INK.strokes.push(INK.cur);INK.cur=null;inkRedraw();inkQueueSave()};
-  cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
-}
-function inkErase(x,y){const r=0.018,before=INK.strokes.length;INK.strokes=INK.strokes.filter(s=>{for(let i=0;i<s.p.length;i+=3){if(Math.abs(s.p[i]-x)<r&&Math.abs(s.p[i+1]-y)<r*1.4)return false}return true});if(INK.strokes.length!==before)inkRedraw()}
-inkUI();
 
 /* Akademik: APA 7 */
 function splitAuthors(a){return (a||'').split(/;|\s+&\s+|\s+ve\s+|\s+and\s+/).map(x=>x.trim()).filter(Boolean)}
@@ -4596,7 +4612,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v28';
+const DK_VER='v29';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
