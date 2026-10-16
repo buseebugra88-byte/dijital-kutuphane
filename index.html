@@ -1143,10 +1143,10 @@ const LOCAL=(()=>{
 const GAUTH=(()=>{
   const CFG=window.DK_CONFIG||{};const SCOPE='https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/drive.file';
   let tok=null,exp=0,client=null,pending=null,inited=false;
-  try{const s=JSON.parse(sessionStorage.getItem('dk-gtok')||'null');if(s&&s.exp>Date.now()+60000){tok=s.t;exp=s.exp}}catch(e){}
+  try{const s=JSON.parse(localStorage.getItem('dk-gtok')||'null');if(s&&s.exp>Date.now()+60000){tok=s.t;exp=s.exp}}catch(e){}
   const native=()=>!!(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform());
   const fire=()=>{try{G.onchange&&G.onchange()}catch(e){}try{window.dkAfterAuth&&window.dkAfterAuth()}catch(e){}};
-  function save(t,sec){tok=t;exp=Date.now()+Math.max(300,(sec||3500)-120)*1000;try{sessionStorage.setItem('dk-gtok',JSON.stringify({t,exp}))}catch(e){}fire()}
+  function save(t,sec){try{const x=document.getElementById('dkReauth');x&&x.remove()}catch(e){}tok=t;exp=Date.now()+Math.max(300,(sec||3500)-120)*1000;try{localStorage.setItem('dk-gtok',JSON.stringify({t,exp}))}catch(e){}fire()}
   function loadGis(){return new Promise((res,rej)=>{if(window.google&&google.accounts&&google.accounts.oauth2)return res();
     const s=document.createElement('script');s.src='https://accounts.google.com/gsi/client';s.async=true;s.onload=()=>res();s.onerror=()=>rej({ui:'Google girişi yüklenemedi. İnternet bağlantını kontrol et.'});document.head.appendChild(s)})}
   async function nativeLogin(){
@@ -1157,11 +1157,14 @@ const GAUTH=(()=>{
     let r;try{r=await SL.login({provider:'google',options:{scopes:[SCOPE]}})}catch(e){throw{ui:'Google girişi tamamlanmadı.'}}
     const a=(r&&r.result&&r.result.accessToken)||{};const t=typeof a==='string'?a:(a.token||a.accessToken||'');
     if(!t)throw{ui:'Google girişi tamamlanmadı.'};save(t,3500)}
+  function reconnectBar(){if(document.getElementById('dkReauth'))return;const b=document.createElement('button');b.id='dkReauth';b.type='button';b.className='dk-ver';b.style.top='calc(env(safe-area-inset-top,0px) + 56px)';b.textContent='☁️ Google Drive bağlantısını yenilemek için dokun';
+    b.onclick=()=>{b.textContent='Google açılıyor…';G.token().then(()=>{b.remove();try{toast('Google Drive yeniden bağlandı ✓')}catch(e){}},e=>{b.textContent='☁️ Tekrar dene — Google Drive\'a bağlan';try{toast((e&&e.ui)||'Olmadı')}catch(x){}})};document.body.appendChild(b)}
   function webLogin(){return new Promise((res,rej)=>{
     if(!CFG.googleWebClientId)return rej({ui:'Google Drive için Client ID henüz eklenmemiş (config.js).'});
+    const ua=navigator.userActivation;if(ua&&!ua.isActive){reconnectBar();return rej({code:'need_login',ui:'Google Drive oturumu yenilenmeli — üstteki düğmeye dokun.'})}
     const go=()=>{client=client||google.accounts.oauth2.initTokenClient({client_id:CFG.googleWebClientId,scope:SCOPE,callback:()=>{}});
       client.callback=r=>{if(!r||r.error)return rej({ui:'Google girişi iptal edildi.'});save(r.access_token,+r.expires_in||3500);res()};
-      client.error_callback=e=>rej({ui:e&&e.type==='popup_closed'?'Giriş penceresi kapatıldı.':'Google giriş penceresi açılamadı. Tarayıcı açılır pencereyi engellemiş olabilir.'});
+      client.error_callback=e=>{if(!(e&&e.type==='popup_closed'))reconnectBar();rej({ui:e&&e.type==='popup_closed'?'Giriş penceresi kapatıldı.':'Google penceresi açılamadı — üstteki “Google Drive bağlantısını yenile” düğmesine dokun.'})};
       client.requestAccessToken({prompt:''})};
     if(window.google&&google.accounts&&google.accounts.oauth2)go();else loadGis().then(go,rej)})}
   const G={onchange:null,
@@ -1169,7 +1172,7 @@ const GAUTH=(()=>{
     signedIn:()=>!!tok&&exp>Date.now(),
     token(){if(G.signedIn())return Promise.resolve(tok);if(pending)return pending;
       pending=(native()?nativeLogin():webLogin()).then(()=>tok).finally(()=>{pending=null});return pending},
-    expire(){tok=null;exp=0;try{sessionStorage.removeItem('dk-gtok')}catch(e){}},
+    expire(){tok=null;exp=0;try{localStorage.removeItem('dk-gtok')}catch(e){}},
     signOut(){try{if(tok&&!native()&&window.google&&google.accounts&&google.accounts.oauth2)google.accounts.oauth2.revoke(tok,()=>{})}catch(e){}
       try{if(native()){const C=window.Capacitor;const SL=(C.Plugins&&C.Plugins.SocialLogin);SL&&SL.logout&&SL.logout({provider:'google'}).catch(()=>{})}}catch(e){}
       G.expire();fire()},
@@ -4741,7 +4744,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v36';
+const DK_VER='v37';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
