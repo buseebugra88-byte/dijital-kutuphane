@@ -671,6 +671,23 @@ body.sec-home.home-simple header.top,body.sec-home.home-simple .divider{display:
 .nbx-ref,.nbb-ref{pointer-events:auto;display:inline-flex;gap:4px;align-items:center;border:0;background:color-mix(in srgb,var(--accent) 14%,#fff);color:var(--accent);border-radius:999px;padding:2px 9px;font-size:max(11px,calc(var(--k,1) * 15px));cursor:pointer;margin-top:2px;font-family:-apple-system,"Segoe UI",sans-serif}
 .nbb-ref{font-size:12px;align-self:center;flex:none}
 /* ===== Hayatım ===== */
+.mem-boxes{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.mem-boxes .chip{padding:6px 12px;font-size:13.5px;color:var(--ink)}.mem-boxes .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.mem-newbox{display:flex;gap:6px;flex:1 1 230px;min-width:0;max-width:340px}.mem-newbox input{flex:1;min-width:0;padding:7px 14px;border:1px dashed var(--line);border-radius:999px;background:var(--paper);color:var(--ink);font:inherit;font-size:13.5px}
+.mem-form input:not([type=file]),.mem-form select,.mem-form textarea{padding:9px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit}.mem-form textarea{line-height:1.6;resize:vertical}.mem-form #lfMemT{font-weight:600}
+.mem-thumbs{display:flex;gap:8px;flex-wrap:wrap}.mem-th{position:relative;width:80px;height:80px;border-radius:12px;overflow:hidden;background:var(--bg);border:1px solid var(--line)}.mem-th img{width:100%;height:100%;object-fit:cover;display:block}
+.mem-th .lf-x{position:absolute;top:3px;right:3px;background:var(--paper);border-radius:999px;opacity:.92;padding:0 6px;line-height:20px;font-size:15px}
+.mem-add{position:relative;width:80px;height:80px;border:1.5px dashed var(--accent);border-radius:12px;display:grid;place-items:center;font-size:12.5px;color:var(--accent);cursor:pointer;text-align:center;overflow:hidden}.mem-add input{position:absolute;inset:0;opacity:0;cursor:pointer}.mem-add:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+.mem-y{margin:10px 0 -6px;font:600 28px/1.1 var(--display)}.mem-mo{margin-bottom:-6px}
+.mem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:14px;align-items:start}
+.mem-c h4{font-size:17px}.mem-note{margin:0;white-space:pre-wrap;line-height:1.6;font-size:14.5px;word-break:break-word}.mem-meta{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}.mem-meta .chip{font-size:12px}
+.mem-c.flash{outline:2px solid var(--accent);outline-offset:3px}
+.mem-ph{display:grid;gap:3px;border-radius:12px;overflow:hidden;margin:-4px -6px 2px}.mem-ph.n2,.mem-ph.n4{grid-template-columns:1fr 1fr}.mem-ph.n3{grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr}.mem-ph.n3 .mem-im:first-child{grid-row:span 2;aspect-ratio:auto}
+.mem-im{position:relative;border:0;padding:0;background:var(--bg);cursor:zoom-in;aspect-ratio:1;overflow:hidden;display:grid;place-items:center;min-height:0}.mem-im img{width:100%;height:100%;object-fit:cover;display:block}.mem-im .hint{font-size:12px;padding:8px}
+.mem-ph.n1 .mem-im{aspect-ratio:auto;max-height:440px}.mem-ph.n1 .mem-im img{height:auto;max-height:440px}
+.mem-more{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.45);color:#fff;font-size:22px}
+.mem-otd .lf-row{flex-wrap:nowrap}.mem-otdi{border:0;padding:0;width:52px;height:52px;border-radius:10px;overflow:hidden;cursor:zoom-in;flex:none}.mem-otdi img{width:100%;height:100%;object-fit:cover;display:block}
+.mem-strip{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:6px}.mem-strip button{border:0;padding:0;aspect-ratio:1;border-radius:10px;overflow:hidden;cursor:zoom-in;background:var(--bg)}.mem-strip img{width:100%;height:100%;object-fit:cover;display:block}
+.msm-box.mem-lbx{width:min(900px,100%);padding:16px}.mem-lb{margin:0;display:grid;gap:8px}.mem-lb img{width:100%;max-height:72vh;object-fit:contain;border-radius:12px;background:var(--bg)}.mem-lbx .msm-acts{justify-content:space-between}
 :is(.lfc,.hs-g,.hs-ct,.lf-gm) .bar2{height:7px;border-radius:4px;background:color-mix(in srgb,var(--ink) 9%,transparent);overflow:hidden;display:block}:is(.lfc,.hs-g,.hs-ct,.lf-gm) .bar2 i{display:block;height:100%;border-radius:4px;background:var(--accent)}
 .lf{grid-template-columns:minmax(0,1fr) !important;width:100%}.lf>*{grid-column:1/-1 !important}.lfc{grid-template-columns:minmax(0,1fr)}.lfc>*{min-width:0}.lfc input:not([type=checkbox]),.lfc textarea,.lfc select{max-width:100%;box-sizing:border-box}
 .lft .lf-faces{flex-wrap:wrap}.lft .lf-faces button{font-size:22px;padding:3px 6px}
@@ -2548,7 +2565,7 @@ async function recWish(i){const R=(TL.recs.items||[]).filter(x=>x&&x.t&&!inLib(x
 const STO={busy:false,stop:false,msg:{},usage:null,orph:null};
 function bookAssetIds(b){const s=new Set();if(b.assetId)s.add(b.assetId);(b.parts||[]).forEach(p=>{const id=typeof p==='string'?p:p&&p.id;if(id)s.add(id)});return [...s]}
 async function stoScan(){try{const r=await st.assets.list();STO.usage=r.usage;const refs=new Set();st.books.forEach(b=>{bookAssetIds(b).forEach(i=>refs.add(i));if(b.coverId)refs.add(b.coverId)});
-  (STK.items||[]).forEach(i=>refs.add(i.id));(TL.chars||[]).forEach(c=>c.img&&refs.add(c.img));Object.values(TL.boards||{}).forEach(bd=>(bd.items||[]).forEach(it=>it.id&&refs.add(it.id)));
+  (STK.items||[]).forEach(i=>refs.add(i.id));(TL.chars||[]).forEach(c=>c.img&&refs.add(c.img));(LF.mems||[]).forEach(m=>(m.imgs||[]).forEach(i=>refs.add(i)));Object.values(TL.boards||{}).forEach(bd=>(bd.items||[]).forEach(it=>it.id&&refs.add(it.id)));
   const keep=new Set(['eb5fd4010a5a4c166c0a1d121ca74096']);STO.orph=(r.assets||[]).filter(a=>!refs.has(a.id)&&!keep.has(a.id)&&Date.now()-new Date(a.createdAt)>6e5&&!STO.busy)}catch(e){STO.usage=null;STO.orph=null}}
 STO.items=[];
 function stoBooks(){return st.books.filter(b=>!b.source&&b.fileType!=='epub'&&bookAssetIds(b).length).sort((a,b)=>(b.fileSize||0)-(a.fileSize||0))}
@@ -2954,14 +2971,14 @@ async function saveFile(name,data){
   try{const dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;if(!dl){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toast('Dosya indirildi');return}await dl.save({filename:name,data});toast('Dosya kaydedildi')}
   catch(e){toast(e&&e.code==='declined'?'İndirme iptal edildi':e&&e.code==='rate_limited'?'Biraz bekleyip tekrar dene':'Bu görünümde dosya indirilemiyor')}}
 async function backupData(){const get=async col=>{try{const s_=await st.db.collection(col).get();return s_.docs.map(d=>({id:d.id,...d.data()}))}catch(e){return []}};
-  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),nfolders:await get('nfolders'),nbooks:await get('nbooks'),npages:await get('npages'),cal:await get('cal'),tasks:await get('tasks'),moods:await get('moods'),habits:await get('habits'),money:await get('money'),lists:await get('lists'),recipes:await get('recipes'),goals:await get('goals'),lifecfg:await get('lifecfg'),weeks:await get('weeks'),worries:await get('worries'),chtrash:await get('chtrash'),
+  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),nfolders:await get('nfolders'),nbooks:await get('nbooks'),npages:await get('npages'),cal:await get('cal'),tasks:await get('tasks'),moods:await get('moods'),habits:await get('habits'),money:await get('money'),lists:await get('lists'),recipes:await get('recipes'),goals:await get('goals'),lifecfg:await get('lifecfg'),weeks:await get('weeks'),worries:await get('worries'),mems:await get('mems'),chtrash:await get('chtrash'),
     settings:{ui:UI,thesis:TL.thesis,writing:TL.writing,log:st.log,bingo:TL.bingo,journal:TL.journal,widgets:TL.widgets,stickers:{items:STK.items,emblem:STK.emblem}}}}
 function csvBooks(){const H=['Başlık','Yazar','Tür','Raf','Etiketler','Durum','Sayfa','Kaldığı sayfa','Bitirme','Puan','Yıl','Dergi','DOI','Dosya'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   return '﻿'+[H.map(q).join(','),...st.books.map(b=>[b.title,b.author,{kitap:'Kitap',pdf:'PDF',roman:'Romanım',makale:'Makale'}[b.kind]||b.kind,b.shelf,(b.tags||[]).join('; '),STATUS_LABEL[b.status]||b.status,b.pages||'',b.currentPage||'',b.finishedAt||'',b.rating||'',b.year||'',b.journal||'',b.doi||'',b.fileName||''].map(q).join(','))].join('\r\n')}
 async function restore(file,quiet){const m=$('bkMsg')||{textContent:''};try{const d=JSON.parse(await file.text());if(!d||d.app!=='Dijital Kütüphanem')throw 0;let n=0;
   if(d.blobs&&typeof LOCAL!=='undefined'){const ids=Object.keys(d.blobs);let k=0;for(const id of ids){if(!LOCAL.has(id)){const x=d.blobs[id];try{await LOCAL.assets.putId(id,new Blob([b64dec(x.b64)],{type:x.type||'image/jpeg'}))}catch(e){}}if(++k%20===0)m.textContent='Görseller: '+k+'/'+ids.length}}
-  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages],['cal',d.cal],['tasks',d.tasks],['moods',d.moods],['habits',d.habits],['money',d.money],['lists',d.lists],['recipes',d.recipes],['goals',d.goals],['lifecfg',d.lifecfg],['weeks',d.weeks],['worries',d.worries],['chtrash',d.chtrash]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
+  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages],['cal',d.cal],['tasks',d.tasks],['moods',d.moods],['habits',d.habits],['money',d.money],['lists',d.lists],['recipes',d.recipes],['goals',d.goals],['lifecfg',d.lifecfg],['weeks',d.weeks],['worries',d.worries],['mems',d.mems],['chtrash',d.chtrash]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
   if(d.settings){if(d.settings.thesis)await st.db.doc('settings/thesis').set(d.settings.thesis);if(d.settings.writing)await st.db.doc('settings/writing').set(d.settings.writing);if(d.settings.log)await st.db.doc('settings/log').set(d.settings.log);if(d.settings.bingo)await st.db.doc('settings/bingo').set(d.settings.bingo);if(d.settings.journal)await st.db.doc('settings/journal').set(d.settings.journal);if(d.settings.widgets)await st.db.doc('settings/widgets').set(d.settings.widgets);if(d.settings.stickers&&Array.isArray(d.settings.stickers.items)){const it=d.settings.stickers.items.filter(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(it.length||!STK.items.length)await st.db.doc('settings/stickers').set({items:it,emblem:it.some(x=>x.id===d.settings.stickers.emblem)?d.settings.stickers.emblem:'',updatedAt:new Date().toISOString()})}if(d.settings.ui){const u={...d.settings.ui};const hasStk=d.settings.stickers&&(d.settings.stickers.items||[]).some(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(u.art==='custom'&&!hasStk)u.art='fairy';setUI(u)}}
   m.textContent=`Geri yükleme tamam: ${n} kayıt.`+(typeof LOCAL!=='undefined'?' Şimdi Ayarlar → Klasörden ekle ile kitap klasörünü seç; dosyalar kayıtlarına kendiliğinden bağlanır.':'')}catch(e){m.textContent='Bu dosya bir Dijital Kütüphanem yedeği gibi görünmüyor.';if(quiet)throw e}}
 /* Drive ile otomatik eşitleme: açılışta/girişte Drive'daki daha yeni yedeği alır, değişiklikleri Drive'a yazar */
@@ -3970,7 +3987,7 @@ async function kyAuto(){if(KY.auto||KY.busy||!st.db||!navigator.onLine)return;co
 
 /* ===================== 🌿 Hayatım ===================== */
 const LF={cal:[],tasks:[],moods:[],habits:[],money:[],lists:[],recipes:[],goals:[],cfg:{},mon:null,sel:null,tv:'today',lsel:null,mm:null,rsel:null,breath:null,focus:null};
-const LFC=['cal','tasks','moods','habits','money','lists','recipes','goals','lifecfg','weeks','worries'];LF.weeks=[];LF.worries=[];
+const LFC=['cal','tasks','moods','habits','money','lists','recipes','goals','lifecfg','weeks','worries','mems'];LF.weeks=[];LF.worries=[];LF.mems=[];
 const lfK=(d=new Date())=>todayKey(d);
 const lfD=k=>new Date(k+'T12:00:00');
 const lfAdd=(k,n)=>{const d=lfD(k);d.setDate(d.getDate()+n);return lfK(d)};
@@ -3999,7 +4016,7 @@ function lfItems(k){const out=[];
   return out.sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'))}
 
 /* ---- render ---- */
-function lfRender(){const host=$('secHost');if(!host||st.sec!=='life')return;const sub=curSub();const f={week:lfWeekView,today:lfToday,cal:lfCal,tasks:lfTasks,habits:lfHabits,mood:lfMood,calm:lfCalm,goals:lfGoals,money:lfMoney,lists:lfLists,food:lfFood,days:lfDays,year:lfYear}[sub]||lfToday;
+function lfRender(){const host=$('secHost');if(!host||st.sec!=='life')return;const sub=curSub();const f={week:lfWeekView,today:lfToday,cal:lfCal,tasks:lfTasks,habits:lfHabits,mood:lfMood,calm:lfCalm,goals:lfGoals,money:lfMoney,lists:lfLists,food:lfFood,days:lfDays,mem:lfMem,year:lfYear}[sub]||lfToday;
   host.innerHTML=`<div class="lf lf-${sub}">${f()}</div>`;if(LF.focus){const e=$(LF.focus);if(e)e.focus();LF.focus=null}}
 const lfFaces=['','😞','😕','😐','🙂','😄'],lfFaceC=['','#8fa3c7','#a8b8d8','#e2d6b8','#a8d5a2','#6fc28b'];
 function lfTodayBox(compact){const k=lfK(),items=lfItems(k),T=lfTaskList('today').slice(0,compact?5:20),H=LF.habits.filter(h=>!h.off),md=LF.moods.find(m=>m.id===k);
@@ -4162,9 +4179,80 @@ function lfYear(){const y=String(new Date().getFullYear()),B=st.books.filter(b=>
   const mo=LF.money.filter(m=>(m.date||'').startsWith(y)),out=mo.filter(m=>m.type==='out').reduce((a,m)=>a+(+m.amt||0),0);
   const good=LF.moods.filter(m=>m.id.startsWith(y)).flatMap(m=>(m.good||[]).filter(Boolean)).length;
   return `<div class="lf-hd"><h2>✨ ${y} yılım</h2></div><div class="lf-yr">
-   ${[['📚',B.length,'kitap bitirdin'],['📖',pages.toLocaleString('tr-TR'),'sayfa okudun'],['🗓',readDays,'gün okudun'],['✍️',words.toLocaleString('tr-TR'),'kelime yazdın'],['📓',NP,'defter sayfası'],['✅',td,'görev bitirdin'],['🔁',ht,'alışkanlık tiki'],['🎯',gd,'hedefe ulaştın'],['✨',good,'güzel an not ettin'],['💸',lfTL(out),'harcadın']].map(([i,v,l])=>`<div class="lfc lf-yc"><span>${i}</span><b>${v}</b><span class="hint">${l}</span></div>`).join('')}</div>
+   ${[['📚',B.length,'kitap bitirdin'],['📖',pages.toLocaleString('tr-TR'),'sayfa okudun'],['🗓',readDays,'gün okudun'],['✍️',words.toLocaleString('tr-TR'),'kelime yazdın'],['📓',NP,'defter sayfası'],['✅',td,'görev bitirdin'],['🔁',ht,'alışkanlık tiki'],['🎯',gd,'hedefe ulaştın'],['✨',good,'güzel an not ettin'],['🗃',LF.mems.filter(m=>(m.date||'').startsWith(y)).length,'anı biriktirdin'],['💸',lfTL(out),'harcadın']].map(([i,v,l])=>`<div class="lfc lf-yc"><span>${i}</span><b>${v}</b><span class="hint">${l}</span></div>`).join('')}</div>
    ${M.length?`<div class="lfc"><h4>Aylara göre ruh halin</h4><div class="lf-ybars">${months.map((v,i)=>`<div><i style="height:${v?v/5*100:2}%;background:${v?lfFaceC[Math.round(v)]:'var(--line)'}"></i><span>${new Date(2000,i,1).toLocaleDateString('tr-TR',{month:'short'})}</span></div>`).join('')}</div></div>`:''}
+   ${(()=>{const P=LF.mems.filter(m=>(m.date||'').startsWith(y)).sort((a,b)=>b.date.localeCompare(a.date)).flatMap(m=>(m.imgs||[]).filter(i=>assetSrcOf(i)).slice(0,1).map(i=>[m,i])).slice(0,12);return P.length?`<div class="lfc"><div class="lf-gh"><h4>Yılın anıları</h4><button class="lf-lnk" type="button" data-lf="go" data-v="mem">Anı kutusu →</button></div><div class="mem-strip">${P.map(([m,i])=>`<button type="button" data-lf="mview" data-id="${m.id}" data-i="${(m.imgs||[]).indexOf(i)}" aria-label="${esc(m.title||'Anı fotoğrafı')}"><img src="${esc(assetSrcOf(i))}" alt="" loading="lazy"></button>`).join('')}</div></div>`:''})()}
    ${B.length?`<div class="lfc"><h4>Bu yıl bitirdiğin kitaplar</h4><div class="covrow">${B.map(bookHtml).join('')}</div></div>`:''}`}
+
+/* ---- 🗃 anı kutusu ---- */
+LF.mbox='';LF.mform=null;LF.mpend=[];LF.mlb=null;
+const lfMemBoxes=()=>((LF.cfg.memb||{}).boxes||[]);
+const lfMemDate=(k,o)=>lfD(k).toLocaleDateString('tr-TR',o||{day:'numeric',month:'long',year:'numeric',weekday:'long'});
+function lfMemPhotos(m){const I=m.imgs||[];if(!I.length)return '';const shown=I.slice(0,4),more=I.length-shown.length;
+  return `<div class="mem-ph n${shown.length}">${shown.map((id,i)=>{const src=assetSrcOf(id);return `<button type="button" class="mem-im" data-lf="mview" data-id="${m.id}" data-i="${i}" aria-label="Fotoğrafı büyüt">${src?`<img src="${esc(src)}" alt="" loading="lazy">`:'<span class="hint">Fotoğraf bu cihaza henüz gelmedi</span>'}${i===3&&more>0?`<b class="mem-more">+${more}</b>`:''}</button>`}).join('')}</div>`}
+function lfMemCard(m){const bx=lfMemBoxes().find(b=>b.id===m.box);
+  return `<article class="lfc mem-c" data-memid="${m.id}">${lfMemPhotos(m)}<div class="mem-meta"><span class="hint">${esc(lfMemDate(m.date))}</span>${bx?`<button type="button" class="chip" data-lf="mbox" data-id="${bx.id}">${esc(bx.icon||'🗃')} ${esc(bx.name)}</button>`:''}</div>
+   ${m.title?`<h4>${esc(m.title)}</h4>`:''}${m.note?`<p class="mem-note">${esc(m.note)}</p>`:''}
+   <div class="lf-row"><button class="lf-lnk" type="button" data-lf="medit" data-id="${m.id}">Düzenle</button><button class="lf-lnk" type="button" data-lf="mdel" data-id="${m.id}">Sil</button></div></article>`}
+function lfMemForm(){const f=LF.mform;if(!f)return '';const B=lfMemBoxes();
+  return `<div class="lfc mem-form"><h4>${f.id?'✎ Anıyı düzenle':'＋ Yeni anı'}</h4>
+   <div class="lf-row"><input type="date" id="lfMemD" value="${esc(f.date)}" aria-label="Tarih"><select id="lfMemB" aria-label="Kutu"><option value="">Kutusuz</option>${B.map(b=>`<option value="${b.id}"${f.box===b.id?' selected':''}>${esc(b.icon||'🗃')} ${esc(b.name)}</option>`).join('')}</select></div>
+   <input id="lfMemT" placeholder="Başlık (isteğe bağlı)" value="${esc(f.title)}">
+   <textarea id="lfMemN" rows="4" placeholder="Ne oldu, kim vardı, nasıl hissettin…">${esc(f.note)}</textarea>
+   <div class="mem-thumbs">${f.imgs.map(id=>`<span class="mem-th">${assetSrcOf(id)?`<img src="${esc(assetSrcOf(id))}" alt="">`:''}<button type="button" class="lf-x" data-lf="mimgx" data-id="${id}" aria-label="Fotoğrafı çıkar">×</button></span>`).join('')}${LF.mpend.map((p,i)=>`<span class="mem-th"><img src="${p.url}" alt=""><button type="button" class="lf-x" data-lf="mpendx" data-i="${i}" aria-label="Fotoğrafı çıkar">×</button></span>`).join('')}<label class="mem-add">＋ Fotoğraf<input id="lfMemF" type="file" accept="image/*" multiple></label></div>
+   <div class="lf-row"><button class="btn primary" type="button" data-lf="msave">Kaydet</button><button class="btn" type="button" data-lf="mcancel">Vazgeç</button></div></div>`}
+function lfMem(){const B=lfMemBoxes(),all=[...LF.mems].filter(m=>m.date).sort((a,b)=>b.date.localeCompare(a.date)||(b.at||'').localeCompare(a.at||''));
+  const cur=B.find(b=>b.id===LF.mbox);if(!cur)LF.mbox='';const M=cur?all.filter(m=>m.box===cur.id):all;
+  const tk=lfK(),otd=cur?[]:all.filter(m=>m.date.slice(5)===tk.slice(5)&&m.date.slice(0,4)<tk.slice(0,4));
+  const G=[];M.forEach(m=>{const k=m.date.slice(0,7);let g=G[G.length-1];if(!g||g.k!==k){g={k,items:[]};G.push(g)}g.items.push(m)});
+  let lastY='';const feed=G.map(g=>{const yy=g.k.slice(0,4),yh=yy!==lastY?`<h3 class="mem-y">${yy}</h3>`:'';lastY=yy;
+    return yh+`<div class="eyebrow mem-mo">${esc(lfD(g.k+'-01').toLocaleDateString('tr-TR',{month:'long'}))} · ${g.items.length}</div><div class="mem-grid">${g.items.map(lfMemCard).join('')}</div>`}).join('');
+  return `<div class="lf-hd"><h2>🗃 Anı kutusu</h2>${LF.mform?'':'<button class="btn primary" type="button" data-lf="mnew">＋ Anı ekle</button>'}</div>
+   <div class="mem-boxes"><button type="button" class="chip" aria-pressed="${!cur}" data-lf="mbox" data-id="">Hepsi · ${all.length}</button>${B.map(b=>`<button type="button" class="chip" aria-pressed="${!!cur&&cur.id===b.id}" data-lf="mbox" data-id="${b.id}">${esc(b.icon||'🗃')} ${esc(b.name)} · ${all.filter(m=>m.box===b.id).length}</button>`).join('')}
+    <span class="mem-newbox"><input id="lfMemBN" placeholder="Yeni kutu, ör. İzmir 2026" aria-label="Yeni kutu adı"><button class="btn" type="button" data-lf="mboxadd" aria-label="Kutu ekle">＋</button></span></div>
+   ${cur?`<div class="lf-row"><span class="hint">${esc(cur.icon||'🗃')} ${esc(cur.name)} kutusu</span><button class="lf-lnk" type="button" data-lf="mboxdel" data-id="${cur.id}">Kutuyu sil</button></div>`:''}
+   ${lfMemForm()}
+   ${otd.length?`<div class="lfc mem-otd"><h4>🕰 Geçmiş yıllarda bugün</h4>${otd.map(m=>`<div class="lf-row"><b>${m.date.slice(0,4)}</b><span class="lf-tt">${esc(m.title||(m.note||'').slice(0,90)||'Fotoğraflı bir anı')}</span>${(m.imgs||[])[0]&&assetSrcOf(m.imgs[0])?`<button type="button" class="mem-otdi" data-lf="mview" data-id="${m.id}" data-i="0" aria-label="Fotoğrafı büyüt"><img src="${esc(assetSrcOf(m.imgs[0]))}" alt=""></button>`:''}</div>`).join('')}</div>`:''}
+   ${feed||`<div class="lfc"><span class="hint">${cur?'Bu kutu henüz boş. Anı eklerken kutu olarak bunu seç.':'Fotoğraflarını ve küçük notlarını buraya biriktir. Anılar tarihe göre dizilir; istersen “İzmir 2026”, “Tez yılı” gibi kutulara da ayırabilirsin.'}</span></div>`}`}
+function lfMemGrab(){const f=LF.mform;if(!f)return;const g=id=>{const e=$(id);return e?e.value:null};const d=g('lfMemD'),t=g('lfMemT'),n=g('lfMemN'),b=g('lfMemB');if(d!==null)f.date=d;if(t!==null)f.title=t;if(n!==null)f.note=n;if(b!==null)f.box=b}
+function lfMemClear(){LF.mpend.forEach(p=>URL.revokeObjectURL(p.url));LF.mpend=[];LF.mform=null}
+async function lfMemShrink(file){const bmp=await createImageBitmap(file);const s=Math.min(1,1600/Math.max(bmp.width,bmp.height)),w=Math.round(bmp.width*s),h=Math.round(bmp.height*s),cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(bmp,0,0,w,h);try{bmp.close()}catch(e){}
+  return await new Promise((ok,no)=>cv.toBlob(b=>b?ok(b):no(new Error('blob')),'image/jpeg',.85))}
+function lfMemShow(id,orig){const m=LF.mems.find(x=>x.id===id);if(!m)return;const I=(m.imgs||[]).filter(x=>assetSrcOf(x));if(!I.length){toast('Bu fotoğraf henüz bu cihaza gelmedi');return}
+  let i=Math.max(0,I.indexOf((m.imgs||[])[orig]));LF.mlb={id,I,i};lfMemLb()}
+function lfMemLb(){const L=LF.mlb;if(!L)return;const m=LF.mems.find(x=>x.id===L.id)||{},i=L.i,I=L.I;
+  msModal(`<figure class="mem-lb"><img src="${esc(assetSrcOf(I[i]))}" alt="${esc(m.title||'Anı fotoğrafı')}"><figcaption>${m.title?`<b>${esc(m.title)}</b> · `:''}<span class="hint">${esc(lfMemDate(m.date,{day:'numeric',month:'long',year:'numeric'}))}${I.length>1?` · ${i+1}/${I.length}`:''}</span></figcaption></figure>${I.length>1?`<div class="msm-acts"><button class="btn" type="button" data-memlb="-1" ${i?'':'disabled'}>‹ Önceki</button><button class="btn" type="button" data-memlb="1" ${i<I.length-1?'':'disabled'}>Sonraki ›</button></div>`:''}`,'wide mem-lbx')}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-memlb]');if(!b||!LF.mlb)return;LF.mlb.i=Math.max(0,Math.min(LF.mlb.I.length-1,LF.mlb.i+(+b.dataset.memlb)));lfMemLb()});
+document.addEventListener('keydown',e=>{if(!LF.mlb||!$('msModal')||!document.querySelector('.mem-lbx'))return;if(e.key==='ArrowLeft'||e.key==='ArrowRight'){const d=e.key==='ArrowLeft'?-1:1,n=LF.mlb.i+d;if(n>=0&&n<LF.mlb.I.length){LF.mlb.i=n;lfMemLb()}}else if(e.key==='Escape')msClose()});
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-lf]');if(!b)return;const k=b.dataset.lf;if(!/^m(new|edit|save|cancel|del|box|boxadd|boxdel|imgx|pendx|view)$/.test(k))return;const id=b.dataset.id;
+  if(k==='mview'){lfMemShow(id,+b.dataset.i||0);return}
+  if(k==='mnew'){lfMemClear();LF.mform={id:'',date:lfK(),title:'',note:'',box:LF.mbox||'',imgs:[]};LF.focus='lfMemT';lfRender();return}
+  if(k==='medit'){const m=LF.mems.find(x=>x.id===id);if(!m)return;lfMemClear();LF.mform={id:m.id,date:m.date||lfK(),title:m.title||'',note:m.note||'',box:m.box||'',imgs:[...(m.imgs||[])]};LF.focus='lfMemN';lfRender();window.scrollTo({top:0,behavior:'smooth'});return}
+  if(k==='mcancel'){lfMemClear();lfRender();return}
+  if(k==='mimgx'){lfMemGrab();if(LF.mform)LF.mform.imgs=LF.mform.imgs.filter(x=>x!==id);lfRender();return}
+  if(k==='mpendx'){lfMemGrab();const p=LF.mpend.splice(+b.dataset.i,1)[0];if(p)URL.revokeObjectURL(p.url);lfRender();return}
+  if(k==='msave'){lfMemGrab();const f=LF.mform;if(!f)return;if(!f.title.trim()&&!f.note.trim()&&!f.imgs.length&&!LF.mpend.length){toast('Bir fotoğraf ya da birkaç kelime ekle');return}if(!f.date){toast('Tarih seç');return}
+    b.disabled=true;b.textContent='Kaydediliyor…';
+    try{const ids=[...f.imgs];for(const p of LF.mpend){const up=await upl(p.blob,{type:'image/jpeg'});ids.push(up.id)}
+      const prev=f.id?LF.mems.find(x=>x.id===f.id):null,now=new Date().toISOString();
+      await st.db.collection('mems').doc(f.id||nbId()).set(nbClean({date:f.date,title:f.title.trim(),note:f.note.trim(),box:f.box||'',imgs:ids,at:(prev&&prev.at)||now,updatedAt:now}));
+      for(const x of (prev&&prev.imgs)||[])if(!ids.includes(x)){try{await st.assets.delete(x)}catch(_){}}
+      lfMemClear();toast(f.id?'Anı güncellendi':'Anı kutuya kondu 🗃');lfRender()}
+    catch(err){b.disabled=false;b.textContent='Kaydet';toast((err&&err.message)||'Kaydedilemedi')}return}
+  if(k==='mdel'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Emin misin? Tekrar bas';setTimeout(()=>{if(b.isConnected&&b.dataset.sure){delete b.dataset.sure;b.textContent='Sil'}},4000);return}
+    const m=LF.mems.find(x=>x.id===id);if(LF.mform&&LF.mform.id===id)lfMemClear();await lfDel('mems',id);for(const x of (m&&m.imgs)||[]){try{await st.assets.delete(x)}catch(_){}}toast('Anı silindi');return}
+  if(k==='mbox'){lfMemGrab();LF.mbox=id||'';lfRender();return}
+  if(k==='mboxadd'){lfMemGrab();const inp=$('lfMemBN');let name=(inp&&inp.value||'').trim();if(!name){toast('Kutuya bir ad ver');if(inp)inp.focus();return}
+    let icon='🗃';const em=name.match(/^(\p{Extended_Pictographic}️?)\s*/u);if(em&&name.length>em[0].length){icon=em[1];name=name.slice(em[0].length)}
+    const B=lfMemBoxes();if(B.some(x=>x.name.toLocaleLowerCase('tr-TR')===name.toLocaleLowerCase('tr-TR'))){toast('Bu adda bir kutu zaten var');return}
+    const nb={id:nbId(),name,icon};await lfSet('lifecfg','memb',{boxes:[...B,nb]});LF.mbox=nb.id;if(LF.mform&&!LF.mform.box)LF.mform.box=nb.id;toast('Kutu açıldı');lfRender();return}
+  if(k==='mboxdel'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Emin misin? Anılar silinmez, kutusuz kalır';setTimeout(()=>{if(b.isConnected&&b.dataset.sure){delete b.dataset.sure;b.textContent='Kutuyu sil'}},5000);return}
+    await lfSet('lifecfg','memb',{boxes:lfMemBoxes().filter(x=>x.id!==id)});for(const m of LF.mems.filter(x=>x.box===id))await lfUpd('mems',m.id,{box:''});if(LF.mform&&LF.mform.box===id)LF.mform.box='';LF.mbox='';toast('Kutu silindi');lfRender();return}});
+document.addEventListener('input',e=>{if(/^lfMem[DTNB]$/.test(e.target.id))lfMemGrab()});
+document.addEventListener('keydown',e=>{if(e.target.id==='lfMemBN'&&e.key==='Enter'&&!e.isComposing){e.preventDefault();const b=document.querySelector('[data-lf="mboxadd"]');if(b)b.click()}});
+document.addEventListener('change',async e=>{const t=e.target;if(/^lfMem[DB]$/.test(t.id)){lfMemGrab();return}if(t.id!=='lfMemF')return;const files=[...t.files];t.value='';if(!files.length)return;lfMemGrab();
+  let bad=0;for(const f of files){try{const blob=await lfMemShrink(f);LF.mpend.push({blob,url:URL.createObjectURL(blob)})}catch(err){bad++}}
+  if(bad)toast(bad===files.length?'Fotoğraf okunamadı':bad+' fotoğraf okunamadı');lfRender()});
 
 /* ---- olaylar ---- */
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-lf]');if(!b||!b.dataset.lf)return;const k=b.dataset.lf,id=b.dataset.id,v=b.dataset.v;
@@ -4281,6 +4369,7 @@ function gsRun(q){const r=$('gsR');if(!r)return;q=gsNorm(q).trim();if(q.length<2
   add('🎯 Hedefler',LF.goals.filter(g=>hit(g.t)||(g.steps||[]).some(s=>hit(s.t))).map(g=>({t:esc(g.t),go:'goal'})));
   add('📋 Listeler',LF.lists.flatMap(l=>(l.items||[]).filter(i=>hit(i.t)).map(i=>({t:esc(i.t),s:esc(l.name),go:'list',id:l.id}))));
   add('🍲 Tarifler',LF.recipes.filter(x=>hit(x.t)||(x.ings||[]).some(hit)).map(x=>({t:esc(x.t),go:'recipe',id:x.id})));
+  add('🗃 Anılar',(LF.mems||[]).filter(m=>hit(m.title)||hit(m.note)).sort((a,b)=>(b.date||'').localeCompare(a.date||'')).map(m=>({t:esc(m.title||lfShort(m.date)),s:(m.title?esc(lfShort(m.date))+' · ':'')+cut(m.note,100),go:'mem',id:m.id})));
   add('💰 Bütçe',LF.money.filter(m=>hit(m.note)||hit(m.name)||hit(m.cat)).map(m=>({t:esc(m.note||m.name||m.cat),s:(m.date?esc(lfShort(m.date))+' · ':'')+lfTL(m.amt),go:'money'})));
   r.innerHTML=G.length?G.map(([t,it])=>`<div class="gs-g"><div class="eyebrow">${t}</div>${it.map(x=>`<button type="button" class="gs-i" data-gs="${x.go}" data-id="${esc(x.id||'')}" data-x="${esc(x.x||'')}"><b>${x.t}</b>${x.s?`<span class="hint">${x.s}</span>`:''}</button>`).join('')}</div>`).join(''):'<span class="hint">Bir şey bulunamadı.</span>'}
 document.addEventListener('input',e=>{if(e.target.id==='gsQ'){clearTimeout(gsRun.t);const v=e.target.value;gsRun.t=setTimeout(()=>gsRun(v),120)}});
@@ -4288,7 +4377,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-gs]');if(!
   if(g==='book'){const bk=st.books.find(x=>x.id===id);if(bk)openForm(bk);return}if(g==='nb'){NB.q=q;nbOpen(id);return}if(g==='ch'){TL.novel=b.dataset.x;wrOpen(id);return}
   if(g==='quote'){goSec('journal','quotes');return}if(g==='idea'){goSec('writer','ideas');return}if(g==='char'){goSec('writer','chars');return}
   if(g==='task'){LF.tv='today';goSec('life','tasks');return}if(g==='cal'){LF.sel=id;LF.mon=id.slice(0,7)+'-01';goSec('life','cal');return}if(g==='mood'){LF.mm=id;goSec('life','mood');return}
-  if(g==='goal'){goSec('life','goals');return}if(g==='list'){LF.lsel=id;goSec('life','lists');return}if(g==='recipe'){LF.rsel=id;goSec('life','food');return}if(g==='money'){goSec('life','money');return}});
+  if(g==='goal'){goSec('life','goals');return}if(g==='list'){LF.lsel=id;goSec('life','lists');return}if(g==='recipe'){LF.rsel=id;goSec('life','food');return}if(g==='money'){goSec('life','money');return}if(g==='mem'){LF.mbox='';goSec('life','mem');setTimeout(()=>{const el=document.querySelector('[data-memid="'+id+'"]');if(el){el.scrollIntoView({block:'center'});el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),2200)}},120);return}});
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();gsOpen()}});
 
 /* ===================== Hızlı not (＋) ===================== */
@@ -4870,7 +4959,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-rm="
 
 const SECS={
   home:{t:'Ana sayfa',tabs:[]},
-  life:{t:'Hayatım',tabs:[['today','☀️ Bugün'],['week','📆 Haftam'],['cal','🗓 Takvim'],['tasks','✅ Görevler'],['habits','🔁 Alışkanlıklar'],['mood','🌿 Günlük'],['calm','🫧 Sakinleş & destek'],['goals','🎯 Hedefler'],['money','💰 Bütçe'],['lists','📋 Listeler'],['food','🍲 Yemek'],['days','🎂 Önemli günler'],['year','✨ Yılım']]},
+  life:{t:'Hayatım',tabs:[['today','☀️ Bugün'],['week','📆 Haftam'],['cal','🗓 Takvim'],['tasks','✅ Görevler'],['habits','🔁 Alışkanlıklar'],['mood','🌿 Günlük'],['calm','🫧 Sakinleş & destek'],['goals','🎯 Hedefler'],['money','💰 Bütçe'],['lists','📋 Listeler'],['food','🍲 Yemek'],['days','🎂 Önemli günler'],['mem','🗃 Anı kutusu'],['year','✨ Yılım']]},
   library:{t:'Kütüphanem',tabs:[]},
   academic:{t:'Akademik',tabs:[['makale','📄 Makaleler'],['lit','📊 Literatür tablosu'],['thesis','🎓 Tez planlayıcı'],['cards','🃏 Çalışma kartları'],['kaynak','📑 Kaynakça'],['nb','📓 Defterlerim']]},
   notes:{t:'Defterlerim',tabs:[]},
