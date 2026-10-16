@@ -860,6 +860,33 @@ body.sec-notes{background-image:none!important}
 .nbt-sz button[aria-pressed="true"]{box-shadow:0 0 0 1.5px var(--ink)}
 .nbp{border-radius:4px!important;box-shadow:0 1px 3px rgba(0,0,0,.08),0 10px 30px -18px rgba(0,0,0,.35)!important}
 .nbp-h{opacity:.7}
+
+/* sayfa yöneticisi */
+.pm-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-right:44px}.pm-h .eyebrow{margin:0}.pm-f{margin-left:auto}.pm-f button{font-size:13px}
+.pm-tip{margin:0}
+.pm-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:16px;max-height:56vh;overflow:auto;padding:6px 4px 10px;touch-action:pan-y}
+.pm-t{position:relative;display:grid;gap:6px;justify-items:center;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none}
+.pm-g.sel .pm-t{touch-action:pan-y}
+.pm-t canvas,.pm-tx{width:100%;height:auto;border-radius:6px;border:1px solid var(--line);background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06),0 6px 14px -10px rgba(0,0,0,.3);display:block}
+.pm-tx{aspect-ratio:1/1.414;padding:10px;font-size:12px;box-sizing:border-box;color:#333;overflow:hidden}
+.pm-n{font-size:12px;color:var(--muted)}
+.pm-t.on canvas,.pm-t.on .pm-tx{outline:3px solid var(--accent);outline-offset:2px}
+.pm-ck{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:50%;border:2px solid #fff;background:rgba(0,0,0,.25);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.pm-t.on .pm-ck{background:var(--accent)}
+.pm-t.drag{z-index:5;opacity:.85;transition:none}.pm-t.drag canvas{box-shadow:0 14px 30px -10px rgba(0,0,0,.5)}
+.pm-t.over canvas,.pm-t.over .pm-tx{outline:2px dashed var(--accent);outline-offset:3px}
+.pm-bar,.pm-acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding-top:10px;border-top:1px solid var(--line)}
+.pm-acts{border-top:0;padding-top:0}
+.pm-sp{flex:1}
+.btn.pm-del{color:#c92a2a}
+.nbmenu-q{display:grid!important;grid-template-columns:repeat(4,1fr);gap:4px;padding-bottom:6px;margin-bottom:4px;border-bottom:1px solid var(--line)}
+.nbmenu-q button{font-size:12px!important;padding:8px 4px!important;text-align:center!important;border-radius:8px}
+.nb-undo{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translateX(-50%);z-index:200;background:#1f1f22;color:#fff;border-radius:12px;padding:10px 12px 10px 16px;display:flex;gap:14px;align-items:center;box-shadow:0 10px 30px -10px rgba(0,0,0,.5);font-size:14px}
+.nb-undo button{border:0;background:none;color:#8ec5ff;font:inherit;font-weight:600;cursor:pointer;padding:4px 6px}
+.nbh-trash{justify-self:start;border:0;background:none;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;padding:4px 0}
+.nbh-trash:hover{color:var(--ink)}
+.pm-trash{display:grid;gap:8px}.pm-tr{display:flex;gap:8px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;flex-wrap:wrap}
+.nbc-star{position:absolute;top:8px;right:8px;font-size:14px;z-index:2}
 </style>
 
 </head><body>
@@ -3335,7 +3362,7 @@ function nbBB(S){if(S.bb)return S.bb;const p=S.pts;let a=1e9,b=1e9,c=-1e9,d=-1e9
 function nbSave(pg,fast){if(!pg)return;NB.dirty.add(pg.id);(NB.touched=NB.touched||new Set()).add(pg.id);clearTimeout(NB.saveT[pg.id]);nbSaved('…');
   NB.saveT[pg.id]=setTimeout(()=>nbFlush(pg.id),fast?50:700)}
 async function nbFlush(pid){const pg=NB.pg[pid];clearTimeout(NB.saveT[pid]);if(!pg||!st.db)return;
-  const d=nbClean({book:pg.book,idx:pg.idx,type:pg.type,paper:pg.paper,pc:pg.pc,h:pg.h,bg:pg.bg,title:pg.title,icon:pg.icon,parent:pg.parent,ocr:pg.ocr,ocrN:pg.ocrN,
+  const d=nbClean({book:pg.book,idx:pg.idx,type:pg.type,paper:pg.paper,pc:pg.pc,h:pg.h,bg:pg.bg,title:pg.title,icon:pg.icon,parent:pg.parent,ocr:pg.ocr,ocrN:pg.ocrN,star:pg.star,
     strokes:(pg.strokes||[]).map(nbEnc),items:pg.items||[],blocks:pg.blocks||[],updatedAt:new Date().toISOString()});
   try{await st.db.collection('npages').doc(pid).set(d);NB.raw[pid]={...d,id:pid};NB.dirty.delete(pid);if(!NB.dirty.size)nbSaved('Kaydedildi ✓');
     const bk=nbBook(pg.book);if(bk){bk.updatedAt=d.updatedAt;clearTimeout(nbFlush.bt);nbFlush.bt=setTimeout(()=>st.db.collection('nbooks').doc(bk.id).update({updatedAt:d.updatedAt}).catch(()=>{}),1500)}}
@@ -3361,22 +3388,22 @@ function nbHomeRe(){if(!(st.sec==='notes'||curSub()==='nb')||NB.bid&&!NB.side)re
 
 /* ===================== Ana ekran: klasörler + defterler ===================== */
 function nbRender(host){host=host||$('secHost');if(!host)return;
-  const F=NB.folders,cnt=f=>NB.books.filter(b=>f==='all'?true:f==='none'?!b.folder||!F.some(x=>x.id===b.folder):b.folder===f).length;
+  const F=NB.folders,cnt=f=>NB.books.filter(b=>f==='all'?true:f==='star'?b.star:f==='none'?!b.folder||!F.some(x=>x.id===b.folder):b.folder===f).length;
   host.innerHTML=`<div class="nbh" id="nbHome">
    <div class="nbh-top"><input type="search" id="nbQ" placeholder="🔎 Defterlerde ve notlarda ara…" value="${esc(NB.q)}">
     <button class="btn" type="button" data-nb="newfolder">📁 Yeni klasör</button><button class="btn primary" type="button" data-nb="new">＋ Yeni defter</button></div>
-   <div class="nbh-f">${[['all','📚 Tümü'],...F.map(f=>[f.id,'📁 '+f.name]),['none','🗂 Klasörsüz']].filter(([k])=>k!=='none'||cnt('none')).map(([k,l])=>`<span class="nbh-fc"><button type="button" class="chip" data-nb="folder" data-id="${k}" aria-pressed="${NB.fsel===k}">${esc(l)} <span class="hint">${cnt(k)}</span></button>${k!=='all'&&k!=='none'?`<button type="button" class="nbh-fm" data-nb="fmenu" data-id="${k}" aria-label="Klasör seçenekleri">⋯</button>`:''}</span>`).join('')}</div>
-   <div class="nbh-g" id="nbGrid"></div>
+   <div class="nbh-f">${[['all','📚 Tümü'],...(NB.books.some(b=>b.star)?[['star','⭐ Favoriler']]:[]),...F.map(f=>[f.id,'📁 '+f.name]),['none','🗂 Klasörsüz']].filter(([k])=>k!=='none'||cnt('none')).map(([k,l])=>`<span class="nbh-fc"><button type="button" class="chip" data-nb="folder" data-id="${k}" aria-pressed="${NB.fsel===k}">${esc(l)} <span class="hint">${cnt(k)}</span></button>${k!=='all'&&k!=='none'&&k!=='star'?`<button type="button" class="nbh-fm" data-nb="fmenu" data-id="${k}" aria-label="Klasör seçenekleri">⋯</button>`:''}</span>`).join('')}</div>
+   <div class="nbh-g" id="nbGrid"></div>${(NB.trash||[]).length?`<button type="button" class="nbh-trash" data-nbx="trashdlg" data-id="${NB.trash[0].id}">🗑 Son silinenler (${NB.trash.length})</button>`:''}
    <p class="hint nbh-tip">✏️ <b>Apple Pencil</b> ile yaz — parmağın sayfayı kaydırır, iki parmakla yakınlaştırırsın. Şekil çizip kalemi bir an <b>bekletirsen</b> düzgün şekle döner. 🎙 Kayıt alırken yazdıkların sesle eşleşir; dinlerken bir yazıya dokunursan o ana gider.</p></div>`;
   nbGrid()}
 function nbText(r){let t=(r.title||'')+' ';(r.blocks||[]).forEach(b=>t+=' '+(b.x||'').replace(/<[^>]+>/g,' '));(r.items||[]).forEach(i=>{if(i.txt)t+=' '+i.txt});if(r.ocr)t+=' '+r.ocr;return t}
 function nbGrid(){const g=$('nbGrid');if(!g)return;const F=NB.folders,q=NB.q.trim().toLocaleLowerCase('tr-TR');
-  let L=NB.books.filter(b=>NB.fsel==='all'?true:NB.fsel==='none'?!b.folder||!F.some(x=>x.id===b.folder):b.folder===NB.fsel);
+  let L=NB.books.filter(b=>NB.fsel==='all'?true:NB.fsel==='star'?b.star:NB.fsel==='none'?!b.folder||!F.some(x=>x.id===b.folder):b.folder===NB.fsel);
   if(q)L=L.filter(b=>(b.title||'').toLocaleLowerCase('tr-TR').includes(q)||nbPagesOf(b.id).some(p=>nbText(p).toLocaleLowerCase('tr-TR').includes(q)));
-  L.sort((a,b)=>(b.opened||b.updatedAt||'').localeCompare(a.opened||a.updatedAt||''));
+  L.sort((a,b)=>(b.star?1:0)-(a.star?1:0)||(b.opened||b.updatedAt||'').localeCompare(a.opened||a.updatedAt||''));
   g.innerHTML=(L.length?L.map(b=>{const P=nbPagesOf(b.id),f=F.find(x=>x.id===b.folder);
     const prev=b.kind==='doc'?`<div class="nbc-doc">${P.slice(0,4).map(p=>`<div>${esc(p.icon||'📄')} ${esc(p.title||'Başlıksız')}</div>`).join('')||'<div class="hint">Boş</div>'}</div>`:`<canvas data-th="${b.id}" width="300" height="424"></canvas>`;
-    return `<div class="nbc" data-nb="open" data-id="${b.id}" role="button" tabindex="0"><div class="nbc-th" style="--c:${b.color||NB_COV[0]}">${prev}<span class="nbc-k">${b.kind==='doc'?'📝':b.pdf?'📄':'✍️'}</span>${(b.recs||[]).length?'<span class="nbc-r">🎙</span>':''}</div>
+    return `<div class="nbc" data-nb="open" data-id="${b.id}" role="button" tabindex="0"><div class="nbc-th" style="--c:${b.color||NB_COV[0]}">${prev}${b.star?'<span class="nbc-star">⭐</span>':''}<span class="nbc-k">${b.kind==='doc'?'📝':b.pdf?'📄':'✍️'}</span>${(b.recs||[]).length?'<span class="nbc-r">🎙</span>':''}</div>
       <div class="nbc-m"><b>${esc(b.title||'Adsız defter')}</b><span class="hint">${P.length} sayfa${f&&NB.fsel==='all'?' · '+esc(f.name):''}</span></div>
       <button class="iconbtn nbc-x" type="button" data-nb="bmenu" data-id="${b.id}" aria-label="Defter seçenekleri">⋯</button></div>`}).join(''):`<div class="nbh-empty"><div style="font-size:42px">📓</div><b>${q?'Bulunamadı':'Henüz defter yok'}</b><span class="hint">${q?'Başka bir kelime dene':'＋ Yeni defter ile başla'}</span></div>`);
   g.querySelectorAll('canvas[data-th]').forEach(cv=>nbThumb(cv,cv.dataset.th))}
@@ -3697,7 +3724,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-ne]'
   if(k==='ocrpage'){const pg=nbPg(b.dataset.pid);const L=$('nbOcrT').value.split(/\n/).filter(x=>x.trim());const P=nbPagesOf(bk.id),i=P.findIndex(p=>p.id===pg.id),nx=P[i+1];msClose();await nbNewPage(bk.id,{type:'text',idx:nx?(pg.idx+nx.idx)/2:pg.idx+1,title:(pg.title||'Sayfa')+' — metin',blocks:L.map(x=>({id:nbId(),t:'p',x:esc(x)}))});nbBodyRender(true);toast('Yazı sayfası eklendi');return}
   if(k==='ocrall'){nbOcrAll();return}
   if(k==='pm'){nbPageAct(b.dataset.pid,b.dataset.v,b.dataset.x);return}
-  if(k==='pages'){nbPagesDlg();return}
+  if(k==='pages'){PM.selMode=false;PM.sel.clear();PM.filter='all';nbPagesDlg();return}
   if(k==='pjump'){msClose();const el=document.querySelector(`#nbPages [data-pid="${b.dataset.pid}"]`);if(el)el.scrollIntoView({block:'start'});return}
   if(k==='side'){NB.side=!NB.side;$('nbEd').classList.toggle('side',NB.side);document.body.classList.toggle('nb-side',NB.side);setTimeout(()=>nbBodyRender(true),60);if(!NB.side&&(st.sec==='notes'||curSub()==='nb'))nbRender($('secHost'));return}
   if(k==='export'){nbExport();return}
@@ -4783,7 +4810,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v38';
+const DK_VER='v39';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -5019,6 +5046,129 @@ async function rmPackGo(){const P=RMP.pack,sel=[...document.querySelectorAll('[d
   RMP.pack=null;msClose();if(last)TL.novel=last;
   msModal(`<div class="eyebrow">✓ İçe aktarıldı</div><p style="margin:0">${sel.map(n=>'<b>'+esc(n.title)+'</b>').join(', ')}</p><p class="hint" style="margin:0">👤 ${tot.c} karakter · 🕸 ${tot.r} ilişki · 🎬 ${tot.s} sahne · 🕰 ${tot.e} olay · 🗺 ${tot.l} dünya kaydı · ✍️ ${tot.b} bölüm eklendi.</p><p class="hint" style="margin:0">Yazar köşesindeki sekmelerde üstteki seçiciden romanı değiştirerek hepsine bakabilirsin. Özetler Claude'un okuyup çıkardıkları — yanlış ya da eksik gördüğün yeri düzenleyebilirsin.</p><div style="display:flex;justify-content:flex-end"><button class="btn primary" type="button" data-ms="close">Tamam</button></div>`)}
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-rm="pack"],[data-rm="packgo"]');if(!b)return;if(b.dataset.rm==='pack')return rmPackPick();b.disabled=true;b.textContent='Aktarılıyor…';try{await rmPackGo()}catch(x){toast('Bir şey ters gitti: '+errText(x));b.disabled=false;b.textContent='İçe aktar'}});
+
+/* ===================== Sayfa yönetimi (GoodNotes tarzı) ===================== */
+const PM={sel:new Set(),selMode:false,filter:'all',drag:null};
+function nbRender1(pg){/* bir sayfayı 1240px kanvasa çizer */const cv=document.createElement('canvas');cv.width=1240;cv.height=Math.round(1240*(pg.h||NB_H)/1000);const ctx=cv.getContext('2d');const sv=NB.sel;NB.sel=null;nbDraw(ctx,pg,1.24);NB.sel=sv;
+  ctx.setTransform(1.24,0,0,1.24,0,0);(pg.items||[]).filter(i=>i.t==='text').forEach(i=>{ctx.fillStyle=i.c||'#111';ctx.font=(i.fs||24)+'px -apple-system,Segoe UI,sans-serif';const lh=(i.fs||24)*1.35;let y=i.y+(i.fs||24)+4;
+    for(const para of (i.txt||'').split('\n')){let line='';for(const w of para.split(' ')){const tt=line?line+' '+w:w;if(ctx.measureText(tt).width>i.w-8&&line){ctx.fillText(line,i.x+4,y);y+=lh;line=w}else line=tt}ctx.fillText(line,i.x+4,y);y+=lh}});return cv}
+async function nbWaitImgs(P){const ids=new Set();P.forEach(pg=>{if(pg.bg)ids.add(pg.bg);(pg.items||[]).forEach(i=>{if(i.t==='img')ids.add(i.src)})});
+  await Promise.all([...ids].map(id=>new Promise(r=>{const o=nbImg(id);if(o)return r();const x=NB.imgs[id];if(!x)return r();x.img.addEventListener('load',r,{once:true});x.img.addEventListener('error',r,{once:true});setTimeout(r,8000)})))}
+async function nbExport(pids){const bk=nbBook();if(!bk)return;await nbFlushAll();toast('PDF hazırlanıyor…');let P=nbPagesOf(bk.id).map(r=>nbPg(r.id));if(pids&&pids.length)P=P.filter(p=>pids.includes(p.id));await nbWaitImgs(P);
+  const out=[];for(const pg of P){if(pg.type==='text'){out.push(`<section class="tp"><h1>${esc(pg.icon&&bk.kind==='doc'?pg.icon+' ':'')}${esc(pg.title||'')}</h1>${nbBlocksPrint(pg)}</section>`);continue}const cv=nbRender1(pg);out.push(`<img src="${cv.toDataURL('image/jpeg',.9)}">`);cv.width=cv.height=0}
+  const name=(bk.title||'Defter')+(pids&&pids.length?(pids.length===1?' — sayfa':' — '+pids.length+' sayfa'):'');
+  const html=`<!doctype html><html><head><meta charset="utf-8"><title>${esc(name)}</title><style>@page{size:A4;margin:0}body{margin:0;font-family:Georgia,serif;color:#1d1d1f}img{width:210mm;display:block;page-break-after:always;break-after:page}
+   .tp{padding:20mm 18mm;page-break-after:always;break-after:page;font-size:12pt;line-height:1.6}.tp h1{font-size:22pt;margin:0 0 12pt}.tp h2{font-size:17pt}.tp h3{font-size:14pt}blockquote{border-left:3px solid #999;margin:0;padding-left:12px;color:#444}.co{background:#f4f1ea;padding:10px 12px;border-radius:8px}pre{background:#f3f3f3;padding:10px;white-space:pre-wrap;font-size:10pt}.ck{text-decoration:line-through;color:#888}.tp img{width:100%;page-break-after:auto}</style></head><body>${out.join('')}</body></html>`;
+  msOut(html,name,'pdf')}
+async function nbExportImg(pid){const pg=nbPg(pid),bk=nbBook();if(!pg||pg.type==='text'){toast('Yazı sayfaları PDF olarak dışa aktarılır');return}await nbFlushAll();await nbWaitImgs([pg]);const cv=nbRender1(pg);
+  const blob=await new Promise(r=>cv.toBlob(r,'image/png'));const P=nbPagesOf(bk.id),n=P.findIndex(p=>p.id===pid)+1;const fn=((bk.title||'Defter')+' - sayfa '+n).replace(/[\\/:*?"<>|]/g,'-')+'.png';
+  try{const f=new File([blob],fn,{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:fn});return}}catch(e){if(e&&e.name==='AbortError')return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=fn;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);toast('Resim kaydedildi')}
+/* geri alınabilir silme */
+function nbUndoBar(msg,fn){let b=$('nbUndo');if(b)b.remove();b=document.createElement('div');b.id='nbUndo';b.className='nb-undo';b.innerHTML=`<span>${esc(msg)}</span><button type="button">Geri al</button>`;document.body.appendChild(b);
+  const t=setTimeout(()=>b.remove(),7000);b.querySelector('button').onclick=async()=>{clearTimeout(t);b.remove();await fn()}}
+async function nbDelPages(pids){const bk=nbBook();if(!bk)return;const P=nbPagesOf(bk.id);if(pids.length>=P.length){toast('Defterde en az bir sayfa kalmalı');return}await nbFlushAll();
+  const saved=pids.map(id=>({id,d:{...NB.raw[id]}}));for(const {id} of saved){delete saved.find(x=>x.id===id).d.id;NB.dirty.delete(id);clearTimeout(NB.saveT[id]);try{await st.db.collection('npages').doc(id).delete()}catch(e){}delete NB.raw[id];delete NB.pg[id]}
+  if(pids.includes(NB.docPid))NB.docPid=(nbPagesOf(bk.id)[0]||{}).id;PM.sel.clear();nbBodyRender(true);nbTools();if($('pmGrid'))nbPagesDlg();
+  nbUndoBar(pids.length===1?'Sayfa silindi':pids.length+' sayfa silindi',async()=>{for(const {id,d} of saved){try{await st.db.collection('npages').doc(id).set(d);NB.raw[id]={...d,id}}catch(e){}}nbBodyRender(true);if($('pmGrid'))nbPagesDlg();toast('Geri alındı')})}
+async function nbDupPages(pids){const bk=nbBook();const P=nbPagesOf(bk.id);let last=null;for(const pid of pids){const pg=nbPg(pid);const i=P.findIndex(p=>p.id===pid),nx=P[i+1];
+  const n=await nbNewPage(bk.id,{type:pg.type,idx:nx?(pg.idx+nx.idx)/2:pg.idx+1,paper:pg.paper,pc:pg.pc,h:pg.h,bg:pg.bg,title:pg.title,icon:pg.icon,parent:pg.parent,blocks:JSON.parse(JSON.stringify(pg.blocks||[]))});
+  n.strokes=pg.strokes.map(s=>({...s,pts:s.pts.slice(),a:undefined,t:undefined}));n.items=JSON.parse(JSON.stringify(pg.items||[]));await nbFlush(n.id);last=n}nbBodyRender(true);if($('pmGrid'))nbPagesDlg();toast(pids.length===1?'Sayfa çoğaltıldı':pids.length+' sayfa çoğaltıldı')}
+async function nbStarPages(pids){const all=pids.every(id=>nbPg(id).star);for(const id of pids){const pg=nbPg(id);pg.star=all?undefined:true;await nbFlush(id)}nbBodyRender(true);if($('pmGrid'))nbPagesDlg();toast(all?'Yer imi kaldırıldı':'⭐ Yer imine eklendi')}
+function nbMoveDlg(pids){const bk=nbBook();const others=NB.books.filter(b=>b.id!==bk.id&&b.kind!=='doc');
+  msModal(`<div class="eyebrow">↪ ${pids.length===1?'Sayfayı':pids.length+' sayfayı'} başka deftere</div>${others.length?`<label class="hint">Hedef defter<select id="pmT">${others.map(b=>`<option value="${b.id}">${esc(b.title||'Defter')}</option>`).join('')}</select></label>
+   <div class="msm-acts"><button class="btn primary" type="button" data-pm="mvgo" data-x="copy">⧉ Kopyala</button><button class="btn" type="button" data-pm="mvgo" data-x="move">↪ Taşı</button></div>`:'<p class="hint">Başka bir el yazısı defterin yok. Önce yeni bir defter oluştur.</p>'}`);PM.mv=pids}
+async function nbMoveGo(mode){const pids=PM.mv||[],tid=$('pmT').value;if(!tid)return;await nbFlushAll();let idx=nbPagesOf(tid).reduce((m,p)=>Math.max(m,p.idx||0),0)+1;
+  if(mode==='move'&&pids.length>=nbPagesOf(NB.bid).length){toast('Defterde en az bir sayfa kalmalı');return}
+  for(const pid of pids){const pg=nbPg(pid);if(mode==='move'){pg.book=tid;pg.idx=idx++;pg.parent=undefined;await nbFlush(pid);delete NB.pg[pid]}
+    else{const n=await nbNewPage(tid,{type:pg.type,idx:idx++,paper:pg.paper,pc:pg.pc,h:pg.h,bg:pg.bg,title:pg.title,icon:pg.icon,blocks:JSON.parse(JSON.stringify(pg.blocks||[]))});n.strokes=pg.strokes.map(s=>({...s,pts:s.pts.slice(),a:undefined,t:undefined}));n.items=JSON.parse(JSON.stringify(pg.items||[]));await nbFlush(n.id);delete NB.pg[n.id]}}
+  msClose();PM.sel.clear();nbBodyRender(true);const t=NB.books.find(b=>b.id===tid);toast(`${pids.length} sayfa “${t?t.title:'deftere'}” ${mode==='move'?'taşındı':'kopyalandı'}`)}
+async function nbClearPage(pid){const pg=nbPg(pid);if(!pg)return;nbPush(pg);pg.strokes=[];pg.items=[];NB.sel=null;nbAfter(pg);toast('Sayfa temizlendi — Geri al ile dönebilirsin')}
+/* sayfa menüsü: eklemelerle */
+function nbPageMenu(pid,anchor){const pg=nbPg(pid);if(!pg)return;const ink=pg.type!=='text';
+  nbMenu(anchor,`<div class="nbmenu-r nbmenu-q"><button data-pm="star" data-pid="${pid}">${pg.star?'★ Yer imi':'☆ Yer imi'}</button><button data-pm="dup" data-pid="${pid}">⧉ Çoğalt</button><button data-pm="pdf" data-pid="${pid}">⬇ PDF</button>${ink?`<button data-pm="img" data-pid="${pid}">🖼 Resim</button>`:''}</div>
+   <button data-ne="pm" data-pid="${pid}" data-v="addink">＋ Altına boş sayfa</button><button data-ne="pm" data-pid="${pid}" data-v="addtext">＋ Altına yazı sayfası</button>
+   ${ink&&!pg.bg?`<div class="nbmenu-l">Kağıt</div><div class="nbmenu-r">${Object.entries(NB_PAPER).map(([k,l])=>`<button data-ne="pm" data-pid="${pid}" data-v="paper" data-x="${k}" aria-pressed="${(pg.paper||nbBook().paper)===k}">${l}</button>`).join('')}</div>
+   <div class="nbmenu-r">${NB_PC.map(c=>`<button class="nb-sw" data-ne="pm" data-pid="${pid}" data-v="pc" data-x="${c}" style="background:${c}" aria-label="Kağıt rengi"></button>`).join('')}</div>`:''}
+   ${ink&&!pg.bg?`<div class="nbmenu-l">Şablon</div><div class="nbmenu-r">${Object.entries(NB_TPL).map(([k,l])=>`<button data-ne="pm" data-pid="${pid}" data-v="paper" data-x="${k}" aria-pressed="${pg.paper===k}">${l}</button>`).join('')}</div>`:''}
+   ${ink?`<button data-ne="pm" data-pid="${pid}" data-v="ocr">🔤 El yazısını metne çevir${pg.ocr?' (yeniden)':''}</button>`:''}${ink&&pg.ocr?`<button data-ne="pm" data-pid="${pid}" data-v="ocrshow">📄 Çevrilmiş metni gör</button>`:''}
+   ${ink&&NB.clip?`<button data-ne="pm" data-pid="${pid}" data-v="paste">📋 Kopyalananı yapıştır</button>`:''}
+   <button data-ne="pm" data-pid="${pid}" data-v="up">↑ Yukarı taşı</button><button data-ne="pm" data-pid="${pid}" data-v="down">↓ Aşağı taşı</button>
+   <button data-pm="move" data-pid="${pid}">↪ Başka deftere taşı / kopyala</button>${ink?`<button data-pm="clear" data-pid="${pid}">🧹 Sayfayı temizle</button>`:''}
+   <button data-pm="del" data-pid="${pid}" class="nbmenu-d">🗑 Sayfayı sil</button>`)}
+/* sayfa yöneticisi */
+function nbPagesDlg(){const bk=nbBook();if(!bk)return;let P=nbPagesOf(NB.bid);const N=P.length;const starred=P.filter(p=>p.star).length;if(PM.filter==='star')P=P.filter(p=>p.star);
+  for(const id of [...PM.sel])if(!NB.raw[id])PM.sel.delete(id);const n=PM.sel.size;
+  msModal(`<div class="pm-h"><div class="eyebrow">▦ Sayfalar · ${N}</div><div class="seg pm-f"><button type="button" data-pm="f" data-x="all" aria-pressed="${PM.filter==='all'}">Tümü</button><button type="button" data-pm="f" data-x="star" aria-pressed="${PM.filter==='star'}">⭐ Yer imleri ${starred||''}</button></div>
+     <button class="btn" type="button" data-pm="selmode">${PM.selMode?'Bitti':'Seç'}</button></div>
+   <p class="hint pm-tip">${PM.selMode?'Sayfalara dokunarak seç, sonra alttan ne yapacağını seç.':'Bir sayfaya dokun: o sayfaya gider. Sürükleyerek sırasını değiştir.'}</p>
+   <div class="pm-g${PM.selMode?' sel':''}" id="pmGrid">${P.map(p=>{const i=nbPagesOf(NB.bid).findIndex(x=>x.id===p.id);return `<div class="pm-t${PM.sel.has(p.id)?' on':''}" data-pmt="${p.id}">${p.type==='text'?`<div class="pm-tx">📝 ${esc(p.title||'Yazı')}</div>`:`<canvas data-pth="${p.id}" width="180" height="254"></canvas>`}<span class="pm-n">${i+1}${p.star?' ⭐':''}</span>${PM.selMode?`<span class="pm-ck">${PM.sel.has(p.id)?'✓':''}</span>`:''}</div>`}).join('')||'<p class="hint">Yer imi eklenmiş sayfa yok. Bir sayfanın ⋯ menüsünden “☆ Yer imi” diyebilirsin.</p>'}</div>
+   ${PM.selMode?`<div class="pm-bar"><span><b>${n}</b> seçili</span><button class="btn" type="button" data-pm="all">${n===P.length&&n?'Seçimi kaldır':'Tümünü seç'}</button><span class="pm-sp"></span>
+     <button class="btn" type="button" data-pm="bdup" ${n?'':'disabled'}>⧉ Çoğalt</button><button class="btn" type="button" data-pm="bstar" ${n?'':'disabled'}>⭐ Yer imi</button><button class="btn" type="button" data-pm="bpdf" ${n?'':'disabled'}>⬇ PDF</button><button class="btn" type="button" data-pm="bmove" ${n?'':'disabled'}>↪ Taşı</button><button class="btn pm-del" type="button" data-pm="bdel" ${n?'':'disabled'}>🗑 Sil</button></div>`:
+     `<div class="pm-bar"><button class="btn" type="button" data-pm="pdfall">⬇ Tüm defteri PDF olarak</button>${nbOcrWay()?`<button class="btn" type="button" data-ne="ocrall">🔤 El yazılarını aranabilir yap</button>`:''}</div>`}`,'wide');
+  document.querySelectorAll('#pmGrid canvas[data-pth]').forEach(cv=>{const pg=nbPg(cv.dataset.pth);const s=cv.width/1000;cv.height=Math.round((pg.h||NB_H)*s);nbDraw(cv.getContext('2d'),pg,s,{thumb:1})})}
+/* sürükle-bırak sıralama */
+document.addEventListener('pointerdown',e=>{const t=e.target.closest('.pm-t');if(!t||PM.selMode||!$('pmGrid'))return;PM.drag={id:t.dataset.pmt,x:e.clientX,y:e.clientY,on:false,el:t}});
+document.addEventListener('pointermove',e=>{const D=PM.drag;if(!D)return;if(!D.on){if(Math.hypot(e.clientX-D.x,e.clientY-D.y)<8)return;D.on=true;D.el.classList.add('drag')}
+  e.preventDefault();D.el.style.transform=`translate(${e.clientX-D.x}px,${e.clientY-D.y}px)`;D.el.style.pointerEvents='none';const o=document.elementFromPoint(e.clientX,e.clientY);const tt=o&&o.closest('.pm-t');
+  document.querySelectorAll('.pm-t.over').forEach(x=>x!==tt&&x.classList.remove('over'));if(tt&&tt!==D.el){tt.classList.add('over');D.to=tt.dataset.pmt;D.after=e.clientX>tt.getBoundingClientRect().left+tt.offsetWidth/2}},{passive:false});
+document.addEventListener('pointerup',async e=>{const D=PM.drag;PM.drag=null;if(!D)return;if(!D.on){if(!e.target.closest('[data-pm]')){msClose();const el=document.querySelector(`#nbPages [data-pid="${D.id}"]`);if(el)el.scrollIntoView({block:'start'});else if(nbBook().kind==='doc'){NB.docPid=D.id;nbBodyRender();nbTools()}}return}
+  D.el.style.transform='';D.el.style.pointerEvents='';if(!D.to||D.to===D.id){nbPagesDlg();return}
+  const P=nbPagesOf(NB.bid).filter(p=>p.id!==D.id);let j=P.findIndex(p=>p.id===D.to);if(D.after)j++;const a=P[j-1],b=P[j];const pg=nbPg(D.id);pg.idx=a&&b?(a.idx+b.idx)/2:a?a.idx+1:b.idx-1;await nbFlush(D.id);nbBodyRender(true);nbPagesDlg()});
+document.addEventListener('click',async e=>{const t=e.target.closest('.pm-t');if(t&&PM.selMode){const id=t.dataset.pmt;PM.sel.has(id)?PM.sel.delete(id):PM.sel.add(id);nbPagesDlg();return}
+  const b=e.target.closest('[data-pm]');if(!b)return;const k=b.dataset.pm,pid=b.dataset.pid,close=()=>document.querySelectorAll('.nbmenu').forEach(m=>m.remove());
+  if(k==='star'){close();return nbStarPages([pid])}if(k==='dup'){close();return nbDupPages([pid])}if(k==='pdf'){close();return nbExport([pid])}if(k==='img'){close();return nbExportImg(pid)}
+  if(k==='move'){close();return nbMoveDlg([pid])}if(k==='clear'){close();return nbClearPage(pid)}
+  if(k==='del'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Emin misin? Tekrar bas';return}close();return nbDelPages([pid])}
+  if(k==='mvgo')return nbMoveGo(b.dataset.x);
+  if(k==='f'){PM.filter=b.dataset.x;return nbPagesDlg()}if(k==='selmode'){PM.selMode=!PM.selMode;PM.sel.clear();return nbPagesDlg()}
+  if(k==='all'){const P=(PM.filter==='star'?nbPagesOf(NB.bid).filter(p=>p.star):nbPagesOf(NB.bid));if(PM.sel.size===P.length)PM.sel.clear();else P.forEach(p=>PM.sel.add(p.id));return nbPagesDlg()}
+  const S=nbPagesOf(NB.bid).filter(p=>PM.sel.has(p.id)).map(p=>p.id);
+  if(k==='bdup')return nbDupPages(S);if(k==='bstar')return nbStarPages(S);if(k==='bpdf'){msClose();return nbExport(S)}if(k==='bmove')return nbMoveDlg(S);if(k==='pdfall'){msClose();return nbExport()}
+  if(k==='bdel'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent=`${S.length} sayfa silinsin mi? Tekrar bas`;return}return nbDelPages(S)}
+},true);
+
+/* ---- defter düzeyi: favori, çoğalt, PDF, çöp kutusu ---- */
+function nbBookDlg(id){const bk=nbBook(id);if(!bk)return;
+  msModal(`<div class="eyebrow">📓 Defter</div><input id="nbBT" value="${esc(bk.title||'')}">
+   <label class="hint">Klasör <select id="nbBF">${nbFolderOpts(bk.folder)}</select></label>
+   <div><label class="hint">Kapak rengi</label><div class="nb-sws" id="nbBC">${nbCovPick(bk.color)}</div></div>
+   <div class="msm-acts"><button class="btn primary" type="button" data-nb="bsave" data-id="${id}">Kaydet</button></div>
+   <div class="pm-acts"><button class="btn" type="button" data-nbx="star" data-id="${id}">${bk.star?'★ Favorilerden çıkar':'☆ Favorilere ekle'}</button><button class="btn" type="button" data-nbx="dup" data-id="${id}">⧉ Defteri çoğalt</button><button class="btn" type="button" data-nbx="pdf" data-id="${id}">⬇ PDF olarak dışa aktar</button><button class="btn" type="button" data-nb="bside" data-id="${id}">◧ Yan yana aç</button><button class="btn pm-del" type="button" data-nbx="trash" data-id="${id}">🗑 Defteri sil</button></div>
+   <p class="hint" style="margin:0">Silinen defterler 30 gün boyunca “Son silinenler”de durur; oradan geri getirebilirsin.</p>`)}
+async function nbDupBook(id){const bk=nbBook(id);if(!bk)return;await nbFlushAll();toast('Defter çoğaltılıyor…');const {id:_,opened,...rest}=bk;const nid=nbId();
+  await st.db.collection('nbooks').doc(nid).set(nbClean({...rest,title:(bk.title||'Defter')+' (kopya)',star:undefined,updatedAt:new Date().toISOString(),createdAt:new Date().toISOString()}));
+  const map={};for(const r of nbPagesOf(id)){const pg=nbPg(r.id);const n=await nbNewPage(nid,{type:pg.type,idx:pg.idx,paper:pg.paper,pc:pg.pc,h:pg.h,bg:pg.bg,title:pg.title,icon:pg.icon,blocks:JSON.parse(JSON.stringify(pg.blocks||[]))});map[pg.id]=n.id;
+    n.strokes=pg.strokes.map(s=>({...s,pts:s.pts.slice(),a:undefined,t:undefined}));n.items=JSON.parse(JSON.stringify(pg.items||[]));n.parent=pg.parent;await nbFlush(n.id);delete NB.pg[n.id]}
+  for(const pid of Object.values(map)){const r=NB.raw[pid];if(r&&r.parent&&map[r.parent]){const pg=nbPg(pid);pg.parent=map[r.parent];await nbFlush(pid);delete NB.pg[pid]}}
+  toast('Defter çoğaltıldı ✓')}
+async function nbExportBook(id){const was=NB.bid;NB.bid=id;try{await nbExport()}finally{NB.bid=was}}
+function nbTrashDlg(){const T=(NB.trash||[]).sort((a,b)=>(b.deletedAt||'').localeCompare(a.deletedAt||''));
+  msModal(`<div class="eyebrow">🗑 Son silinenler</div><p class="hint" style="margin:0">30 günden eski olanlar kendiliğinden kalıcı olarak silinir.</p>
+   <div class="pm-trash">${T.map(b=>{const d=Math.max(0,30-Math.floor((Date.now()-new Date(b.deletedAt||Date.now()))/864e5));return `<div class="pm-tr"><span><b>${esc(b.title||'Defter')}</b><br><small class="hint">${nbPagesOf(b.id).length} sayfa · ${d} gün kaldı</small></span><span class="pm-sp"></span><button class="btn" type="button" data-nbx="restore" data-id="${b.id}">↩ Geri getir</button><button class="btn pm-del" type="button" data-nbx="purge" data-id="${b.id}">Kalıcı sil</button></div>`}).join('')||'<p class="hint">Burası boş.</p>'}</div>`)}
+async function nbPurge(id){for(const p of nbPagesOf(id)){try{await st.db.collection('npages').doc(p.id).delete()}catch(x){}}try{await st.db.collection('nbooks').doc(id).delete()}catch(x){}}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-nbx]');if(!b)return;e.stopPropagation();const k=b.dataset.nbx,id=b.dataset.id,bk=nbBook(id)||(NB.trash||[]).find(x=>x.id===id);if(!bk)return;
+  const save=p=>st.db.collection('nbooks').doc(id).update(p);
+  if(k==='star'){await save({star:!bk.star});msClose();toast(bk.star?'Favorilerden çıkarıldı':'⭐ Favorilere eklendi');return}
+  if(k==='dup'){msClose();return nbDupBook(id)}
+  if(k==='pdf'){msClose();return nbExportBook(id)}
+  if(k==='trash'){if(NB.bid===id)nbClose();await save({deleted:true,deletedAt:new Date().toISOString()});msClose();nbUndoBar('Defter silindi',async()=>{await save({deleted:false,deletedAt:''});toast('Geri getirildi')});return}
+  if(k==='trashdlg')return nbTrashDlg();
+  if(k==='restore'){await save({deleted:false,deletedAt:''});toast('Defter geri geldi ✓');setTimeout(nbTrashDlg,300);return}
+  if(k==='purge'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Kalıcı olarak silinsin mi? Tekrar bas';return}await nbPurge(id);setTimeout(nbTrashDlg,300);toast('Kalıcı olarak silindi');return}},true);
+/* dinleyici: silinenleri ayır, favoriler önce */
+function nbListen(db){
+  db.collection('nfolders').onSnapshot(s=>{NB.folders=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||0)-(b.order||0)||(a.name||'').localeCompare(b.name||'','tr'));nbHomeRe()},()=>{});
+  db.collection('nbooks').onSnapshot(s=>{const all=s.docs.map(d=>({id:d.id,...d.data()}));NB.books=all.filter(b=>!b.deleted);NB.trash=all.filter(b=>b.deleted);
+    const old=NB.trash.filter(b=>Date.now()-new Date(b.deletedAt||0)>30*864e5);if(old.length&&!NB.purging){NB.purging=1;(async()=>{for(const b of old)await nbPurge(b.id);NB.purging=0})()}
+    nbHomeRe();if(NB.bid&&!nbBook()){nbClose()}},()=>{});
+  db.collection('npages').onSnapshot(s=>{const seen=new Set();const changed=[];
+    for(const d of s.docs){const x={id:d.id,...d.data()};seen.add(d.id);const old=NB.raw[d.id];if(NB.dirty.has(d.id))continue;
+      if(!old||old.updatedAt!==x.updatedAt){NB.raw[d.id]=x;if(NB.pg[d.id]){delete NB.pg[d.id];changed.push(d.id)}}}
+    for(const id of Object.keys(NB.raw))if(!seen.has(id)&&!NB.dirty.has(id)){delete NB.raw[id];delete NB.pg[id];changed.push(id)}
+    if(NB.bid&&changed.length){const ae=document.activeElement;if(!(ae&&ae.closest&&ae.closest('#nbEd [contenteditable]'))&&!NB.cur&&!NB.drag)nbBodyRender(true)}
+    nbHomeRe()},()=>{});
+}
 
 const SECS={
   home:{t:'Ana sayfa',tabs:[]},
