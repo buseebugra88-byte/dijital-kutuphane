@@ -1073,6 +1073,24 @@ html body .rstage{overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow
 .pgwrap.flipping{animation-duration:.32s!important;animation-timing-function:ease-out!important;will-change:transform,opacity}
 .spage{position:relative}.spage:not([data-done])::before{content:attr(data-p);position:absolute;inset:0;display:grid;place-items:center;font:600 15px var(--body);color:rgba(0,0,0,.18);background:repeating-linear-gradient(180deg,#fff 0 22px,#f6f4ef 22px 23px)}
 .reader.mode-night .spage:not([data-done])::before{color:rgba(255,255,255,.2);background:#222}
+
+.rxl{position:absolute;inset:0;z-index:3;pointer-events:none}.rxl.on{pointer-events:auto;touch-action:none;cursor:text}
+.rxh{position:absolute;mix-blend-mode:multiply;opacity:.5;border-radius:2px;pointer-events:auto;cursor:pointer}.reader.mode-night .rxh{mix-blend-mode:screen;opacity:.35}
+.rxg{position:absolute;opacity:.35;border-radius:3px;pointer-events:none}
+.rxe{position:absolute;transform:translate(-50%,0);border:0;background:rgba(255,255,255,.85);border-radius:999px;width:34px;height:34px;font-size:19px;line-height:1;display:grid;place-items:center;box-shadow:0 3px 10px -4px rgba(0,0,0,.35);pointer-events:auto;cursor:pointer;padding:0}
+#reader:has(#inkBar:not([hidden])) .rxh,#reader:has(#inkBar:not([hidden])) .rxe{pointer-events:none}
+.pgwrap canvas,.spage canvas{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.rxpop{position:fixed;z-index:400;background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:10px 12px;box-shadow:0 18px 40px -16px rgba(0,0,0,.4);max-width:min(340px,calc(100vw - 16px));display:grid;gap:8px}
+.rxpop p{margin:0;font:italic 14px/1.45 var(--display)}.rxpc{display:flex;gap:6px}.rxpc button{width:28px;height:28px;border-radius:50%;border:2px solid rgba(0,0,0,.08);cursor:pointer}.rxpc button[aria-pressed="true"]{outline:2px solid var(--ink);outline-offset:2px}
+.rxpa{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.rxpa button,.rxpa a{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:5px 11px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer;text-decoration:none}
+.rxdef ol{margin:0;padding-left:20px;font-size:14px;line-height:1.45;display:grid;gap:4px}.rxdef b{font:600 18px var(--display)}
+.rxemo{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}.rxemo button{border:0;background:none;font-size:24px;padding:4px;border-radius:10px;cursor:pointer}.rxemo button:hover{background:var(--bg)}
+.rxbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.rxbar .hint{font-size:12px}
+.rxlist{display:grid;gap:6px;max-height:55vh;overflow:auto}.rxli{display:grid;grid-template-columns:44px 1fr;gap:8px;text-align:left;border:1px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--paper);font:inherit;font-size:14px;line-height:1.5;cursor:pointer;color:var(--ink)}.rxli small{color:var(--muted)}
+.rxselb{position:fixed;z-index:400;box-shadow:0 8px 20px -8px rgba(0,0,0,.35)}
+.reta{font-size:12px;margin-left:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+#rHlBtn[aria-pressed="true"]{background:#ffe066;color:#4a3a35}
+.rxstars{display:flex;gap:4px;font-size:30px}.rxstars button{border:0;background:none;color:var(--line);cursor:pointer;font-size:30px;padding:0 2px}.rxstars button.on{color:var(--brass)}
 </style>
 
 </head><body>
@@ -2812,7 +2830,13 @@ async function finishCard(b){
   x.fillStyle=V('--ink');x.font='600 58px '+disp;let y=wrapT(x,b.title,W/2,860,W-240,66,2);x.fillStyle=V('--muted');x.font='400 32px '+body;x.fillText(b.author||'',W/2,y+50);
   const r=b.rating||0;if(r){x.font='44px '+body;x.fillStyle=V('--brass');x.fillText('★'.repeat(r)+'☆'.repeat(5-r),W/2,y+120)}
   const q=(TL.quotes||[]).filter(z=>z.book===b.id&&z.text);if(q.length){const qq=q[hashStr(b.id)%q.length];x.fillStyle=V('--ink');x.font='italic 400 30px '+disp;wrapT(x,'“'+qq.text.slice(0,180)+(qq.text.length>180?'…':'')+'”',W/2,y+190,W-260,42,3)}
-  else if(b.review){x.fillStyle=V('--ink');x.font='italic 400 30px '+disp;wrapT(x,b.review.slice(0,180),W/2,y+190,W-260,42,3)}
+  else{const hq=(LF.hls||[]).filter(z=>z.book===b.id&&z.type==='hl'&&z.text&&z.text.length>20);if(hq.length){const qq=hq[hashStr(b.id)%hq.length];x.fillStyle=V('--ink');x.font='italic 400 30px '+disp;wrapT(x,'“'+qq.text.slice(0,180)+(qq.text.length>180?'…':'')+'”',W/2,y+190,W-260,42,3)}
+    else if(b.review){x.fillStyle=V('--ink');x.font='italic 400 30px '+disp;wrapT(x,b.review.slice(0,180),W/2,y+190,W-260,42,3)}}
+  {const st0=b.startedAt||(b.addedAt||'').slice(0,10),fin=b.finishedAt||lfK();let days=0;try{days=Math.max(1,Math.round((lfD(fin)-lfD(st0))/864e5)+1)}catch(e){}
+   const em={};(LF.hls||[]).filter(z=>z.book===b.id&&z.type==='emo').forEach(z=>em[z.e]=(em[z.e]||0)+1);const top=Object.entries(em).sort((p,q)=>q[1]-p[1]).slice(0,4);
+   const parts=[days&&days<2000?days+' günde okudum':'',b.pages?b.pages+' sayfa':''].filter(Boolean);x.fillStyle=V('--muted');x.font='500 28px '+body;
+   if(top.length){x.font='34px '+body;x.fillText(top.map(([e,n])=>e+' '+n).join('    '),W/2,H-210)}
+   if(parts.length){x.font='500 28px '+body;x.fillText(parts.join('  ·  '),W/2,H-160)}}
   x.fillStyle=V('--muted');x.font='400 24px '+body;x.fillText((b.finishedAt?fmtTR(b.finishedAt)+' · ':'')+'Dijital Kütüphanem',W/2,H-110);
   if(UI.art==='custom'&&STK.items.length){const st_=await img(assetSrcOf(STK.items[hashStr(b.id)%STK.items.length].id));if(st_){const h=230,w=st_.width*h/st_.height;x.save();x.translate(W-90-w/2,cy+ch-40);x.rotate(.08);x.shadowColor='rgba(0,0,0,.15)';x.shadowBlur=14;x.drawImage(st_,-w/2,-h/2,w,h);x.restore()}}
   const blob=await new Promise(res=>c.toBlob(res,'image/png'));if(!blob){toast('Kart oluşturulamadı');return}
@@ -3272,14 +3296,14 @@ async function saveFile(name,data){
   try{const dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;if(!dl){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toast('Dosya indirildi');return}await dl.save({filename:name,data});toast('Dosya kaydedildi')}
   catch(e){toast(e&&e.code==='declined'?'İndirme iptal edildi':e&&e.code==='rate_limited'?'Biraz bekleyip tekrar dene':'Bu görünümde dosya indirilemiyor')}}
 async function backupData(){const get=async col=>{try{const s_=await st.db.collection(col).get();return s_.docs.map(d=>({id:d.id,...d.data()}))}catch(e){return []}};
-  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),nfolders:await get('nfolders'),nbooks:await get('nbooks'),npages:await get('npages'),cal:await get('cal'),tasks:await get('tasks'),moods:await get('moods'),habits:await get('habits'),money:await get('money'),lists:await get('lists'),recipes:await get('recipes'),goals:await get('goals'),lifecfg:await get('lifecfg'),weeks:await get('weeks'),worries:await get('worries'),mems:await get('mems'),films:await get('films'),songs:await get('songs'),plists:await get('plists'),cint:await get('cint'),club:await get('club'),acards:await get('acards'),tzch:await get('tzch'),chtrash:await get('chtrash'),
+  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),nfolders:await get('nfolders'),nbooks:await get('nbooks'),npages:await get('npages'),cal:await get('cal'),tasks:await get('tasks'),moods:await get('moods'),habits:await get('habits'),money:await get('money'),lists:await get('lists'),recipes:await get('recipes'),goals:await get('goals'),lifecfg:await get('lifecfg'),weeks:await get('weeks'),worries:await get('worries'),mems:await get('mems'),films:await get('films'),songs:await get('songs'),plists:await get('plists'),cint:await get('cint'),club:await get('club'),acards:await get('acards'),tzch:await get('tzch'),hls:await get('hls'),chtrash:await get('chtrash'),
     settings:{ui:UI,thesis:TL.thesis,writing:TL.writing,log:st.log,bingo:TL.bingo,journal:TL.journal,widgets:TL.widgets,stickers:{items:STK.items,emblem:STK.emblem}}}}
 function csvBooks(){const H=['Başlık','Yazar','Tür','Raf','Etiketler','Durum','Sayfa','Kaldığı sayfa','Bitirme','Puan','Yıl','Dergi','DOI','Dosya'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   return '﻿'+[H.map(q).join(','),...st.books.map(b=>[b.title,b.author,{kitap:'Kitap',pdf:'PDF',roman:'Romanım',makale:'Makale'}[b.kind]||b.kind,b.shelf,(b.tags||[]).join('; '),STATUS_LABEL[b.status]||b.status,b.pages||'',b.currentPage||'',b.finishedAt||'',b.rating||'',b.year||'',b.journal||'',b.doi||'',b.fileName||''].map(q).join(','))].join('\r\n')}
 async function restore(file,quiet){const m=$('bkMsg')||{textContent:''};try{const d=JSON.parse(await file.text());if(!d||d.app!=='Dijital Kütüphanem')throw 0;let n=0;
   if(d.blobs&&typeof LOCAL!=='undefined'){const ids=Object.keys(d.blobs);let k=0;for(const id of ids){if(!LOCAL.has(id)){const x=d.blobs[id];try{await LOCAL.assets.putId(id,new Blob([b64dec(x.b64)],{type:x.type||'image/jpeg'}))}catch(e){}}if(++k%20===0)m.textContent='Görseller: '+k+'/'+ids.length}}
-  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages],['cal',d.cal],['tasks',d.tasks],['moods',d.moods],['habits',d.habits],['money',d.money],['lists',d.lists],['recipes',d.recipes],['goals',d.goals],['lifecfg',d.lifecfg],['weeks',d.weeks],['worries',d.worries],['mems',d.mems],['films',d.films],['songs',d.songs],['plists',d.plists],['cint',d.cint],['club',d.club],['acards',d.acards],['tzch',d.tzch],['chtrash',d.chtrash]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
+  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages],['cal',d.cal],['tasks',d.tasks],['moods',d.moods],['habits',d.habits],['money',d.money],['lists',d.lists],['recipes',d.recipes],['goals',d.goals],['lifecfg',d.lifecfg],['weeks',d.weeks],['worries',d.worries],['mems',d.mems],['films',d.films],['songs',d.songs],['plists',d.plists],['cint',d.cint],['club',d.club],['acards',d.acards],['tzch',d.tzch],['hls',d.hls],['chtrash',d.chtrash]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
   if(d.settings){if(d.settings.thesis)await st.db.doc('settings/thesis').set(d.settings.thesis);if(d.settings.writing)await st.db.doc('settings/writing').set(d.settings.writing);if(d.settings.log)await st.db.doc('settings/log').set(d.settings.log);if(d.settings.bingo)await st.db.doc('settings/bingo').set(d.settings.bingo);if(d.settings.journal)await st.db.doc('settings/journal').set(d.settings.journal);if(d.settings.widgets)await st.db.doc('settings/widgets').set(d.settings.widgets);if(d.settings.stickers&&Array.isArray(d.settings.stickers.items)){const it=d.settings.stickers.items.filter(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(it.length||!STK.items.length)await st.db.doc('settings/stickers').set({items:it,emblem:it.some(x=>x.id===d.settings.stickers.emblem)?d.settings.stickers.emblem:'',updatedAt:new Date().toISOString()})}if(d.settings.ui){const u={...d.settings.ui};const hasStk=d.settings.stickers&&(d.settings.stickers.items||[]).some(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(u.art==='custom'&&!hasStk)u.art='fairy';setUI(u)}}
   m.textContent=`Geri yükleme tamam: ${n} kayıt.`+(typeof LOCAL!=='undefined'?' Şimdi Ayarlar → Klasörden ekle ile kitap klasörünü seç; dosyalar kayıtlarına kendiliğinden bağlanır.':'')}catch(e){m.textContent='Bu dosya bir Dijital Kütüphanem yedeği gibi görünmüyor.';if(quiet)throw e}}
 /* Drive ile otomatik eşitleme: açılışta/girişte Drive'daki daha yeni yedeği alır, değişiklikleri Drive'a yazar */
@@ -4290,7 +4314,7 @@ async function kyAuto(){if(KY.auto||KY.busy||!st.db||!navigator.onLine)return;co
 
 /* ===================== 🌿 Hayatım ===================== */
 const LF={cal:[],tasks:[],moods:[],habits:[],money:[],lists:[],recipes:[],goals:[],cfg:{},mon:null,sel:null,tv:'today',lsel:null,mm:null,rsel:null,breath:null,focus:null};
-const LFC=['cal','tasks','moods','habits','money','lists','recipes','goals','lifecfg','weeks','worries','mems','films','songs','plists','cint','club','acards','tzch'];LF.club=null;LF.acards=[];LF.tzch=[];LF.weeks=[];LF.worries=[];LF.mems=[];LF.films=[];LF.songs=[];LF.plists=[];LF.cint=[];
+const LFC=['cal','tasks','moods','habits','money','lists','recipes','goals','lifecfg','weeks','worries','mems','films','songs','plists','cint','club','acards','tzch','hls'];LF.hls=[];LF.club=null;LF.acards=[];LF.tzch=[];LF.weeks=[];LF.worries=[];LF.mems=[];LF.films=[];LF.songs=[];LF.plists=[];LF.cint=[];
 const lfK=(d=new Date())=>todayKey(d);
 const lfD=k=>new Date(k+'T12:00:00');
 const lfAdd=(k,n)=>{const d=lfD(k);d.setDate(d.getDate()+n);return lfK(d)};
@@ -4299,7 +4323,7 @@ const lfDay=k=>lfD(k).toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',m
 const lfShort=k=>lfD(k).toLocaleDateString('tr-TR',{day:'numeric',month:'short'});
 function lfListen(db){LFC.forEach(c=>db.collection(c).onSnapshot(s=>{const a=s.docs.map(d=>({id:d.id,...d.data()}));if(c==='lifecfg'){LF.cfg={};a.forEach(x=>LF.cfg[x.id]=x)}else LF[c]=a;lfRe()},()=>{}));setInterval(lfTick,30000);setTimeout(lfTick,4000)}
 function lfRe(){clearTimeout(lfRe.t);lfRe.t=setTimeout(()=>{const ae=document.activeElement,typing=ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName)&&ae.type!=='checkbox';
-  if(st.sec==='life'&&!typing&&!LF.breath)lfRender();try{clRe()}catch(e){}try{mxRe()}catch(e){}try{tzRe()}catch(e){}if(st.sec==='home'&&st.view==='panel'&&!typing&&!UI.homeFull)renderList()},120)}
+  if(st.sec==='life'&&!typing&&!LF.breath)lfRender();try{clRe()}catch(e){}try{mxRe()}catch(e){}try{tzRe()}catch(e){}try{rxRepaint()}catch(e){}if(st.sec==='home'&&st.view==='panel'&&!typing&&!UI.homeFull)renderList()},120)}
 async function lfSet(c,id,d){id=id||nbId();try{await st.db.collection(c).doc(id).set(nbClean(d))}catch(e){toast('Kaydedilemedi')}return id}
 async function lfUpd(c,id,d){try{await st.db.collection(c).doc(id).update(d)}catch(e){toast('Kaydedilemedi')}}
 async function lfDel(c,id){try{await st.db.collection(c).doc(id).delete()}catch(e){}}
@@ -5023,7 +5047,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v56';
+const DK_VER='v57';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6405,6 +6429,129 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-tz]'
   if(k==='doc'){tzDoc(false);return}if(k==='pdf'){tzDoc(true);return}
 });
 window.__tz={html:(p)=>tzHtml(tzFmt(),p)};
+/* ---------- Okuyucu ekleri: vurgulama, kelime anlamı, sayfa ifadeleri, kalan süre ---------- */
+const RX={mode:false,color:'#ffe066',tc:{},sp:null,last:0,pick:null};
+const RX_COL=[['#ffe066','Sarı'],['#ffb3c7','Pembe'],['#b5e8a9','Yeşil'],['#a9d4ff','Mavi']];
+const RX_EMO=['❤️','😍','😭','😱','😂','🔥','💔','🤯','😡','🥺','🤔','✨'];
+const rxMine=(p)=>(LF.hls||[]).filter(h=>R.book&&h.book===R.book.id&&(p==null||h.page===p));
+async function rxText(n){const k=(R.book&&R.book.id)+'|'+n;if(RX.tc[k])return RX.tc[k];if(!R.doc||R.epub)return [];
+  try{const pg=await R.doc.getPage(n),vp=pg.getViewport({scale:1}),tc=await pg.getTextContent(),out=[];
+    for(const it of tc.items){if(!it.str||!it.str.trim())continue;const [a,b,c,d,e,f]=it.transform,h=Math.hypot(c,d)||it.height||10;
+      const r=vp.convertToViewportRectangle([e,f-h*0.22,e+(it.width||0),f+h*0.9]);const x1=Math.min(r[0],r[2])/vp.width,x2=Math.max(r[0],r[2])/vp.width,y1=Math.min(r[1],r[3])/vp.height,y2=Math.max(r[1],r[3])/vp.height;
+      if(x2-x1>0)out.push({s:it.str,x1,x2,y1,y2})}
+    const keys=Object.keys(RX.tc);if(keys.length>12)delete RX.tc[keys[0]];RX.tc[k]=out;return out}catch(e){return []}}
+function rxHost(n){if(isScroll())return SCR.els[n-1]||null;const w=$('rStage').querySelector(':scope>.pgwrap:not(.flipping)');return w}
+function rxLayer(host){let L=host.querySelector(':scope>.rxl');if(!L){L=document.createElement('div');L.className='rxl';host.appendChild(L)}return L}
+function rxAttach(host,n){if(!host||R.epub)return;const L=rxLayer(host);L.dataset.p=n;L.classList.toggle('on',RX.mode);rxPaint(L,n)}
+function rxPaint(L,n){const H=rxMine(n);L.innerHTML=H.filter(h=>h.type==='hl').map(h=>(h.rects||[]).map(r=>`<i class="rxh" data-rx="${h.id}" style="left:${r[0]*100}%;top:${r[1]*100}%;width:${r[2]*100}%;height:${r[3]*100}%;background:${h.color}"></i>`).join('')).join('')
+  +H.filter(h=>h.type==='emo').map((h,i)=>`<button type="button" class="rxe" data-rx="${h.id}" style="left:${(h.x??0.93)*100}%;top:${(h.y??(0.04+i*0.07))*100}%" aria-label="İfade ${h.e}">${h.e}</button>`).join('')}
+function rxRepaint(){if(!R.book||$('reader').hidden||R.epub)return;$('rStage').querySelectorAll('.rxl').forEach(L=>rxPaint(L,+L.dataset.p));rxCount()}
+function rxCount(){const b=$('rHlList');if(b){const n=rxMine().length;b.textContent='📒 Vurgularım'+(n?' ('+n+')':'')}}
+/* sürükleyerek vurgulama */
+document.addEventListener('pointerdown',e=>{const L=e.target.closest&&e.target.closest('.rxl.on');if(!L||e.target.closest('.rxh,.rxe'))return;e.preventDefault();
+  const r=L.getBoundingClientRect(),p=[(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height];RX.drag={L,r,p0:p,p1:p,id:e.pointerId};try{L.setPointerCapture(e.pointerId)}catch(x){}
+  const g=document.createElement('i');g.className='rxg';g.style.background=RX.color;L.appendChild(g);RX.drag.g=g},true);
+document.addEventListener('pointermove',e=>{const D=RX.drag;if(!D||e.pointerId!==D.id)return;e.preventDefault();D.p1=[(e.clientX-D.r.left)/D.r.width,(e.clientY-D.r.top)/D.r.height];
+  const x=Math.min(D.p0[0],D.p1[0]),y=Math.min(D.p0[1],D.p1[1]);Object.assign(D.g.style,{left:x*100+'%',top:y*100+'%',width:Math.abs(D.p1[0]-D.p0[0])*100+'%',height:Math.max(0.012,Math.abs(D.p1[1]-D.p0[1]))*100+'%'})},true);
+document.addEventListener('pointerup',async e=>{const D=RX.drag;if(!D||e.pointerId!==D.id)return;RX.drag=null;D.g.remove();const n=+D.L.dataset.p;
+  const dx=Math.abs(D.p1[0]-D.p0[0]),dy=Math.abs(D.p1[1]-D.p0[1]);if(dx<0.02&&dy<0.01)return;
+  const T=await rxText(n);const s=D.p0[1]<D.p1[1]||(Math.abs(D.p0[1]-D.p1[1])<0.01&&D.p0[0]<D.p1[0])?D.p0:D.p1,t=s===D.p0?D.p1:D.p0;
+  const top=Math.min(s[1],t[1]),bot=Math.max(s[1],t[1]);const sel=[];
+  for(const it of T){const cy=(it.y1+it.y2)/2,lh=it.y2-it.y1;if(cy<top-lh*0.75||cy>bot+lh*0.75)continue;
+    const first=Math.abs(cy-s[1])<lh*0.8,last=Math.abs(cy-t[1])<lh*0.8;let a=it.x1,b=it.x2;
+    if(first&&last){a=Math.max(a,Math.min(s[0],t[0]));b=Math.min(b,Math.max(s[0],t[0]))}else if(first)a=Math.max(a,s[0]);else if(last)b=Math.min(b,t[0]);
+    if(b-a<=0.002)continue;const L_=it.s.length,i0=Math.max(0,Math.round((a-it.x1)/(it.x2-it.x1)*L_)),i1=Math.min(L_,Math.round((b-it.x1)/(it.x2-it.x1)*L_));
+    let j0=i0,j1=i1;while(j0>0&&/\S/.test(it.s[j0-1]))j0--;while(j1<L_&&/\S/.test(it.s[j1]))j1++;
+    const ax=it.x1+(it.x2-it.x1)*j0/L_,bx=it.x1+(it.x2-it.x1)*j1/L_;sel.push({x1:ax,x2:bx,y1:it.y1,y2:it.y2,s:it.s.slice(j0,j1)})}
+  let rects,text='';
+  if(sel.length){sel.sort((p,q)=>(p.y1-q.y1)||(p.x1-q.x1));const lines=[];for(const it of sel){const ln=lines.find(l=>Math.abs(l.y-(it.y1+it.y2)/2)<(it.y2-it.y1)*0.5);if(ln){ln.x1=Math.min(ln.x1,it.x1);ln.x2=Math.max(ln.x2,it.x2);ln.y1=Math.min(ln.y1,it.y1);ln.y2=Math.max(ln.y2,it.y2);ln.t.push(it.s)}else lines.push({y:(it.y1+it.y2)/2,x1:it.x1,x2:it.x2,y1:it.y1,y2:it.y2,t:[it.s]})}
+    rects=lines.map(l=>[l.x1,l.y1,l.x2-l.x1,l.y2-l.y1].map(v=>Math.round(v*10000)/10000));text=lines.map(l=>l.t.join(' ').trim()).join(' ').replace(/-\s+(?=[a-zçğıöşü])/g,'').replace(/\s+/g,' ').trim()}
+  else rects=[[Math.min(s[0],t[0]),Math.min(s[1],t[1]),Math.max(0.02,dx),Math.max(0.018,dy)]];
+  await lfSet('hls',null,{type:'hl',book:R.book.id,page:n,color:RX.color,rects,text:text.slice(0,1200),at:new Date().toISOString()});toast(text?'🖍 Vurgulandı':'🖍 Vurgulandı (bu sayfada seçilebilir yazı yok)')},true);
+/* vurgu / ifade menüsü */
+function rxMenu(h,x,y){rxPopClose();const m=document.createElement('div');m.className='rxpop';m.id='rxPop';
+  m.innerHTML=h.type==='hl'?`${h.text?`<p>“${esc(h.text.slice(0,160))}${h.text.length>160?'…':''}”</p>`:''}<div class="rxpc">${RX_COL.map(([c,l])=>`<button type="button" data-rxa="col" data-v="${c}" style="background:${c}" aria-label="${l}"${c===h.color?' aria-pressed="true"':''}></button>`).join('')}</div>
+   <div class="rxpa">${h.text?`<button type="button" data-rxa="quote">💬 Alıntılara ekle</button>`:''}${h.text&&h.text.split(/\s+/).length<=2?`<button type="button" data-rxa="def">📖 Anlamı</button>`:''}<button type="button" data-rxa="del">🗑 Sil</button></div>`
+   :`<div class="rxpa"><span style="font-size:22px">${h.e}</span><button type="button" data-rxa="del">🗑 Kaldır</button></div>`;
+  m.dataset.id=h.id;document.body.appendChild(m);const W=m.offsetWidth,Hh=m.offsetHeight;m.style.left=Math.max(8,Math.min(innerWidth-W-8,x-W/2))+'px';m.style.top=Math.max(8,y-Hh-12>60?y-Hh-12:y+16)+'px'}
+function rxPopClose(){const m=$('rxPop');if(m)m.remove();const d=$('rxDef');if(d&&!RX.keepDef)d.remove()}
+document.addEventListener('click',async e=>{const hl=e.target.closest&&e.target.closest('.rxh,.rxe');
+  if(hl){e.stopPropagation();e.preventDefault();const h=(LF.hls||[]).find(x=>x.id===hl.dataset.rx);if(h)rxMenu(h,e.clientX,e.clientY);return}
+  const a=e.target.closest&&e.target.closest('[data-rxa]');if(a){e.stopPropagation();const m=$('rxPop'),id=m&&m.dataset.id,h=(LF.hls||[]).find(x=>x.id===id),k=a.dataset.rxa;if(!h)return;
+    if(k==='col'){await lfUpd('hls',id,{color:a.dataset.v});RX.color=a.dataset.v;rxPopClose();return}
+    if(k==='del'){await lfDel('hls',id);rxPopClose();return}
+    if(k==='quote'){try{await st.db.collection('quotes').doc().set({book:R.book.id,title:R.book.title,author:R.book.author||'',page:h.page,text:h.text,note:'',at:new Date().toISOString()});toast('💬 Alıntı defterine eklendi')}catch(x){toast('Eklenemedi')}rxPopClose();return}
+    if(k==='def'){const r=a.getBoundingClientRect();rxPopClose();rxDefine(h.text.replace(/[^\p{L}\s'’-]/gu,'').trim().split(/\s+/)[0],r.left,r.top);return}
+    return}
+  if($('rxPop')&&!e.target.closest('#rxPop')){rxPopClose()}
+  if($('rxDef')&&!e.target.closest('#rxDef')&&Date.now()-(RX.lp||0)>700)$('rxDef').remove()},true);
+/* kelime anlamı: uzun bas */
+async function rxWordAt(host,n,cx,cy){const L=host.getBoundingClientRect(),x=(cx-L.left)/L.width,y=(cy-L.top)/L.height,T=await rxText(n);
+  const it=T.find(i=>x>=i.x1&&x<=i.x2&&y>=i.y1-0.004&&y<=i.y2+0.004);if(!it)return '';const k=Math.min(it.s.length-1,Math.max(0,Math.floor((x-it.x1)/(it.x2-it.x1)*it.s.length)));
+  let a=k,b=k;const W=/[\p{L}'’-]/u;if(!W.test(it.s[k]||''))return '';while(a>0&&W.test(it.s[a-1]))a--;while(b<it.s.length-1&&W.test(it.s[b+1]))b++;return it.s.slice(a,b+1).replace(/^[-'’]+|[-'’]+$/g,'')}
+async function rxLookup(w){const q=w.toLocaleLowerCase('tr');
+  try{const r=await fetch('https://sozluk.gov.tr/gts?ara='+encodeURIComponent(q));if(r.ok){const j=await r.json();if(Array.isArray(j)&&j.length){const M=[];j.forEach(e=>(e.anlamlarListe||[]).forEach(a=>M.push(a.anlam)));if(M.length)return {src:'TDK Güncel Türkçe Sözlük',m:M.slice(0,4)}}}}catch(e){}
+  try{const r=await fetch('https://tr.wiktionary.org/w/api.php?action=query&prop=extracts&explaintext=1&format=json&origin=*&redirects=1&titles='+encodeURIComponent(q));const j=await r.json();const p=Object.values((j.query||{}).pages||{})[0];
+    if(p&&p.extract){const lines=p.extract.split('\n').map(x=>x.trim()).filter(x=>x&&!/^=|^(Köken|Söyleniş|Heceleme|Ayrıca bakınız|Kaynakça|Çeviriler)/.test(x));const tr=lines.slice(0,12).filter(x=>x.length>8).slice(0,4);if(tr.length)return {src:'Vikisözlük',m:tr}}}catch(e){}
+  return null}
+async function rxDefine(w,x,y){if(!w)return;const old=$('rxDef');if(old)old.remove();const d=document.createElement('div');d.id='rxDef';d.className='rxpop rxdef';
+  d.innerHTML=`<b>${esc(w)}</b><p class="hint">Aranıyor…</p>`;document.body.appendChild(d);const pos=()=>{const W=d.offsetWidth,H=d.offsetHeight;d.style.left=Math.max(8,Math.min(innerWidth-W-8,x-W/2))+'px';d.style.top=(y-H-14>50?y-H-14:Math.min(innerHeight-H-8,y+20))+'px'};pos();
+  const r=await rxLookup(w);if(!d.isConnected)return;
+  d.innerHTML=`<b>${esc(w)}</b>${r?`<ol>${r.m.map(m=>`<li>${esc(m)}</li>`).join('')}</ol><small class="hint">${esc(r.src)}</small>`:`<p class="hint">Burada anlamını bulamadım.</p>`}<div class="rxpa"><a href="https://sozluk.gov.tr/?kelime=${encodeURIComponent(w)}" target="_blank" rel="noopener">TDK'da aç</a><button type="button" data-rxd="x">Kapat</button></div>`;pos()}
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-rxd="x"]')){const d=$('rxDef');d&&d.remove()}});
+(function(){const st_=$('rStage');let T=null,P=null;
+  st_.addEventListener('pointerdown',e=>{if(RX.mode||!$('inkBar').hidden||R.epub||e.button>0)return;if(e.target.closest('.rxh,.rxe'))return;const host=e.target.closest('.pgwrap,.spage');if(!host)return;
+    P={x:e.clientX,y:e.clientY};clearTimeout(T);T=setTimeout(async()=>{const n=host.classList.contains('spage')?+host.dataset.p:R.page;const w=await rxWordAt(host,n,P.x,P.y);if(w){RX.lp=Date.now();rxDefine(w,P.x,P.y)}},520)});
+  st_.addEventListener('pointermove',e=>{if(P&&Math.hypot(e.clientX-P.x,e.clientY-P.y)>10){clearTimeout(T);P=null}});
+  ['pointerup','pointercancel'].forEach(t=>st_.addEventListener(t,()=>{clearTimeout(T);P=null}));
+  st_.addEventListener('click',e=>{if(Date.now()-(RX.lp||0)<700){e.stopPropagation();e.preventDefault()}},true);
+  st_.addEventListener('contextmenu',e=>{if(e.target.closest('.pgwrap,.spage'))e.preventDefault()})})();
+document.addEventListener('selectionchange',()=>{if(!R.epub||$('reader').hidden)return;clearTimeout(RX.selT);RX.selT=setTimeout(()=>{const s=getSelection(),t=(s&&s.toString()||'').trim();let b=$('rxSelB');
+  if(!t||t.split(/\s+/).length>2||!/\p{L}/u.test(t)){if(b)b.remove();return}const r=s.getRangeAt(0).getBoundingClientRect();if(!b){b=document.createElement('button');b.id='rxSelB';b.type='button';b.className='btn rxselb';b.textContent='📖 Anlamı';document.body.appendChild(b)}
+  b.style.left=Math.max(8,Math.min(innerWidth-110,r.left+r.width/2-50))+'px';b.style.top=Math.max(8,r.top-48)+'px';b.onclick=()=>{b.remove();rxDefine(t.replace(/[^\p{L}'’-]/gu,''),r.left+r.width/2,r.top)}},350)});
+/* araç çubuğu */
+function rxBar(){let b=$('rxBar');if(!b){b=document.createElement('div');b.className='inkbar rxbar';b.id='rxBar';b.hidden=true;$('inkBar').after(b)}
+  b.innerHTML=`<span class="hint">Vurgulamak için satırların üzerinden parmağınla sürükle</span><div class="rxpc">${RX_COL.map(([c,l])=>`<button type="button" data-rxc="${c}" style="background:${c}" aria-label="${l}"${c===RX.color?' aria-pressed="true"':''}></button>`).join('')}</div><button class="btn" type="button" id="rHlList">📒 Vurgularım</button><button class="btn primary" type="button" data-rxc="done">Bitti</button>`;rxCount();return b}
+function rxSetMode(on){RX.mode=on;const b=rxBar();b.hidden=!on;if(on){$('inkBar').hidden=true;barsShow()}$('rStage').querySelectorAll('.rxl').forEach(L=>L.classList.toggle('on',on));const t=$('rHlBtn');if(t)t.setAttribute('aria-pressed',on)}
+document.addEventListener('click',e=>{const c=e.target.closest&&e.target.closest('[data-rxc]');if(!c)return;if(c.dataset.rxc==='done'){rxSetMode(false);return}RX.color=c.dataset.rxc;rxBar()});
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#rHlList'))rxListDlg()});
+function rxListDlg(){const H=rxMine().sort((a,b)=>a.page-b.page||(a.at||'').localeCompare(b.at||''));
+  msModal(`<div class="eyebrow">📒 Vurgularım ve ifadelerim</div><h3>${esc(R.book.title)}</h3>${H.length?`<div class="rxlist">${H.map(h=>`<button type="button" class="rxli" data-rxgo="${h.page}"><small>s. ${h.page}</small>${h.type==='emo'?`<span style="font-size:20px">${h.e}</span>`:`<span style="box-shadow:inset 0 -0.55em 0 ${h.color}">${esc(h.text||'(seçilemeyen yazı)')}</span>`}</button>`).join('')}</div>
+   <div class="msm-acts"><button class="btn" type="button" data-rxcopy>📋 Vurguları kopyala</button></div>`:'<p class="hint">Henüz vurgu ya da ifade yok. 🖍 ile satırları vurgula, 😊 ile sayfaya ifade bırak.</p>'}`,'wide')}
+document.addEventListener('click',async e=>{const g=e.target.closest&&e.target.closest('[data-rxgo]');if(g){msClose();goPage(+g.dataset.rxgo);return}
+  if(e.target.closest&&e.target.closest('[data-rxcopy]')){const H=rxMine().filter(h=>h.type==='hl'&&h.text).sort((a,b)=>a.page-b.page);if(await aiCopy(`${R.book.title}${R.book.author?' — '+R.book.author:''}\n\n`+H.map(h=>`“${h.text}” (s. ${h.page})`).join('\n\n')))toast('Kopyalandı')}});
+/* sayfa ifadesi */
+function rxEmoPick(){const b=$('rEmoBtn').getBoundingClientRect();rxPopClose();const m=document.createElement('div');m.className='rxpop';m.id='rxPop';m.dataset.id='';
+  m.innerHTML=`<p class="hint" style="margin:0 0 6px">Bu sayfaya bir ifade bırak</p><div class="rxemo">${RX_EMO.map(x=>`<button type="button" data-rxemo="${x}">${x}</button>`).join('')}</div>`;document.body.appendChild(m);m.style.left=Math.max(8,Math.min(innerWidth-m.offsetWidth-8,b.left+b.width/2-m.offsetWidth/2))+'px';m.style.top=(b.bottom+8)+'px'}
+document.addEventListener('click',async e=>{const x=e.target.closest&&e.target.closest('[data-rxemo]');if(!x)return;e.stopPropagation();const n=R.page,i=rxMine(n).filter(h=>h.type==='emo').length;rxPopClose();
+  await lfSet('hls',null,{type:'emo',book:R.book.id,page:n,e:x.dataset.rxemo,x:0.93,y:Math.min(0.9,0.04+i*0.07),at:new Date().toISOString()});toast(x.dataset.rxemo+' s. '+n+' sayfasına eklendi')},true);
+/* kalan süre */
+function rxSpeed(){let a=[];try{a=JSON.parse(localStorage.getItem('dk-spd')||'[]')}catch(e){}if(a.length<5)return 90;const s=a.slice().sort((p,q)=>p-q);return s[Math.floor(s.length/2)]}
+function rxTick(){const now=Date.now();if(RX.lastP&&RX.lastP!==R.page&&R.page===RX.lastP+1){const dt=(now-RX.lastT)/1000;if(dt>=8&&dt<=480){let a=[];try{a=JSON.parse(localStorage.getItem('dk-spd')||'[]')}catch(e){}a.push(Math.round(dt));try{localStorage.setItem('dk-spd',JSON.stringify(a.slice(-80)))}catch(e){}}}
+  if(RX.lastP!==R.page){RX.lastP=R.page;RX.lastT=now}}
+async function rxOutline(){const b=R.book;if(!b||!R.doc||R.epub||RX.olBook===b.id)return;RX.olBook=b.id;RX.ol=[];try{if(!R.doc.getOutline)return;const o=await R.doc.getOutline();if(!o)return;const P=[];
+  const walk=async(items,d)=>{for(const it of items||[]){try{let dest=it.dest;if(typeof dest==='string')dest=await R.doc.getDestination(dest);if(dest&&dest[0]){const i=await R.doc.getPageIndex(dest[0]);P.push(i+1)}}catch(e){}if(d<1)await walk(it.items,d+1)}};await walk(o,0);RX.ol=[...new Set(P)].sort((a,b)=>a-b);rxEta()}catch(e){}}
+function rxFmt(sec){const m=Math.max(1,Math.round(sec/60));return m<60?m+' dk':Math.floor(m/60)+' sa'+(m%60?' '+m%60+' dk':'')}
+function rxEta(){rxTick();let el=$('rEta');if(!el){el=document.createElement('span');el.id='rEta';el.className='hint reta';const f=document.querySelector('#reader .rfoot');if(!f)return;f.insertBefore(el,$('rSaved'))}
+  if(!R.doc||R.epub||!R.doc.numPages){el.textContent='';return}const sp=rxSpeed(),left=R.doc.numPages-R.page;const nx=(RX.ol||[]).find(p=>p>R.page);
+  el.textContent=(nx&&nx-R.page<=60?'Bölüm sonuna ~'+rxFmt((nx-R.page)*sp)+' · ':'')+(left>0?'Kitabın bitmesine ~'+rxFmt(left*sp):'Son sayfa 🎉');el.title='Senin okuma hızına göre tahmin ('+Math.round(sp)+' sn/sayfa)';
+  if(left===0&&R.book&&R.book.status!=='okundu'&&RX.doneAsk!==R.book.id){RX.doneAsk=R.book.id;rxDoneDlg()}}
+function rxDoneDlg(){const b=R.book;msModal(`<div class="eyebrow">🎉 Son sayfa!</div><h3>${esc(b.title)} bitti mi?</h3><p class="hint" style="margin:0">"Okundu" olarak işaretleyip bitirme kartını hazırlayayım mı? Kartta kapak, puanın, en sevdiğin alıntı, kaç günde okuduğun ve sayfalara bıraktığın ifadeler yer alır.</p>
+  <div class="rxstars" id="rxStars">${[1,2,3,4,5].map(i=>`<button type="button" data-rxst="${i}" aria-label="${i} yıldız">★</button>`).join('')}</div>
+  <div class="msm-acts"><button class="btn primary" type="button" data-rxdone="card">Bitirdim, kartımı hazırla</button><button class="btn" type="button" data-rxdone="mark">Sadece okundu yap</button><button class="btn" type="button" data-ms="close">Henüz değil</button></div>`)}
+document.addEventListener('click',async e=>{const s=e.target.closest&&e.target.closest('[data-rxst]');if(s){RX.rate=+s.dataset.rxst;document.querySelectorAll('[data-rxst]').forEach(x=>x.classList.toggle('on',+x.dataset.rxst<=RX.rate));return}
+  const d=e.target.closest&&e.target.closest('[data-rxdone]');if(!d)return;const b=R.book;if(!b)return;const upd={status:'okundu',finishedAt:lfK(),...(RX.rate?{rating:RX.rate}:{})};
+  try{await st.db.collection('books').doc(b.id).update(upd);Object.assign(b,upd)}catch(x){}msClose();toast('🎉 Tebrikler!');if(d.dataset.rxdone==='card'){try{await finishCard(Object.assign({},b,upd))}catch(x){toast('Kart oluşturulamadı')}}});
+/* okuyucu düğmeleri */
+(function(){const bar=document.querySelector('#reader .rbar');if(!bar)return;const ink=$('rInkBtn');
+  const h=document.createElement('button');h.className='iconbtn';h.id='rHlBtn';h.type='button';h.title='Vurgula';h.setAttribute('aria-label','Vurgula');h.textContent='🖍';
+  const m=document.createElement('button');m.className='iconbtn';m.id='rEmoBtn';m.type='button';m.title='Sayfaya ifade bırak';m.setAttribute('aria-label','Sayfaya ifade bırak');m.textContent='😊';
+  bar.insertBefore(h,ink);bar.insertBefore(m,ink);
+  h.addEventListener('click',()=>{if(R.epub){toast('Vurgulama şimdilik PDF kitaplarda');return}rxSetMode(!RX.mode)});
+  m.addEventListener('click',e=>{e.stopPropagation();if(R.epub){toast('İfadeler şimdilik PDF kitaplarda');return}rxEmoPick()});
+  $('rInkBtn').addEventListener('click',()=>{if(RX.mode)rxSetMode(false)})})();
+window.__rx={text:rxText};
+
 
 
 const SECS={
@@ -6916,10 +7063,10 @@ async function renderPage(){
     if(old&&dir&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const r=old.getBoundingClientRect(),sr=stage.getBoundingClientRect();ob={l:r.left-sr.left+stage.scrollLeft,t:r.top-sr.top+stage.scrollTop,w:r.width}}
     stage.querySelectorAll(':scope>.pgwrap:not(.flipping)').forEach(w=>{if(w!==old||!ob)rdFree(w)});stage.innerHTML='';stage.appendChild(wrap);
     if(ob){old.querySelectorAll('.inklayer').forEach(x=>x.remove());old.classList.add('flipping',dir>0?'fl-next':'fl-prev');Object.assign(old.style,{position:'absolute',left:ob.l+'px',top:ob.t+'px',width:ob.w+'px',margin:'0'});stage.appendChild(old);const rm=()=>{rdFree(old);old.remove()};old.addEventListener('animationend',rm);setTimeout(rm,700)}stage.scrollTop=0;
-    inkAttach(ink,R.book,R.page,dpr);rdW=stage.clientWidth;rdH=stage.clientHeight;
+    inkAttach(ink,R.book,R.page,dpr);rdW=stage.clientWidth;rdH=stage.clientHeight;try{rxAttach(wrap,R.page)}catch(e){}
   }catch(e){}
   R.rendering=false;
-  $('rPage').value=R.page;$('rPrev').disabled=R.page<=1;$('rNext').disabled=R.page>=R.doc.numPages;
+  $('rPage').value=R.page;$('rPrev').disabled=R.page<=1;$('rNext').disabled=R.page>=R.doc.numPages;try{rxEta();rxOutline()}catch(e){}
   if(R.pending){R.pending=false;renderPage()}
 }
 let posT;document.addEventListener('DOMContentLoaded',()=>{});
@@ -6932,7 +7079,7 @@ function barsBusy(){return !$('rPop').hidden||!$('rAskBox').hidden||!$('inkBar')
 function barsHide(){const r=$('reader');if(r.classList.contains('ah')&&!barsBusy())r.classList.add('bars-off')}
 function barsShow(){$('reader').classList.remove('bars-off')}
 function barsToggle(){const r=$('reader');if(!r.classList.contains('ah'))return;if(r.classList.contains('bars-off'))barsShow();else barsHide()}
-function footSync(){$('rPage').value=R.page;$('rPrev').disabled=R.page<=1;$('rNext').disabled=R.page>=R.doc.numPages}
+function footSync(){$('rPage').value=R.page;$('rPrev').disabled=R.page<=1;$('rNext').disabled=R.page>=R.doc.numPages;try{rxEta()}catch(e){}}
 function scrollToPage(n){const el=SCR.els[n-1],stg=$('rStage');if(!el)return;const r=$('reader'),pad=r.classList.contains('ah')?4:8;stg.scrollTop+=el.getBoundingClientRect().top-stg.getBoundingClientRect().top-pad;SCR.lastTop=stg.scrollTop}
 async function renderScroll(){
   const stage=$('rStage'),b=R.book,doc=R.doc;if(!doc)return;
@@ -6956,7 +7103,7 @@ async function scrDraw(n,doc,key){
     const c=document.createElement('canvas');c.width=Math.floor(vp.width*dpr);c.height=Math.floor(vp.height*dpr);c.style.width='100%';c.style.height='100%';c.setAttribute('aria-label','Sayfa '+n);
     await pg.render({canvasContext:c.getContext('2d'),viewport:vp,transform:dpr!==1?[dpr,0,0,dpr,0,0]:null}).promise;if(SCR.key!==key)return;
     const before=el.offsetTop<stage.scrollTop,oh=el.offsetHeight;
-    el.style.width=Math.floor(vp.width)+'px';el.style.height=Math.floor(vp.height)+'px';el.innerHTML='';el.appendChild(c);el.dataset.done='1';
+    el.style.width=Math.floor(vp.width)+'px';el.style.height=Math.floor(vp.height)+'px';el.innerHTML='';el.appendChild(c);el.dataset.done='1';try{rxAttach(el,n)}catch(e){}
     if(before)stage.scrollTop+=el.offsetHeight-oh;
     SCR.els.forEach((o,i)=>{if(o.dataset.done&&Math.abs(i+1-R.page)>3){rdFree(o);o.innerHTML='';delete o.dataset.done}});
   }catch(e){}finally{SCR.busy.delete(n)}
@@ -6977,11 +7124,11 @@ async function saveMark(force){
   clearTimeout(R.saveT);const b=R.book;if(!b||!st.db||(R.page===R.lastSaved&&!(R.epub&&Math.abs(R.pos-R.lastPos)>0.02)))return;
   const page=R.page,upd={currentPage:page,lastReadAt:new Date().toISOString()};if(R.epub){upd.epubPos=R.pos;R.lastPos=R.pos}
   const prevSaved=R.lastSaved||0;R.sess=(R.sess||0)+(page>prevSaved&&prevSaved?page-prevSaved:0);
-  if(b.status==='okunacak'&&(R.epub?R.sess>=1:R.sess>=5))upd.status='okunuyor';
+  if(b.status==='okunacak'&&(R.epub?R.sess>=1:R.sess>=5)){upd.status='okunuyor';if(!b.startedAt)upd.startedAt=lfK()}
   try{await st.db.collection('books').doc(b.id).update(upd);R.lastSaved=page;logReading(page>prevSaved?page-prevSaved:0,b);if(R.book===b)$('rSaved').textContent='🔖 Ayraç '+(R.epub?'bölüm ':'s. ')+page+' kaydedildi'}
   catch(e){if(R.book===b)$('rSaved').textContent='Ayraç kaydedilemedi'}
 }
-async function closeReader(){{const sb=document.getElementById('dkShareBar');if(sb)sb.remove()}await saveMark();if(typeof ttsStop==='function')ttsStop();$('ttsBar').hidden=true;$('ttsBar').dataset.open='0';$('inkBar').hidden=true;INK.canvas=null;INK.key='';if(R.epub){Object.values(R.epub.urls).forEach(u=>URL.revokeObjectURL(u))}R.book=null;R.doc=null;R.epub=null;R.firstEpub=null;SCR.key='';SCR.io&&SCR.io.disconnect();$('rStage').classList.remove('scrollflow');$('reader').classList.remove('bars-off');$('reader').hidden=true;document.body.style.overflow='';$('rStage').innerHTML='';renderSection()}
+async function closeReader(){{const sb=document.getElementById('dkShareBar');if(sb)sb.remove()}try{rxSetMode(false);rxPopClose();RX.lastP=0;const e_=$('rEta');if(e_)e_.textContent=''}catch(e){}await saveMark();if(typeof ttsStop==='function')ttsStop();$('ttsBar').hidden=true;$('ttsBar').dataset.open='0';$('inkBar').hidden=true;INK.canvas=null;INK.key='';if(R.epub){Object.values(R.epub.urls).forEach(u=>URL.revokeObjectURL(u))}R.book=null;R.doc=null;R.epub=null;R.firstEpub=null;SCR.key='';SCR.io&&SCR.io.disconnect();$('rStage').classList.remove('scrollflow');$('reader').classList.remove('bars-off');$('reader').hidden=true;document.body.style.overflow='';$('rStage').innerHTML='';renderSection()}
 $('rPrev').addEventListener('click',()=>goPage(R.page-1));
 $('rNext').addEventListener('click',()=>goPage(R.page+1));
 $('rPage').addEventListener('change',e=>goPage(parseInt(e.target.value)||1));
