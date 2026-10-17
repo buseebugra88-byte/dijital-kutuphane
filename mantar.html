@@ -138,6 +138,27 @@ ul.steps{margin:0;padding-left:22px;display:grid;gap:8px}
 .myth s{color:var(--danger);text-decoration-thickness:2px}
 a{color:var(--forest);font-weight:700}
 .toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;background:#2b2620;color:#fff;border-radius:16px;padding:12px 18px;font-size:17px;max-width:calc(100% - 32px);text-align:center}
+.wrap{zoom:var(--z,1)}
+.say{flex:none;width:52px;height:52px;border-radius:50%;border:2px solid var(--line);background:var(--card);font-size:24px;display:grid;place-items:center;padding:0}
+.rule .say{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.4)}.stop .say{justify-self:center;background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.5)}
+.az{min-height:52px;padding:8px 14px;font-size:20px}
+.b-spot{background:#eaf1f7;color:#1f3d5a;border:2px solid #bdd0e2}
+.season{border-color:#e6d2a8;background:#fffaf0}.warnline{color:#7a3b00}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#ece3d2;border-radius:16px;padding:5px}
+.seg button{border:0;background:transparent;border-radius:12px;padding:12px 6px;font-size:18px;font-weight:700;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--forest);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+button.card{width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.spot .dist{font-size:22px;font-weight:700;color:#1f3d5a}.dirw{font-size:19px;font-weight:700;color:var(--forest)}
+.big2{font-size:38px;font-weight:700;color:#1f3d5a;line-height:1.1}
+.radar svg{width:100%;max-width:320px;justify-self:center;height:auto}
+.legend{margin:0;padding-left:24px;font-size:17px;display:grid;gap:2px}
+.yr{display:grid;gap:10px}.yr h3 .muted{font-size:16px;font-weight:400}
+.card input:not([type=file]){width:100%;border:2px solid var(--line);border-radius:14px;background:#fff;padding:12px;font-size:18px}
+.linkbtn{display:block;text-align:center;text-decoration:none;color:var(--ink)}
+.tag.ok{background:var(--forest-soft);color:var(--forest)}
+.intro{min-height:calc(100vh - 60px);display:grid;align-content:center;gap:18px;text-align:center;justify-items:center}
+.intro .ib{font-size:84px;line-height:1}.intro p{font-size:21px;max-width:30ch}
+.dots{display:flex;gap:8px}.dots i{width:10px;height:10px;border-radius:50%;background:#d8ccb6}.dots i.on{background:var(--forest)}
 @media (max-width:380px){body{font-size:18px}.big{font-size:20px}.pair .two{grid-template-columns:1fr}}
 </style>
 </head>
@@ -145,7 +166,7 @@ a{color:var(--forest);font-weight:700}
 <main class="wrap" id="app"></main>
 <nav aria-label="Bölümler" id="nav">
   <button type="button" data-go="home"><span>🏠</span>Ana</button>
-  <button type="button" data-go="photo"><span>📷</span>Fotoğraf</button>
+  <button type="button" data-go="book"><span>📒</span>Defter</button>
   <button type="button" data-go="check"><span>✅</span>Kontrol</button>
   <button type="button" data-go="guide"><span>📖</span>Rehber</button>
   <button type="button" data-go="sos" class="sos"><span>🚨</span>Acil</button>
@@ -239,55 +260,129 @@ const NEVER=[
 ];
 const MYTHS=[['Gümüş kaşık kararırsa zehirlidir.','Gümüş kaşık zehri göstermez.'],['Sirkeli ya da tuzlu suda kaynatınca zehri gider.','Köygöçürenin zehri kaynatınca, pişince, kuruyunca da gitmez.'],['Böceklerin, salyangozların, hayvanların yediği mantar zehirsizdir.','Hayvanlar zehirlenmeden yiyebilir, insan zehirlenir.'],['Zehirli mantar kötü kokar, acıdır.','Köygöçürenin tadı ve kokusu hoştur; tadından anlaşılmaz.'],['Kesince maviye dönmüyorsa zehirsizdir.','Renk değişimi zehri göstermez.'],['Yoğurt, ayran, süt zehirlenmeyi önler.','Önlemez. Evde tedavi denemeyin, hastaneye gidin.'],['Zehirliyle yenen ayrı yerlerde çıkar.','Yan yana çıkabilirler.'],['Çayırda ya da ağaçta çıkan mantar zehirsizdir.','Her yerde zehirli mantar çıkabilir.']];
 
+/* ---------- mevsim ---------- */
+const SEASON=[
+ {m:[9,10,11],t:'Sonbahar: mantarın en bol, en tehlikeli zamanı',ok:'Kanlıca (çam altı), çayır ve şemsiye mantarı, yumurta mantarı',bad:'Köygöçüren ve panter mantarı en çok bu aylarda çıkar. Zeytin dibindeki turuncu mantar da Eylül-Ocak arası görülür.'},
+ {m:[12,1,2],t:'Kış',ok:'Kanlıca yağmura göre sürebilir',bad:'Zeytin dibindeki turuncu mantar Ocak’a kadar çıkabilir. Bozulmuş, donmuş-çözülmüş mantarı toplamayın.'},
+ {m:[3,4,5],t:'İlkbahar: kuzugöbeği zamanı',ok:'Kuzugöbeği',bad:'Yalancı kuzugöbeği (beyin gibi kıvrımlı) aynı zamanda çıkar. Boyuna kesip içine bakın.'},
+ {m:[6,7,8],t:'Yaz: kurak dönem',ok:'Mantar azdır',bad:'Yaz sonunda ilk yağmurlarla köygöçüren çıkmaya başlar.'}];
+function seasonCard(){const m=new Date().getMonth()+1,s=SEASON.find(x=>x.m.includes(m));return `<div class="card season"><div class="row" style="justify-content:space-between;align-items:center"><h3>🍂 ${s.t}</h3>${speakBtn(s.t+'. Toplananlar: '+s.ok+'. Dikkat: '+s.bad)}</div><p><b>Toplananlar:</b> ${s.ok}</p><p class="warnline"><b>Dikkat:</b> ${s.bad}</p><p class="muted" style="font-size:15px">Aylar yağmura göre değişir; yaklaşık bilgidir.</p></div>`}
+
+/* ---------- sesli okuma ---------- */
+const plain=h=>String(h).replace(/<[^>]+>/g,'').replace(/&[a-z]+;/g,' ');
+function speak(t){try{const ss=window.speechSynthesis;if(!ss){toast('Bu telefonda sesli okuma yok');return}ss.cancel();const u=new SpeechSynthesisUtterance(plain(t));u.lang='tr-TR';u.rate=.92;const v=ss.getVoices().find(v=>/^tr/i.test(v.lang));if(v)u.voice=v;ss.speak(u)}catch(e){toast('Sesli okuma açılamadı')}}
+const SAY=[];function speakBtn(t){SAY.push(t);return `<button class="say" type="button" data-say="${SAY.length-1}" aria-label="Sesli oku">🔊</button>`}
+
+/* ---------- konum ---------- */
+function here(){return new Promise((ok,no)=>{if(!navigator.geolocation)return no({ui:'Bu telefon konum veremiyor.'});
+  navigator.geolocation.getCurrentPosition(p=>ok({lat:p.coords.latitude,lng:p.coords.longitude,acc:Math.round(p.coords.accuracy||0),at:Date.now()}),
+   e=>no({ui:e&&e.code===1?'Konum izni verilmedi. Telefonun ayarlarından bu uygulamaya konum izni verin.':'Konum bulunamadı. Açık havada birkaç saniye bekleyip tekrar deneyin.'}),{enableHighAccuracy:true,timeout:20000,maximumAge:5000})})}
+const R=6371000,rad=x=>x*Math.PI/180;
+function dist(a,b){const dl=rad(b.lat-a.lat),dn=rad(b.lng-a.lng),h=Math.sin(dl/2)**2+Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+function bearing(a,b){const y=Math.sin(rad(b.lng-a.lng))*Math.cos(rad(b.lat)),x=Math.cos(rad(a.lat))*Math.sin(rad(b.lat))-Math.sin(rad(a.lat))*Math.cos(rad(b.lat))*Math.cos(rad(b.lng-a.lng));return (Math.atan2(y,x)*180/Math.PI+360)%360}
+const DIRS=['kuzey','kuzeydoğu','doğu','güneydoğu','güney','güneybatı','batı','kuzeybatı'];
+const dirOf=b=>DIRS[Math.round(b/45)%8];const cap1=t=>t.charAt(0).toLocaleUpperCase('tr-TR')+t.slice(1);
+const mfmt=m=>m<1000?Math.round(m/10)*10+' m':(m/1000).toLocaleString('tr-TR',{maximumFractionDigits:1})+' km';
+const mapsUrl=p=>`https://www.google.com/maps/search/?api=1&query=${p.lat.toFixed(6)},${p.lng.toFixed(6)}`;
+
 /* ---------- durum ---------- */
-const S={view:'home',rec:null,draft:null,qi:0,answers:{},result:null,forRec:null,guideOpen:null};
+const S={view:'home',sub:'spots',rec:null,draft:null,qi:0,answers:{},result:null,forRec:null,me:null,heading:null,compass:false,aiConfirm:null,spot:null,intro:!store('intro'),introI:0};
 const SHOTS=[['top','Üstü','Şapkanın üstü, rengi görünsün.','🍄'],['under','Altı','Şapkayı ters çevirin; lameller görünsün.','🔄'],['base','Sapın dibi','Toprağı kazıyıp çıkarın; sapın en dibi görünsün.','⛏️'],['cut','Kesiti','Boyuna ikiye kesin; içi ve süt görünsün.','🔪']];
 const PLACES=['Çam altı','Zeytin dibi','Meşe / orman','Çayır','Ağaç kütüğü / odun','Bahçe'];
+let SPOTS=store('spots')||[];const saveSpots=()=>store('spots',SPOTS);
+let ZOOM=store('zoom')||1;function applyZoom(){document.documentElement.style.setProperty('--z',ZOOM)}applyZoom();
 
 function go(v,opts){S.view=v;Object.assign(S,opts||{});render();window.scrollTo({top:0})}
-document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(!b)return;if(b.dataset.go==='check'){S.qi=0;S.answers={};S.result=null;S.forRec=null}if(b.dataset.go==='photo'){S.draft=null}go(b.dataset.go)});
+function resetCheck(){S.qi=0;S.answers={};S.result=null;S.forRec=null}
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(!b)return;const v=b.dataset.go;if(v==='check')resetCheck();if(v==='book'){S.rec=null;S.draft=null;S.spot=null}go(v)});
 
 /* ---------- yediğimiz saat ---------- */
 function ateInfo(){const a=store('ate');if(!a)return null;const h=(Date.now()-a)/36e5;if(h>96){store('ate',null);return null}return {at:a,h}}
 function hrs(h){const H=Math.floor(h),M=Math.floor((h-H)*60);return H?`${H} saat ${M} dakika`:`${M} dakika`}
 function ateCard(){const a=ateInfo();
   if(!a)return `<div class="card ate"><h3>Yabani mantar mı yediniz?</h3><p class="muted">Yediğiniz saati kaydedin. Bir şey olursa doktora söylemek çok önemli.</p><button class="btn wide" type="button" data-act="ate">🕒 Yedik, saati kaydet</button></div>`;
-  return `<div class="card ate" style="border-color:${a.h>=6?'#e7b2ab':'var(--line)'}"><h3>Mantar yiyeli</h3><div class="t">${hrs(a.h)} oldu</div>
-   <p>${a.h<6?'Mide bulantısı, kusma, ishal ya da karın ağrısı olursa hemen hastaneye gidin.':'<b style="color:var(--danger)">6 saatten sonra başlayan bulantı, kusma, ishal en tehlikeli olanıdır.</b> Böyle bir şey olursa hiç beklemeden hastaneye gidin.'} Belirti olmasa bile 2-3 gün dikkatli olun.</p>
+  const msg=a.h<6?'Mide bulantısı, kusma, ishal ya da karın ağrısı olursa hemen hastaneye gidin.':'6 saatten sonra başlayan bulantı, kusma, ishal en tehlikeli olanıdır. Böyle bir şey olursa hiç beklemeden hastaneye gidin.';
+  return `<div class="card ate" style="border-color:${a.h>=6?'#e7b2ab':'var(--line)'}"><div class="row" style="justify-content:space-between;align-items:center"><h3>Mantar yiyeli</h3>${speakBtn('Mantar yiyeli '+hrs(a.h)+' oldu. '+msg)}</div><div class="t">${hrs(a.h)} oldu</div>
+   <p>${a.h<6?msg:'<b style="color:var(--danger)">'+msg+'</b>'} Belirti olmasa bile 2-3 gün dikkatli olun.</p>
    <div class="row"><button class="btn red" type="button" data-go2="sos">🚨 Acil durum</button><button class="btn" type="button" data-act="ateclear">Kaydı sil</button></div></div>`}
 
 /* ---------- ekranlar ---------- */
-function vHome(){return `<div class="top"><img src="mantar-192.png" alt=""><div><h1>Mantar Bekçisi</h1><small>Kaş · Antalya</small></div></div>
- <div class="rule"><b>Emin olmadığınız mantarı yemeyin.</b><span>Bu uygulama hiçbir mantara “yenir” demez. Şüpheli işaret görürse uyarır, gerisini uzmana bırakır.</span></div>
- <button class="big b-photo" type="button" data-go2="photo"><span class="i">📷</span><span>Fotoğrafla ve ${esc(ASK)}’ye sor<small>4 fotoğraf çekin, WhatsApp’tan gönderin</small></span></button>
+function vHome(){return `<div class="top"><img src="mantar-192.png" alt=""><div style="flex:1"><h1>Mantar Bekçisi</h1><small>Kaş · Antalya</small></div><button class="btn az" type="button" data-act="zoom" aria-label="Yazıyı büyüt">A${ZOOM>1?'−':'+'}</button></div>
+ <div class="rule"><div class="row" style="justify-content:space-between;align-items:flex-start;flex-wrap:nowrap"><b>Emin olmadığınız mantarı yemeyin.</b>${speakBtn('Emin olmadığınız mantarı yemeyin. Bu uygulama hiçbir mantara yenir demez. Şüpheli işaret görürse uyarır, gerisini uzmana bırakır.')}</div><span>Bu uygulama hiçbir mantara “yenir” demez. Şüpheli işaret görürse uyarır, gerisini uzmana bırakır.</span></div>
+ <button class="big b-photo" type="button" data-act="newrec"><span class="i">📷</span><span>Fotoğrafla ve ${esc(ASK)}’ye sor<small>4 fotoğraf çekin, WhatsApp’tan gönderin</small></span></button>
  <button class="big b-check" type="button" data-go2="check"><span class="i">✅</span><span>Yemeden önce kontrol et<small>Tek tek sorular, büyük düğmeler</small></span></button>
+ <button class="big b-spot" type="button" data-go2="book" data-sub="spots"><span class="i">📍</span><span>Ocaklarım<small>Kaydettiğiniz yerler, internetsiz de</small></span></button>
  <button class="big b-sos" type="button" data-go2="sos"><span class="i">🚨</span><span>Acil durum<small>Mantar yedikten sonra rahatsızlık</small></span></button>
- ${ateCard()}
- <button class="big b-guide" type="button" data-go2="guide"><span class="i">📖</span><span>Karıştırılan mantarlar<small>Kaş’ta toplananlar ve zehirli ikizleri</small></span></button>`}
+ ${ateCard()}${seasonCard()}
+ <button class="big b-guide" type="button" data-go2="guide"><span class="i">📖</span><span>Karıştırılan mantarlar<small>Kaş’ta toplananlar ve zehirli ikizleri</small></span></button>
+ <button class="btn wide" type="button" data-act="introagain" style="font-weight:400">❔ Uygulama nasıl kullanılır?</button>`}
 
-function vPhoto(){
+/* --- defter: ocaklar + kayıtlar --- */
+function vBook(){
   if(S.rec){const r=RECS.find(x=>x.id===S.rec);if(r)return vRec(r)}
-  const d=S.draft||(S.draft={id:'m'+Date.now().toString(36),at:Date.now(),imgs:{},place:'',note:''});
-  const n=Object.keys(d.imgs).length;
-  return `<h2>Mantarı fotoğrafla</h2><p class="muted">Her biri için düğmeye basın, telefonun kamerası açılır.</p>
+  if(S.draft)return vDraft();
+  if(S.spot){const sp=SPOTS.find(x=>x.id===S.spot);if(sp)return vSpot(sp)}
+  return `<h2>Mantar defteri</h2><div class="seg"><button type="button" data-sub="spots" aria-pressed="${S.sub==='spots'}">📍 Ocaklarım</button><button type="button" data-sub="recs" aria-pressed="${S.sub==='recs'}">📒 Kayıtlar</button></div>
+   ${S.sub==='spots'?vSpots():vRecs()}`}
+function vSpots(){const me=S.me;
+  const L=SPOTS.map(s=>({s,d:me?dist(me,s):null,b:me?bearing(me,s):null})).sort((a,b)=>(a.d??1e12)-(b.d??1e12)||(b.s.at-a.s.at));
+  return `<div class="card"><div class="row" style="justify-content:space-between;align-items:center"><h3>Neredeyim?</h3>${speakBtn('Buradayım düğmesine basınca telefon yerinizi bulur. Ocaklarınızın ne kadar uzakta ve hangi yönde olduğunu gösterir. Bunun için internet gerekmez.')}</div>
+    <p class="muted">Ocaklarınızın uzaklığını ve yönünü gösterir. İnternet gerekmez, telefonun konumu yeter.</p>
+    <button class="btn pri wide" type="button" data-act="locate">📡 ${me?'Yerimi yenile':'Buradayım, yerimi bul'}</button>
+    ${me?`<span class="muted" style="font-size:15px">Konum ${new Date(me.at).toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})} · ±${me.acc} m</span>`:''}
+    <button class="btn wide" type="button" data-act="addspot">➕ Burası bir ocak, kaydet</button></div>
+   ${me&&SPOTS.length?radar(L):''}
+   ${L.length?L.map(({s,d,b})=>`<button type="button" class="card spot" data-spot="${s.id}"><div class="row" style="justify-content:space-between;align-items:center;flex-wrap:nowrap"><b>📍 ${esc(s.name)}</b>${d!=null?`<span class="dist">${mfmt(d)}</span>`:''}</div>
+     ${d!=null?`<span class="dirw">${d<40?'Tam buradasınız':cap1(dirOf(b))+' yönünde'}</span>`:''}<span class="muted" style="font-size:15px">${s.kind?esc(s.kind)+' · ':''}${(s.visits||[]).length?'son gidiş '+new Date(s.visits[s.visits.length-1]).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'}):'kaydedildi '+new Date(s.at).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})}</span></button>`).join('')
+   :'<p class="empty">Henüz ocak yok.<br>Mantar topladığınız yerde “Burası bir ocak, kaydet” düğmesine basın. Seneye aynı yeri kolayca bulursunuz.</p>'}`}
+function radar(L){const W=300,C=W/2,maxD=Math.max(...L.map(x=>x.d));const steps=[100,200,500,1000,2000,5000,10000,20000,50000];const range=steps.find(s=>s>=maxD*1.1)||maxD*1.1;const k=(C-26)/range,rot=S.compass&&S.heading!=null?-S.heading:0;
+  return `<div class="card radar"><div class="row" style="justify-content:space-between;align-items:center"><h3>Etrafım</h3><button class="chip" type="button" data-act="compass" aria-pressed="${S.compass}">🧭 Pusula ${S.compass?'açık':'kapalı'}</button></div>
+   <svg viewBox="0 0 ${W} ${W}" role="img" aria-label="Ocakların haritası">
+    <circle cx="${C}" cy="${C}" r="${C-6}" fill="#eef3ea" stroke="#c9d8c2"/><circle cx="${C}" cy="${C}" r="${(C-26)/2}" fill="none" stroke="#c9d8c2" stroke-dasharray="4 5"/>
+    <g transform="rotate(${rot} ${C} ${C})"><text x="${C}" y="22" text-anchor="middle" font-size="16" font-weight="700" fill="#b3261e">K</text>
+    ${L.map(({s,d,b},i)=>{const x=C+Math.sin(rad(b))*d*k,y=C-Math.cos(rad(b))*d*k;return `<g transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><circle r="9" fill="#3f6b4a" stroke="#fff" stroke-width="2"/><text y="4" text-anchor="middle" font-size="11" font-weight="700" fill="#fff" transform="rotate(${-rot})">${i+1}</text></g>`}).join('')}</g>
+    <circle cx="${C}" cy="${C}" r="8" fill="#2b6fd6" stroke="#fff" stroke-width="3"/>${S.compass?`<path d="M${C} ${C-24} l-7 12 h14z" fill="#2b6fd6"/>`:''}
+   </svg><span class="muted" style="font-size:15px">Mavi nokta sizsiniz. Kesikli halka ${mfmt(range/2)}, dış halka ${mfmt(range)}. ${S.compass?'Telefonu düz tutun; harita baktığınız yöne döner.':'Yukarısı kuzey.'}</span>
+   <ol class="legend">${L.map(({s,d})=>`<li>${esc(s.name)} · ${mfmt(d)}</li>`).join('')}</ol></div>`}
+function vSpot(sp){const me=S.me,d=me?dist(me,sp):null,b=me?bearing(me,sp):null,recs=RECS.filter(r=>r.spot===sp.id);
+  return `<button class="btn" type="button" data-act="back">‹ Geri</button><h2>📍 ${esc(sp.name)}</h2>
+   ${d!=null?`<div class="card"><div class="dist big2">${mfmt(d)}</div><div class="dirw">${d<40?'Tam buradasınız':cap1(dirOf(b))+' yönünde'}</div>${speakBtn(esc(sp.name)+' ocağı '+mfmt(d)+(d<40?'. Tam buradasınız.':', '+dirOf(b)+' yönünde.'))}</div>`:`<div class="card"><p>Uzaklığı görmek için yerinizi bulun.</p></div>`}
+   <button class="btn pri wide" type="button" data-act="locate">📡 Yerimi yenile</button>
+   <a class="btn wide linkbtn" href="${mapsUrl(sp)}" target="_blank" rel="noopener">🗺 Haritada aç (internet gerekir)</a>
+   <div class="card"><label for="spName"><b>Adı</b></label><input id="spName" value="${esc(sp.name)}"><label for="spNote"><b>Not</b></label><textarea id="spNote" placeholder="ör. büyük zeytinin dibi, dere kenarı">${esc(sp.note||'')}</textarea>
+    <div class="chips">${PLACES.map(p=>`<button type="button" class="chip" data-spkind="${esc(p)}" aria-pressed="${sp.kind===p}">${p}</button>`).join('')}</div>
+    <button class="btn wide" type="button" data-act="spotsave" data-id="${sp.id}">Kaydet</button></div>
+   <button class="btn wide" type="button" data-act="visit" data-id="${sp.id}">✔ Bugün buraya geldik</button>
+   ${(sp.visits||[]).length?`<div class="card"><h3>Gidişler</h3>${sp.visits.slice().reverse().map(v=>`<span>${new Date(v).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'})}</span>`).join('')}</div>`:''}
+   ${recs.length?`<h3>Bu ocaktan kayıtlar</h3>${recs.map(recCard).join('')}`:''}
+   <button class="btn wide" type="button" data-act="spotdel" data-id="${sp.id}">🗑 Ocağı sil</button>`}
+function vRecs(){if(!RECS.length)return '<p class="empty">Henüz kayıt yok.<br>Ana sayfadaki “Fotoğrafla” düğmesiyle ilk mantarınızı kaydedin.</p><button class="btn pri wide" type="button" data-act="newrec">📷 Yeni kayıt</button>';
+  const Y={};RECS.forEach(r=>{const y=new Date(r.at).getFullYear();(Y[y]=Y[y]||[]).push(r)});
+  return `<button class="btn pri wide" type="button" data-act="newrec">📷 Yeni kayıt</button>`+Object.keys(Y).sort((a,b)=>b-a).map(y=>`<div class="yr"><h3>${y} <span class="muted">· ${Y[y].length} kayıt · ${Y[y].filter(r=>r.ok).length} onaylı</span></h3>${Y[y].map(recCard).join('')}</div>`).join('')}
+
+function vDraft(){const d=S.draft,n=Object.keys(d.imgs).length;
+  return `<button class="btn" type="button" data-act="back">‹ Geri</button><h2>Mantarı fotoğrafla</h2><p class="muted">Her biri için düğmeye basın, telefonun kamerası açılır.</p>
   <div class="shots">${SHOTS.map(([k,t,h,ic])=>{const b=d.imgs[k];return `<div class="shot${b?' done':''}"><div class="ph" style="${b?`background-image:url(${urlOf(b)})`:''}">${b?'':ic}</div><div><b>${t}</b><p>${h}</p><label>${b?'Yeniden çek':'📷 Çek'}<input type="file" accept="image/*" capture="environment" data-shot="${k}"></label></div></div>`}).join('')}</div>
   <div class="card"><h3>Nerede buldunuz?</h3><div class="chips">${PLACES.map(p=>`<button type="button" class="chip" data-place="${esc(p)}" aria-pressed="${d.place===p}">${p}</button>`).join('')}</div>
-   <textarea id="note" placeholder="Not (isteğe bağlı): kaç tane, nasıl kokuyor…">${esc(d.note)}</textarea></div>
+   <button class="btn wide" type="button" data-act="draftloc">📍 ${d.loc?'Konum eklendi ✓'+(d.spot?' · '+esc((SPOTS.find(s=>s.id===d.spot)||{}).name||''):''):'Konumu ekle'}</button>
+   <input id="amount" placeholder="Ne kadar? (ör. yarım sepet, 12 tane)" value="${esc(d.amount||'')}">
+   <textarea id="note" placeholder="Not (isteğe bağlı): nasıl kokuyor, neye benziyor…">${esc(d.note)}</textarea></div>
   <button class="btn pri wide" type="button" data-act="send" ${n?'':'disabled'}>📤 ${esc(ASK)}’ye gönder (WhatsApp)</button>
   <button class="btn wide" type="button" data-act="aidraft" ${n?'':'disabled'}>🤖 Yapay zekâya sor</button>
   <button class="btn wide" type="button" data-act="savecheck" ${n?'':'disabled'}>✅ Kaydet ve kontrol listesine geç</button>
-  ${RECS.length?`<h3 style="margin-top:8px">Önceki kayıtlar</h3>${RECS.map(recCard).join('')}`:''}`}
-function verdictTag(r){return r.verdict==='red'?'<span class="tag red">YEMEYİN</span>':r.verdict==='amber'?'<span class="tag amber">Uzmana gösterin</span>':'<span class="tag none">Kontrol edilmedi</span>'}
-function recCard(r){const im=SHOTS.map(([k])=>r.imgs[k]).filter(Boolean);return `<button type="button" class="card rec" data-rec="${r.id}" style="text-align:left;cursor:pointer"><div class="row" style="justify-content:space-between;align-items:center"><b>${new Date(r.at).toLocaleString('tr-TR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})}</b>${verdictTag(r)}</div>
-  <div class="th">${im.map(b=>`<i style="background-image:url(${urlOf(b)})"></i>`).join('')}</div>${r.place?`<span class="muted">${esc(r.place)}</span>`:''}</button>`}
-function vRec(r){const im=SHOTS.filter(([k])=>r.imgs[k]);
+  <button class="btn wide" type="button" data-act="savedraft" ${n?'':'disabled'}>💾 Sadece kaydet</button>`}
+function verdictTag(r){return (r.ok?'<span class="tag ok">'+esc(ASK)+' onayladı</span> ':'')+(r.verdict==='red'?'<span class="tag red">YEMEYİN</span>':r.verdict==='amber'?'<span class="tag amber">Uzmana gösterin</span>':'<span class="tag none">Kontrol edilmedi</span>')}
+function recCard(r){const im=SHOTS.map(([k])=>r.imgs[k]).filter(Boolean),sp=r.spot&&SPOTS.find(s=>s.id===r.spot);return `<button type="button" class="card rec" data-rec="${r.id}"><div class="row" style="justify-content:space-between;align-items:center"><b>${new Date(r.at).toLocaleString('tr-TR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})}</b><span>${verdictTag(r)}</span></div>
+  <div class="th">${im.map(b=>`<i style="background-image:url(${urlOf(b)})"></i>`).join('')}</div><span class="muted">${[sp?'📍 '+esc(sp.name):'',esc(r.place||''),esc(r.amount||'')].filter(Boolean).join(' · ')}</span></button>`}
+function vRec(r){const im=SHOTS.filter(([k])=>r.imgs[k]),sp=r.spot&&SPOTS.find(s=>s.id===r.spot);
   return `<button class="btn" type="button" data-act="back">‹ Geri</button><h2>${new Date(r.at).toLocaleString('tr-TR',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})}</h2>
   <div>${verdictTag(r)}</div>${r.reasons&&r.reasons.length?`<div class="card" style="border-color:#e7b2ab"><b style="color:var(--danger)">Neden yememeli?</b>${r.reasons.map(x=>`<p>${esc(x)}</p>`).join('')}</div>`:''}
   <div class="shots">${im.map(([k,t])=>`<div class="card" style="padding:10px"><b>${t}</b><img src="${urlOf(r.imgs[k])}" alt="${t}" style="width:100%;border-radius:12px;display:block"></div>`).join('')}</div>
-  ${r.place||r.note?`<div class="card">${r.place?`<b>${esc(r.place)}</b>`:''}${r.note?`<p>${esc(r.note)}</p>`:''}</div>`:''}
+  ${r.place||r.note||r.amount||sp||r.loc?`<div class="card">${sp?`<button class="chip" type="button" data-spot="${sp.id}">📍 ${esc(sp.name)}</button>`:''}${r.place?`<b>${esc(r.place)}</b>`:''}${r.amount?`<p>${esc(r.amount)}</p>`:''}${r.note?`<p>${esc(r.note)}</p>`:''}${r.loc&&!sp?`<button class="btn" type="button" data-act="rec2spot" data-id="${r.id}">📍 Bu yeri ocak olarak kaydet</button>`:''}</div>`:''}
   <button class="btn pri wide" type="button" data-act="sendrec" data-id="${r.id}">📤 ${esc(ASK)}’ye gönder (WhatsApp)</button>
   ${S.aiConfirm===r.id?`<div class="caution" id="aiBox"><h2>🤖 Yapay zekâ da yanılabilir</h2><p>Fotoğraflar ve hazır bir soru, seçeceğiniz uygulamaya (ChatGPT, Gemini, Claude) gider. Uygulamada soruyu gönderin.</p><p><b>Yapay zekâ “yenir” dese bile uzmana göstermeden yemeyin.</b> Zehirli olabilir derse hemen atın.</p><button class="btn pri wide" type="button" data-act="aigo" data-id="${r.id}">Anladım, sor</button><button class="btn wide" type="button" data-act="aicancel">Vazgeç</button></div>`:`<button class="btn wide" type="button" data-act="ai" data-id="${r.id}">🤖 Yapay zekâya sor</button>`}
   <button class="btn wide" type="button" data-act="checkrec" data-id="${r.id}">✅ Kontrol listesini yap</button>
+  <div class="card"><b>${esc(ASK)} ya da bir uzman baktı mı?</b><p class="muted" style="font-size:16px">Sadece mantarı gören kişi “tamam” dediyse işaretleyin.</p><button class="btn wide${r.ok?' pri':''}" type="button" data-act="okrec" data-id="${r.id}">${r.ok?'✓ '+esc(ASK)+' onayladı':esc(ASK)+' onayladı olarak işaretle'}</button></div>
   <button class="btn wide" type="button" data-act="delrec" data-id="${r.id}">🗑 Kaydı sil</button>`}
 
 function vCheck(){
@@ -295,23 +390,26 @@ function vCheck(){
   const q=QS[S.qi],btn=q.btn||[['EVET','yes'],['HAYIR','no'],['EMİN DEĞİLİM','unsure']];
   return `<div class="row" style="justify-content:space-between;align-items:center"><span class="muted">Soru ${S.qi+1} / ${QS.length}</span>${S.qi?'<button class="btn" type="button" data-act="qback" style="min-height:44px;padding:8px 14px">‹ Önceki</button>':''}</div>
   <div class="prog"><i style="width:${S.qi/QS.length*100}%"></i></div>
-  <p class="q">${q.q}</p><p class="qhint">💡 ${q.h}</p>
+  <div class="row" style="flex-wrap:nowrap;align-items:flex-start;gap:12px"><p class="q" style="flex:1">${q.q}</p>${speakBtn(q.q+'. '+q.h)}</div><p class="qhint">💡 ${q.h}</p>
   <div class="ans">${btn.map(([l,v])=>`<button type="button" class="a-${v}" data-ans="${v}">${l}</button>`).join('')}</div>`}
 function vResult(){const R=S.result;
-  if(R.v==='red')return `<div class="stop"><div class="x">✋</div><h2>YEMEYİN</h2><p>${esc(R.why)}</p></div>
+  if(R.v==='red'){setTimeout(()=>{if(store('autosay'))speak('Yemeyin. '+R.why)},200);
+   return `<div class="stop"><div class="x">✋</div><h2>YEMEYİN</h2><p>${esc(R.why)}</p>${speakBtn('Yemeyin. '+R.why)}</div>
    <div class="card"><ul class="steps"><li>Bu mantarı <b>atın</b>, ellerinizi yıkayın.</li><li>Aynı sepetteki mantarlara karışmışsa <b>onları da yemeyin</b>.</li><li>Merak ediyorsanız fotoğrafını ${esc(ASK)}’ye ya da bir uzmana gönderin.</li><li>Yediyseniz: belirti olmasa bile <b>hemen 112’yi arayın</b> ya da hastaneye gidin.</li></ul></div>
-   <button class="btn pri wide" type="button" data-go2="photo">📷 Fotoğrafla ve ${esc(ASK)}’ye sor</button>
+   <button class="btn pri wide" type="button" data-act="newrec">📷 Fotoğrafla ve ${esc(ASK)}’ye sor</button>
    <button class="btn red wide" type="button" data-go2="sos">🚨 Yedik, acil durum</button>
-   <button class="btn wide" type="button" data-act="restart">Başka bir mantarı kontrol et</button>`;
-  return `<div class="caution"><div style="font-size:48px">⚠️</div><h2>Uzmana göstermeden yemeyin</h2>
+   <button class="btn wide" type="button" data-act="restart">Başka bir mantarı kontrol et</button>`}
+  const t='Uzmana göstermeden yemeyin. Sorularda tehlikeli bir işaret çıkmadı. Ama bu, mantarın yenebilir olduğu anlamına gelmez.';
+  return `<div class="caution"><div class="row" style="justify-content:space-between;align-items:center"><div style="font-size:48px">⚠️</div>${speakBtn(t)}</div><h2>Uzmana göstermeden yemeyin</h2>
    <p>Sorularda tehlikeli bir işaret çıkmadı. <b>Ama bu, mantarın yenebilir olduğu anlamına gelmez.</b> Birçok zehirli mantar bu sorulardan geçebilir.</p></div>
    <div class="card"><h3>Yine de yiyecekseniz</h3><ul class="steps"><li>Önce fotoğrafları ${esc(ASK)}’ye ya da bir uzmana gösterin.</li><li><b>Bir tanesini pişirmeden buzdolabında saklayın.</b> Zehirlenmede doktor ona bakar.</li><li>Az yiyin, iyice pişirin, <b>çiğ yemeyin</b>.</li><li>Yanında <b>alkol</b> içmeyin.</li><li>Yediğiniz saati kaydedin.</li></ul></div>
-   <button class="btn pri wide" type="button" data-go2="photo">📷 Fotoğrafla ve ${esc(ASK)}’ye sor</button>
+   <button class="btn pri wide" type="button" data-act="newrec">📷 Fotoğrafla ve ${esc(ASK)}’ye sor</button>
    <button class="btn wide" type="button" data-act="ate">🕒 Yedik, saati kaydet</button>
    <button class="btn wide" type="button" data-act="restart">Başka bir mantarı kontrol et</button>`}
 
 function vSos(){const a=ateInfo();
-  return `<h2 style="color:var(--danger)">Acil durum</h2>
+  const say='Mantar yedikten sonra bulantı, kusma, ishal, karın ağrısı ya da baş dönmesi olursa hemen hastaneye gidin ya da 112yi arayın. Mantarı yiyen herkes gitsin. Mantardan kalanı yanınıza alın. Evde yoğurt, süt ya da ilaçla tedavi denemeyin.';
+  return `<div class="row" style="justify-content:space-between;align-items:center"><h2 style="color:var(--danger)">Acil durum</h2>${speakBtn(say)}</div>
   ${a?`<div class="card" style="border-color:#e7b2ab"><b>Mantar yiyeli ${hrs(a.h)} oldu.</b><span class="muted">Bunu doktora söyleyin.</span></div>`:''}
   <a class="call c112" href="tel:112">📞 112<small>Acil çağrı · ambulans</small></a>
   <a class="call c114" href="tel:114">☎️ 114<small>Ulusal Zehir Danışma Merkezi</small></a>
@@ -328,25 +426,39 @@ function vGuide(){
   return `<h2>Karıştırılan mantarlar</h2><p class="muted">Kaş ve çevresinde toplananlar ile zehirli ikizleri. Resimler ayırt edici yerleri göstermek için çizildi; gerçek mantarlar farklı görünebilir.</p>
   <div class="qhint">Kontrol listesi, eteği ya da dibinde kesesi olduğu için bazı yenen mantarlara da “yemeyin” der. Bu bilerek böyle: şüphede uyarmak, yanlış bir “tamam”dan iyidir.</div>
   ${PAIRS.map(p=>`<div class="card pair"><div class="two"><figure class="ok">${p.ok.d}<figcaption><b>${p.ok.n}</b>toplanan</figcaption></figure><figure class="bad">${p.bad.d}<figcaption><b>${p.bad.n}</b>zehirli ikizi</figcaption></figure></div>
-   <span class="muted">${p.where}</span><div class="diff">${p.diff.map(([i,t])=>`<div><span>${i}</span><span>${t}</span></div>`).join('')}</div></div>`).join('')}
+   <div class="row" style="justify-content:space-between;align-items:center"><span class="muted">${p.where}</span>${speakBtn(p.ok.n+' ve '+p.bad.n+'. '+p.diff.map(d=>d[1]).join(' '))}</div><div class="diff">${p.diff.map(([i,t])=>`<div><span>${i}</span><span>${t}</span></div>`).join('')}</div></div>`).join('')}
   <div class="card never"><h3 style="color:var(--danger)">Bunlara asla dokunmayın</h3>${NEVER.map(n=>`<div class="row" style="flex-wrap:nowrap;align-items:center"><div style="width:96px;flex:none">${n.d}</div><div><b>${n.n}</b><p style="font-size:17px">${n.t}</p></div></div>`).join('')}</div>
   <div class="card"><h3>Doğru bilinen yanlışlar</h3>${MYTHS.map(([a,b])=>`<div class="myth"><s>${a}</s><span>✅ ${b}</span></div>`).join('')}</div>
   <p class="muted" style="font-size:15px">Kaynaklar: Tarım ve Orman Bakanlığı, “Mantar Zehirlenmeleri ve Başlıca Zehirli Mantarlar”; Sağlık Bakanlığı uyarıları.</p>`}
 
-function render(){
+/* --- ilk açılış tanıtımı --- */
+const INTRO=[['🧺','Hoş geldiniz','Bu uygulama mantar toplarken sizi korumak için. <b>Hiçbir mantara “yenir” demez.</b> Emin olmadığınız mantarı yemeyin.'],
+ ['📷','Fotoğrafla, '+ASK+'’ye sor','Mantarın üstünü, altını, sapının dibini ve kesitini çekin. Tek düğmeyle WhatsApp’tan '+ASK+'’ye gider.'],
+ ['✅','Yemeden önce kontrol','Tek tek sorular gelir. Bir şüphe çıkarsa kırmızı ekranda <b>YEMEYİN</b> yazar.'],
+ ['📍','Ocaklarınızı kaydedin','Mantar bulduğunuz yeri kaydedin. Seneye ormanda, internet olmadan bile ne kadar uzakta olduğunu gösterir.'],
+ ['🚨','Acil durum','Mantar yedikten sonra rahatsızlanırsanız kırmızı Acil düğmesine basın: 112 ve 114’ü tek dokunuşla ararsınız. 🔊 düğmeleri yazıları sesli okur.']];
+function vIntro(){const [i,t,x]=INTRO[S.introI];const last=S.introI===INTRO.length-1;
+  return `<div class="intro"><div class="ib">${i}</div><h2>${t}</h2><p>${x}</p>${speakBtn(t+'. '+x)}<div class="dots">${INTRO.map((_,k)=>`<i class="${k===S.introI?'on':''}"></i>`).join('')}</div>
+   <button class="btn pri wide" type="button" data-act="intronext">${last?'Başlayalım':'İleri ›'}</button>${last?'':'<button class="btn wide" type="button" data-act="introskip">Geç</button>'}</div>`}
+
+function render(){SAY.length=0;
   document.querySelectorAll('#nav [data-go]').forEach(b=>b.setAttribute('aria-current',b.dataset.go===S.view?'page':'false'));
-  $('app').innerHTML={home:vHome,photo:vPhoto,check:vCheck,guide:vGuide,sos:vSos}[S.view]()}
+  $('nav').hidden=S.intro;
+  $('app').innerHTML=S.intro?vIntro():{home:vHome,book:vBook,check:vCheck,guide:vGuide,sos:vSos}[S.view]()}
 
 /* ---------- fotoğraf işleme ---------- */
 async function shrink(file){const url=URL.createObjectURL(file);try{const img=new Image();img.src=url;await img.decode();const s=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight)),c=document.createElement('canvas');c.width=Math.round(img.naturalWidth*s);c.height=Math.round(img.naturalHeight*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);return await new Promise(ok=>c.toBlob(b=>ok(b||file),'image/jpeg',.85))}catch(e){return file}finally{URL.revokeObjectURL(url)}}
-async function saveDraft(){const d=S.draft;if(!d)return null;const n=$('note');if(n)d.note=n.value.trim();const ex=RECS.find(r=>r.id===d.id);const rec=Object.assign(ex||{},d);
-  try{await DB.put(rec)}catch(e){toast('Kaydedilemedi: telefonda yer kalmamış olabilir');return null}if(!ex)RECS.unshift(rec);return rec}
-async function share(r){const files=SHOTS.filter(([k])=>r.imgs[k]).map(([k,t])=>new File([r.imgs[k]],`mantar-${t.toLowerCase().replace(/[^a-zçğıöşü]/g,'')}.jpg`,{type:'image/jpeg'}));
-  const text=`${ASK}, bu mantara bakar mısın? 🍄\n${r.place?'Yer: '+r.place+'\n':''}${r.note?'Not: '+r.note+'\n':''}${r.verdict==='red'?'Kontrol listesi: YEMEYİN dedi.\n':r.verdict==='amber'?'Kontrol listesi: şüpheli işaret bulmadı, uzmana göster dedi.\n':''}(Mantar Bekçisi)`;
+function grabDraft(){const d=S.draft;if(!d)return;const n=$('note'),a=$('amount');if(n)d.note=n.value.trim();if(a)d.amount=a.value.trim()}
+async function saveDraft(){const d=S.draft;if(!d)return null;grabDraft();const ex=RECS.find(r=>r.id===d.id);const rec=Object.assign(ex||{},d);
+  try{await DB.put(rec)}catch(e){toast('Kaydedilemedi: telefonda yer kalmamış olabilir');return null}if(!ex)RECS.unshift(rec);
+  if(rec.spot){const sp=SPOTS.find(s=>s.id===rec.spot);if(sp){const day=new Date(rec.at).toDateString();sp.visits=sp.visits||[];if(!sp.visits.some(v=>new Date(v).toDateString()===day)){sp.visits.push(rec.at);saveSpots()}}}
+  return rec}
+const fileOf=(b,t)=>new File([b],`mantar-${t.toLowerCase().replace(/[^a-zçğıöşü]/g,'')}.jpg`,{type:'image/jpeg'});
+async function share(r){const files=SHOTS.filter(([k])=>r.imgs[k]).map(([k,t])=>fileOf(r.imgs[k],t)),sp=r.spot&&SPOTS.find(s=>s.id===r.spot);
+  const text=`${ASK}, bu mantara bakar mısın? 🍄\n${r.place?'Yer: '+r.place+'\n':''}${sp?'Ocak: '+sp.name+'\n':''}${r.amount?'Miktar: '+r.amount+'\n':''}${r.note?'Not: '+r.note+'\n':''}${r.loc?'Konum: '+mapsUrl(r.loc)+'\n':''}${r.verdict==='red'?'Kontrol listesi: YEMEYİN dedi.\n':r.verdict==='amber'?'Kontrol listesi: şüpheli işaret bulmadı, uzmana göster dedi.\n':''}(Mantar Bekçisi)`;
   try{if(navigator.canShare&&navigator.canShare({files})){await navigator.share({files,text});return}}catch(e){if(e&&e.name==='AbortError')return}
   try{if(navigator.share){await navigator.share({text});toast('Fotoğrafları ayrıca galeriden ekleyin');return}}catch(e){if(e&&e.name==='AbortError')return}
   toast('Bu telefonda paylaşma açılamadı. Fotoğrafları galeriden gönderin.',4000)}
-
 const AIQ=r=>`Bu fotoğraflardaki mantarı Antalya Kaş’ta topladık${r.place?' ('+r.place+')':''}. Fotoğraflar: üstü, altı, sapın dibi ve kesiti.
 Lütfen bize “yenir” ya da “güvenli” DEME; fotoğraftan bunu kimse kesin bilemez.
 Bunun yerine:
@@ -354,45 +466,72 @@ Bunun yerine:
 2) Bu mantar hangi zehirli mantarlarla karıştırılabilir, onları nasıl ayırırız?
 3) Fotoğraflarda neyi göremiyorsun, uzmana neyi göstermeliyiz?
 Kısa ve sade Türkçe yaz, büyüklerimiz okuyacak.${r.note?'\nNotumuz: '+r.note:''}`;
-async function askAI(r){const files=SHOTS.filter(([k])=>r.imgs[k]).map(([k,t])=>new File([r.imgs[k]],`mantar-${t.toLowerCase().replace(/[^a-zçğıöşü]/g,'')}.jpg`,{type:'image/jpeg'})),text=AIQ(r);
+async function askAI(r){const files=SHOTS.filter(([k])=>r.imgs[k]).map(([k,t])=>fileOf(r.imgs[k],t)),text=AIQ(r);
   const cp=navigator.clipboard?navigator.clipboard.writeText(text).catch(()=>{}):Promise.resolve();
   try{if(navigator.canShare&&navigator.canShare({files,text})){await navigator.share({files,text});toast('Uygulamada soruyu gönderin. Soru panoya da kopyalandı.',4000);return}}catch(e){if(e&&e.name==='AbortError')return}
   await cp;toast('Soru panoya kopyalandı. ChatGPT ya da Gemini’yi açıp fotoğrafları ekleyin, yapıştırın.',5000)}
+function nearestSpot(p){let best=null;for(const s of SPOTS){const d=dist(p,s);if(d<=150&&(!best||d<best.d))best={s,d}}return best&&best.s}
+function newSpot(p,name){const n=SPOTS.length+1,sp={id:'s'+Date.now().toString(36),name:name||('Ocak '+n),lat:p.lat,lng:p.lng,acc:p.acc,at:Date.now(),visits:[Date.now()],kind:''};SPOTS.push(sp);saveSpots();return sp}
+
+/* ---------- pusula ---------- */
+let compassOn=false;function onOri(e){let h=null;if(typeof e.webkitCompassHeading==='number')h=e.webkitCompassHeading;else if(e.absolute&&e.alpha!=null)h=360-e.alpha;if(h==null)return;
+  const prev=S.heading;S.heading=h;if(S.view==='book'&&!S.spot&&!S.rec&&!S.draft&&(prev==null||Math.abs(((h-prev+540)%360)-180)>4)){const sv=document.querySelector('.radar svg g');if(sv){const C=150;sv.setAttribute('transform',`rotate(${-h} ${C} ${C})`);sv.querySelectorAll('text').forEach((t,i)=>{if(i>0)t.setAttribute('transform',`rotate(${h})`)})}}}
+function setCompass(on){S.compass=on;if(on&&!compassOn){compassOn=true;window.addEventListener('deviceorientationabsolute',onOri,true);window.addEventListener('deviceorientation',onOri,true);
+    setTimeout(()=>{if(S.compass&&S.heading==null)toast('Bu telefonda pusula bulunamadı. Harita yukarısı kuzey olarak kalır.',4000)},2500)}render()}
 
 /* ---------- olaylar ---------- */
 document.addEventListener('click',async e=>{
-  const g=e.target.closest('[data-go2]');if(g){const v=g.dataset.go2;if(v==='check'){S.qi=0;S.answers={};S.result=null;S.forRec=null}if(v==='photo'){S.draft=null;S.rec=null}go(v);return}
-  const pl=e.target.closest('[data-place]');if(pl&&S.draft){const n=$('note');if(n)S.draft.note=n.value;S.draft.place=S.draft.place===pl.dataset.place?'':pl.dataset.place;render();return}
-  const rc=e.target.closest('[data-rec]');if(rc){S.rec=rc.dataset.rec;render();window.scrollTo({top:0});return}
+  const sy=e.target.closest('[data-say]');if(sy){speak(SAY[+sy.dataset.say]||'');return}
+  const g=e.target.closest('[data-go2]');if(g){const v=g.dataset.go2;if(v==='check')resetCheck();if(v==='book'){S.rec=null;S.draft=null;S.spot=null;if(g.dataset.sub)S.sub=g.dataset.sub}go(v);return}
+  const sb=e.target.closest('.seg [data-sub]');if(sb){S.sub=sb.dataset.sub;render();return}
+  const pl=e.target.closest('[data-place]');if(pl&&S.draft){grabDraft();S.draft.place=S.draft.place===pl.dataset.place?'':pl.dataset.place;render();return}
+  const sk=e.target.closest('[data-spkind]');if(sk){const sp=SPOTS.find(x=>x.id===S.spot);if(sp){sp.name=($('spName')||{}).value||sp.name;sp.note=($('spNote')||{}).value||'';sp.kind=sp.kind===sk.dataset.spkind?'':sk.dataset.spkind;saveSpots();render()}return}
+  const rc=e.target.closest('[data-rec]');if(rc){S.rec=rc.dataset.rec;S.view='book';render();window.scrollTo({top:0});return}
+  const spb=e.target.closest('[data-spot]');if(spb){S.spot=spb.dataset.spot;S.rec=null;S.view='book';render();window.scrollTo({top:0});return}
   const an=e.target.closest('[data-ans]');if(an){const q=QS[S.qi],v=an.dataset.ans;S.answers[q.k]=v;
     if(v!=='no'){S.result={v:'red',why:v==='unsure'?'Emin olmadığınız bir işaret var. Emin değilseniz yemeyin. '+q.why:q.why};await finishCheck();render();window.scrollTo({top:0});return}
     if(S.qi<QS.length-1){S.qi++;render();window.scrollTo({top:0});return}
     S.result={v:'amber'};await finishCheck();render();window.scrollTo({top:0});return}
   const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+  if(a==='zoom'){ZOOM=ZOOM>1?1:1.25;store('zoom',ZOOM);applyZoom();render();return}
+  if(a==='intronext'){if(S.introI<INTRO.length-1){S.introI++;render()}else{store('intro',1);S.intro=false;render()}window.speechSynthesis&&speechSynthesis.cancel();return}
+  if(a==='introskip'){store('intro',1);S.intro=false;render();return}
+  if(a==='introagain'){S.intro=true;S.introI=0;render();window.scrollTo({top:0});return}
   if(a==='qback'){S.qi=Math.max(0,S.qi-1);render();return}
-  if(a==='restart'){S.qi=0;S.answers={};S.result=null;S.forRec=null;render();window.scrollTo({top:0});return}
+  if(a==='restart'){resetCheck();render();window.scrollTo({top:0});return}
   if(a==='ate'){store('ate',Date.now());toast('Saat kaydedildi');render();return}
   if(a==='ateclear'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Emin misiniz? Tekrar basın';return}store('ate',null);render();return}
-  if(a==='send'){const r=await saveDraft();if(r){await share(r)}return}
-  if(a==='savecheck'){const r=await saveDraft();if(!r)return;S.forRec=r.id;S.draft=null;S.qi=0;S.answers={};S.result=null;go('check');return}
-  if(a==='back'){S.rec=null;S.aiConfirm=null;render();return}
+  if(a==='newrec'){S.draft={id:'m'+Date.now().toString(36),at:Date.now(),imgs:{},place:'',note:'',amount:''};S.rec=null;S.spot=null;go('book');return}
+  if(a==='back'){if(S.draft)grabDraft();S.rec=null;S.draft=null;S.spot=null;S.aiConfirm=null;render();return}
+  if(a==='draftloc'){grabDraft();b.disabled=true;b.textContent='Konum aranıyor…';try{const p=await here();S.me=p;S.draft.loc=p;const sp=nearestSpot(p);if(sp){S.draft.spot=sp.id;toast('“'+sp.name+'” ocağına eklendi')}else{const ns=newSpot(p);S.draft.spot=ns.id;toast('Yeni ocak kaydedildi: '+ns.name)}}catch(x){toast(x.ui||'Konum alınamadı',4500)}render();return}
+  if(a==='send'){const r=await saveDraft();if(r)await share(r);return}
+  if(a==='savedraft'){const r=await saveDraft();if(!r)return;S.draft=null;S.rec=r.id;render();toast('Kaydedildi');return}
+  if(a==='savecheck'){const r=await saveDraft();if(!r)return;S.draft=null;resetCheck();S.forRec=r.id;go('check');return}
   if(a==='aidraft'){const r=await saveDraft();if(!r)return;S.draft=null;S.rec=r.id;S.aiConfirm=r.id;render();setTimeout(()=>{const x=$('aiBox');if(x)x.scrollIntoView({block:'center'})},50);return}
   if(a==='ai'){S.aiConfirm=b.dataset.id;render();setTimeout(()=>{const x=$('aiBox');if(x)x.scrollIntoView({block:'center'})},50);return}
   if(a==='aicancel'){S.aiConfirm=null;render();return}
   if(a==='aigo'){const r=RECS.find(x=>x.id===b.dataset.id);S.aiConfirm=null;render();if(r)await askAI(r);return}
   if(a==='sendrec'){const r=RECS.find(x=>x.id===b.dataset.id);if(r)await share(r);return}
-  if(a==='checkrec'){S.forRec=b.dataset.id;S.qi=0;S.answers={};S.result=null;S.rec=null;go('check');return}
+  if(a==='checkrec'){resetCheck();S.forRec=b.dataset.id;S.rec=null;go('check');return}
+  if(a==='okrec'){const r=RECS.find(x=>x.id===b.dataset.id);if(!r)return;r.ok=!r.ok;try{await DB.put(r)}catch(x){}render();return}
   if(a==='delrec'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Emin misiniz? Tekrar basın';return}const id=b.dataset.id;try{await DB.del(id)}catch(x){}RECS=RECS.filter(r=>r.id!==id);S.rec=null;render();toast('Silindi');return}
+  if(a==='rec2spot'){const r=RECS.find(x=>x.id===b.dataset.id);if(!r||!r.loc)return;const sp=nearestSpot(r.loc)||newSpot(r.loc);r.spot=sp.id;try{await DB.put(r)}catch(x){}toast('Ocak: '+sp.name);render();return}
+  if(a==='locate'){b.disabled=true;b.textContent='Konum aranıyor…';try{S.me=await here()}catch(x){toast(x.ui||'Konum alınamadı',4500)}render();return}
+  if(a==='addspot'){b.disabled=true;b.textContent='Konum aranıyor…';try{const p=await here();S.me=p;const near=nearestSpot(p);if(near&&dist(p,near)<40){toast('Burası zaten kayıtlı: '+near.name);S.spot=near.id}else{const sp=newSpot(p);S.spot=sp.id;toast('Ocak kaydedildi. Ona bir ad verin.')}}catch(x){toast(x.ui||'Konum alınamadı',4500)}render();return}
+  if(a==='spotsave'){const sp=SPOTS.find(x=>x.id===b.dataset.id);if(!sp)return;sp.name=(($('spName')||{}).value||'').trim()||sp.name;sp.note=(($('spNote')||{}).value||'').trim();saveSpots();toast('Kaydedildi');render();return}
+  if(a==='visit'){const sp=SPOTS.find(x=>x.id===b.dataset.id);if(!sp)return;sp.visits=sp.visits||[];const t=new Date().toDateString();if(!sp.visits.some(v=>new Date(v).toDateString()===t))sp.visits.push(Date.now());saveSpots();toast('Bugünkü gidiş eklendi');render();return}
+  if(a==='spotdel'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Emin misiniz? Tekrar basın';return}SPOTS=SPOTS.filter(x=>x.id!==b.dataset.id);saveSpots();S.spot=null;render();toast('Ocak silindi');return}
+  if(a==='compass'){setCompass(!S.compass);return}
 });
 async function finishCheck(){if(!S.forRec)return;const r=RECS.find(x=>x.id===S.forRec);if(!r)return;r.verdict=S.result.v;r.reasons=S.result.v==='red'?[S.result.why]:[];try{await DB.put(r)}catch(e){}}
-document.addEventListener('change',async e=>{const t=e.target;if(!t.dataset||!t.dataset.shot||!S.draft)return;const f=t.files&&t.files[0];if(!f)return;const n=$('note');if(n)S.draft.note=n.value;
+document.addEventListener('change',async e=>{const t=e.target;if(!t.dataset||!t.dataset.shot||!S.draft)return;const f=t.files&&t.files[0];if(!f)return;grabDraft();
   S.draft.imgs[t.dataset.shot]=await shrink(f);render()});
-document.addEventListener('input',e=>{if(e.target.id==='note'&&S.draft)S.draft.note=e.target.value});
-setInterval(()=>{if(S.view==='home'||S.view==='sos'){const ae=document.activeElement;if(!ae||ae.tagName!=='TEXTAREA')render()}},60000);
+setInterval(()=>{if(!S.intro&&(S.view==='home'||S.view==='sos')){const ae=document.activeElement;if(!ae||!/TEXTAREA|INPUT/.test(ae.tagName))render()}},60000);
+window.speechSynthesis&&speechSynthesis.getVoices();
 
 render();
-DB.open().then(loadRecs).then(()=>{if(S.view==='photo')render()}).catch(()=>{});
-if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+DB.open().then(loadRecs).then(()=>{if(S.view==='book')render()}).catch(()=>{});
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 })();
 </script>
 </body>
