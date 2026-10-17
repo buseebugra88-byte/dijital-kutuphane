@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mantar Bekçisi</title>
+<meta name="theme-color" content="#3f6b4a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mantar Bekçisi">
+<link rel="manifest" href="mantar.webmanifest">
+<link rel="icon" href="mantar-192.png">
+<link rel="apple-touch-icon" href="mantar-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap">
+<style>
+/* Layout: tek sütun, büyük yazı; altta 4 büyük sekme; her ekran tek iş yapar */
+:root{
+  --bg:#f6f1e7;
+  --card:#fffdf8;
+  --ink:#2b2620;
+  --muted:#6b6257;
+  --line:#e0d5c2;
+  --forest:#3f6b4a;
+  --forest-soft:#e3ecdf;
+  --danger:#b3261e;
+  --danger-soft:#fbe4e1;
+  --warn:#8a5a00;
+  --warn-soft:#fff1cf;
+  --body:"Atkinson Hyperlegible",system-ui,"Segoe UI",Roboto,sans-serif;
+  --display:"Fraunces",Georgia,serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:19px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:focus-visible,a:focus-visible,label:focus-within{outline:3px solid var(--forest);outline-offset:3px}
+.wrap{max-width:620px;margin:0 auto;display:grid;gap:18px;padding-block:18px 10px}
+h1,h2{font-family:var(--display);font-weight:700;line-height:1.15;margin:0;text-wrap:balance}
+h1{font-size:30px}h2{font-size:26px}h3{font-size:20px;margin:0}
+p{margin:0}
+.top{display:flex;align-items:center;gap:12px}
+.top img{width:52px;height:52px;border-radius:14px}
+.top small{display:block;color:var(--muted);font-size:15px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;gap:12px}
+.rule{background:var(--forest);color:#fff;border-radius:20px;padding:18px;display:grid;gap:6px}
+.rule b{font-size:22px;font-family:var(--display)}
+.big{display:flex;align-items:center;gap:16px;width:100%;text-align:left;border:0;border-radius:22px;padding:20px;min-height:96px;font-size:22px;font-weight:700;box-shadow:0 2px 0 rgba(0,0,0,.08)}
+.big span.i{font-size:38px;line-height:1;flex:none}
+.big small{display:block;font-size:16px;font-weight:400;opacity:.9;margin-top:2px}
+.b-photo{background:#e7efe3;color:#22402b;border:2px solid #b9cdb2}
+.b-check{background:#fff7e3;color:#5a3d00;border:2px solid #ead7a3}
+.b-sos{background:var(--danger);color:#fff}
+.b-guide{background:var(--card);color:var(--ink);border:2px solid var(--line)}
+.btn{border:2px solid var(--line);background:var(--card);border-radius:16px;padding:14px 18px;font-size:19px;font-weight:700;min-height:56px}
+.btn.pri{background:var(--forest);border-color:var(--forest);color:#fff}
+.btn.red{background:var(--danger);border-color:var(--danger);color:#fff}
+.btn.wide{width:100%}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>.btn{flex:1 1 160px}
+.muted{color:var(--muted)}
+.ate{display:grid;gap:10px}
+.ate .t{font-size:24px;font-weight:700}
+
+/* alt menü */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--card);border-top:1px solid var(--line);
+  padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+nav button{border:0;background:none;border-radius:14px;padding:6px 2px;display:grid;justify-items:center;gap:2px;font-size:13.5px;font-weight:700;color:var(--muted)}
+nav button span{font-size:26px;line-height:1.1}
+nav button[aria-current="page"]{background:var(--forest-soft);color:var(--forest)}
+nav button.sos{color:var(--danger)}
+nav button.sos[aria-current="page"]{background:var(--danger-soft)}
+
+/* fotoğraf */
+.shots{display:grid;gap:12px}
+.shot{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:center;background:var(--card);border:2px solid var(--line);border-radius:18px;padding:12px}
+.shot.done{border-color:#b9cdb2;background:#f4f8f1}
+.shot .ph{width:96px;height:96px;border-radius:12px;background:#efe7d8 center/cover no-repeat;display:grid;place-items:center;font-size:36px}
+.shot b{display:block;font-size:20px}
+.shot p{font-size:16px;color:var(--muted);line-height:1.35;margin-top:2px}
+.shot label{display:inline-block;margin-top:8px;background:var(--forest);color:#fff;border-radius:12px;padding:10px 14px;font-weight:700;font-size:17px;cursor:pointer}
+.shot.done label{background:var(--card);color:var(--forest);border:2px solid #b9cdb2}
+.shot input{position:absolute;width:1px;height:1px;opacity:0}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:2px solid var(--line);background:var(--card);border-radius:999px;padding:9px 14px;font-size:17px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--forest);border-color:var(--forest);color:#fff}
+textarea{width:100%;border:2px solid var(--line);border-radius:14px;background:#fff;padding:12px;font-size:18px;min-height:84px}
+.rec{display:grid;gap:10px}
+.rec .th{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.rec .th i{aspect-ratio:1;border-radius:10px;background:#efe7d8 center/cover no-repeat}
+.tag{display:inline-block;border-radius:999px;padding:3px 12px;font-size:15px;font-weight:700}
+.tag.red{background:var(--danger-soft);color:var(--danger)}.tag.amber{background:var(--warn-soft);color:var(--warn)}.tag.none{background:#eee6d8;color:var(--muted)}
+
+/* kontrol */
+.prog{height:10px;background:#eadfcc;border-radius:5px;overflow:hidden}.prog i{display:block;height:100%;background:var(--forest)}
+.q{font-size:25px;font-family:var(--display);font-weight:700;line-height:1.25}
+.qhint{background:#f1ead9;border-radius:14px;padding:12px 14px;font-size:17px;color:#4b4339}
+.ans{display:grid;gap:12px}
+.ans button{border-radius:20px;padding:20px;font-size:24px;font-weight:700;min-height:76px;border:3px solid}
+.a-yes{background:#fff;border-color:var(--danger)!important;color:var(--danger)}
+.a-no{background:#fff;border-color:var(--forest)!important;color:var(--forest)}
+.a-unsure{background:#fff;border-color:#c9a14a!important;color:var(--warn)}
+.stop{background:var(--danger);color:#fff;border-radius:24px;padding:24px;display:grid;gap:12px;text-align:center}
+.stop .x{font-size:64px;line-height:1}
+.stop h2{font-size:42px;color:#fff}
+.stop p{font-size:20px}
+.caution{background:var(--warn-soft);border:3px solid #e2c06e;border-radius:24px;padding:22px;display:grid;gap:12px}
+.caution h2{color:#6b4500}
+ul.steps{margin:0;padding-left:22px;display:grid;gap:8px}
+
+/* acil */
+.call{display:flex;align-items:center;justify-content:center;gap:12px;text-decoration:none;border-radius:22px;padding:20px;font-size:28px;font-weight:700;min-height:88px}
+.call.c112{background:var(--danger);color:#fff}
+.call.c114{background:#fff;color:var(--danger);border:3px solid var(--danger)}
+.call small{display:block;font-size:16px;font-weight:400}
+.tl{display:grid;gap:10px}
+.tl div{display:grid;grid-template-columns:86px 1fr;gap:12px;align-items:start}
+.tl b{background:#f1ead9;border-radius:10px;padding:4px 8px;text-align:center;font-size:16px}
+.tl div.hot b{background:var(--danger);color:#fff}
+
+/* rehber */
+.pair{display:grid;gap:12px}
+.pair .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pair figure{margin:0;border-radius:16px;padding:10px;display:grid;gap:6px;justify-items:center;text-align:center}
+.pair figure.ok{background:#eef3ea}.pair figure.bad{background:var(--danger-soft)}
+.pair figure svg{width:100%;max-width:150px;height:auto}
+.pair figcaption{font-size:16px;line-height:1.3}
+.pair figcaption b{display:block;font-size:17px}
+.pair figure.bad figcaption b{color:var(--danger)}
+.diff{display:grid;gap:6px;font-size:17px}
+.diff div{display:grid;grid-template-columns:28px 1fr;gap:6px}
+.never{display:grid;gap:12px}
+.myth{display:grid;gap:4px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.myth s{color:var(--danger);text-decoration-thickness:2px}
+a{color:var(--forest);font-weight:700}
+.toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:30;background:#2b2620;color:#fff;border-radius:16px;padding:12px 18px;font-size:17px;max-width:calc(100% - 32px);text-align:center}
+@media (max-width:380px){body{font-size:18px}.big{font-size:20px}.pair .two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main class="wrap" id="app"></main>
+<nav aria-label="Bölümler" id="nav">
+  <button type="button" data-go="home"><span>🏠</span>Ana</button>
+  <button type="button" data-go="photo"><span>📷</span>Fotoğraf</button>
+  <button type="button" data-go="check"><span>✅</span>Kontrol</button>
+  <button type="button" data-go="guide"><span>📖</span>Rehber</button>
+  <button type="button" data-go="sos" class="sos"><span>🚨</span>Acil</button>
+</nav>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store=(k,v)=>{try{if(v===undefined)return JSON.parse(localStorage.getItem('mb-'+k));if(v===null)localStorage.removeItem('mb-'+k);else localStorage.setItem('mb-'+k,JSON.stringify(v))}catch(e){return null}};
+let toastT;function toast(t,ms){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,ms||2600)}
+const ASK=store('ask')||'Buse';
+
+/* ---------- kayıtlar (IndexedDB) ---------- */
+const DB={db:null,open(){return new Promise((ok,no)=>{const r=indexedDB.open('mantar-bekcisi',1);r.onupgradeneeded=()=>r.result.createObjectStore('recs',{keyPath:'id'});r.onsuccess=()=>{DB.db=r.result;ok()};r.onerror=()=>no(r.error)})},
+  tx(m,fn){return new Promise((ok,no)=>{const t=DB.db.transaction('recs',m),s=t.objectStore('recs');const q=fn(s);t.oncomplete=()=>ok(q&&q.result);t.onerror=()=>no(t.error)})},
+  put(x){return DB.tx('readwrite',s=>s.put(x))},del(id){return DB.tx('readwrite',s=>s.delete(id))},all(){return DB.tx('readonly',s=>s.getAll())}};
+let RECS=[];const URLS=new Map();const urlOf=b=>{if(!URLS.has(b))URLS.set(b,URL.createObjectURL(b));return URLS.get(b)};
+async function loadRecs(){try{RECS=(await DB.all()).sort((a,b)=>b.at-a.at)}catch(e){RECS=[]}}
+
+/* ---------- mantar çizimleri ---------- */
+function mush(o){
+  const cap=o.cap||'#c98b5a',gill=o.gill||'#f4ead8',stem=o.stem||'#f2ead9',ink='#3b3128';let s='';
+  s+=`<rect x="0" y="0" width="160" height="170" fill="none"/>`;
+  s+=`<path d="M8 150 Q80 142 152 150 L152 170 L8 170Z" fill="#c9b48f" opacity=".55"/>`;
+  if(o.cluster){return `<svg viewBox="0 0 160 170" aria-hidden="true">${s}<path d="M20 152 Q60 120 100 152Z" fill="#8a6a45"/>${[30,62,94,120].map((x,i)=>{const h=[70,92,80,60][i],y=150-h;return `<path d="M${x+6} 150 L${x+10} ${y+14} L${x+16} ${y+14} L${x+20} 150Z" fill="${stem}" stroke="${ink}" stroke-width="1.5"/><path d="M${x-8} ${y+16} Q${x+13} ${y-14} ${x+34} ${y+16} Q${x+13} ${y+8} ${x-8} ${y+16}Z" fill="${cap}" stroke="${ink}" stroke-width="1.5"/>`}).join('')}</svg>`}
+  if(o.shape==='morel'||o.shape==='brain'){
+    let t=`<path d="M70 150 L72 104 L88 104 L90 150Z" fill="${stem}" stroke="${ink}" stroke-width="2"/>`;
+    if(o.shape==='morel'){t+=`<path d="M56 108 Q50 50 80 22 Q110 50 104 108Z" fill="${cap}" stroke="${ink}" stroke-width="2"/>`;
+      for(let r=0;r<5;r++)for(let c=0;c<4;c++){const x=62+c*11+(r%2)*5,y=40+r*14;t+=`<ellipse cx="${x}" cy="${y}" rx="4" ry="5.5" fill="#5b4330" opacity=".75"/>`}}
+    else{t+=`<path d="M50 108 Q42 60 66 42 Q80 30 96 42 Q120 58 110 108Z" fill="${cap}" stroke="${ink}" stroke-width="2"/>`;
+      t+=`<path d="M58 96 Q66 82 60 70 Q70 58 64 50 M78 100 Q86 86 78 74 Q90 64 82 48 M98 98 Q92 84 100 72 Q92 60 100 52" fill="none" stroke="#5b2a1a" stroke-width="3" stroke-linecap="round"/>`}
+    return `<svg viewBox="0 0 160 170" aria-hidden="true">${s}${t}</svg>`}
+  const big=o.small?0.7:1,cy=o.shape==='umbrella'?64:o.shape==='egg'?96:74;
+  let t='';
+  const stemTop=cy+6,sx=80,sw=o.small?10:16;
+  t+=`<path d="M${sx-sw/2} 150 L${sx-sw/2+2} ${stemTop} L${sx+sw/2-2} ${stemTop} L${sx+sw/2} 150Z" fill="${stem}" stroke="${ink}" stroke-width="2"/>`;
+  if(o.snake)for(let y=stemTop+10;y<146;y+=10)t+=`<path d="M${sx-sw/2+2} ${y} l${sw/2-2} 4 l${sw/2-2} -4" fill="none" stroke="#9b7a55" stroke-width="1.5"/>`;
+  if(o.volva)t+=`<path d="M${sx-sw/2-10} 152 Q${sx-sw/2-14} 128 ${sx-sw/2} 126 L${sx+sw/2} 126 Q${sx+sw/2+14} 128 ${sx+sw/2+10} 152Z" fill="#fbf7ef" stroke="${ink}" stroke-width="2"/><path d="M${sx-sw/2-8} 134 q4 -4 8 0 M${sx+sw/2} 132 q4 -4 8 0" stroke="${ink}" stroke-width="1.5" fill="none"/>`;
+  if(o.bulb)t+=`<ellipse cx="${sx}" cy="146" rx="${sw}" ry="9" fill="${stem}" stroke="${ink}" stroke-width="2"/>`;
+  if(o.ring)t+=`<path d="M${sx-sw/2-8} ${stemTop+22} Q${sx} ${stemTop+12} ${sx+sw/2+8} ${stemTop+22} Q${sx} ${stemTop+30} ${sx-sw/2-8} ${stemTop+22}Z" fill="#fbf7ef" stroke="${ink}" stroke-width="1.8"/>`;
+  const w=(o.shape==='umbrella'?62:54)*big,top=o.shape==='umbrella'?cy-26*big:o.shape==='funnel'?cy-6:cy-40*big;
+  if(o.shape==='egg'){t=`<path d="M58 150 Q50 110 80 92 Q110 110 102 150Z" fill="#fbf7ef" stroke="${ink}" stroke-width="2"/><path d="M68 108 Q80 96 92 108 Q80 104 68 108Z" fill="${cap}"/>`}
+  else if(o.shape==='funnel'){t+=`<path d="M${sx-sw/2} ${cy+10} L${sx-w+8} ${cy-14} L${sx+w-8} ${cy-14} L${sx+sw/2} ${cy+10}Z" fill="${gill}" stroke="${ink}" stroke-width="1.5"/>`;for(let i=-3;i<=3;i++)t+=`<line x1="${sx+i*sw/8}" y1="${cy+9}" x2="${sx+i*(w-10)/3}" y2="${cy-13}" stroke="${ink}" stroke-width=".8" opacity=".5"/>`;
+    t+=`<path d="M${sx-w} ${cy-30} Q${sx} ${cy-6} ${sx+w} ${cy-30} Q${sx+w+2} ${cy-18} ${sx+w-8} ${cy-14} Q${sx} ${cy-2} ${sx-w+8} ${cy-14} Q${sx-w-2} ${cy-18} ${sx-w} ${cy-30}Z" fill="${cap}" stroke="${ink}" stroke-width="2"/><ellipse cx="${sx}" cy="${cy-24}" rx="${w*.55}" ry="5" fill="${ink}" opacity=".12"/>`}
+  else{t+=`<path d="M${sx-w} ${cy} Q${sx-w} ${top} ${sx} ${top} Q${sx+w} ${top} ${sx+w} ${cy}Z" fill="${cap}" stroke="${ink}" stroke-width="2"/>`;
+    t+=`<path d="M${sx-w+3} ${cy+1} L${sx+w-3} ${cy+1} L${sx+sw/2} ${cy+8} L${sx-sw/2} ${cy+8}Z" fill="${gill}" stroke="${ink}" stroke-width="1.5"/>`;
+    for(let i=-4;i<=4;i++)t+=`<line x1="${sx+i*w/5}" y1="${cy+1.5}" x2="${sx+i*sw/10}" y2="${cy+7.5}" stroke="${ink}" stroke-width=".8" opacity=".5"/>`;
+    if(o.warts)[[-28,-14],[-8,-26],[14,-20],[30,-8],[-36,-4],[2,-10],[20,-32]].forEach(([dx,dy])=>{if(top<cy+dy*big)t+=`<circle cx="${sx+dx*big}" cy="${cy+dy*big}" r="${4*big}" fill="#fffaf0" stroke="${ink}" stroke-width=".8"/>`});
+    if(o.scales)for(let i=0;i<14;i++){const a=i/14*Math.PI,r=w*.75,x=sx-Math.cos(a)*r*.9,y=cy-Math.sin(a)*(cy-top)*.7;t+=`<path d="M${x-4} ${y} l4 -4 l4 4" fill="none" stroke="#6b4a2c" stroke-width="2"/>`}
+    if(o.umbo)t+=`<ellipse cx="${sx}" cy="${top+5}" rx="9" ry="5" fill="#7a5638"/>`}
+  if(o.milk)t+=`<circle cx="${sx+w-10}" cy="${cy+12}" r="5" fill="${o.milk}" stroke="${ink}" stroke-width="1"/><path d="M${sx+w-10} ${cy+17} q0 8 -3 12" stroke="${o.milk}" stroke-width="4" fill="none" stroke-linecap="round"/>`;
+  return `<svg viewBox="0 0 160 170" aria-hidden="true">${s}${t}</svg>`}
+
+/* ---------- içerik ---------- */
+const QS=[
+ {k:'volva',q:'Sapın en dibinde, toprağın içinde <b>kese, torba ya da yumru</b> gibi bir şişkinlik var mı?',h:'Mantarı bıçakla kesmeyin; toprağı kazıyıp bütün olarak çıkarın. Kesip topladıysanız bakamazsınız, o zaman “Emin değilim” deyin.',why:'Sapın dibindeki kese, Türkiye’deki ölümlerin çoğuna yol açan köygöçüren ve panter mantarında görülür.'},
+ {k:'gill',q:'Şapkanın altındaki ince yapraklar (lameller) <b>bembeyaz</b> mı?',h:'Şapkayı ters çevirip altına bakın.',why:'Köygöçüren ve akrabalarının lamelleri her zaman beyazdır. Çayır mantarının lamelleri ise pembe ya da kahverengidir.'},
+ {k:'green',q:'Şapkanın rengi <b>yeşilimsi, zeytin yeşili ya da sarımsı-yeşil</b> mi?',h:'Gün ışığında bakın. Hafif yeşillik bile sayılır.',why:'Köygöçürenin şapkası genellikle yeşilimsi-sarımsı olur. Çok zehirlidir, küçük bir parçası bile öldürebilir.'},
+ {k:'warts',q:'Şapkanın üstünde <b>beyaz benekler</b>, pamuk ya da kabuk gibi lekeler var mı?',h:'Yağmurdan sonra benekler silinmiş olabilir.',why:'Beyaz benekli şapka sinek mantarında ve panter mantarında görülür. İkisi de zehirlidir; panter mantarı çam altında da çıkar.'},
+ {k:'ring',q:'Sapın üst tarafında <b>etek ya da yüzük</b> gibi bir zar var mı?',h:'Etek bazen sapa yapışık, ince bir halka gibi durur.',why:'Etekli mantarların arasında ölümcül türler var. Etekli bir mantarı mutlaka bir uzman görmeli.'},
+ {k:'egg',q:'Mantar henüz <b>yumurta gibi kapalı</b>, şapkası açılmamış mı?',h:'Beyaz, yumurta gibi yuvarlak bir topak.',why:'Yumurta halindeyken yenen yumurta mantarı ile ölümcül köygöçüren birbirinden ayırt edilemez.'},
+ {k:'cluster',q:'Ağaç kütüğünde, <b>zeytin dibinde</b> ya da odunda <b>öbek halinde</b> (birçoğu bir arada) mı çıkmış?',h:'Kaş’ta zeytin köklerinde turuncu öbekler halinde zehirli bir mantar çıkar.',why:'Odunda öbek halinde çıkan turuncu-sarı mantarlar zehirli olabilir. Zeytin dibindeki turuncu mantar sarı mantarla karıştırılır ve ağır zehirlenme yapar.'},
+ {k:'small',q:'Şemsiye mantarına benziyor ama şapkası <b>avuç içinden (10 cm) küçük</b> mü?',h:'Gerçek şemsiye mantarı büyüktür, sapı yılan derisi gibi desenlidir.',why:'Küçük şemsiye görünümlü mantarların bazıları köygöçürenle aynı zehri taşır.'},
+ {k:'brain',q:'Şapkası <b>beyin gibi kıvrım kıvrım</b>, buruşuk mu?',h:'Kuzugöbeğinin şapkası petek gibi gözeneklidir, beyin gibi kıvrımlı değildir.',why:'Beyin gibi kıvrımlı olan yalancı kuzugöbeğidir. Pişirilse bile tehlikelidir.'},
+ {k:'milk',q:'Kesince <b>beyaz süt</b> gibi bir sıvı çıkıyor mu?',h:'Kanlıcanın (çıntarın) sütü turuncudur, havuç rengindedir. Süt çıkmıyorsa “Hayır” deyin.',why:'Beyaz sütlü mantarlar kanlıca değildir. Bir kısmı ağır mide-bağırsak zehirlenmesi yapar.'},
+ {k:'old',q:'Kurtlu, yumuşamış, kötü kokulu ya da <b>toplanalı 1 günden fazla</b> mı oldu?',h:'Mantar çabuk bozulur.',why:'Bozulmuş mantar, yenen türden bile olsa zehirlenme yapar.'},
+ {k:'mixed',q:'Sepette ya da poşette <b>başka cins mantarlarla karıştı</b> mı?',h:'Tanımadığınız tek bir mantar bile karışmışsa “Evet” deyin.',why:'Zehirli bir mantarın kırık parçaları diğerlerine karışabilir. Karışan sepetteki mantarlar güvenli değildir.'},
+ {k:'expert',q:'Bu mantarı daha önce bir <b>uzman size elinde gösterdi</b> ve tam olarak aynısı olduğundan <b>yüzde yüz emin</b> misiniz?',h:'“Hep topluyoruz” ya da “köyde böyle diyorlar” yeterli değildir.',why:'Uzmanın görmediği ve tam emin olmadığınız bir mantar yenmez. Yöresel adlar da yanıltıcıdır, aynı ad farklı mantarlara verilebilir.',
+  btn:[['EVET, EMİNİM','no'],['HAYIR / TAM DEĞİL','yes'],['EMİN DEĞİLİM','unsure']]}
+];
+const PAIRS=[
+ {ok:{n:'Kanlıca (çıntar)',d:mush({cap:'#d9773a',gill:'#e89a5c',stem:'#e3a06a',shape:'funnel',milk:'#e07a2a'})},bad:{n:'Beyaz sütlü mantarlar',d:mush({cap:'#e9b9a8',gill:'#f6efe4',stem:'#f2e6d6',shape:'funnel',milk:'#ffffff'})},
+  where:'Kızılçam altında, sonbahar-kış.',diff:[['🥕','Kanlıcanın sütü turuncudur, bir süre sonra ezilen yerler yeşile döner.'],['🥛','Beyaz süt çıkıyorsa kanlıca değildir. Kenarı tüylü pembe benzeri mide zehirlenmesi yapar.'],['🌲','Çam altında panter mantarı da çıkar: kahverengi şapka, beyaz benekler, dipte kese.']]},
+ {ok:{n:'Yumurta mantarı (Sezar mantarı)',d:mush({cap:'#e8662a',gill:'#f2c23b',stem:'#f2c23b',volva:1,ring:1})},bad:{n:'Sinek mantarı / köygöçüren',d:mush({cap:'#d23a2a',gill:'#ffffff',stem:'#fbf7ef',volva:1,ring:1,warts:1})},
+  where:'Meşe ve kestane altında.',diff:[['🟡','Yumurta mantarının lamelleri ve sapı SARIDIR.'],['⚪','Lamelleri beyaz, şapkası beyaz benekli ya da yeşilimsi olanlar zehirlidir.'],['🥚','Yumurta halindeyken asla toplamayın: o haliyle köygöçürenle ayırt edilemez.'],['🛑','Dibindeki kese köygöçürendekinin aynısı olduğu için kontrol listesi bu mantara da “yemeyin” der. Mutlaka uzman görmeli.']]},
+ {ok:{n:'Çayır mantarı',d:mush({cap:'#f3ece0',gill:'#a8625a',stem:'#f2ead9',ring:1})},bad:{n:'Köygöçüren',d:mush({cap:'#b9b56a',gill:'#ffffff',stem:'#f7f3e8',volva:1,ring:1})},
+  where:'Çayır ve açıklıklarda.',diff:[['🟤','Çayır mantarının lamelleri pembe, sonra çikolata kahvesi olur.'],['⚪','Köygöçürenin lamelleri hep beyazdır, sapın dibinde kese vardır.'],['☠️','Türkiye’deki mantar ölümlerinin büyük kısmı köygöçürenden olur. Pişirmek zehri yok etmez.']]},
+ {ok:{n:'Şemsiye mantarı (büyük)',d:mush({cap:'#d8c3a0',gill:'#f6efe2',stem:'#e8dcc4',shape:'umbrella',ring:1,scales:1,umbo:1,snake:1,bulb:1})},bad:{n:'Küçük şemsiye benzerleri',d:mush({cap:'#d9b7a6',gill:'#f6efe2',stem:'#efe4d6',shape:'umbrella',ring:1,scales:1,small:1})},
+  where:'Çayır ve orman kenarları.',diff:[['📏','Gerçek şemsiye mantarının şapkası 10 cm’den büyüktür, sapı yılan derisi desenlidir.'],['⚠️','Avuç içinden küçük olanların bazıları köygöçürenle aynı zehri taşır. Küçüklerini hiç toplamayın.']]},
+ {ok:{n:'Kuzugöbeği',d:mush({cap:'#b08a5e',stem:'#efe4cf',shape:'morel'})},bad:{n:'Yalancı kuzugöbeği',d:mush({cap:'#8c3b24',stem:'#efe4cf',shape:'brain'})},
+  where:'İlkbaharda.',diff:[['🐝','Kuzugöbeğinin şapkası petek gibi gözeneklidir; boyuna kesince içi tek boşluktur.'],['🧠','Beyin gibi kıvrımlı, kırmızımsı-kahve olan yalancı kuzugöbeğidir. Pişirince bile tehlikelidir.']]},
+ {ok:{n:'Sarı mantar (horoz mantarı)',d:mush({cap:'#efb437',gill:'#efb437',stem:'#efb437',shape:'funnel'})},bad:{n:'Zeytin dibindeki turuncu mantar',d:mush({cap:'#e46a1c',stem:'#e46a1c',cluster:1})},
+  where:'Kaş’ta zeytinliklerde dikkat!',diff:[['🫒','Zeytin kökünde, kütükte ÖBEK halinde çıkan parlak turuncu mantar zehirlidir (Omphalotus olearius). İzmir’de toplu zehirlenme yaptı.'],['〰️','Sarı mantarın altında yaprak değil, sapa doğru inen kıvrımlı damarlar vardır ve toprakta tek tek çıkar.']]}
+];
+const NEVER=[
+ {n:'Köygöçüren',d:mush({cap:'#b9b56a',gill:'#ffffff',stem:'#f7f3e8',volva:1,ring:1}),t:'Yeşilimsi şapka, beyaz lameller, etek, dipte kese. Belirtiler 6-24 saat sonra başlar, karaciğeri yok eder.'},
+ {n:'Panter mantarı',d:mush({cap:'#8a6a4a',gill:'#ffffff',stem:'#f7f3e8',volva:1,ring:1,warts:1}),t:'Kahverengi şapka, beyaz benekler, dipte kese. Çam altında da çıkar.'},
+ {n:'Sinek mantarı',d:mush({cap:'#d23a2a',gill:'#ffffff',stem:'#fbf7ef',volva:1,ring:1,warts:1}),t:'Kırmızı-turuncu şapka, beyaz benekler.'}
+];
+const MYTHS=[['Gümüş kaşık kararırsa zehirlidir.','Gümüş kaşık zehri göstermez.'],['Sirkeli ya da tuzlu suda kaynatınca zehri gider.','Köygöçürenin zehri kaynatınca, pişince, kuruyunca da gitmez.'],['Böceklerin, salyangozların, hayvanların yediği mantar zehirsizdir.','Hayvanlar zehirlenmeden yiyebilir, insan zehirlenir.'],['Zehirli mantar kötü kokar, acıdır.','Köygöçürenin tadı ve kokusu hoştur; tadından anlaşılmaz.'],['Kesince maviye dönmüyorsa zehirsizdir.','Renk değişimi zehri göstermez.'],['Yoğurt, ayran, süt zehirlenmeyi önler.','Önlemez. Evde tedavi denemeyin, hastaneye gidin.'],['Zehirliyle yenen ayrı yerlerde çıkar.','Yan yana çıkabilirler.'],['Çayırda ya da ağaçta çıkan mantar zehirsizdir.','Her yerde zehirli mantar çıkabilir.']];
+
+/* ---------- durum ---------- */
+const S={view:'home',rec:null,draft:null,qi:0,answers:{},result:null,forRec:null,guideOpen:null};
+const SHOTS=[['top','Üstü','Şapkanın üstü, rengi görünsün.','🍄'],['under','Altı','Şapkayı ters çevirin; lameller görünsün.','🔄'],['base','Sapın dibi','Toprağı kazıyıp çıkarın; sapın en dibi görünsün.','⛏️'],['cut','Kesiti','Boyuna ikiye kesin; içi ve süt görünsün.','🔪']];
+const PLACES=['Çam altı','Zeytin dibi','Meşe / orman','Çayır','Ağaç kütüğü / odun','Bahçe'];
+
+function go(v,opts){S.view=v;Object.assign(S,opts||{});render();window.scrollTo({top:0})}
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(!b)return;if(b.dataset.go==='check'){S.qi=0;S.answers={};S.result=null;S.forRec=null}if(b.dataset.go==='photo'){S.draft=null}go(b.dataset.go)});
+
+/* ---------- yediğimiz saat ---------- */
+function ateInfo(){const a=store('ate');if(!a)return null;const h=(Date.now()-a)/36e5;if(h>96){store('ate',null);return null}return {at:a,h}}
+function hrs(h){const H=Math.floor(h),M=Math.floor((h-H)*60);return H?`${H} saat ${M} dakika`:`${M} dakika`}
+function ateCard(){const a=ateInfo();
+  if(!a)return `<div class="card ate"><h3>Yabani mantar mı yediniz?</h3><p class="muted">Yediğiniz saati kaydedin. Bir şey olursa doktora söylemek çok önemli.</p><button class="btn wide" type="button" data-act="ate">🕒 Yedik, saati kaydet</button></div>`;
+  return `<div class="card ate" style="border-color:${a.h>=6?'#e7b2ab':'var(--line)'}"><h3>Mantar yiyeli</h3><div class="t">${hrs(a.h)} oldu</div>
+   <p>${a.h<6?'Mide bulantısı, kusma, ishal ya da karın ağrısı olursa hemen hastaneye gidin.':'<b style="color:var(--danger)">6 saatten sonra başlayan bulantı, kusma, ishal en tehlikeli olanıdır.</b> Böyle bir şey olursa hiç beklemeden hastaneye gidin.'} Belirti olmasa bile 2-3 gün dikkatli olun.</p>
+   <div class="row"><button class="btn red" type="button" data-go2="sos">🚨 Acil durum</button><button class="btn" type="button" data-act="ateclear">Kaydı sil</button></div></div>`}
+
+/* ---------- ekranlar ---------- */
+function vHome(){return `<div class="top"><img src="mantar-192.png" alt=""><div><h1>Mantar Bekçisi</h1><small>Kaş · Antalya</small></div></div>
+ <div class="rule"><b>Emin olmadığınız mantarı yemeyin.</b><span>Bu uygulama hiçbir mantara “yenir” demez. Şüpheli işaret görürse uyarır, gerisini uzmana bırakır.</span></div>
+ <button class="big b-photo" type="button" data-go2="photo"><span class="i">📷</span><span>Fotoğrafla ve ${esc(ASK)}’ye sor<small>4 fotoğraf çekin, WhatsApp’tan gönderin</small></span></button>
+ <button class="big b-check" type="button" data-go2="check"><span class="i">✅</span><span>Yemeden önce kontrol et<small>Tek tek sorular, büyük düğmeler</small></span></button>
+ <button class="big b-sos" type="button" data-go2="sos"><span class="i">🚨</span><span>Acil durum<small>Mantar yedikten sonra rahatsızlık</small></span></button>
+ ${ateCard()}
+ <button class="big b-guide" type="button" data-go2="guide"><span class="i">📖</span><span>Karıştırılan mantarlar<small>Kaş’ta toplananlar ve zehirli ikizleri</small></span></button>`}
+
+function vPhoto(){
+  if(S.rec){const r=RECS.find(x=>x.id===S.rec);if(r)return vRec(r)}
+  const d=S.draft||(S.draft={id:'m'+Date.now().toString(36),at:Date.now(),imgs:{},place:'',note:''});
+  const n=Object.keys(d.imgs).length;
+  return `<h2>Mantarı fotoğrafla</h2><p class="muted">Her biri için düğmeye basın, telefonun kamerası açılır.</p>
+  <div class="shots">${SHOTS.map(([k,t,h,ic])=>{const b=d.imgs[k];return `<div class="shot${b?' done':''}"><div class="ph" style="${b?`background-image:url(${urlOf(b)})`:''}">${b?'':ic}</div><div><b>${t}</b><p>${h}</p><label>${b?'Yeniden çek':'📷 Çek'}<input type="file" accept="image/*" capture="environment" data-shot="${k}"></label></div></div>`}).join('')}</div>
+  <div class="card"><h3>Nerede buldunuz?</h3><div class="chips">${PLACES.map(p=>`<button type="button" class="chip" data-place="${esc(p)}" aria-pressed="${d.place===p}">${p}</button>`).join('')}</div>
+   <textarea id="note" placeholder="Not (isteğe bağlı): kaç tane, nasıl kokuyor…">${esc(d.note)}</textarea></div>
+  <button class="btn pri wide" type="button" data-act="send" ${n?'':'disabled'}>📤 ${esc(ASK)}’ye gönder (WhatsApp)</button>
+  <button class="btn wide" type="button" data-act="aidraft" ${n?'':'disabled'}>🤖 Yapay zekâya sor</button>
+  <button class="btn wide" type="button" data-act="savecheck" ${n?'':'disabled'}>✅ Kaydet ve kontrol listesine geç</button>
+  ${RECS.length?`<h3 style="margin-top:8px">Önceki kayıtlar</h3>${RECS.map(recCard).join('')}`:''}`}
+function verdictTag(r){return r.verdict==='red'?'<span class="tag red">YEMEYİN</span>':r.verdict==='amber'?'<span class="tag amber">Uzmana gösterin</span>':'<span class="tag none">Kontrol edilmedi</span>'}
+function recCard(r){const im=SHOTS.map(([k])=>r.imgs[k]).filter(Boolean);return `<button type="button" class="card rec" data-rec="${r.id}" style="text-align:left;cursor:pointer"><div class="row" style="justify-content:space-between;align-items:center"><b>${new Date(r.at).toLocaleString('tr-TR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})}</b>${verdictTag(r)}</div>
+  <div class="th">${im.map(b=>`<i style="background-image:url(${urlOf(b)})"></i>`).join('')}</div>${r.place?`<span class="muted">${esc(r.place)}</span>`:''}</button>`}
+function vRec(r){const im=SHOTS.filter(([k])=>r.imgs[k]);
+  return `<button class="btn" type="button" data-act="back">‹ Geri</button><h2>${new Date(r.at).toLocaleString('tr-TR',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})}</h2>
+  <div>${verdictTag(r)}</div>${r.reasons&&r.reasons.length?`<div class="card" style="border-color:#e7b2ab"><b style="color:var(--danger)">Neden yememeli?</b>${r.reasons.map(x=>`<p>${esc(x)}</p>`).join('')}</div>`:''}
+  <div class="shots">${im.map(([k,t])=>`<div class="card" style="padding:10px"><b>${t}</b><img src="${urlOf(r.imgs[k])}" alt="${t}" style="width:100%;border-radius:12px;display:block"></div>`).join('')}</div>
+  ${r.place||r.note?`<div class="card">${r.place?`<b>${esc(r.place)}</b>`:''}${r.note?`<p>${esc(r.note)}</p>`:''}</div>`:''}
+  <button class="btn pri wide" type="button" data-act="sendrec" data-id="${r.id}">📤 ${esc(ASK)}’ye gönder (WhatsApp)</button>
+  ${S.aiConfirm===r.id?`<div class="caution" id="aiBox"><h2>🤖 Yapay zekâ da yanılabilir</h2><p>Fotoğraflar ve hazır bir soru, seçeceğiniz uygulamaya (ChatGPT, Gemini, Claude) gider. Uygulamada soruyu gönderin.</p><p><b>Yapay zekâ “yenir” dese bile uzmana göstermeden yemeyin.</b> Zehirli olabilir derse hemen atın.</p><button class="btn pri wide" type="button" data-act="aigo" data-id="${r.id}">Anladım, sor</button><button class="btn wide" type="button" data-act="aicancel">Vazgeç</button></div>`:`<button class="btn wide" type="button" data-act="ai" data-id="${r.id}">🤖 Yapay zekâya sor</button>`}
+  <button class="btn wide" type="button" data-act="checkrec" data-id="${r.id}">✅ Kontrol listesini yap</button>
+  <button class="btn wide" type="button" data-act="delrec" data-id="${r.id}">🗑 Kaydı sil</button>`}
+
+function vCheck(){
+  if(S.result)return vResult();
+  const q=QS[S.qi],btn=q.btn||[['EVET','yes'],['HAYIR','no'],['EMİN DEĞİLİM','unsure']];
+  return `<div class="row" style="justify-content:space-between;align-items:center"><span class="muted">Soru ${S.qi+1} / ${QS.length}</span>${S.qi?'<button class="btn" type="button" data-act="qback" style="min-height:44px;padding:8px 14px">‹ Önceki</button>':''}</div>
+  <div class="prog"><i style="width:${S.qi/QS.length*100}%"></i></div>
+  <p class="q">${q.q}</p><p class="qhint">💡 ${q.h}</p>
+  <div class="ans">${btn.map(([l,v])=>`<button type="button" class="a-${v}" data-ans="${v}">${l}</button>`).join('')}</div>`}
+function vResult(){const R=S.result;
+  if(R.v==='red')return `<div class="stop"><div class="x">✋</div><h2>YEMEYİN</h2><p>${esc(R.why)}</p></div>
+   <div class="card"><ul class="steps"><li>Bu mantarı <b>atın</b>, ellerinizi yıkayın.</li><li>Aynı sepetteki mantarlara karışmışsa <b>onları da yemeyin</b>.</li><li>Merak ediyorsanız fotoğrafını ${esc(ASK)}’ye ya da bir uzmana gönderin.</li><li>Yediyseniz: belirti olmasa bile <b>hemen 112’yi arayın</b> ya da hastaneye gidin.</li></ul></div>
+   <button class="btn pri wide" type="button" data-go2="photo">📷 Fotoğrafla ve ${esc(ASK)}’ye sor</button>
+   <button class="btn red wide" type="button" data-go2="sos">🚨 Yedik, acil durum</button>
+   <button class="btn wide" type="button" data-act="restart">Başka bir mantarı kontrol et</button>`;
+  return `<div class="caution"><div style="font-size:48px">⚠️</div><h2>Uzmana göstermeden yemeyin</h2>
+   <p>Sorularda tehlikeli bir işaret çıkmadı. <b>Ama bu, mantarın yenebilir olduğu anlamına gelmez.</b> Birçok zehirli mantar bu sorulardan geçebilir.</p></div>
+   <div class="card"><h3>Yine de yiyecekseniz</h3><ul class="steps"><li>Önce fotoğrafları ${esc(ASK)}’ye ya da bir uzmana gösterin.</li><li><b>Bir tanesini pişirmeden buzdolabında saklayın.</b> Zehirlenmede doktor ona bakar.</li><li>Az yiyin, iyice pişirin, <b>çiğ yemeyin</b>.</li><li>Yanında <b>alkol</b> içmeyin.</li><li>Yediğiniz saati kaydedin.</li></ul></div>
+   <button class="btn pri wide" type="button" data-go2="photo">📷 Fotoğrafla ve ${esc(ASK)}’ye sor</button>
+   <button class="btn wide" type="button" data-act="ate">🕒 Yedik, saati kaydet</button>
+   <button class="btn wide" type="button" data-act="restart">Başka bir mantarı kontrol et</button>`}
+
+function vSos(){const a=ateInfo();
+  return `<h2 style="color:var(--danger)">Acil durum</h2>
+  ${a?`<div class="card" style="border-color:#e7b2ab"><b>Mantar yiyeli ${hrs(a.h)} oldu.</b><span class="muted">Bunu doktora söyleyin.</span></div>`:''}
+  <a class="call c112" href="tel:112">📞 112<small>Acil çağrı · ambulans</small></a>
+  <a class="call c114" href="tel:114">☎️ 114<small>Ulusal Zehir Danışma Merkezi</small></a>
+  <div class="card"><h3>Hemen yapın</h3><ul class="steps"><li>Mantar yedikten sonra <b>bulantı, kusma, ishal, karın ağrısı, baş dönmesi</b> olursa <b>hemen hastaneye</b> gidin.</li><li><b>Mantarı yiyen herkes</b> gitsin; belirtisi olmayanlar da.</li><li>Mantardan kalanı, artığı ya da fotoğrafını <b>yanınıza alın</b>.</li><li>Evde <b>yoğurt, süt, ayran ya da ilaçla</b> tedavi denemeyin.</li><li>Kusmuyorsa zorla kusturmayın; doktora bırakın.</li></ul></div>
+  <div class="card"><h3>Belirtilerin saati çok önemli</h3><div class="tl">
+    <div><b>0-6 saat</b><span>Genellikle daha hafif zehirlenmeler. Yine de hastaneye gidin.</span></div>
+    <div class="hot"><b>6-24 saat</b><span><b>En tehlikeli.</b> Köygöçüren gibi mantarlarda belirtiler geç başlar.</span></div>
+    <div class="hot"><b>1-3. gün</b><span>Kusma geçip <b>düzelmiş gibi</b> görünebilir. Aldanmayın: bu sırada karaciğer zarar görür. Hastaneden erken ayrılmayın.</span></div>
+  </div></div>
+  <div class="card"><h3>Doktora söyleyin</h3><ul class="steps"><li>Ne zaman yediniz, ne kadar yediniz?</li><li>İlk belirti kaç saat sonra başladı?</li><li>Kaç çeşit mantar vardı, çiğ mi pişmiş mi?</li><li>Yiyen herkes hastalandı mı?</li><li>Son günlerde alkol içtiniz mi?</li></ul></div>
+  ${a?'':`<button class="btn wide" type="button" data-act="ate">🕒 Yediğimiz saati kaydet</button>`}`}
+
+function vGuide(){
+  return `<h2>Karıştırılan mantarlar</h2><p class="muted">Kaş ve çevresinde toplananlar ile zehirli ikizleri. Resimler ayırt edici yerleri göstermek için çizildi; gerçek mantarlar farklı görünebilir.</p>
+  <div class="qhint">Kontrol listesi, eteği ya da dibinde kesesi olduğu için bazı yenen mantarlara da “yemeyin” der. Bu bilerek böyle: şüphede uyarmak, yanlış bir “tamam”dan iyidir.</div>
+  ${PAIRS.map(p=>`<div class="card pair"><div class="two"><figure class="ok">${p.ok.d}<figcaption><b>${p.ok.n}</b>toplanan</figcaption></figure><figure class="bad">${p.bad.d}<figcaption><b>${p.bad.n}</b>zehirli ikizi</figcaption></figure></div>
+   <span class="muted">${p.where}</span><div class="diff">${p.diff.map(([i,t])=>`<div><span>${i}</span><span>${t}</span></div>`).join('')}</div></div>`).join('')}
+  <div class="card never"><h3 style="color:var(--danger)">Bunlara asla dokunmayın</h3>${NEVER.map(n=>`<div class="row" style="flex-wrap:nowrap;align-items:center"><div style="width:96px;flex:none">${n.d}</div><div><b>${n.n}</b><p style="font-size:17px">${n.t}</p></div></div>`).join('')}</div>
+  <div class="card"><h3>Doğru bilinen yanlışlar</h3>${MYTHS.map(([a,b])=>`<div class="myth"><s>${a}</s><span>✅ ${b}</span></div>`).join('')}</div>
+  <p class="muted" style="font-size:15px">Kaynaklar: Tarım ve Orman Bakanlığı, “Mantar Zehirlenmeleri ve Başlıca Zehirli Mantarlar”; Sağlık Bakanlığı uyarıları.</p>`}
+
+function render(){
+  document.querySelectorAll('#nav [data-go]').forEach(b=>b.setAttribute('aria-current',b.dataset.go===S.view?'page':'false'));
+  $('app').innerHTML={home:vHome,photo:vPhoto,check:vCheck,guide:vGuide,sos:vSos}[S.view]()}
+
+/* ---------- fotoğraf işleme ---------- */
+async function shrink(file){const url=URL.createObjectURL(file);try{const img=new Image();img.src=url;await img.decode();const s=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight)),c=document.createElement('canvas');c.width=Math.round(img.naturalWidth*s);c.height=Math.round(img.naturalHeight*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);return await new Promise(ok=>c.toBlob(b=>ok(b||file),'image/jpeg',.85))}catch(e){return file}finally{URL.revokeObjectURL(url)}}
+async function saveDraft(){const d=S.draft;if(!d)return null;const n=$('note');if(n)d.note=n.value.trim();const ex=RECS.find(r=>r.id===d.id);const rec=Object.assign(ex||{},d);
+  try{await DB.put(rec)}catch(e){toast('Kaydedilemedi: telefonda yer kalmamış olabilir');return null}if(!ex)RECS.unshift(rec);return rec}
+async function share(r){const files=SHOTS.filter(([k])=>r.imgs[k]).map(([k,t])=>new File([r.imgs[k]],`mantar-${t.toLowerCase().replace(/[^a-zçğıöşü]/g,'')}.jpg`,{type:'image/jpeg'}));
+  const text=`${ASK}, bu mantara bakar mısın? 🍄\n${r.place?'Yer: '+r.place+'\n':''}${r.note?'Not: '+r.note+'\n':''}${r.verdict==='red'?'Kontrol listesi: YEMEYİN dedi.\n':r.verdict==='amber'?'Kontrol listesi: şüpheli işaret bulmadı, uzmana göster dedi.\n':''}(Mantar Bekçisi)`;
+  try{if(navigator.canShare&&navigator.canShare({files})){await navigator.share({files,text});return}}catch(e){if(e&&e.name==='AbortError')return}
+  try{if(navigator.share){await navigator.share({text});toast('Fotoğrafları ayrıca galeriden ekleyin');return}}catch(e){if(e&&e.name==='AbortError')return}
+  toast('Bu telefonda paylaşma açılamadı. Fotoğrafları galeriden gönderin.',4000)}
+
+const AIQ=r=>`Bu fotoğraflardaki mantarı Antalya Kaş’ta topladık${r.place?' ('+r.place+')':''}. Fotoğraflar: üstü, altı, sapın dibi ve kesiti.
+Lütfen bize “yenir” ya da “güvenli” DEME; fotoğraftan bunu kimse kesin bilemez.
+Bunun yerine:
+1) Bu mantarda zehirli olma ihtimalini gösteren işaretler var mı? (sapın dibinde kese/yumru, beyaz lameller, etek, şapkada beyaz benekler, yeşilimsi şapka, odunda öbek halinde çıkma, beyaz süt vb.)
+2) Bu mantar hangi zehirli mantarlarla karıştırılabilir, onları nasıl ayırırız?
+3) Fotoğraflarda neyi göremiyorsun, uzmana neyi göstermeliyiz?
+Kısa ve sade Türkçe yaz, büyüklerimiz okuyacak.${r.note?'\nNotumuz: '+r.note:''}`;
+async function askAI(r){const files=SHOTS.filter(([k])=>r.imgs[k]).map(([k,t])=>new File([r.imgs[k]],`mantar-${t.toLowerCase().replace(/[^a-zçğıöşü]/g,'')}.jpg`,{type:'image/jpeg'})),text=AIQ(r);
+  const cp=navigator.clipboard?navigator.clipboard.writeText(text).catch(()=>{}):Promise.resolve();
+  try{if(navigator.canShare&&navigator.canShare({files,text})){await navigator.share({files,text});toast('Uygulamada soruyu gönderin. Soru panoya da kopyalandı.',4000);return}}catch(e){if(e&&e.name==='AbortError')return}
+  await cp;toast('Soru panoya kopyalandı. ChatGPT ya da Gemini’yi açıp fotoğrafları ekleyin, yapıştırın.',5000)}
+
+/* ---------- olaylar ---------- */
+document.addEventListener('click',async e=>{
+  const g=e.target.closest('[data-go2]');if(g){const v=g.dataset.go2;if(v==='check'){S.qi=0;S.answers={};S.result=null;S.forRec=null}if(v==='photo'){S.draft=null;S.rec=null}go(v);return}
+  const pl=e.target.closest('[data-place]');if(pl&&S.draft){const n=$('note');if(n)S.draft.note=n.value;S.draft.place=S.draft.place===pl.dataset.place?'':pl.dataset.place;render();return}
+  const rc=e.target.closest('[data-rec]');if(rc){S.rec=rc.dataset.rec;render();window.scrollTo({top:0});return}
+  const an=e.target.closest('[data-ans]');if(an){const q=QS[S.qi],v=an.dataset.ans;S.answers[q.k]=v;
+    if(v!=='no'){S.result={v:'red',why:v==='unsure'?'Emin olmadığınız bir işaret var. Emin değilseniz yemeyin. '+q.why:q.why};await finishCheck();render();window.scrollTo({top:0});return}
+    if(S.qi<QS.length-1){S.qi++;render();window.scrollTo({top:0});return}
+    S.result={v:'amber'};await finishCheck();render();window.scrollTo({top:0});return}
+  const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+  if(a==='qback'){S.qi=Math.max(0,S.qi-1);render();return}
+  if(a==='restart'){S.qi=0;S.answers={};S.result=null;S.forRec=null;render();window.scrollTo({top:0});return}
+  if(a==='ate'){store('ate',Date.now());toast('Saat kaydedildi');render();return}
+  if(a==='ateclear'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Emin misiniz? Tekrar basın';return}store('ate',null);render();return}
+  if(a==='send'){const r=await saveDraft();if(r){await share(r)}return}
+  if(a==='savecheck'){const r=await saveDraft();if(!r)return;S.forRec=r.id;S.draft=null;S.qi=0;S.answers={};S.result=null;go('check');return}
+  if(a==='back'){S.rec=null;S.aiConfirm=null;render();return}
+  if(a==='aidraft'){const r=await saveDraft();if(!r)return;S.draft=null;S.rec=r.id;S.aiConfirm=r.id;render();setTimeout(()=>{const x=$('aiBox');if(x)x.scrollIntoView({block:'center'})},50);return}
+  if(a==='ai'){S.aiConfirm=b.dataset.id;render();setTimeout(()=>{const x=$('aiBox');if(x)x.scrollIntoView({block:'center'})},50);return}
+  if(a==='aicancel'){S.aiConfirm=null;render();return}
+  if(a==='aigo'){const r=RECS.find(x=>x.id===b.dataset.id);S.aiConfirm=null;render();if(r)await askAI(r);return}
+  if(a==='sendrec'){const r=RECS.find(x=>x.id===b.dataset.id);if(r)await share(r);return}
+  if(a==='checkrec'){S.forRec=b.dataset.id;S.qi=0;S.answers={};S.result=null;S.rec=null;go('check');return}
+  if(a==='delrec'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Emin misiniz? Tekrar basın';return}const id=b.dataset.id;try{await DB.del(id)}catch(x){}RECS=RECS.filter(r=>r.id!==id);S.rec=null;render();toast('Silindi');return}
+});
+async function finishCheck(){if(!S.forRec)return;const r=RECS.find(x=>x.id===S.forRec);if(!r)return;r.verdict=S.result.v;r.reasons=S.result.v==='red'?[S.result.why]:[];try{await DB.put(r)}catch(e){}}
+document.addEventListener('change',async e=>{const t=e.target;if(!t.dataset||!t.dataset.shot||!S.draft)return;const f=t.files&&t.files[0];if(!f)return;const n=$('note');if(n)S.draft.note=n.value;
+  S.draft.imgs[t.dataset.shot]=await shrink(f);render()});
+document.addEventListener('input',e=>{if(e.target.id==='note'&&S.draft)S.draft.note=e.target.value});
+setInterval(()=>{if(S.view==='home'||S.view==='sos'){const ae=document.activeElement;if(!ae||ae.tagName!=='TEXTAREA')render()}},60000);
+
+render();
+DB.open().then(loadRecs).then(()=>{if(S.view==='photo')render()}).catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('sw.js').catch(()=>{});
+})();
+</script>
+</body>
+</html>
