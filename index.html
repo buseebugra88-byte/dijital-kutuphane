@@ -307,8 +307,8 @@ body.panel-mode .main{grid-template-columns:1fr}
 .reader.ah.bars-off .rbar{transform:translateY(-105%);opacity:0;pointer-events:none}.reader.ah.bars-off .rfoot{transform:translateY(105%);opacity:0;pointer-events:none}
 .rstage{position:relative;perspective:2000px}.pgwrap.flipping{z-index:3;pointer-events:none;backface-visibility:hidden;box-shadow:0 10px 30px -10px rgba(0,0,0,.45)}
 .fl-next{transform-origin:left center;animation:flipNext .6s cubic-bezier(.45,.05,.55,.95) forwards}.fl-prev{transform-origin:right center;animation:flipPrev .6s cubic-bezier(.45,.05,.55,.95) forwards}
-@keyframes flipNext{0%{transform:rotateY(0);filter:brightness(1);opacity:1}60%{filter:brightness(.8);opacity:1}88%{opacity:1}100%{transform:rotateY(-100deg);filter:brightness(.55);opacity:0}}
-@keyframes flipPrev{0%{transform:rotateY(0);filter:brightness(1);opacity:1}60%{filter:brightness(.8);opacity:1}88%{opacity:1}100%{transform:rotateY(100deg);filter:brightness(.55);opacity:0}}
+@keyframes flipNext{0%{transform:translateX(0);opacity:1}100%{transform:translateX(-18%);opacity:0}}
+@keyframes flipPrev{0%{transform:translateX(0);opacity:1}100%{transform:translateX(18%);opacity:0}}
 .pgwrap{position:relative;display:inline-block;max-width:100%}
 .pgwrap canvas{display:block;max-width:100%;height:auto}
 .pgwrap .inklayer{position:absolute;inset:0;width:100%;height:100%;touch-action:pan-x pan-y pinch-zoom;background:none!important;box-shadow:none!important;filter:none!important}
@@ -1068,6 +1068,11 @@ html body .tz-text{min-height:58vh;width:100%;resize:vertical;font:16px/1.75 var
 .tz-ci:has(input:checked){border-color:var(--brass);background:var(--brass-soft)}.tz-fmt summary{cursor:pointer;display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}.tz-fmt[open]{display:grid;gap:10px}
 .tz{--st:color-mix(in srgb,var(--brass) 82%,#7a2e2a);--soft:color-mix(in srgb,var(--paper) 86%,var(--brass-soft))}
 @media(max-width:760px){.tz-grid{grid-template-columns:1fr}.tz-side{position:static}.tz-text{min-height:50vh}}
+
+html body .rstage{overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.pgwrap.flipping{animation-duration:.32s!important;animation-timing-function:ease-out!important;will-change:transform,opacity}
+.spage{position:relative}.spage:not([data-done])::before{content:attr(data-p);position:absolute;inset:0;display:grid;place-items:center;font:600 15px var(--body);color:rgba(0,0,0,.18);background:repeating-linear-gradient(180deg,#fff 0 22px,#f6f4ef 22px 23px)}
+.reader.mode-night .spage:not([data-done])::before{color:rgba(255,255,255,.2);background:#222}
 </style>
 
 </head><body>
@@ -5018,7 +5023,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v55';
+const DK_VER='v56';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6887,6 +6892,10 @@ async function renderEpub(){
   if(R.restorePos!=null){const rp=R.restorePos;R.restorePos=null;requestAnimationFrame(()=>{stage.scrollTop=rp*(stage.scrollHeight-stage.clientHeight)})}else stage.scrollTop=0;
   $('rPage').value=R.page;$('rPrev').disabled=R.page<=1;$('rNext').disabled=R.page>=R.doc.numPages;
 }
+function rdDpr(vp){const d=Math.min(2.5,window.devicePixelRatio||1),max=/iP(hone|ad|od)|Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1?9e6:16e6;const a=vp.width*vp.height;return Math.max(1,Math.min(d,Math.sqrt(max/Math.max(1,a))))}
+function rdFree(root){if(!root)return;root.querySelectorAll('canvas').forEach(c=>{try{c.width=0;c.height=0}catch(e){}})}
+let rdRz,rdW=0,rdH=0;function rdResize(){if(!R.book||$('reader').hidden||R.epub||!R.doc)return;const st_=$('rStage');if(Math.abs(st_.clientWidth-rdW)<4&&Math.abs(st_.clientHeight-rdH)<40)return;rdW=st_.clientWidth;rdH=st_.clientHeight;SCR.key='';R.flipDir=0;renderPage()}
+window.addEventListener('resize',()=>{clearTimeout(rdRz);rdRz=setTimeout(rdResize,250)});window.addEventListener('orientationchange',()=>{clearTimeout(rdRz);rdRz=setTimeout(rdResize,400)});
 async function renderPage(){
   if(!R.doc)return;
   if(R.epub){if(R.firstEpub!==R.book){R.firstEpub=R.book;R.restorePos=R.pos||0}return renderEpub()}
@@ -6895,8 +6904,8 @@ async function renderPage(){
   R.rendering=true;
   try{
     const pg=await R.doc.getPage(R.page),stage=$('rStage');
-    const base=pg.getViewport({scale:1}),fit=Math.min(900,stage.clientWidth-32)/base.width;
-    const vp=pg.getViewport({scale:fit*R.scale}),dpr=window.devicePixelRatio||1;
+    const base=pg.getViewport({scale:1}),cs=getComputedStyle(stage),avH=stage.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0)-8,fitW=Math.min(900,stage.clientWidth-32)/base.width,fit=avH>200?Math.min(fitW,avH/base.height):fitW;
+    const vp=pg.getViewport({scale:fit*R.scale}),dpr=rdDpr(vp);
     const c=document.createElement('canvas');c.width=Math.floor(vp.width*dpr);c.height=Math.floor(vp.height*dpr);
     c.style.width=Math.floor(vp.width)+'px';c.setAttribute('aria-label','Sayfa '+R.page);
     await pg.render({canvasContext:c.getContext('2d'),viewport:vp,transform:dpr!==1?[dpr,0,0,dpr,0,0]:null}).promise;
@@ -6905,9 +6914,9 @@ async function renderPage(){
     wrap.appendChild(c);wrap.appendChild(ink);stage.classList.remove('scrollflow');SCR.key='';
     const old=stage.querySelector(':scope>.pgwrap'),dir=R.flipDir;R.flipDir=0;let ob=null;
     if(old&&dir&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const r=old.getBoundingClientRect(),sr=stage.getBoundingClientRect();ob={l:r.left-sr.left+stage.scrollLeft,t:r.top-sr.top+stage.scrollTop,w:r.width}}
-    stage.innerHTML='';stage.appendChild(wrap);
-    if(ob){old.querySelectorAll('.inklayer').forEach(x=>x.remove());old.classList.add('flipping',dir>0?'fl-next':'fl-prev');Object.assign(old.style,{position:'absolute',left:ob.l+'px',top:ob.t+'px',width:ob.w+'px',margin:'0'});stage.appendChild(old);const rm=()=>old.remove();old.addEventListener('animationend',rm);setTimeout(rm,1000)}stage.scrollTop=0;
-    inkAttach(ink,R.book,R.page,dpr);
+    stage.querySelectorAll(':scope>.pgwrap:not(.flipping)').forEach(w=>{if(w!==old||!ob)rdFree(w)});stage.innerHTML='';stage.appendChild(wrap);
+    if(ob){old.querySelectorAll('.inklayer').forEach(x=>x.remove());old.classList.add('flipping',dir>0?'fl-next':'fl-prev');Object.assign(old.style,{position:'absolute',left:ob.l+'px',top:ob.t+'px',width:ob.w+'px',margin:'0'});stage.appendChild(old);const rm=()=>{rdFree(old);old.remove()};old.addEventListener('animationend',rm);setTimeout(rm,700)}stage.scrollTop=0;
+    inkAttach(ink,R.book,R.page,dpr);rdW=stage.clientWidth;rdH=stage.clientHeight;
   }catch(e){}
   R.rendering=false;
   $('rPage').value=R.page;$('rPrev').disabled=R.page<=1;$('rNext').disabled=R.page>=R.doc.numPages;
@@ -6935,7 +6944,7 @@ async function renderScroll(){
   const fit=Math.min(900,stage.clientWidth-32)/base.width,w=Math.floor(base.width*fit*R.scale),h=Math.floor(base.height*fit*R.scale);
   const frag=document.createDocumentFragment();SCR.els=[];
   for(let i=1;i<=doc.numPages;i++){const d=document.createElement('div');d.className='spage';d.dataset.p=i;d.style.width=w+'px';d.style.height=h+'px';SCR.els.push(d);frag.appendChild(d)}
-  stage.innerHTML='';stage.classList.add('scrollflow');stage.appendChild(frag);
+  rdFree(stage);stage.innerHTML='';stage.classList.add('scrollflow');stage.appendChild(frag);
   SCR.io=new IntersectionObserver(ents=>{for(const en of ents)if(en.isIntersecting)scrDraw(+en.target.dataset.p,doc,key)},{root:stage,rootMargin:'120% 0px'});
   SCR.els.forEach(el=>SCR.io.observe(el));
   scrollToPage(R.page);SCR.lastTop=stage.scrollTop;footSync();
@@ -6943,13 +6952,13 @@ async function renderScroll(){
 async function scrDraw(n,doc,key){
   const el=SCR.els[n-1];if(!el||el.dataset.done||SCR.busy.has(n))return;SCR.busy.add(n);
   try{const pg=await doc.getPage(n);if(SCR.key!==key)return;
-    const base=pg.getViewport({scale:1}),stage=$('rStage'),fit=Math.min(900,stage.clientWidth-32)/base.width,vp=pg.getViewport({scale:fit*R.scale}),dpr=Math.min(2.5,window.devicePixelRatio||1);
+    const base=pg.getViewport({scale:1}),stage=$('rStage'),fit=Math.min(900,stage.clientWidth-32)/base.width,vp=pg.getViewport({scale:fit*R.scale}),dpr=rdDpr(vp);
     const c=document.createElement('canvas');c.width=Math.floor(vp.width*dpr);c.height=Math.floor(vp.height*dpr);c.style.width='100%';c.style.height='100%';c.setAttribute('aria-label','Sayfa '+n);
     await pg.render({canvasContext:c.getContext('2d'),viewport:vp,transform:dpr!==1?[dpr,0,0,dpr,0,0]:null}).promise;if(SCR.key!==key)return;
     const before=el.offsetTop<stage.scrollTop,oh=el.offsetHeight;
     el.style.width=Math.floor(vp.width)+'px';el.style.height=Math.floor(vp.height)+'px';el.innerHTML='';el.appendChild(c);el.dataset.done='1';
     if(before)stage.scrollTop+=el.offsetHeight-oh;
-    SCR.els.forEach((o,i)=>{if(o.dataset.done&&Math.abs(i+1-R.page)>4){o.innerHTML='';delete o.dataset.done}});
+    SCR.els.forEach((o,i)=>{if(o.dataset.done&&Math.abs(i+1-R.page)>3){rdFree(o);o.innerHTML='';delete o.dataset.done}});
   }catch(e){}finally{SCR.busy.delete(n)}
 }
 $('rStage').addEventListener('scroll',()=>{
