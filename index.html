@@ -1055,6 +1055,19 @@ html body #secHost select,html body #secHost input:not([type=checkbox]):not([typ
 .cl-pick{display:grid;gap:8px}.cl-pk{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:8px 8px 8px 12px}.cl-pk.on{border-color:var(--brass);background:var(--brass-soft)}
 .cl-pkb{border:0;background:none;text-align:left;display:grid;gap:2px;cursor:pointer;font:inherit;color:inherit;padding:0;min-width:0}.cl-pkb b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .co,.cl{grid-template-columns:minmax(0,1fr)}.co .cl-btns select{flex:1 1 220px;min-width:0;text-overflow:ellipsis}
+
+.tz-grid{display:grid;grid-template-columns:minmax(200px,250px) minmax(0,1fr);gap:14px;align-items:start}
+.tz-side{position:sticky;top:12px;gap:10px}.tz-grp{display:grid;gap:3px}.tz-grp>small{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:2px 0}
+.tz-ch{display:flex;justify-content:space-between;gap:8px;border:0;background:none;text-align:left;font:inherit;font-size:13.5px;padding:7px 10px;border-radius:12px;cursor:pointer;color:var(--ink)}.tz-ch span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.tz-ch small{color:var(--muted);font-variant-numeric:tabular-nums}
+.tz-ch:hover{background:var(--soft)}.tz-ch.on{background:var(--soft);box-shadow:inset 3px 0 0 var(--st);font-weight:700}
+.tz-ed{gap:10px;min-height:70vh}.tz-top{display:grid;grid-template-columns:1fr auto;gap:8px}.tz-title{font:600 20px var(--display)!important}
+.tz-tools{display:flex;gap:6px;flex-wrap:wrap;align-items:center}.tz-tools .btn{padding:5px 12px;font-size:12.5px}.tz-st{margin-left:auto;font-size:12px}
+html body .tz-text{min-height:58vh;width:100%;resize:vertical;font:16px/1.75 var(--display);padding:18px 20px;border-radius:16px;background:color-mix(in srgb,var(--paper) 70%,#fff)!important}
+.tz-foot{display:flex;gap:8px;align-items:center;font-size:12.5px}
+.tz-hi{justify-items:start;gap:10px}.tz-cl{display:grid;gap:6px;max-height:50vh;overflow:auto}.tz-ci{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;border:1px solid var(--line);border-radius:12px;padding:8px 10px;cursor:pointer}.tz-ci span{display:grid}.tz-ci small{color:var(--muted);font-size:12px}
+.tz-ci:has(input:checked){border-color:var(--brass);background:var(--brass-soft)}.tz-fmt summary{cursor:pointer;display:flex;gap:8px;flex-wrap:wrap;align-items:baseline}.tz-fmt[open]{display:grid;gap:10px}
+.tz{--st:color-mix(in srgb,var(--brass) 82%,#7a2e2a);--soft:color-mix(in srgb,var(--paper) 86%,var(--brass-soft))}
+@media(max-width:760px){.tz-grid{grid-template-columns:1fr}.tz-side{position:static}.tz-text{min-height:50vh}}
 </style>
 
 </head><body>
@@ -3254,14 +3267,14 @@ async function saveFile(name,data){
   try{const dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;if(!dl){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toast('Dosya indirildi');return}await dl.save({filename:name,data});toast('Dosya kaydedildi')}
   catch(e){toast(e&&e.code==='declined'?'İndirme iptal edildi':e&&e.code==='rate_limited'?'Biraz bekleyip tekrar dene':'Bu görünümde dosya indirilemiyor')}}
 async function backupData(){const get=async col=>{try{const s_=await st.db.collection(col).get();return s_.docs.map(d=>({id:d.id,...d.data()}))}catch(e){return []}};
-  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),nfolders:await get('nfolders'),nbooks:await get('nbooks'),npages:await get('npages'),cal:await get('cal'),tasks:await get('tasks'),moods:await get('moods'),habits:await get('habits'),money:await get('money'),lists:await get('lists'),recipes:await get('recipes'),goals:await get('goals'),lifecfg:await get('lifecfg'),weeks:await get('weeks'),worries:await get('worries'),mems:await get('mems'),films:await get('films'),songs:await get('songs'),plists:await get('plists'),cint:await get('cint'),club:await get('club'),acards:await get('acards'),chtrash:await get('chtrash'),
+  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),nfolders:await get('nfolders'),nbooks:await get('nbooks'),npages:await get('npages'),cal:await get('cal'),tasks:await get('tasks'),moods:await get('moods'),habits:await get('habits'),money:await get('money'),lists:await get('lists'),recipes:await get('recipes'),goals:await get('goals'),lifecfg:await get('lifecfg'),weeks:await get('weeks'),worries:await get('worries'),mems:await get('mems'),films:await get('films'),songs:await get('songs'),plists:await get('plists'),cint:await get('cint'),club:await get('club'),acards:await get('acards'),tzch:await get('tzch'),chtrash:await get('chtrash'),
     settings:{ui:UI,thesis:TL.thesis,writing:TL.writing,log:st.log,bingo:TL.bingo,journal:TL.journal,widgets:TL.widgets,stickers:{items:STK.items,emblem:STK.emblem}}}}
 function csvBooks(){const H=['Başlık','Yazar','Tür','Raf','Etiketler','Durum','Sayfa','Kaldığı sayfa','Bitirme','Puan','Yıl','Dergi','DOI','Dosya'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   return '﻿'+[H.map(q).join(','),...st.books.map(b=>[b.title,b.author,{kitap:'Kitap',pdf:'PDF',roman:'Romanım',makale:'Makale'}[b.kind]||b.kind,b.shelf,(b.tags||[]).join('; '),STATUS_LABEL[b.status]||b.status,b.pages||'',b.currentPage||'',b.finishedAt||'',b.rating||'',b.year||'',b.journal||'',b.doi||'',b.fileName||''].map(q).join(','))].join('\r\n')}
 async function restore(file,quiet){const m=$('bkMsg')||{textContent:''};try{const d=JSON.parse(await file.text());if(!d||d.app!=='Dijital Kütüphanem')throw 0;let n=0;
   if(d.blobs&&typeof LOCAL!=='undefined'){const ids=Object.keys(d.blobs);let k=0;for(const id of ids){if(!LOCAL.has(id)){const x=d.blobs[id];try{await LOCAL.assets.putId(id,new Blob([b64dec(x.b64)],{type:x.type||'image/jpeg'}))}catch(e){}}if(++k%20===0)m.textContent='Görseller: '+k+'/'+ids.length}}
-  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages],['cal',d.cal],['tasks',d.tasks],['moods',d.moods],['habits',d.habits],['money',d.money],['lists',d.lists],['recipes',d.recipes],['goals',d.goals],['lifecfg',d.lifecfg],['weeks',d.weeks],['worries',d.worries],['mems',d.mems],['films',d.films],['songs',d.songs],['plists',d.plists],['cint',d.cint],['club',d.club],['acards',d.acards],['chtrash',d.chtrash]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
+  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages],['cal',d.cal],['tasks',d.tasks],['moods',d.moods],['habits',d.habits],['money',d.money],['lists',d.lists],['recipes',d.recipes],['goals',d.goals],['lifecfg',d.lifecfg],['weeks',d.weeks],['worries',d.worries],['mems',d.mems],['films',d.films],['songs',d.songs],['plists',d.plists],['cint',d.cint],['club',d.club],['acards',d.acards],['tzch',d.tzch],['chtrash',d.chtrash]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
   if(d.settings){if(d.settings.thesis)await st.db.doc('settings/thesis').set(d.settings.thesis);if(d.settings.writing)await st.db.doc('settings/writing').set(d.settings.writing);if(d.settings.log)await st.db.doc('settings/log').set(d.settings.log);if(d.settings.bingo)await st.db.doc('settings/bingo').set(d.settings.bingo);if(d.settings.journal)await st.db.doc('settings/journal').set(d.settings.journal);if(d.settings.widgets)await st.db.doc('settings/widgets').set(d.settings.widgets);if(d.settings.stickers&&Array.isArray(d.settings.stickers.items)){const it=d.settings.stickers.items.filter(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(it.length||!STK.items.length)await st.db.doc('settings/stickers').set({items:it,emblem:it.some(x=>x.id===d.settings.stickers.emblem)?d.settings.stickers.emblem:'',updatedAt:new Date().toISOString()})}if(d.settings.ui){const u={...d.settings.ui};const hasStk=d.settings.stickers&&(d.settings.stickers.items||[]).some(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(u.art==='custom'&&!hasStk)u.art='fairy';setUI(u)}}
   m.textContent=`Geri yükleme tamam: ${n} kayıt.`+(typeof LOCAL!=='undefined'?' Şimdi Ayarlar → Klasörden ekle ile kitap klasörünü seç; dosyalar kayıtlarına kendiliğinden bağlanır.':'')}catch(e){m.textContent='Bu dosya bir Dijital Kütüphanem yedeği gibi görünmüyor.';if(quiet)throw e}}
 /* Drive ile otomatik eşitleme: açılışta/girişte Drive'daki daha yeni yedeği alır, değişiklikleri Drive'a yazar */
@@ -4272,7 +4285,7 @@ async function kyAuto(){if(KY.auto||KY.busy||!st.db||!navigator.onLine)return;co
 
 /* ===================== 🌿 Hayatım ===================== */
 const LF={cal:[],tasks:[],moods:[],habits:[],money:[],lists:[],recipes:[],goals:[],cfg:{},mon:null,sel:null,tv:'today',lsel:null,mm:null,rsel:null,breath:null,focus:null};
-const LFC=['cal','tasks','moods','habits','money','lists','recipes','goals','lifecfg','weeks','worries','mems','films','songs','plists','cint','club','acards'];LF.club=null;LF.acards=[];LF.weeks=[];LF.worries=[];LF.mems=[];LF.films=[];LF.songs=[];LF.plists=[];LF.cint=[];
+const LFC=['cal','tasks','moods','habits','money','lists','recipes','goals','lifecfg','weeks','worries','mems','films','songs','plists','cint','club','acards','tzch'];LF.club=null;LF.acards=[];LF.tzch=[];LF.weeks=[];LF.worries=[];LF.mems=[];LF.films=[];LF.songs=[];LF.plists=[];LF.cint=[];
 const lfK=(d=new Date())=>todayKey(d);
 const lfD=k=>new Date(k+'T12:00:00');
 const lfAdd=(k,n)=>{const d=lfD(k);d.setDate(d.getDate()+n);return lfK(d)};
@@ -4281,7 +4294,7 @@ const lfDay=k=>lfD(k).toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',m
 const lfShort=k=>lfD(k).toLocaleDateString('tr-TR',{day:'numeric',month:'short'});
 function lfListen(db){LFC.forEach(c=>db.collection(c).onSnapshot(s=>{const a=s.docs.map(d=>({id:d.id,...d.data()}));if(c==='lifecfg'){LF.cfg={};a.forEach(x=>LF.cfg[x.id]=x)}else LF[c]=a;lfRe()},()=>{}));setInterval(lfTick,30000);setTimeout(lfTick,4000)}
 function lfRe(){clearTimeout(lfRe.t);lfRe.t=setTimeout(()=>{const ae=document.activeElement,typing=ae&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName)&&ae.type!=='checkbox';
-  if(st.sec==='life'&&!typing&&!LF.breath)lfRender();try{clRe()}catch(e){}try{mxRe()}catch(e){}if(st.sec==='home'&&st.view==='panel'&&!typing&&!UI.homeFull)renderList()},120)}
+  if(st.sec==='life'&&!typing&&!LF.breath)lfRender();try{clRe()}catch(e){}try{mxRe()}catch(e){}try{tzRe()}catch(e){}if(st.sec==='home'&&st.view==='panel'&&!typing&&!UI.homeFull)renderList()},120)}
 async function lfSet(c,id,d){id=id||nbId();try{await st.db.collection(c).doc(id).set(nbClean(d))}catch(e){toast('Kaydedilemedi')}return id}
 async function lfUpd(c,id,d){try{await st.db.collection(c).doc(id).update(d)}catch(e){toast('Kaydedilemedi')}}
 async function lfDel(c,id){try{await st.db.collection(c).doc(id).delete()}catch(e){}}
@@ -5005,7 +5018,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v52';
+const DK_VER='v53';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6257,13 +6270,143 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-mx]'
 });
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('sb-open'))sbClose();if(e.key==='Enter'&&e.target.closest&&e.target.closest('[data-mx="acopen"]'))e.target.click()});
 setTimeout(()=>{try{if(/[?&]bugun=1/.test(location.search)){let n=0;const t=setInterval(()=>{if(Array.isArray(LF.club)&&LF.cfg||++n>30){clearInterval(t);sbOpen()}},300)}}catch(e){}},500);
+/* ---------- Tez yazı odası ---------- */
+const TZ={sel:null,t:null,q:''};
+const TZ_DEF=[['front','TEŞEKKÜR'],['front','ÖZET'],['front','ABSTRACT'],['front','SİMGELER VE KISALTMALAR'],['main','GİRİŞ'],['main','GENEL BİLGİLER'],['main','BİREYLER VE YÖNTEM'],['main','BULGULAR'],['main','TARTIŞMA'],['main','SONUÇ VE ÖNERİLER'],['back','EKLER']];
+const TZ_KIND={front:'Ön kısım',main:'Ana bölüm',back:'Son kısım'};
+function tzFmt(){const th=TL.thesis||{};return Object.assign({uni:'T.C.\nHACETTEPE ÜNİVERSİTESİ\nSAĞLIK BİLİMLERİ ENSTİTÜSÜ',title:th.title||'',titleEn:'',unvan:'Fzt.',author:(UI&&UI.name)||'',program:'Fizyoterapi ve Rehabilitasyon Programı',programEn:'Program of Physiotherapy and Rehabilitation',degree:'YÜKSEK LİSANS TEZİ',degreeEn:'Master of Science Thesis',advisor:'',city:'ANKARA',year:String(new Date().getFullYear()),
+  font:'Times New Roman',size:12,lh:1.5,mt:3,mb:3,ml:4,mr:2.5,cite:'van',num:true,refTitle:'KAYNAKLAR',indent:1.25,outer:true,forms:true},(LF.cfg&&LF.cfg.tzfmt)||{})}
+const tzChs=()=>(LF.tzch||[]).slice().sort((a,b)=>({front:0,main:1,back:2}[a.kind]-{front:0,main:1,back:2}[b.kind])||(a.no||0)-(b.no||0));
+const tzWords=t=>wcount((t||'').replace(/\[@[^\]]+\]/g,' ').replace(/^#+\s*/gm,''));
+function tzCiteIds(t){const out=[];(t||'').replace(/\[@([^\]]+)\]/g,(_,g)=>{g.split(/[;,]\s*@?/).map(x=>x.replace(/^@/,'').trim()).filter(Boolean).forEach(id=>out.push(id))});return out}
+function tzAuthors(b){return splitAuthors(b.author||'')}
+function tzVanName(a){a=(a||'').trim();let last,first;if(a.includes(',')){[last,first]=a.split(',',2)}else{const p=a.split(/\s+/);last=p.pop();first=p.join(' ')}const ini=(first||'').split(/[\s.\-]+/).filter(Boolean).map(x=>x[0].toLocaleUpperCase('tr')).join('');return (last||'').trim()+(ini?' '+ini:'')}
+function tzVanRef(b){const A=tzAuthors(b).map(tzVanName);const au=A.length>6?A.slice(0,6).join(', ')+', ve ark':A.join(', ');
+  let o=(au?au+'. ':'')+(b.title||'').replace(/\.$/,'')+'. ';if(b.journal)o+=b.journal.replace(/\.$/,'')+'. ';if(b.year)o+=b.year;if(b.volume)o+=';'+b.volume+(b.issue?'('+b.issue+')':'');if(b.pagesRange)o+=':'+b.pagesRange.replace(/[–—]/g,'-');o+='.';if(b.doi)o+=' doi:'+b.doi;return o}
+function tzRange(n){const out=[];for(let i=0;i<n.length;){let j=i;while(j+1<n.length&&n[j+1]===n[j]+1)j++;out.push(j-i>=2?n[i]+'–'+n[j]:j-i===1?n[i]+', '+n[j]:String(n[i]));i=j+1}return out.join(', ')}
+function tzCiteText(ids,fmt,order){if(fmt.cite==='van'){const n=[...new Set(ids.map(id=>order.indexOf(id)+1).filter(x=>x>0))].sort((a,b)=>a-b);return n.length?'('+tzRange(n)+')':'(?)'}
+  return '('+ids.map(id=>{const b=st.books.find(x=>x.id===id);return b?(apaAuthorsShort(b)||b.title)+', '+(b.year||'t.y.'):'?'}).join('; ')+')'}
+function tzRender(host){host=host||$('secHost');const chs=tzChs(),F=tzFmt();
+  if(!chs.length){host.innerHTML=`<div class="co tz"><div class="lf-hd"><h2>✍️ Tez yazı odası</h2></div><div class="lfc tz-hi">${UI.shelfDeco!=='off'?`<div style="line-height:0">${stampSvg('frog',80)}</div>`:''}<b>Tezini bölüm bölüm burada yaz</b><p class="hint" style="margin:0">Teşekkür, Özet, Abstract, Giriş, Genel Bilgiler, Bireyler ve Yöntem, Bulgular, Tartışma, Sonuç ve Öneriler ile Ekler bölümleri hazır gelir; adlarını değiştirebilir, yenilerini ekleyebilirsin. Kaynakça'daki makalelerden atıf ekler, sonunda Word ya da PDF olarak alırsın.</p><div><button class="btn primary" type="button" data-tz="init">Tezimi başlat</button></div></div></div>`;return}
+  if(!TZ.sel||!chs.some(c=>c.id===TZ.sel))TZ.sel=(chs.find(c=>c.kind==='main')||chs[0]).id;const c=chs.find(x=>x.id===TZ.sel);
+  const tot=chs.reduce((a,x)=>a+tzWords(x.text),0),cites=[...new Set(chs.flatMap(x=>tzCiteIds(x.text)))];
+  let mi=0;const label=x=>x.kind==='main'&&F.num?(++mi)+'. '+x.title:x.title;
+  host.innerHTML=`<div class="co tz"><div class="lf-hd"><h2>✍️ Tez yazı odası</h2><span class="hint">${mxN(tot)} kelime · ${cites.length} kaynak · ${F.cite==='van'?'numaralı (Vancouver)':'APA 7'}</span></div>
+   <div class="tz-grid">
+    <aside class="lfc tz-side">${['front','main','back'].map(k=>{const L=chs.filter(x=>x.kind===k);return L.length?`<div class="tz-grp"><small>${TZ_KIND[k]}</small>${L.map(x=>`<button type="button" class="tz-ch${x.id===TZ.sel?' on':''}" data-tz="sel" data-id="${x.id}"><span>${esc(label(x))}</span><small>${mxN(tzWords(x.text))}</small></button>`).join('')}</div>`:''}).join('')}
+     <button class="btn" type="button" data-tz="add">＋ Bölüm ekle</button>
+     <button class="btn primary" type="button" data-tz="export">⬇ Word / PDF</button></aside>
+    <section class="lfc tz-ed">
+     <div class="tz-top"><input id="tzTitle" class="tz-title" value="${esc(c.title)}" aria-label="Bölüm adı"><select id="tzKind" aria-label="Bölüm türü">${Object.entries(TZ_KIND).map(([k,l])=>`<option value="${k}"${c.kind===k?' selected':''}>${l}</option>`).join('')}</select></div>
+     <div class="tz-tools"><button class="btn" type="button" data-tz="h2" title="Alt başlık">＋ Alt başlık</button><button class="btn" type="button" data-tz="h3">＋ Alt-alt başlık</button><button class="btn" type="button" data-tz="cite">📑 Atıf ekle</button><button class="btn" type="button" data-tz="check">✨ Kontrol ettir</button><span class="tz-st hint" id="tzSt"></span></div>
+     <textarea id="tzText" class="tz-text" rows="20" style="min-height:58vh" spellcheck="true" placeholder="Yazmaya başla…&#10;&#10;Alt başlık için satırın başına ## yaz, alt-alt başlık için ###.&#10;Atıflar [@…] olarak görünür; dışa aktarırken seçtiğin stile çevrilir.">${esc(c.text||'')}</textarea>
+     <div class="tz-foot hint"><span id="tzWc">${mxN(tzWords(c.text))} kelime</span>${tzCiteIds(c.text).length?` · bu bölümde ${new Set(tzCiteIds(c.text)).size} kaynak`:''}<button class="lf-lnk" type="button" data-tz="del" style="margin-left:auto">${TZ.sure===c.id?'Emin misin? Tekrar bas':'Bölümü sil'}</button></div>
+    </section></div></div>`}
+function tzRe(){if(curSub()!=='tezyaz'||st.sec!=='academic')return;const ae=document.activeElement;if(ae&&(ae.id==='tzText'||ae.id==='tzTitle'))return;if($('msModal'))return;tzRender()}
+function tzSaveSoon(){clearTimeout(TZ.t);const s=$('tzSt');if(s)s.textContent='yazılıyor…';TZ.t=setTimeout(tzSaveNow,900)}
+async function tzSaveNow(){clearTimeout(TZ.t);const t=$('tzText'),ti=$('tzTitle');if(!t||!TZ.sel)return;const text=t.value,title=(ti.value||'').trim()||'Adsız bölüm';
+  const cur=(LF.tzch||[]).find(x=>x.id===TZ.sel);if(cur&&cur.text===text&&cur.title===title){const s=$('tzSt');if(s)s.textContent='kaydedildi ✓';return}
+  await lfUpd('tzch',TZ.sel,{text,title,words:tzWords(text),updatedAt:new Date().toISOString()});if(cur){cur.text=text;cur.title=title}const s=$('tzSt');if(s)s.textContent='kaydedildi ✓';const w=$('tzWc');if(w)w.textContent=mxN(tzWords(text))+' kelime'}
+function tzInsert(str,block){const t=$('tzText');if(!t)return;const a=t.selectionStart,b=t.selectionEnd,v=t.value;let ins=str;if(block){const pre=v.slice(0,a);ins=(pre&&!pre.endsWith('\n')?'\n':'')+str}
+  t.value=v.slice(0,a)+ins+v.slice(b);const p=a+ins.length;t.focus();t.setSelectionRange(p,p);tzSaveSoon()}
+function tzCiteDlg(q){TZ.q=q||'';const arts=st.books.filter(b=>b.kind==='makale'||b.journal).filter(b=>!TZ.q||mxNorm(b.title+' '+b.author+' '+(b.year||'')).includes(mxNorm(TZ.q))).sort((a,b)=>(apaAuthorsShort(a)||'').localeCompare(apaAuthorsShort(b)||'','tr'));
+  msModal(`<div class="eyebrow">📑 Atıf ekle</div><input id="tzQ" placeholder="Yazar, başlık ya da yıl ara" value="${esc(TZ.q)}"><p class="hint" style="margin:0">Birden fazla seçersen tek parantezde birleşir.</p>
+   <div class="tz-cl">${arts.map(b=>`<label class="tz-ci"><input type="checkbox" value="${b.id}"><span><b>${esc(apaAuthorsShort(b)||'Yazarsız')}${b.year?', '+esc(b.year):''}</b><small>${esc(b.title)}</small></span></label>`).join('')||'<span class="hint">Akademik rafında makale yok. Makaleler sekmesinden ekleyebilirsin.</span>'}</div>
+   <div class="msm-acts"><button class="btn primary" type="button" data-tz="citego">Ekle</button></div>`,'wide');setTimeout(()=>{const i=$('tzQ');if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}},40)}
+function tzCheckDlg(){msModal(`<div class="eyebrow">✨ Kontrol ettir</div><p class="hint" style="margin:0">Bölümün metni hazır bir istekle kopyalanır; Claude ya da ChatGPT açılır, yapıştırman yeter. Metnin burada değişmez.</p>
+   <div class="ai-t"><label class="ai-o"><input type="radio" name="tzM" value="flag" checked><span><b>Sadece işaretle</b><small class="hint">Sorunlu cümleleri ve nedenini listeler, metne dokunmaz</small></span></label><label class="ai-o"><input type="radio" name="tzM" value="proof"><span><b>Yazım ve noktalama</b><small class="hint">Sadece yazım ve noktalama düzeltmeleri, cümle yapısı değişmez</small></span></label><label class="ai-o"><input type="radio" name="tzM" value="acad"><span><b>Akademik dil</b><small class="hint">Bilimsel üslup, belirsiz ifadeler, kaynak gerektiren iddialar</small></span></label></div>
+   <div class="msm-acts"><button class="btn primary" type="button" data-tz="ask" data-v="claude">Claude'da aç</button><button class="btn" type="button" data-tz="ask" data-v="gpt">ChatGPT'de aç</button></div>`)}
+function tzPrompt(m,c){const head={flag:'Aşağıdaki yüksek lisans tezi bölümünü oku. Metni yeniden YAZMA. Sadece sorunlu cümleleri alıntıla ve her birinin neden sorunlu olduğunu (anlam belirsizliği, uzun cümle, tekrar, mantık boşluğu, bilimsel dil) kısaca açıkla.',
+  proof:'Aşağıdaki yüksek lisans tezi bölümünde SADECE yazım ve noktalama hatalarını düzelt (TDK kurallarına göre). Cümle yapısını, kelime seçimini ve anlamı değiştirme. Önce düzeltmeleri "yanlış → doğru" listesi olarak ver.',
+  acad:'Aşağıdaki fizyoterapi ve rehabilitasyon alanındaki yüksek lisans tezi bölümünü akademik dil açısından değerlendir. Metni yeniden yazma; belirsiz ya da öznel ifadeleri, kaynak gerektiren iddiaları ve tutarsız terim kullanımını cümle alıntısıyla listele.'}[m];
+  return `${head}\n[@...] işaretleri kaynak atıflarıdır, onlara dokunma.\n\nBölüm: ${c.title}\n\n${c.text||''}`}
+function tzExportDlg(){const F=tzFmt();const fld=(id,l,v,t,ex)=>`<div class="f"><label for="${id}">${l}</label><input id="${id}" ${t?'type="'+t+'"':''} value="${esc(v)}" ${ex||''}></div>`;
+  msModal(`<div class="eyebrow">⬇ Tezi dışa aktar</div><h3>Kapak ve biçim</h3>
+   <div class="f"><label for="tzUni">Üst bilgi (her satır ayrı)</label><textarea id="tzUni" rows="3">${esc(F.uni)}</textarea></div>
+   ${fld('tzT','Tezin başlığı',F.title)}${fld('tzTEn','İngilizce başlık (Abstract için)',F.titleEn)}
+   <div class="row">${fld('tzU','Unvan',F.unvan,'','placeholder="ör. Fzt."')}${fld('tzA','Adın soyadın',F.author)}${fld('tzAdv','Danışman (unvanıyla)',F.advisor,'','placeholder="ör. Prof. Dr. …"')}</div>
+   <div class="row">${fld('tzP','Program',F.program)}${fld('tzDeg','Derece',F.degree)}</div>
+   <div class="row">${fld('tzPEn','Program (İngilizce)',F.programEn)}${fld('tzDegEn','Derece (İngilizce)',F.degreeEn)}</div>
+   <label class="cl-chk hint"><input type="checkbox" id="tzOuter" ${F.outer?'checked':''}> Dış kapağı da ekle (iç kapakta danışman adı da yer alır)</label>
+   <label class="cl-chk hint"><input type="checkbox" id="tzForms" ${F.forms?'checked':''}> Onay, Yayımlama Beyanı ve Etik Beyan için yer tutucu sayfa koy (iii, iv, v)</label>
+   <div class="row">${fld('tzCity','Şehir',F.city)}${fld('tzY','Yıl',F.year,'','inputmode="numeric"')}</div>
+   <details class="tz-fmt"><summary><b>Sayfa biçimi</b> <span class="hint">${esc(F.font)} ${F.size} pt · ${String(F.lh).replace('.',',')} satır · kenarlar ${[F.mt,F.mr,F.mb,F.ml].join(' / ')} cm</span></summary>
+    <div class="row">${fld('tzFont','Yazı tipi',F.font)}${fld('tzSize','Punto',F.size,'number','min="9" max="14" step="0.5"')}${fld('tzLh','Satır aralığı',F.lh,'number','min="1" max="2.5" step="0.1"')}</div>
+    <div class="row">${fld('tzMt','Üst (cm)',F.mt,'number','step="0.1"')}${fld('tzMb','Alt (cm)',F.mb,'number','step="0.1"')}${fld('tzMl','Sol (cm)',F.ml,'number','step="0.1"')}${fld('tzMr','Sağ (cm)',F.mr,'number','step="0.1"')}</div>
+    <div class="row">${fld('tzInd','Paragraf girintisi (cm)',F.indent,'number','step="0.05"')}${fld('tzRT','Kaynakça başlığı',F.refTitle)}</div></details>
+   <div class="seg" id="tzCiteSeg"><button type="button" data-tz="cs" data-v="apa" aria-pressed="${F.cite!=='van'}">APA 7 (yazar, yıl)</button><button type="button" data-tz="cs" data-v="van" aria-pressed="${F.cite==='van'}">Numaralı (Vancouver)</button></div>
+   <label class="cl-chk hint"><input type="checkbox" id="tzNum" ${F.num?'checked':''}> Ana bölümleri ve alt başlıkları numarala (1., 1.1., 1.1.1.)</label>
+   <p class="hint" style="margin:0;font-size:12px">Hacettepe Sağlık Bilimleri Enstitüsü Tez Yazım Kılavuzu'na (2018) göre ayarlı: A4, kenarlar üst/alt 3 cm, sol 4 cm, sağ 2,5 cm; Times New Roman 12 punto; 1,5 satır; paragraf girintisi 1,25 cm; Vancouver numaralı kaynak. PDF'te sayfa numaraları sağ üstte, 10 punto (ön sayfalar iii, iv…; Giriş'ten itibaren 1, 2…). Word'de sayfa numarasını Ekle → Sayfa Numarası ile ekle; içindekilere sağ tıklayıp <b>Alanı güncelleştir</b> dersen sayfa numaraları gelir. Onay, Yayımlama Beyanı ve Etik Beyan sayfalarını enstitünün formlarından ekle.</p>
+   <div class="msm-acts"><button class="btn primary" type="button" data-tz="doc">📄 Word (.doc)</button><button class="btn" type="button" data-tz="pdf">🖨 PDF</button><button class="btn" type="button" data-tz="fsave">Sadece kaydet</button></div>`,'wide')}
+async function tzFmtSave(){const n=(id,d)=>{const v=parseFloat(($(id)||{}).value);return isNaN(v)?d:v};const F=tzFmt();const seg=document.querySelector('#tzCiteSeg [aria-pressed="true"]');
+  const f={uni:$('tzUni').value,title:$('tzT').value.trim(),titleEn:$('tzTEn').value.trim(),unvan:$('tzU').value.trim(),programEn:$('tzPEn').value.trim(),degreeEn:$('tzDegEn').value.trim(),outer:$('tzOuter').checked,forms:$('tzForms').checked,author:$('tzA').value.trim(),advisor:$('tzAdv').value.trim(),program:$('tzP').value.trim(),degree:$('tzDeg').value.trim(),city:$('tzCity').value.trim(),year:$('tzY').value.trim(),
+    font:($('tzFont').value||'').trim()||F.font,size:n('tzSize',F.size),lh:n('tzLh',F.lh),mt:n('tzMt',F.mt),mb:n('tzMb',F.mb),ml:n('tzMl',F.ml),mr:n('tzMr',F.mr),indent:n('tzInd',F.indent),refTitle:($('tzRT').value||'').trim()||'KAYNAKLAR',cite:seg?seg.dataset.v:F.cite,num:$('tzNum').checked};
+  await lfSet('lifecfg','tzfmt',f);return Object.assign(F,f)}
+function tzHtml(F,forPrint){const chs=tzChs(),all=chs.map(c=>c.text||'').join('\n'),order=[];tzCiteIds(all).forEach(id=>{if(!order.includes(id)&&st.books.some(b=>b.id===id))order.push(id)});
+  const e=esc,cm=x=>x+'cm',P=F.size+'pt';let mi=0;const toc=[];const isIdx=c=>/^(SİMGELER|ŞEKİLLER|TABLOLAR)/i.test(c.title),isSum=c=>/^(ÖZET|ABSTRACT)$/i.test((c.title||'').trim());
+  const inline=t=>e(t).replace(/\[@([^\]]+)\]/g,(_,g)=>e(tzCiteText(g.split(/[;,]\s*@?/).map(x=>x.replace(/^@/,'').trim()).filter(Boolean),F,order)));
+  const body=(c,num,noInd)=>{let s2=0,s3=0;return (c.text||'').split(/\n/).map(l=>l.trimEnd()).reduce((acc,l)=>{if(!l.trim())return acc;
+    if(/^###\s+/.test(l)){s3++;const t=(F.num&&num?num+'.'+s2+'.'+s3+'. ':'')+l.replace(/^###\s+/,'');toc.push([3,t]);return acc+`<h3>${inline(t)}</h3>`}
+    if(/^##\s+/.test(l)){s2++;s3=0;const t=(F.num&&num?num+'.'+s2+'. ':'')+l.replace(/^##\s+/,'');toc.push([2,t]);return acc+`<h2>${inline(t)}</h2>`}
+    return acc+`<p class="${noInd?'MsoBodyText ni':'MsoBodyText'}">${inline(l)}</p>`},'')};
+  const sec=(c,cls)=>{const num=c.kind==='main'?++mi:0;const t=(F.num&&num?num+'. ':'')+c.title;toc.push([1,t]);return `<h1${cls?' class="'+cls+'"':''}>${e(t)}</h1>${body(c,num)}`};
+  const sumHead=c=>{const en=/ABSTRACT/i.test(c.title);const nm=(F.author||'').trim().split(/\s+/);const last=nm.length>1?nm.pop():'';const first=nm.join(' ');
+    return `<p class="MsoBodyText ni"><b>${e(en?(last+', '+first.split(/\s+/).map(x=>x[0]+'.').join('')):((last?last+', ':'')+first.split(/\s+/).map(x=>x[0]+'.').join('')))}, ${e(en?(F.titleEn||F.title):F.title)}, ${en?'Hacettepe University Graduate School of Health Sciences, '+e(F.programEn)+', '+e(F.degreeEn)+', Ankara, '+e(F.year):'Hacettepe Üniversitesi Sağlık Bilimleri Enstitüsü, '+e(F.program)+' '+e(F.degree.toLocaleLowerCase('tr').replace(/(^|\s)\S/g,x=>x.toLocaleUpperCase('tr')))+', Ankara, '+e(F.year)}.</b></p>`};
+  const frontA=chs.filter(c=>c.kind==='front'&&!isIdx(c)),frontB=chs.filter(c=>c.kind==='front'&&isIdx(c)&&(c.text||'').trim());
+  const front=frontA.map(c=>{toc.push([1,c.title]);return `<h1 class="fr">${e(c.title)}</h1>${isSum(c)?sumHead(c):''}${body(c,0,isSum(c))}`}).join('');
+  const idx=frontB.map(c=>{toc.push([1,c.title]);return `<h1 class="fr">${e(c.title)}</h1>${body(c,0,true)}`}).join('');
+  const mainArr=chs.filter(c=>c.kind==='main');const main=mainArr.map((c,i)=>sec(c,i===0?'m1':'')).join('');
+  const refs=order.map(id=>st.books.find(b=>b.id===id)).filter(Boolean);const R=F.cite==='van'?refs.map((b,i)=>`<p class=ref>${i+1}. ${e(tzVanRef(b))}</p>`).join(''):refs.slice().sort((a,b)=>kyRef(a,false).localeCompare(kyRef(b,false),'tr')).map(b=>`<p class="ref apa">${kyRef(b,true)}</p>`).join('');
+  let refSec='';if(refs.length){toc.push([1,F.refTitle]);refSec=`<h1 class="fr">${e(F.refTitle)}</h1>${R}`}
+  const back=chs.filter(c=>c.kind==='back'&&(c.text||'').trim()).map(c=>{toc.push([1,c.title]);return `<h1 class="fr">${e(c.title)}</h1>${body(c,0)}`}).join('');
+  const tocHtml=toc.map(([l,t])=>`<p class=MsoToc${l} style="margin-left:${(l-1)*0.6}cm">${inline(t)}</p>`).join('');
+  const nm=(F.author||'').trim().split(/\s+/);const last=nm.length>1?nm.pop().toLocaleUpperCase('tr'):'';const who=[F.unvan,nm.join(' '),last].filter(Boolean).join(' ');
+  const gap=n=>`<p class=cv>${'&nbsp;<br>'.repeat(Math.max(0,n-1))}&nbsp;</p>`;
+  const coverP=adv=>`<div class=cover>${F.uni.split('\n').filter(Boolean).map(x=>`<p class=cv1>${e(x)}</p>`).join('')}${gap(8)}<p class=cvt>${e((F.title||'TEZİN BAŞLIĞI').toLocaleUpperCase('tr'))}</p>${gap(3)}<p class=cv>${e(who)}</p>${gap(3)}<p class=cv>${e(F.program)}</p><p class=cv>${e(F.degree)}</p>${adv&&F.advisor?`${gap(2)}<p class=cv>TEZ DANIŞMANI</p><p class=cv>${e(F.advisor)}</p>${gap(2)}`:gap(6)}<p class=cv>${e(F.city)}</p><p class=cv>${e(F.year)}</p></div>`;
+  const tocField=forPrint?tocHtml:`<p class=MsoToc1><span style='mso-element:field-begin'></span> TOC \\o "1-3" \\h \\z \\u <span style='mso-element:field-separator'></span></p>${tocHtml}<p class=MsoToc1><span style='mso-element:field-end'></span></p>`;
+  const pnum=`font-family:"${F.font}";font-size:10pt;vertical-align:bottom;padding-bottom:6pt`;
+  const pg=forPrint?`@page cover{counter-increment:page 0 fp ${F.outer?1:2}}@page front{counter-increment:page 0 fp 1;@top-right{content:counter(fp,lower-roman);${pnum}}}@page body{@top-right{content:counter(page);${pnum}}}.cover{page:cover}.frontpart{page:front}.mainpart{page:body}`:'';
+  const forms=F.forms?['ONAY SAYFASI','YAYIMLAMA VE FİKRİ MÜLKİYET HAKLARI BEYANI','ETİK BEYAN'].map(t=>`<h1 class="fr">${t}</h1><p class="MsoBodyText ni" style="text-align:center;color:#888">(Enstitünün formu bu sayfanın yerine konacak.)</p>`).join(''):'';
+  return `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${e(F.title||'Tez')}</title>
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
+<style>@page{size:21cm 29.7cm;margin:${cm(F.mt)} ${cm(F.mr)} ${cm(F.mb)} ${cm(F.ml)}}@page Section1{size:21cm 29.7cm;margin:${cm(F.mt)} ${cm(F.mr)} ${cm(F.mb)} ${cm(F.ml)}}div.Section1{page:Section1}${pg}
+body{font-family:'${F.font}',Times,serif;font-size:${P};color:#000}
+p.MsoBodyText{text-indent:${cm(F.indent)};text-align:justify;line-height:${Math.round(F.lh*100)}%;margin:0}p.ni{text-indent:0}
+h1{font-size:${P};font-weight:bold;text-align:center;text-transform:uppercase;margin:0 0 ${F.size*F.lh*1.2}pt;page-break-before:always;break-before:page;mso-outline-level:1}
+h2,h3{font-size:${P};font-weight:bold;margin:12pt 0 12pt ${cm(F.indent)};line-height:${Math.round(F.lh*100)}%;page-break-after:avoid;break-after:avoid}h2{mso-outline-level:2}h3{mso-outline-level:3}
+p.ref{margin:0 0 6pt;text-align:left;line-height:100%}p.ref.apa{text-indent:-1.25cm;margin-left:1.25cm}
+.cover{text-align:center;page-break-after:always;break-after:page}.cover+.cover{page-break-before:always}p.cv1{text-align:center;margin:0;font-weight:bold;line-height:100%}p.cv{text-align:center;margin:0;font-weight:bold;line-height:150%}p.cvt{text-align:center;margin:0;font-size:${F.size+2}pt;font-weight:bold;line-height:150%}
+p[class^=MsoToc]{margin:0;line-height:150%}
+</style></head><body><div class=Section1>${F.outer?coverP(false):''}${coverP(true)}<div class=frontpart>${forms}${front}<h1 class="fr">İÇİNDEKİLER</h1>${tocField}${idx}</div><div class=mainpart>${main}${refSec}${back}</div></div></body></html>`}
+async function tzDoc(pdf){const F=await tzFmtSave();msClose();const html=tzHtml(F,pdf);const name=((F.title||'Tez').replace(/[\\/:*?"<>|]/g,'').slice(0,60)||'Tez');
+  msOut(html,name,pdf?'pdf':'doc')}
+document.addEventListener('input',e=>{if(e.target.id==='tzText'||e.target.id==='tzTitle')tzSaveSoon();if(e.target.id==='tzQ'){const v=e.target.value;clearTimeout(TZ.qt);TZ.qt=setTimeout(()=>tzCiteDlg(v),250)}});
+document.addEventListener('focusout',e=>{if(e.target.id==='tzText'||e.target.id==='tzTitle')tzSaveNow()});
+document.addEventListener('change',async e=>{if(e.target.id==='tzKind'){await tzSaveNow();await lfUpd('tzch',TZ.sel,{kind:e.target.value});setTimeout(()=>tzRender(),250)}});
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-tz]');if(!b)return;const k=b.dataset.tz;
+  if(k==='init'){b.disabled=true;for(const [i,[kind,title]] of TZ_DEF.entries())await lfSet('tzch',null,{kind,title,no:i+1,text:'',words:0,updatedAt:new Date().toISOString()});setTimeout(()=>tzRender(),400);return}
+  if(k==='sel'){await tzSaveNow();TZ.sel=b.dataset.id;TZ.sure=null;tzRender();if(innerWidth<760){const ed=document.querySelector('.tz-ed');ed&&ed.scrollIntoView({behavior:'smooth',block:'start'})}return}
+  if(k==='add'){await tzSaveNow();const L=tzChs().filter(x=>x.kind==='main');const id=await lfSet('tzch',null,{kind:'main',title:'YENİ BÖLÜM',no:Math.max(0,...L.map(x=>x.no||0))+1,text:'',words:0,updatedAt:new Date().toISOString()});TZ.sel=id;setTimeout(()=>{tzRender();const t=$('tzTitle');t&&(t.focus(),t.select())},350);return}
+  if(k==='del'){if(TZ.sure!==TZ.sel){TZ.sure=TZ.sel;tzRender();setTimeout(()=>{if(TZ.sure){TZ.sure=null;tzRe()}},5000);return}const id=TZ.sel;TZ.sure=null;TZ.sel=null;await lfDel('tzch',id);toast('Bölüm silindi');setTimeout(()=>tzRender(),300);return}
+  if(k==='h2'){tzInsert('## ',true);return}if(k==='h3'){tzInsert('### ',true);return}
+  if(k==='cite'){const t=$('tzText');TZ.pos=t?[t.selectionStart,t.selectionEnd]:null;tzCiteDlg('');return}
+  if(k==='citego'){const ids=[...document.querySelectorAll('.tz-ci input:checked')].map(x=>x.value);msClose();if(!ids.length)return;const t=$('tzText');if(t&&TZ.pos)t.setSelectionRange(TZ.pos[0],TZ.pos[1]);const pre=t?t.value.slice(0,t.selectionStart):'';tzInsert((pre&&!/\s$/.test(pre)?' ':'')+'[@'+ids.join(';@')+']');return}
+  if(k==='check'){await tzSaveNow();tzCheckDlg();return}
+  if(k==='ask'){const m=(document.querySelector('input[name="tzM"]:checked')||{}).value||'flag',c=(LF.tzch||[]).find(x=>x.id===TZ.sel);if(!c)return;const p=tzPrompt(m,c);const ok=await aiCopy(p);msClose();
+    const short=p.length<=1800,url=b.dataset.v==='gpt'?'https://chatgpt.com/'+(short?'?q='+encodeURIComponent(p):''):'https://claude.ai/new'+(short?'?q='+encodeURIComponent(p):'');window.open(url,'_blank','noopener');toast(short?'Açıldı':ok?'İstek kopyalandı, açılan sayfaya yapıştır':'Kopyalanamadı');return}
+  if(k==='export'){await tzSaveNow();tzExportDlg();return}
+  if(k==='cs'){document.querySelectorAll('#tzCiteSeg [data-tz]').forEach(x=>x.setAttribute('aria-pressed',x===b));return}
+  if(k==='fsave'){await tzFmtSave();msClose();toast('Biçim kaydedildi');return}
+  if(k==='doc'){tzDoc(false);return}if(k==='pdf'){tzDoc(true);return}
+});
+window.__tz={html:(p)=>tzHtml(tzFmt(),p)};
 
 
 const SECS={
   home:{t:'Ana sayfa',tabs:[]},
   life:{t:'Hayatım',tabs:[['today','☀️ Bugün'],['week','📆 Haftam'],['cal','🗓 Takvim'],['tasks','✅ Görevler'],['habits','🔁 Alışkanlıklar'],['mood','🌿 Günlük'],['calm','🫧 Sakinleş & destek'],['goals','🎯 Hedefler'],['money','💰 Bütçe'],['lists','📋 Listeler'],['food','🍲 Yemek'],['days','🎂 Önemli günler'],['mem','🗃 Anı kutusu'],['film','🎬 Filmler'],['songs','🎵 Şarkılarım'],['year','✨ Yılım']]},
   library:{t:'Kütüphanem',tabs:[]},
-  academic:{t:'Akademik',tabs:[['makale','📄 Makaleler'],['lit','📊 Literatür tablosu'],['thesis','🎓 Tez planlayıcı'],['cards','🃏 Çalışma kartları'],['kaynak','📑 Kaynakça'],['mcard','🗂 Okuma kartları'],['neuro','🧠 Nörobilim'],['nb','📓 Defterlerim']]},
+  academic:{t:'Akademik',tabs:[['makale','📄 Makaleler'],['lit','📊 Literatür tablosu'],['thesis','🎓 Tez planlayıcı'],['tezyaz','✍️ Tez yazı odası'],['cards','🃏 Çalışma kartları'],['kaynak','📑 Kaynakça'],['mcard','🗂 Okuma kartları'],['neuro','🧠 Nörobilim'],['nb','📓 Defterlerim']]},
   notes:{t:'Defterlerim',tabs:[]},
   writer:{t:'Yazar köşesi',tabs:[['roman','📖 Romanlarım'],['room','✍️ Yazı odası'],['scenes','🎬 Sahne panosu'],['ideas','💡 Fikir defteri'],['chars','👤 Karakterler'],['rel','🕸 İlişki haritası'],['time','🕰 Zaman çizelgesi'],['world','🗺 Dünya'],['board','🎨 İlham panosu'],['music','🎧 Müzik listesi'],['iv','🎙 Karakter röportajı'],['cons','🔎 Tutarlılık'],['write','📝 Yazım takibi'],['subs','📮 Yayınevleri']]},
   journal:{t:'Okuma günlüğüm',tabs:[['month','🗓 Aylık sayfa'],['readlist','📖 Okuma listesi'],['club','👭 Okuma kulübü'],['stats','📈 İstatistikler'],['bingo','🎯 Bingo'],['quotes','💬 Alıntı defteri'],['focus','⏱ Odak'],['year','🌟 Yılın özeti']]},
@@ -6299,6 +6442,7 @@ function renderSection(){
   if(sub==='neuro'){nsRender($('secHost'));return}
   if(sub==='club'){clRender($('secHost'));return}
   if(sub==='cons'||sub==='mcard'){mxRender();return}
+  if(sub==='tezyaz'){tzRender($('secHost'));return}
   const toolMap={thesis:['thesis'],cards:['cards'],room:['writer','room'],rel:['writer','rel'],time:['writer','time'],world:['writer','world'],scenes:['writer','scenes'],bingo:['bingo'],month:['month'],readlist:['readlist'],ideas:['writer','ideas'],chars:['writer','chars'],board:['writer','board'],music:['writer','music'],iv:['writer','iv'],write:['writer','write'],subs:['writer','subs'],quotes:['quotes'],stats:['stats'],focus:['focus'],year:['year'],backup:['backup']};
   if(toolMap[sub]){TL.embedded=true;TL.cur=toolMap[sub][0];TL.sub=toolMap[sub][1]||null;if(TL.cur!=='cards')TL.study=TL.study;$('secHost').appendChild($('toolPanel'));renderTool();return}
   if(sub==='lit'){hostPanel('litVeil');litRender()}
