@@ -1123,6 +1123,15 @@ html body .rstage{overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow
 #ddOv b{font-size:44px}#ddOv span{font-size:18px;font-weight:600}#ddOv small{opacity:.7}
 .actions .btn.danger,#delBtn,#confirmYes{background:#fff5f4!important;color:#c0392b!important;border:1.5px solid #e3a59e!important;font-weight:600;padding:8px 18px!important;font-size:15px!important;width:auto!important}
 .actions .btn.danger:hover,#delBtn:hover,#confirmYes:hover{background:#c0392b!important;color:#fff!important;border-color:#c0392b!important}
+.qm-bar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:0 0 14px;padding:12px 14px;border-radius:18px;background:color-mix(in srgb,#8fb47e 18%,var(--paper,#fff));border:1.5px dashed #9cbf8b;position:sticky;top:8px;z-index:20;box-shadow:0 6px 18px -12px rgba(0,0,0,.35)}
+.qm-bar.off{background:none;border:0;padding:0;position:static;box-shadow:none;justify-content:flex-end}
+.qm-bar>div{flex:1 1 260px;display:grid;gap:2px}.qm-bar>div span{font-size:13px;color:var(--muted,#777)}
+.qm-date{display:flex;gap:6px;align-items:center;font-size:13px}.qm-date input{font:inherit;padding:5px 8px;border-radius:10px;border:1px solid var(--line,#ddd);background:var(--paper,#fff)}
+.bk .qm-chk{display:none}
+.qm-on #listArea .bk .qm-chk{display:grid;place-items:center;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.88);border:2.5px solid #9cbf8b;z-index:5;box-shadow:0 2px 8px rgba(0,0,0,.2);font-size:20px;font-weight:700;color:#fff;pointer-events:none}
+.qm-on #listArea .bk.is-done .qm-chk{background:#6f9c5e;border-color:#fff}.qm-on #listArea .bk.is-done .qm-chk::after{content:'✓'}
+.qm-on #listArea .bk{cursor:pointer}.qm-on #listArea .bk:not(.is-done) img,.qm-on #listArea .bk:not(.is-done) .t{filter:saturate(.75)}
+.qm-on #listArea .bk .edit,.qm-on #listArea .bk .blinfo{display:none!important}
 </style>
 
 </head><body>
@@ -1581,8 +1590,8 @@ function renderList(){
   const list=filtered(),calls=callNumbers();
   if(!list.length){area.innerHTML=`<div class="empty"><svg class="scene ln" viewBox="0 0 64 64" style="width:110px" aria-hidden="true"><use href="#i-glasses"/></svg><h2>Eşleşen kayıt yok</h2>${rmBar()}<p>Aramayı ya da filtreleri değiştirmeyi dene.</p><button class="btn" type="button" data-clear>Filtreleri temizle</button></div>`;return}
   if(st.view==='panel'){area.innerHTML=dashHtml();queueCovers(st.books.filter(b=>b.status==='okunuyor'||b.currentPage>0).slice(0,8));return}
-  if(st.view==='raf'){area.innerHTML=rmBar()+shelfHtml(list);queueCovers(list);return}
-  area.innerHTML=rmBar()+'<div class="list">'+list.map(b=>{
+  if(st.view==='raf'){area.innerHTML=rmBar()+qmBar()+shelfHtml(list);queueCovers(list);return}
+  area.innerHTML=rmBar()+qmBar()+'<div class="list">'+list.map(b=>{
     const p=PREFIX[b.kind]||'K',sub=b.kind==='roman'?(b.pages?b.pages+' bölüm':''):(b.pages?b.pages+' sayfa':'');
     return `<article class="card" tabindex="0" data-id="${b.id}" aria-label="${esc(b.title)} — düzenle">
       <div class="cover ${p}" aria-hidden="true">${coverSrc(b)?`<img src="${coverSrc(b)}" alt="">`:ico(artFor(b))}<small>${calls[b.id]}</small></div>
@@ -1604,7 +1613,7 @@ function bookHtml(b){
   const p=PREFIX[b.kind]||'K',src=coverSrc(b),rib=(b.kind!=='roman'&&b.currentPage>0)?'<span class="ribbon" aria-hidden="true"></span>':'';
   const label=esc(b.title)+(b.author?', '+esc(b.author):'')+(b.currentPage>0?', sayfa '+b.currentPage:'');
   const inner=src?`<img src="${src}" alt="">`:`<span class="t">${esc(b.title)}</span>${ico(artFor(b))}<span class="a">${esc(b.author||'')}</span>`;
-  return `<div class="bk ${src?'':'gen '+p}" role="button" tabindex="0" data-bk="${b.id}" title="${esc(b.title)}" aria-label="${label}">${rib}${inner}
+  return `<div class="bk ${src?'':'gen '+p}${b.status==='okundu'?' is-done':''}" role="button" tabindex="0" data-bk="${b.id}" title="${esc(b.title)}" aria-label="${label}">${rib}${inner}<span class="qm-chk" aria-hidden="true"></span>
     ${b.kind==='pdf'||b.fileType?`<span class="badge">${b.fileType==='epub'?'EPUB':'PDF'}${b.source==='drive'?(bigDrive(b)?' · Drive ↗':' · Drive'):''}${!hasFile(b)&&b.fileRemoved?' · 📎':''}</span>`:''}${!src&&hasFile(b)&&b.kind!=='roman'&&!coverTried.has(b.id)&&!bigDrive(b)?'<span class="loading">kapak hazırlanıyor…</span>':''}
     ${b.blurb?`<button class="blinfo" type="button" data-blinfo="${b.id}" aria-label="${esc(b.title)} tanıtımı" title="Tanıtım">📖</button>`:''}${hasFile(b)?`<button class="edit" type="button" data-edit="${b.id}" aria-label="${esc(b.title)} kaydını düzenle">✎</button>`:''}</div>`;
 }
@@ -5087,7 +5096,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v63';
+const DK_VER='v64';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6594,6 +6603,26 @@ document.addEventListener('click',async e=>{const s=e.target.closest&&e.target.c
   m.addEventListener('click',e=>{e.stopPropagation();if(R.epub){toast('İfadeler şimdilik PDF kitaplarda');return}rxEmoPick()});
   $('rInkBtn').addEventListener('click',()=>{if(RX.mode)rxSetMode(false)})})();
 window.__rx={text:rxText};
+/* ---------- ✅ Hızlı "bitti" işaretleme ---------- */
+const QM={on:false,n:0,date:''};
+function qmToday(){const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
+function qmBar(){if(st.tab==='roman')return '';
+  if(!QM.on)return `<div class="qm-bar off"><button class="btn" type="button" data-qm="on">✅ Bitenleri hızlı işaretle</button></div>`;
+  return `<div class="qm-bar"><div><b>✅ Hızlı işaretleme</b><span>Bitirdiğin kitapların kapağına dokun; yeniden dokunursan geri alınır.${QM.n?` <b>${QM.n} kitap</b> işaretlendi.`:''}</span></div>
+    <label class="qm-date">Bitirme tarihi <input type="date" id="qmDate" value="${esc(QM.date||qmToday())}" max="${qmToday()}"></label><button class="btn primary" type="button" data-qm="off">Bitti</button></div>`}
+function qmSet(on){QM.on=on;if(on){QM.n=0;QM.date=QM.date||qmToday()}document.body.classList.toggle('qm-on',on);renderList()}
+async function qmToggle(id){const b=st.books.find(x=>x.id===id);if(!b||!st.db)return;
+  if(b.kind==='roman'){toast('Kendi romanların işaretlenmez');return}
+  const done=b.status==='okundu';
+  QM.prev=QM.prev||{};if(!done)QM.prev[id]={status:b.status,currentPage:b.currentPage||0};const pv=QM.prev[id];
+  const up=done?(pv?{status:pv.status==='okundu'?'okunacak':pv.status,currentPage:pv.currentPage,finishedAt:''}:{status:(b.currentPage>0&&!(b.pages&&b.currentPage>=b.pages))?'okunuyor':'okunacak',finishedAt:''}):{status:'okundu',finishedAt:QM.date||qmToday(),...(b.startedAt?{}:{startedAt:QM.date||qmToday()}),...(b.pages&&b.fileType!=='epub'?{currentPage:b.pages}:{})};
+  Object.assign(b,up);QM.n+=done?-1:1;if(QM.n<0)QM.n=0;renderList();
+  try{await st.db.collection('books').doc(id).update(up);if(!done)toast(`“${b.title}” bitti 🎉`)}catch(e){toast('Kaydedilemedi')}}
+$('listArea').addEventListener('click',e=>{const q=e.target.closest('[data-qm]');if(q){e.stopPropagation();qmSet(q.dataset.qm==='on');return}
+  if(!QM.on)return;const bk=e.target.closest('[data-bk]');if(!bk)return;e.preventDefault();e.stopPropagation();qmToggle(bk.dataset.bk)},true);
+$('listArea').addEventListener('change',e=>{if(e.target.id==='qmDate')QM.date=e.target.value||qmToday()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&QM.on)qmSet(false)});
+
 /* ---------- 📖 Tanıtımlar + 🃏 3 aday + sürükle-bırak ---------- */
 const BL={lang:'',busy:false};
 function blStrip(h){const d=document.createElement('div');d.innerHTML=String(h||'').replace(/<br\s*\/?>/gi,'\n').replace(/<\/p>/gi,'\n\n');return (d.textContent||'').replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim()}
