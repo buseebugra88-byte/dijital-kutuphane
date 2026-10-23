@@ -5172,7 +5172,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v71';
+const DK_VER='v72';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6720,10 +6720,17 @@ async function epEta(){const el=$('rEta');if(!el||!R.epub||!R.book)return;const 
 $('rStage').addEventListener('scroll',()=>{if(!R.epub)return;clearTimeout(EP.st);EP.st=setTimeout(epEta,700)},{passive:true});
 setInterval(()=>{if(R.epub&&!$('reader').hidden&&document.visibilityState==='visible')epEta()},30000);
 /*EP2*/
-/* EPUB tanıma: etiket boşsa dosya adına bak, yanlış etiketi düzelt */
-function isEpubB(b){return !!b&&(b.fileType==='epub'||/\.epub$/i.test(b.fileName||'')||/\.epub$/i.test(b.title||'')&&!b.fileType)}
-(function epFixTypes(){if(!st.ready||!st.db){setTimeout(epFixTypes,1500);return}const L=st.books.filter(b=>b.fileType!=='epub'&&/\.epub$/i.test(b.fileName||''));
-  L.forEach(b=>{try{st.db.collection('books').doc(b.id).update({fileType:'epub'});b.fileType='epub'}catch(e){}});if(L.length){try{renderTabs();renderList()}catch(e){}}})();
+/* EPUB tanıma: etiket boşsa dosya adına, o da yetmezse dosyanın içine bak; yanlış etiketi düzelt */
+function isEpubB(b){return !!b&&(b.fileType==='epub'||/\.(k?epub)(\.zip)?$/i.test(b.fileName||'')||/\.epub$/i.test(b.title||'')&&!b.fileType)}
+async function epSniff(b){if(typeof LOCAL==='undefined'||!LOCAL.fetchAsset||!b.assetId)return null;try{const r=await LOCAL.fetchAsset(b.assetId);if(!r.ok)return null;const ct=r.headers.get('content-type')||'';if(/epub/i.test(ct))return 'epub';
+  const u=new Uint8Array(await (await r.blob()).slice(0,80).arrayBuffer());if(u[0]===0x25&&u[1]===0x50&&u[2]===0x44&&u[3]===0x46)return 'pdf';if(u[0]===0x50&&u[1]===0x4b){const t=new TextDecoder().decode(u);return /epub/i.test(t)?'epub':'zip'}return null}catch(e){return null}}
+(function epFixTypes(){if(!st.ready||!st.db){setTimeout(epFixTypes,1500);return}
+  const fix=async(L,why)=>{for(const b of L){try{await st.db.collection('books').doc(b.id).update({fileType:'epub'});b.fileType='epub'}catch(e){}}};
+  (async()=>{const byName=st.books.filter(b=>b.fileType!=='epub'&&/\.(k?epub)(\.zip)?$/i.test(b.fileName||''));await fix(byName);
+    let done={};try{done=JSON.parse(localStorage.getItem('dk-sniff')||'{}')}catch(e){}
+    const C=st.books.filter(b=>b.fileType!=='epub'&&b.assetId&&!(b.parts&&b.parts.length>1)&&b.kind!=='roman'&&!done[b.id]),found=[];
+    for(const b of C){const t=await epSniff(b);if(t==='epub'||t==='zip')found.push(b);if(t)done[b.id]=t}try{localStorage.setItem('dk-sniff',JSON.stringify(done))}catch(e){}
+    await fix(found);const n=byName.length+found.length;if(n){try{renderTabs();renderList()}catch(e){}toast(`📗 ${n} EPUB bulundu, EPUB rafına taşındı`)}})()})();
 
 window.__ep={paint:()=>epPaint(),lens:()=>epLens(),sel:()=>EP.sel,hl:c=>epHl(c)};
 /* ---------- 📗 EPUB 2: içindekiler, arama, sayfa çevirme, sesli okuma takibi ---------- */
