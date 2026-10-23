@@ -1185,6 +1185,8 @@ html,body{overflow-x:clip;max-width:100%}
 html body .btn.primary{color:var(--on-brass,var(--paper))}
 html[data-preset=kindle] .bk-ban,html[data-preset=pastelk] .bk-ban{background:color-mix(in srgb,var(--brass) 18%,var(--paper));border-color:var(--line)}
 html[data-preset=kindle] body,html[data-preset=pastelk] body{background-image:none!important}
+body.kindle-soft{background-image:none!important}
+body.kindle-soft .bk-ban{background:color-mix(in srgb,var(--brass) 16%,var(--paper));border-color:var(--line)}
 </style>
 
 </head><body>
@@ -1447,7 +1449,7 @@ html[data-preset=kindle] body,html[data-preset=pastelk] body{background-image:no
     </div>
     <div class="row">
       <div class="f"><label for="tDeco">Başlık süsü</label><select id="tDeco"><option value="emblem">Amblem</option><option value="drawing">Kitap ve kedi çizimi</option></select></div>
-      <div class="f"><label>Ana sayfa widget'ları</label><div class="chips" id="tWidgets"></div></div><div class="f"><label for="tShelfDeco">Raf süsleri</label><select id="tShelfDeco"><option value="on">Göster</option><option value="off">Gizle</option></select></div><div class="f"><label for="tStyle">Tasarım</label><select id="tStyle"><option value="classic">Klasik</option><option value="journal">Defter (scrapbook)</option></select></div><div class="f"><label for="tTex">Doku</label><select id="tTex"><option value="">Düz renk</option><option value="pencil">Kuru kalem</option><option value="pastel">Pastel boya</option></select></div><div class="f"><label for="tEmoji">Emojiler</label><select id="tEmoji"><option value="">Tasarıma göre</option><option value="on">Göster</option><option value="off">Gizle</option></select></div><div class="f"><label for="tArt">Çizim tarzı</label><select id="tArt"><option value="cat">Kediler</option><option value="fairy">Peri bahçesi</option><option value="custom">Kendi çıkartmalarım</option></select></div><div class="f"><label for="tStamps">Çıkartmalar</label><select id="tStamps"><option value="on">Göster</option><option value="off">Gizle</option></select></div><div class="f"><label for="tSoft">Yazı rengi</label><select id="tSoft"><option value="on">Yumuşak</option><option value="off">Koyu</option></select></div>
+      <div class="f"><label>Ana sayfa widget'ları</label><div class="chips" id="tWidgets"></div></div><div class="f"><label for="tShelfDeco">Raf süsleri</label><select id="tShelfDeco"><option value="on">Göster</option><option value="off">Gizle</option></select></div><div class="f"><label for="tStyle">Tasarım</label><select id="tStyle"><option value="classic">Klasik</option><option value="journal">Defter (scrapbook)</option></select></div><div class="f"><label for="tTex">Doku</label><select id="tTex"><option value="">Düz renk</option><option value="pencil">Kuru kalem</option><option value="pastel">Pastel boya</option></select></div><div class="f"><label for="tEmoji">Emojiler</label><select id="tEmoji"><option value="">Tasarıma göre</option><option value="on">Göster</option><option value="off">Gizle</option></select></div><div class="f"><label for="tArt">Çizim tarzı</label><select id="tArt"><option value="cat">Kediler</option><option value="fairy">Peri bahçesi</option><option value="custom">Kendi çıkartmalarım</option></select></div><div class="f"><label for="tStamps">Çıkartmalar</label><select id="tStamps"><option value="on">Göster</option><option value="off">Gizle</option></select></div><div class="f"><label for="tSoft">Yazı rengi</label><select id="tSoft"><option value="on">Yumuşak</option><option value="off">Koyu</option></select></div><div class="f"><label for="tKindle">Renkler</label><select id="tKindle"><option value="on">Kindle gibi pastel</option><option value="off">Canlı</option></select></div>
     </div>
     <div class="row">
       <div class="f"><label for="tRFlow">Okuma şekli (PDF)</label><select id="tRFlow"><option value="scroll">Aşağı kaydırarak</option><option value="page">Sayfa çevirerek (efektli)</option></select></div>
@@ -2087,6 +2089,12 @@ function applyUI(){
   if((UI.deco||'emblem')==='emblem')body.classList.add('deco-emblem');if(UI.style==='journal')body.classList.add('style-journal');if(UI.tex==='pencil'||UI.tex==='pastel')body.classList.add('tex-'+UI.tex,'tex-on');if(UI.emoji==='off'||(UI.emoji!=='on'&&UI.style==='journal')){body.classList.add('no-emoji');setTimeout(()=>deEmoji(document),0)}if(UI.stamps==='off')body.classList.add('no-stamps');
   $('emblem').innerHTML=emblemSvg('kütüphanem');
   if(UI.pattern!=='check')body.classList.add('pat-'+UI.pattern);if(UI.cover!=='m')body.classList.add('cov-'+UI.cover);if(UI.illus==='off')body.classList.add('no-illus');
+  if(UI.kindle!=='off'){const root_=document.documentElement,cs=getComputedStyle(root_),g=k=>(root_.style.getPropertyValue('--'+k)||cs.getPropertyValue('--'+k)).trim(),dk=isDark(),pap=g('paper'),ink=g('ink'),hx=v=>/^#[0-9a-f]{6}$/i.test(v);
+    const tgt=dk?'#efe9df':pap,soft=(k,t)=>{const v=g(k);if(hx(v)&&hx(tgt))root_.style.setProperty('--'+k,mixHex(v,tgt,t))};
+    soft('brass',dk?.32:.42);soft('accent',dk?.16:.2);soft('k',.25);soft('p',.25);soft('r',.2);
+    const b=g('brass');if(hx(b)&&hx(pap)&&hx(ink)&&!root_.style.getPropertyValue('--on-brass')){const L=h=>{const c=[1,3,5].map(i=>parseInt(h.substr(i,2),16)/255).map(v=>v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4));return .2126*c[0]+.7152*c[1]+.0722*c[2]},cr=(a,c)=>{const x=L(a),y=L(c);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+      if(cr(b,pap)<3.2)root_.style.setProperty('--on-brass',cr(b,ink)>cr(b,pap)?mixHex(ink,dk?'#ffffff':'#000000',.35):pap)}
+    body.classList.add('kindle-soft')}else body.classList.remove('kindle-soft');
   const w=(UI.title||UIDEF.title).trim().split(' '),last=w.pop();
   $('hTitle').innerHTML=(w.length?esc(w.join(' '))+' ':'')+'<em>'+esc(last)+'</em>';$('hSub').textContent=UI.sub;
   document.title=(UI.title||UIDEF.title).trim();const snt=document.getElementById('snTitle');if(snt)snt.textContent=document.title;
@@ -2096,7 +2104,7 @@ function fillThemeForm(){try{fillReadOpts()}catch(e){}
   $('tPresets').innerHTML=Object.entries(PRESETS).map(([k,p])=>`<button type="button" class="sw" data-preset="${k}" aria-pressed="${UI.preset===k}"><i>${p.sw.map(c=>`<b style="background:${c}"></b>`).join('')}</i>${esc(p.name)}</button>`).join('');
   $('tBgc').value=UI.bgc||(getComputedStyle(document.documentElement).getPropertyValue('--bg').trim().slice(0,7)||'#efe7e2');
   $('tMode').value=UI.mode;$('tAccent').value=UI.accent||(getComputedStyle(document.documentElement).getPropertyValue('--accent').trim().slice(0,7)||'#7f9a68');
-  $('tPattern').value=UI.pattern;$('tFont').value=UI.font;$('tCover').value=UI.cover;$('tIllus').value=UI.illus;$('tTitle').value=UI.title;$('tSoft').value=UI.soft||'on';$('tArt').value=UI.art||'cat';$('tStyle').value=UI.style||'classic';$('tTex').value=UI.tex||'';$('tEmoji').value=UI.emoji||'';{const S=wgData().show;$('tWidgets').innerHTML=[['clock','🕰 Saat'],['goal','🎯 Hedef'],['todo','✅ Yapılacaklar'],['read','🔋 Okuma'],['note','💌 Not']].map(([k,l])=>`<button type="button" class="chip" data-wshow="${k}" aria-pressed="${!!S[k]}">${l}</button>`).join('')}$('tShelfDeco').value=UI.shelfDeco||'on';$('tName').value=UI.name||'';$('tBody').value=UI.body||'nunito';$('tDeco').value=UI.deco||'emblem';$('tStamps').value=UI.stamps||'on';$('tSub').value=UI.sub;
+  $('tPattern').value=UI.pattern;$('tFont').value=UI.font;$('tCover').value=UI.cover;$('tIllus').value=UI.illus;$('tTitle').value=UI.title;$('tSoft').value=UI.soft||'on';$('tKindle').value=UI.kindle||'on';$('tArt').value=UI.art||'cat';$('tStyle').value=UI.style||'classic';$('tTex').value=UI.tex||'';$('tEmoji').value=UI.emoji||'';{const S=wgData().show;$('tWidgets').innerHTML=[['clock','🕰 Saat'],['goal','🎯 Hedef'],['todo','✅ Yapılacaklar'],['read','🔋 Okuma'],['note','💌 Not']].map(([k,l])=>`<button type="button" class="chip" data-wshow="${k}" aria-pressed="${!!S[k]}">${l}</button>`).join('')}$('tShelfDeco').value=UI.shelfDeco||'on';$('tName').value=UI.name||'';$('tBody').value=UI.body||'nunito';$('tDeco').value=UI.deco||'emblem';$('tStamps').value=UI.stamps||'on';$('tSub').value=UI.sub;
 }
 let uiT;function setUI(patch){UI={...UI,...patch};applyUI();if('art' in patch||'shelfDeco' in patch)refreshArt();try{localStorage.setItem('dk-ui',JSON.stringify(UI))}catch(e){}
   $('tSaved').textContent='';clearTimeout(uiT);uiT=setTimeout(async()=>{if(!st.db)return;try{await st.db.doc('settings/ui').set({...UI,updatedAt:new Date().toISOString()});$('tSaved').textContent='Kaydedildi ✓'}catch(e){$('tSaved').textContent='Bu cihazda kaydedildi'}},700)}
@@ -2124,7 +2132,7 @@ $('tMode').addEventListener('change',e=>{setUI({mode:e.target.value});fillThemeF
 $('tAccent').addEventListener('input',e=>setUI({accent:e.target.value}));
 $('tBgc').addEventListener('input',e=>setUI({bgc:e.target.value}));$('tBgcReset').addEventListener('click',()=>{setUI({bgc:''});fillThemeForm()});
 $('tAccentReset').addEventListener('click',()=>{setUI({accent:''});fillThemeForm()});
-[['tPattern','pattern'],['tFont','font'],['tBody','body'],['tDeco','deco'],['tStamps','stamps'],['tSoft','soft'],['tArt','art'],['tStyle','style'],['tTex','tex'],['tEmoji','emoji'],['tShelfDeco','shelfDeco'],['tCover','cover'],['tIllus','illus']].forEach(([id,k])=>$(id).addEventListener('change',e=>setUI({[k]:e.target.value})));
+[['tPattern','pattern'],['tFont','font'],['tBody','body'],['tDeco','deco'],['tStamps','stamps'],['tSoft','soft'],['tKindle','kindle'],['tArt','art'],['tStyle','style'],['tTex','tex'],['tEmoji','emoji'],['tShelfDeco','shelfDeco'],['tCover','cover'],['tIllus','illus']].forEach(([id,k])=>$(id).addEventListener('change',e=>setUI({[k]:e.target.value})));
 $('tTitle').addEventListener('input',e=>setUI({title:e.target.value}));$('tName').addEventListener('input',e=>{setUI({name:e.target.value});if(st.view==='panel')renderList()});$('tSub').addEventListener('input',e=>setUI({sub:e.target.value}));
 $('tReset').addEventListener('click',()=>{setUI({...UIDEF});fillThemeForm()});
 applyUI();
@@ -5183,7 +5191,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v74';
+const DK_VER='v75';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
