@@ -1307,6 +1307,7 @@ html,body{overflow-x:clip;max-width:100%}
       <input id="fFile" type="file" accept="application/pdf,.pdf,application/epub+zip,.epub">
       <span class="hint" id="fileHint">20 MB'tan büyük dosyalar otomatik olarak parçalara bölünür.</span>
     </div>
+    <div class="f" id="ftField" hidden><label>Dosya türü</label><div class="seg" id="fFT"><button type="button" data-ft="pdf">PDF</button><button type="button" data-ft="epub">EPUB</button></div><span class="hint">EPUB kitabın PDF rafında görünüyorsa EPUB'u seçip kaydet.</span></div>
     <div class="f"><label for="fCover">Kapak görseli</label><input id="fCover" type="file" accept="image/png,image/jpeg,image/webp,image/gif"><span class="hint" id="coverHint">İstersen bir kapak fotoğrafı yükle; yüklemezsen çizimli bir kapak oluşur.</span></div>
     <div class="f"><label for="fNote">Notlar</label><textarea id="fNote" placeholder="Düşüncelerin, alıntılar, bölüm planı…"></textarea></div>
     <div class="simrow" id="simRow" hidden></div>
@@ -1882,6 +1883,7 @@ function openForm(b){
   $('fileHint').textContent=!st.assets?'Dosya yükleme bu görünümde kullanılamıyor.':(b&&b.assetId?'Bir dosya zaten ekli. Yenisini seçersen onun yerine geçer. ':'PDF ya da EPUB seç; dosya bu cihazda saklanır.');
   $('fFile').disabled=!st.assets;$('fCover').disabled=!st.assets;
   $('coverHint').textContent=!st.assets?'Görsel yükleme bu görünümde kullanılamıyor.':kind==='pdf'?'Boş bırakırsan kapak PDF\'in ilk sayfasından oluşur.':(b&&b.coverId?'Bir kapak zaten var. Yenisini seçersen onun yerine geçer.':'İstersen bir kapak fotoğrafı yükle; yüklemezsen çizimli bir kapak oluşur.');
+  FTsel=null;{const has=b&&b.kind!=='kitap'&&(b.assetId||b.driveId||(b.parts&&b.parts.length));$('ftField').hidden=!has;if(has){FTsel=isEpubB(b)?'epub':'pdf';$('fFT').querySelectorAll('[data-ft]').forEach(x=>x.setAttribute('aria-pressed',x.dataset.ft===FTsel))}}
   $('veil').hidden=false;setTimeout(()=>$('fTitle').focus(),30);
 }
 function closeForm(){$('veil').hidden=true;st.editing=null}
@@ -1904,7 +1906,7 @@ form.addEventListener('submit',async e=>{
     tags:[...new Set($('fTags').value.split(',').map(t=>t.trim().replace(/^#/,'')).filter(Boolean))],
     pages:parseInt($('fPages').value)||0,finishedAt:(kind!=='roman'&&status==='okundu')?($('fDone').value||new Date().toISOString().slice(0,10)):'',
     rating:kind==='roman'?0:formRating,review:kind==='roman'?'':$('fReview').value.trim(),year:$('fYear').value.trim(),journal:$('fJournal').value.trim(),volume:$('fVol').value.trim(),issue:$('fIssue').value.trim(),pagesRange:$('fPgs').value.trim(),doi:$('fDoi').value.trim().replace(/^https?:\/\/(dx\.)?doi\.org\//i,''),ozet:b&&b.ozet?b.ozet:null,
-    blurb:$('fBlurb').value.trim(),blurbLang:$('fBlurb').value.trim()?(BL.lang||'tr'):'',blurbNone:b?!!b.blurbNone:false,note:$('fNote').value.trim(),coverId:b?(b.coverId||''):'',autoCover:b?!!b.autoCover:false,currentPage:kind==='roman'?0:(parseInt($('fCurrent').value)||0),lastReadAt:b?(b.lastReadAt||''):'',assetId:b&&kind!=='kitap'?(b.assetId||''):'',parts:b&&kind!=='kitap'?(b.parts||[]):[],fileName:b&&kind!=='kitap'?(b.fileName||''):'',fileSize:b&&kind!=='kitap'?(b.fileSize||0):0,fileType:b&&kind!=='kitap'?(b.fileType||''):'',source:b&&kind!=='kitap'?(b.source||''):'',driveId:b&&kind!=='kitap'?(b.driveId||''):'',driveUrl:b&&kind!=='kitap'?(b.driveUrl||''):'',
+    blurb:$('fBlurb').value.trim(),blurbLang:$('fBlurb').value.trim()?(BL.lang||'tr'):'',blurbNone:b?!!b.blurbNone:false,note:$('fNote').value.trim(),coverId:b?(b.coverId||''):'',autoCover:b?!!b.autoCover:false,currentPage:kind==='roman'?0:(parseInt($('fCurrent').value)||0),lastReadAt:b?(b.lastReadAt||''):'',assetId:b&&kind!=='kitap'?(b.assetId||''):'',parts:b&&kind!=='kitap'?(b.parts||[]):[],fileName:b&&kind!=='kitap'?(b.fileName||''):'',fileSize:b&&kind!=='kitap'?(b.fileSize||0):0,fileType:b&&kind!=='kitap'?(FTsel||b.fileType||''):'',source:b&&kind!=='kitap'?(b.source||''):'',driveId:b&&kind!=='kitap'?(b.driveId||''):'',driveUrl:b&&kind!=='kitap'?(b.driveUrl||''):'',
     addedAt:b?b.addedAt:new Date().toISOString()};
   let file=$('fFile').files[0];
   if((file||$('fCover').files[0])&&!(await ensureUploadPerm())){showErr('Dosya yükleme izni kapalı. Sayfa menüsündeki İzinler bölümünden izin ver.');return}
@@ -5172,7 +5174,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v72';
+const DK_VER='v73';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -5187,7 +5189,7 @@ async function dkShareBook(b,onP){if(typeof GAUTH==='undefined'||!GAUTH.configur
     id=(await (await gfetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',1,{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+bd},body})).json()).id}
   if(!id)throw{ui:'Drive\'a yüklenemedi.'};
   try{const C=await caches.open('dk-books');await C.put('https://dk-offline/drive/'+encodeURIComponent(id),new Response(blob,{headers:{'Content-Type':'application/octet-stream'}}))}catch(e){}
-  await st.db.collection('books').doc(b.id).update({source:'drive',driveId:id,fileType:'pdf'});Object.assign(b,{source:'drive',driveId:id});return id}
+  await st.db.collection('books').doc(b.id).update({source:'drive',driveId:id,fileType:isEpubB(b)?'epub':'pdf'});Object.assign(b,{source:'drive',driveId:id});return id}
 function dkMissingDlg(b){const drive=typeof GAUTH!=='undefined'&&GAUTH.configured&&GAUTH.configured();
   msModal(`<div class="eyebrow">📄 PDF bu cihazda yok</div><b>${esc(b.title)}</b>
    <p class="hint" style="margin:0">Bu kitabı başka bir cihazından (Mac ya da iPhone) eklemişsin; PDF dosyası orada duruyor, bu cihaza gelmedi.</p>
@@ -6720,6 +6722,8 @@ async function epEta(){const el=$('rEta');if(!el||!R.epub||!R.book)return;const 
 $('rStage').addEventListener('scroll',()=>{if(!R.epub)return;clearTimeout(EP.st);EP.st=setTimeout(epEta,700)},{passive:true});
 setInterval(()=>{if(R.epub&&!$('reader').hidden&&document.visibilityState==='visible')epEta()},30000);
 /*EP2*/
+let FTsel=null;document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#fFT [data-ft]');if(!b)return;FTsel=b.dataset.ft;$('fFT').querySelectorAll('[data-ft]').forEach(x=>x.setAttribute('aria-pressed',x===b))});
+window.__dkdiag=()=>{const B=__dk.st().books;const c={};B.forEach(b=>{const k=[b.kind,b.fileType||'-',b.source||'yerel',(b.fileName||'').split('.').pop().toLowerCase().slice(0,6)].join('|');c[k]=(c[k]||0)+1});return c};
 /* EPUB tanıma: etiket boşsa dosya adına, o da yetmezse dosyanın içine bak; yanlış etiketi düzelt */
 function isEpubB(b){return !!b&&(b.fileType==='epub'||/\.(k?epub)(\.zip)?$/i.test(b.fileName||'')||/\.epub$/i.test(b.title||'')&&!b.fileType)}
 async function epSniff(b){if(typeof LOCAL==='undefined'||!LOCAL.fetchAsset||!b.assetId)return null;try{const r=await LOCAL.fetchAsset(b.assetId);if(!r.ok)return null;const ct=r.headers.get('content-type')||'';if(/epub/i.test(ct))return 'epub';
@@ -6729,6 +6733,10 @@ async function epSniff(b){if(typeof LOCAL==='undefined'||!LOCAL.fetchAsset||!b.a
   (async()=>{const byName=st.books.filter(b=>b.fileType!=='epub'&&/\.(k?epub)(\.zip)?$/i.test(b.fileName||''));await fix(byName);
     let done={};try{done=JSON.parse(localStorage.getItem('dk-sniff')||'{}')}catch(e){}
     const C=st.books.filter(b=>b.fileType!=='epub'&&b.assetId&&!(b.parts&&b.parts.length>1)&&b.kind!=='roman'&&!done[b.id]),found=[];
+    const D=st.books.filter(b=>b.fileType!=='epub'&&b.source==='drive'&&b.driveId&&!b.assetId&&b.kind!=='roman'&&!done['d'+b.id]);
+    for(const b of D){let t=null;try{const C_=await caches.open('dk-books');const m=await C_.match('https://dk-offline/drive/'+encodeURIComponent(b.driveId));if(m){const u=new Uint8Array(await (await m.blob()).slice(0,80).arrayBuffer());t=u[0]===0x50&&u[1]===0x4b?'epub':u[0]===0x25?'pdf':null}}catch(e){}
+      if(!t&&typeof GAUTH!=='undefined'&&GAUTH.signedIn&&GAUTH.signedIn()){try{const j=await (await gfetch(GD+'/'+encodeURIComponent(b.driveId)+'?fields=mimeType,name&supportsAllDrives=true')).json();t=/epub/i.test(j.mimeType||'')||/\.epub$/i.test(j.name||'')?'epub':j.mimeType?'pdf':null}catch(e){}}
+      if(t==='epub')found.push(b);if(t)done['d'+b.id]=t}
     for(const b of C){const t=await epSniff(b);if(t==='epub'||t==='zip')found.push(b);if(t)done[b.id]=t}try{localStorage.setItem('dk-sniff',JSON.stringify(done))}catch(e){}
     await fix(found);const n=byName.length+found.length;if(n){try{renderTabs();renderList()}catch(e){}toast(`📗 ${n} EPUB bulundu, EPUB rafına taşındı`)}})()})();
 
