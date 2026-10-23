@@ -5125,7 +5125,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v67';
+const DK_VER='v68';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6926,15 +6926,12 @@ const AMB_B={
   every(9,22,t=>{const p=rnd(-.5,.5);let x=t;const end=t+rnd(1.5,4);while(x<end){const d=rnd(.05,.18);burst(x,d,[bq('bandpass',rnd(3000,5500),3)],rnd(.04,.08),{a:d*.3,pan:p});x+=d+rnd(.02,.09);if(Math.random()<.12)x+=rnd(.2,.5)}});
   every(18,40,t=>{const n=Math.floor(rnd(5,10)),p0=rnd(-.8,.8);for(let i=0;i<n;i++){const x=t+i*rnd(.5,.6),k=Math.sin(Math.PI*(i+.5)/n),p=p0-2*p0*i/n;burst(x,.12,[bq('lowpass',300)],.03+.14*k,{a:.006,pan:p});tone(x,rnd(60,80),.1,.02+.05*k,{pan:p})}});
   every(25,55,t=>{if(Math.random()<.5){burst(t,.18,[bq('lowpass',220)],.24,{a:.003,pan:rnd(-.7,.7)});tone(t,rnd(90,120),.15,.07)}else{const b=burst(t,rnd(.3,.6),[bq('bandpass',400,6)],.05,{a:.08,pan:rnd(-.7,.7)});b.f[0].frequency.exponentialRampToValueAtTime(rnd(600,900),t+.4)}})},
- cafe(H){const{C,L,loop,bq,burst,tone,every,beat,rnd,pan}=H;loop('brown',[bq('lowpass',300)],.45);loop('pink',[bq('bandpass',900,.6),bq('lowpass',2400)],.05);
-  for(let v=0;v<6;v++){const s=C.createBufferSource();s.buffer=ambBuf(C,'pink');s.loop=true;const f1=bq('bandpass',rnd(350,700),3),f2=bq('bandpass',rnd(1100,2200),4),g2=C.createGain(),lp=bq('lowpass',2600),vg=C.createGain(),lvl=rnd(.35,1);
-    g2.gain.value=.5;vg.gain.value=.0001;const ng=C.createGain();ng.gain.value=.35;s.connect(ng);ng.connect(f1);ng.connect(f2);const base=rnd(105,230),o=C.createOscillator();o.type='sawtooth';o.frequency.value=base;const og=C.createGain();og.gain.value=.09;o.connect(og);og.connect(f1);og.connect(f2);o.start();H.keep(ng,o,og);f2.connect(g2);f1.connect(lp);g2.connect(lp);lp.connect(vg);vg.connect(pan(rnd(-.9,.9),L.g));s.start(0,Math.random()*5);H.keep(s,f1,f2,g2,lp,vg);
-    let talkEnd=0,low=rnd(.9,1.15);
-    let next=H.T()+rnd(0,3);H.loopT(()=>{while(next<H.T()+.4){const t=next;if(t>talkEnd&&Math.random()<.5){talkEnd=t+rnd(1.5,6);}if(t>talkEnd){next=t+rnd(.8,4);talkEnd=next+rnd(1.5,6);continue}
-      const d=rnd(.08,.26),pk=rnd(.5,1.4)*lvl;vg.gain.setTargetAtTime(pk,t,d*.25);vg.gain.setTargetAtTime(.0001,t+d*.7,d*.2);f1.frequency.setTargetAtTime(rnd(300,800)*low,t,.03);o.frequency.setTargetAtTime(base*rnd(.85,1.2),t,.05);f2.frequency.setTargetAtTime(rnd(1000,2400)*low,t,.03);next=t+d+rnd(.03,.12)}})}
-  every(2.5,8,t=>{const p=rnd(-.8,.8);if(Math.random()<.25){const n=Math.floor(rnd(3,7));for(let i=0;i<n;i++)tone(t+i*rnd(.1,.16),rnd(4200,5200),.12,.015,{pan:p})}else{const f=rnd(1700,3200),g=rnd(.02,.045),d=rnd(.25,.6);tone(t,f,d,g,{pan:p});tone(t,f*2.76,d*.6,g*.5,{pan:p});tone(t,f*5.4,d*.3,g*.25,{pan:p});if(Math.random()<.3)tone(t+.12,f*1.07,d*.8,g*.7,{pan:p})}});
-  every(35,80,t=>{const d=rnd(3,6);burst(t,d,[bq('highpass',2500),bq('lowpass',8000)],.05,{a:.4,hold:d-1,pan:rnd(-.9,-.4)});burst(t+.2,d*.7,[bq('lowpass',400)],.05,{a:.3,pan:-.6,kind:'brown'})});
-  every(50,120,t=>{tone(t,1318,1.2,.02,{pan:.7});tone(t+.25,1046,1.4,.02,{pan:.7})})},
+ cafe(H){const{loop,bq,burst,tone,every,loopT,rnd}=H;loop('brown',[bq('lowpass',260)],.5);
+  const m1=loop('pink',[bq('bandpass',420,.9),bq('lowpass',900)],.22,-.3),m2=loop('pink',[bq('bandpass',650,.9),bq('lowpass',1100)],.18,.35);
+  let nx=0;loopT(()=>{const t=H.T();if(t<nx)return;nx=t+rnd(.6,1.6);m1.gain.setTargetAtTime(rnd(.12,.3),t,.5);m2.gain.setTargetAtTime(rnd(.1,.26),t,.5)});
+  every(4,11,t=>{const p=rnd(-.7,.7),f=rnd(2300,3000),g=rnd(.008,.016),d=rnd(.18,.35);tone(t,f,d,g,{pan:p,a:.002});tone(t,f*2.4,d*.5,g*.35,{pan:p,a:.002});if(Math.random()<.35)tone(t+rnd(.12,.25),f*rnd(.9,1.1),d*.8,g*.7,{pan:p,a:.002})});
+  every(10,25,t=>{const p=rnd(-.6,.6);burst(t,.05,[bq('lowpass',900)],.06,{a:.002,pan:p});burst(t,.12,[bq('lowpass',250)],.08,{a:.004,pan:p})});
+  every(60,140,t=>{const d=rnd(2.5,4);burst(t,d,[bq('highpass',3000),bq('lowpass',7000)],.018,{a:.6,hold:d-1.4,pan:-.7})})},
  train(H){const{loop,bq,burst,tone,beat,lfo,rnd}=H;const r=loop('brown',[bq('lowpass',140)],.9);loop('pink',[bq('bandpass',280,.7)],.12);lfo(r.gain,.18,.2);
   let i=0;beat(()=>(++i%2)?.13:1.05+rnd(-.02,.02),t=>{burst(t,.11,[bq('lowpass',700)],.32,{a:.003,pan:.15});tone(t,rnd(70,85),.12,.14,{pan:.15});burst(t,.05,[bq('bandpass',2500,2)],.03,{a:.002})})},
  clock(H){const{loop,bq,burst,tone,beat}=H;loop('brown',[bq('lowpass',120)],.12);let k=0;beat(()=>1,t=>{const f=(++k%2)?3200:2600;burst(t,.035,[bq('bandpass',f,6),bq('highpass',1200)],.4,{a:.001});tone(t,f*.5,.03,.025)})},
