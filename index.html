@@ -1101,7 +1101,7 @@ html body .rstage{overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow
 .vnbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 80px);z-index:420;border-radius:999px;box-shadow:0 10px 24px -10px rgba(0,0,0,.45)}
 .mood-c{margin:4px 0 10px}.mood-l{display:grid;gap:10px}.mood-i{display:grid;grid-template-columns:70px 1fr;gap:12px;align-items:center}.mood-i .book{width:70px}.mood-i>div{display:grid;gap:4px}
 
-#eyeOv,#eyeDim{position:fixed;inset:-50px;pointer-events:none;z-index:2147483000;opacity:0;transition:opacity .4s}#eyeOv{background:#ff9a3c;mix-blend-mode:multiply}#eyeDim{background:#000}
+#eyeOv,#eyeDim{position:fixed;left:0;right:0;top:-60px;bottom:-60px;pointer-events:none;z-index:2147483000;opacity:0;transition:opacity .4s}#eyeOv{background:#ff9a3c;mix-blend-mode:multiply}#eyeDim{background:#000}
 .eye{display:grid;gap:8px;border:1px solid var(--line);border-radius:16px;padding:12px 14px;background:color-mix(in srgb,var(--paper) 90%,var(--bg))}.eye-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
 .eye-r{display:grid;grid-template-columns:minmax(90px,130px) 1fr;gap:10px;align-items:center;font-size:13px;color:var(--muted)}.eye-r input{width:100%;accent-color:var(--brass)}
 
@@ -1144,6 +1144,19 @@ html body .sidenav .sn-item[aria-current="page"] svg,html body .sidenav .sn-item
 html body .sidenav .sn-item[aria-current="page"]::before{display:none}
 }
 @media (max-width:380px){html body .sidenav .sn-item .sn-l::after{font-size:9px}html body .sidenav .sn-item .sn-ic svg{width:20px;height:20px}}
+@media (max-width:860px){
+html body #secTabs{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;overflow-y:hidden;border-radius:22px!important;scrollbar-width:none;-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;max-width:100%;-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent)}
+html body #secTabs:empty,html body #secTabs[hidden]{display:none!important}
+html body #secTabs.at-end{-webkit-mask-image:none;mask-image:none}
+html body #secTabs::-webkit-scrollbar{display:none}
+html body #secTabs button{flex:0 0 auto!important;white-space:nowrap!important;scroll-snap-align:center}
+html body .seg{border-radius:20px}
+html body .tools{border-radius:24px!important;padding:8px!important;gap:8px!important}
+html body .tools input[type=search]{flex:1 1 100%!important}
+}
+html,body{overflow-x:clip;max-width:100%}
+@media (max-width:420px){html body .lf-faces{flex-wrap:wrap;justify-content:center}html body .lf-faces.big button{font-size:28px;padding:3px 6px}}
+:root:not(#_):not(#__):not(#___) select:not([multiple]):not([size]):not(.bare):not([data-bare]){padding-right:34px!important}
 </style>
 
 </head><body>
@@ -5108,7 +5121,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v65';
+const DK_VER='v66';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6615,6 +6628,11 @@ document.addEventListener('click',async e=>{const s=e.target.closest&&e.target.c
   m.addEventListener('click',e=>{e.stopPropagation();if(R.epub){toast('İfadeler şimdilik PDF kitaplarda');return}rxEmoPick()});
   $('rInkBtn').addEventListener('click',()=>{if(RX.mode)rxSetMode(false)})})();
 window.__rx={text:rxText};
+/* 📱 sekme şeridi: seçili sekmeyi görünür tut */
+(function(){const T=$('secTabs');if(!T)return;const fit=()=>{if(innerWidth>860)return;const a=T.querySelector('[aria-pressed="true"]');if(a){const l=a.offsetLeft-(T.clientWidth-a.offsetWidth)/2;T.scrollTo({left:Math.max(0,l),behavior:'smooth'})}end()};
+  const end=()=>T.classList.toggle('at-end',T.scrollLeft+T.clientWidth>=T.scrollWidth-4);
+  new MutationObserver(()=>requestAnimationFrame(fit)).observe(T,{childList:true,subtree:true,attributes:true,attributeFilter:['aria-pressed']});T.addEventListener('scroll',end,{passive:true});addEventListener('resize',fit)})();
+
 /* ---------- ✅ Hızlı "bitti" işaretleme ---------- */
 const QM={on:false,n:0,date:''};
 function qmToday(){const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
