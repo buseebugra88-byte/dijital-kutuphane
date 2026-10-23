@@ -1181,6 +1181,7 @@ html,body{overflow-x:clip;max-width:100%}
 ::highlight(dkfind){background-color:#ffd54a;color:inherit}
 ::highlight(dktts){background-color:rgba(127,170,110,.35);color:inherit}
 .tts-p{background:rgba(127,170,110,.18);border-radius:6px}
+.nbt-pal{border-radius:14px}.nbt-pal button{font-size:12px;padding:4px 10px}
 </style>
 
 </head><body>
@@ -3679,8 +3680,8 @@ const NB_PEN=['#1d1d1f','#3b5bdb','#d6336c','#2f9e44','#f08c00','#7048e8','#868e
 const NB_HL=['#ffe066','#8ce99a','#74c0fc','#faa2c1','#ffc078','#d0bfff'];
 const NB_W={pen:[1.3,2.3,3.8,6],hl:[12,20,30,42]};
 const NB_COV=['#e8a0b4','#f4c27a','#9cc5a1','#8fb3e0','#b9a3e3','#e98a6b','#6c7a89','#d9c9a3'];
-const NB_PAPER={lined:'Çizgili',grid:'Kareli',dot:'Noktalı',plain:'Düz'};
-const NB_PC=['#ffffff','#fbf6ea','#eef4fb','#26262b'];
+const NB_PAPER={lined:'Çizgili',grid:'Kareli',dot:'Noktalı',plain:'Düz',wide:'Geniş çizgili',margin:'Okul defteri',small:'Küçük kareli',music:'Nota'};
+const NB_PC=['#ffffff','#fbf6ea','#eef4fb','#fdeef0','#eef5ea','#f1edfa','#f3e7d3','#26262b'];
 const NB_H=1414;
 const nbId=()=>'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 const nbClean=o=>{const r={};for(const k in o)if(o[k]!==undefined)r[k]=o[k];return r};
@@ -3822,8 +3823,12 @@ function nbPaper(ctx,pg){const h=pg.h||NB_H,bk=nbBook(pg.book)||{},pc=pg.pc||bk.
   ctx.fillStyle=pc;ctx.fillRect(0,0,1000,h);if(pg.bg)return;if(NB_TPL[kind]){nbTplDraw(ctx,kind,h,dark);return}const ln=dark?'rgba(255,255,255,.10)':'rgba(60,70,90,.11)';
   if(kind==='lined'){ctx.strokeStyle=ln;ctx.lineWidth=1.2;ctx.beginPath();for(let y=120;y<h-30;y+=36){ctx.moveTo(0,y);ctx.lineTo(1000,y)}ctx.stroke();}
   else if(kind==='grid'){ctx.strokeStyle=ln;ctx.lineWidth=1;ctx.beginPath();for(let x=25;x<1000;x+=30){ctx.moveTo(x,0);ctx.lineTo(x,h)}for(let y=25;y<h;y+=30){ctx.moveTo(0,y);ctx.lineTo(1000,y)}ctx.stroke()}
+  else if(kind==='wide'){ctx.strokeStyle=ln;ctx.lineWidth=1.2;ctx.beginPath();for(let y=130;y<h-30;y+=50){ctx.moveTo(0,y);ctx.lineTo(1000,y)}ctx.stroke()}
+  else if(kind==='margin'){ctx.strokeStyle=dark?'rgba(140,180,255,.18)':'rgba(70,120,200,.22)';ctx.lineWidth=1.2;ctx.beginPath();for(let y=120;y<h-30;y+=36){ctx.moveTo(0,y);ctx.lineTo(1000,y)}ctx.stroke();ctx.strokeStyle='rgba(220,70,90,.45)';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(110,0);ctx.lineTo(110,h);ctx.stroke()}
+  else if(kind==='small'){ctx.strokeStyle=ln;ctx.lineWidth=.8;ctx.beginPath();for(let x=20;x<1000;x+=20){ctx.moveTo(x,0);ctx.lineTo(x,h)}for(let y=20;y<h;y+=20){ctx.moveTo(0,y);ctx.lineTo(1000,y)}ctx.stroke()}
+  else if(kind==='music'){ctx.strokeStyle=dark?'rgba(255,255,255,.22)':'rgba(60,70,90,.32)';ctx.lineWidth=1.1;ctx.beginPath();for(let y=120;y<h-80;y+=118){for(let k=0;k<5;k++){ctx.moveTo(60,y+k*12);ctx.lineTo(940,y+k*12)}}ctx.stroke()}
   else if(kind==='dot'){ctx.fillStyle=dark?'rgba(255,255,255,.2)':'rgba(60,70,90,.22)';for(let x=25;x<1000;x+=30)for(let y=25;y<h;y+=30){ctx.beginPath();ctx.arc(x,y,1.7,0,7);ctx.fill()}}}
-function nbStroke(ctx,S,alpha){const p=S.pts,n=p.length/3;if(!n)return;ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=S.c;ctx.fillStyle=S.c;
+function nbStroke(ctx,S,alpha){const p=S.pts,n=p.length/3;if(!n)return;if(S.k==='tape'){nbTape(ctx,S,alpha);return}ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=S.c;ctx.fillStyle=S.c;
   if(alpha!=null)ctx.globalAlpha=alpha;
   if(S.k==='hl'){ctx.globalAlpha=(alpha??1)*.38;ctx.globalCompositeOperation='multiply';ctx.lineWidth=S.w;ctx.lineCap='square';ctx.beginPath();ctx.moveTo(p[0],p[1]);for(let i=3;i<p.length;i+=3)ctx.lineTo(p[i],p[i+1]);if(n===1)ctx.lineTo(p[0]+.1,p[1]);ctx.stroke();ctx.restore();return}
   const lw=q=>S.w*(.42+Math.max(.08,q||.5)*1.16);
@@ -3860,7 +3865,7 @@ function nbTop(){const bk=nbBook();if(!bk||!$('nbTitle'))return;if(document.acti
 async function nbClose(){nbStopAudio();if(NB.rec)await nbRecStop();await nbFlushAll();NB.bid=null;NB.sel=null;NB.cvs.forEach((v,k)=>{v.width=v.height=0});NB.cvs.clear();if(NB.obs){NB.obs.disconnect();NB.obs=null}
   document.querySelectorAll('.nbmenu').forEach(m=>m.remove());nbSelBar();
   const ed=$('nbEd');if(ed)ed.remove();document.body.classList.remove('nb-side','nb-open');if(st.sec==='notes'||curSub()==='nb')nbRender($('secHost'));if(st.view==='panel'&&st.sec==='home')renderList();const tp=[...(NB.touched||[])];NB.touched=new Set();nbOcrBg(tp)}
-function nbTools(){const el=$('nbTools');if(!el)return;const t=NB.tool,hl=t==='hl',pal=hl?NB_HL:NB_PEN,cur=hl?NB.hl:NB.color;
+function nbTools(){const el=$('nbTools');if(!el)return;const t=NB.tool,hl=t==='hl',pal=hl?NB_HL:((NB_PALS[NB.pal]||NB_PALS.klasik)[1]),cur=hl?NB.hl:NB.color;
   el.innerHTML=`<div class="seg nbt-tools">${[['pen','✒️','Kalem'],['hl','🖍','Fosforlu'],['er','🧽','Silgi'],['lasso','➰','Kement'],['text','🔤','Yazı']].map(([k,i,l])=>`<button type="button" data-ne="tool" data-v="${k}" aria-pressed="${t===k}" title="${l}">${i}<span>${l}</span></button>`).join('')}<button type="button" data-ne="img" title="Görsel ekle">🖼<span>Görsel</span></button><button type="button" data-ne="stk" title="Çıkartmalar">🧠<span>Çıkartma</span></button></div>
    ${t==='er'||t==='lasso'?'':`<div class="nbt-cols">${pal.map(c=>`<button type="button" class="nb-col" data-ne="col" data-v="${c}" style="--c:${c}" aria-pressed="${c===cur}" aria-label="Renk ${c}"></button>`).join('')}<label class="nb-col nb-colx" title="Başka renk" style="--c:${cur}"><input type="color" id="nbColX" value="${cur}"></label></div>`}
    ${t==='pen'||t==='hl'?`<div class="seg nbt-w">${[0,1,2,3].map(i=>`<button type="button" data-ne="w" data-v="${i}" aria-pressed="${NB.w===i}" aria-label="Kalınlık ${i+1}"><i style="width:${hl?6+i*4:3+i*3}px;height:${hl?6+i*4:3+i*3}px"></i></button>`).join('')}</div>`:''}
@@ -3897,7 +3902,7 @@ function nbItemsHtml(pg){return (pg.items||[]).filter(i=>i.t==='text').map(i=>`<
 function nbPageOf(el){const p=el.closest('[data-pid]');return p&&nbPg(p.dataset.pid)}
 function nbLogical(e,el){const r=el.getBoundingClientRect();const pg=nbPg(el.dataset.pid);return [(e.clientX-r.left)/r.width*1000,(e.clientY-r.top)/r.height*(pg.h||NB_H)]}
 function nbLive(el){let L=NB.live;if(!L){L=NB.live=document.createElement('canvas');L.className='nblive'}const cv=NB.cvs.get(el.dataset.pid);if(!cv)return null;
-  if(L.parentNode!==el||L.width!==cv.width||L.height!==cv.height){L.width=cv.width;L.height=cv.height;el.insertBefore(L,el.querySelector('.nbov'))}const c=L.getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,L.width,L.height);c.setTransform(L.width/1000,0,0,L.width/1000,0,0);return c}
+  if(L.parentNode!==el||L.width!==cv.width||L.height!==cv.height){L.width=cv.width;L.height=cv.height;el.insertBefore(L,el.querySelector('.nbov'))}const c=L.getContext('2d',{desynchronized:true});c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,L.width,L.height);c.setTransform(L.width/1000,0,0,L.width/1000,0,0);return c}
 
 /* ---- geri al ---- */
 function nbSnap(pg){return {pid:pg.id,strokes:pg.strokes.slice(),items:JSON.parse(JSON.stringify(pg.items||[]))}}
@@ -3998,7 +4003,7 @@ function nbUp(e){clearTimeout(NB.holdT);const c=NB.cur,d=NB.drag,dn=NB.down;NB.c
   if(NB.playIdx!=null&&dn&&performance.now()-dn.t<320&&S.pts.length<=12){const [x,y]=[dn.x,dn.y];let best=null,bd=28;for(const T of pg.strokes){if(T.a==null)continue;const b=nbBB(T);if(x<b.x-bd||x>b.x+b.w+bd||y<b.y-bd||y>b.y+b.h+bd)continue;for(let i=0;i<T.pts.length;i+=3){const dd=Math.hypot(T.pts[i]-x,T.pts[i+1]-y);if(dd<bd){bd=dd;best=T}}}
     nbRedraw(pg.id);if(best){nbSeek(best.a,best.t);return}}
   if(S.k==='pen'&&S.pts.length>=9){const sm=[S.pts[0],S.pts[1],S.pts[2]];for(let i=3;i<S.pts.length-3;i+=3){sm.push((S.pts[i-3]+4*S.pts[i]+S.pts[i+3])/6,(S.pts[i-2]+4*S.pts[i+1]+S.pts[i+4])/6,S.pts[i+2])}sm.push(...S.pts.slice(-3));if(!c.snapped)S.pts=sm}
-  if(S.k==='pen')nbStabEnd(S,c);nbPush(pg);pg.strokes.push(S);if(S.k==='hl'&&NB.live){const x=NB.live.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,NB.live.width,NB.live.height)}nbRedraw(pg.id);nbSave(pg)}
+  if(S.k==='pen')nbStabEnd(S,c);if(S.k==='tape'){const q=S.pts;S.pts=[q[0],q[1],.5,q[q.length-3],q[q.length-2],.5];S.bb=null}nbPush(pg);pg.strokes.push(S);if(S.k==='hl'&&NB.live){const x=NB.live.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,NB.live.width,NB.live.height)}nbRedraw(pg.id);nbSave(pg)}
 function nbErase(pg,x,y){const r=11/NB.zoom;const n0=pg.strokes.length;pg.strokes=pg.strokes.filter(S=>{const b=nbBB(S);if(x<b.x-r||x>b.x+b.w+r||y<b.y-r||y>b.y+b.h+r)return true;const p=S.pts,rr=r+S.w/2;
     for(let i=0;i<p.length;i+=3){const ax=p[i],ay=p[i+1],bx=p[i+3]??ax,by=p[i+4]??ay;const dx=bx-ax,dy=by-ay,l=dx*dx+dy*dy;let t=l?((x-ax)*dx+(y-ay)*dy)/l:0;t=Math.max(0,Math.min(1,t));if(Math.hypot(ax+t*dx-x,ay+t*dy-y)<rr)return false}return true});
   if(pg.strokes.length!==n0){NB.cur.hit=1;nbRedraw(pg.id)}}
@@ -4910,17 +4915,19 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-ex="nudge"
 
 /* ===================== Defter v3: pürüzsüz kalem, yeni araçlar, iPad dokunuşları ===================== */
 NB.pt=NB.pt||'fountain';NB.em=NB.em||'stroke';NB.ew=NB.ew??1;NB.fs=NB.fs||24;
-try{const s=JSON.parse(localStorage.getItem('nb-ui3')||'{}');['pt','em','ew','fs'].forEach(k=>{if(s[k]!==undefined)NB[k]=s[k]})}catch(e){}
-function nbUi3(){try{localStorage.setItem('nb-ui3',JSON.stringify({pt:NB.pt,em:NB.em,ew:NB.ew,fs:NB.fs}))}catch(e){}nbUiSave()}
+try{const s=JSON.parse(localStorage.getItem('nb-ui3')||'{}');['pt','em','ew','fs','pal','tapeC','tapePat','tapeW'].forEach(k=>{if(s[k]!==undefined)NB[k]=s[k]})}catch(e){}
+function nbUi3(){try{localStorage.setItem('nb-ui3',JSON.stringify({pt:NB.pt,em:NB.em,ew:NB.ew,fs:NB.fs,pal:NB.pal,tapeC:NB.tapeC,tapePat:NB.tapePat,tapeW:NB.tapeW}))}catch(e){}nbUiSave()}
 NB_W.pen=[1.2,2,3,4.4,6.5];NB_W.hl=[12,20,30,42,56];
-const NB_PT={ball:['Tükenmez','düz ve net'],fountain:['Dolma kalem','bastırdıkça kalınlaşır'],brush:['Fırça','uçları incelir'],pencil:['Kurşun kalem','kâğıt dokulu']};
+const NB_PT={ball:['Tükenmez','düz ve net'],fountain:['Dolma kalem','bastırdıkça kalınlaşır'],brush:['Fırça','uçları incelir'],pencil:['Kurşun kalem','kâğıt dokulu'],calli:['Kaligrafi','yöne göre incelip kalınlaşır'],marker:['Keçeli','dolgun ve canlı'],glitter:['Simli','ışıltılı']};
+const NB_PALS={klasik:['Klasik',['#1d1d1f','#3b5bdb','#d6336c','#2f9e44','#f08c00','#7048e8','#868e96','#c2255c','#0c8599','#ffffff']],pastel:['Pastel',['#e8a0b4','#f4b6c2','#f6c89f','#f7e1a0','#b8e0c2','#a8d8e8','#b5c7f0','#c9b6e8','#d9c2a7','#8a7f8d']],doga:['Doğa',['#5b4636','#8c6a4f','#a3b18a','#588157','#3a5a40','#c9a227','#bc6c25','#6b9080','#94a3b8','#2f3e46']],canli:['Canlı',['#ff006e','#fb5607','#ffbe0b','#38b000','#3a86ff','#8338ec','#00bbf9','#f15bb5','#111111','#ffffff']]};
+const NB_TAPE=['#f4a7b9','#f9d38a','#a8dcc4','#a9c8f0','#cdb4f0','#f6b896','#e5e5e5','#c7a68a'];const NB_TAPEPAT={stripes:'Çizgili',dots:'Puantiyeli',grid:'Kareli',hearts:'Kalpli',plain:'Düz'};
 const NB_I={pen:'<path d="M4 20l1.2-4.6L16.5 4.1a2 2 0 0 1 2.8 0l.6.6a2 2 0 0 1 0 2.8L8.6 18.8z"/><path d="M14.5 6l3.5 3.5"/>',
  hl:'<path d="M9 15l-3 5h6l1-2"/><path d="M8 14l7.5-9.5a2 2 0 0 1 2.8-.3l1.2 1a2 2 0 0 1 .3 2.8L12 17z"/>',
  er:'<path d="M8 20h12"/><path d="M5.5 15.5l9-9a2 2 0 0 1 2.8 0l2.2 2.2a2 2 0 0 1 0 2.8L12 19H8.5z"/><path d="M9.5 11.5l5 5"/>',
  lasso:'<ellipse cx="12" cy="10" rx="8" ry="5.5" stroke-dasharray="3 2.5"/><path d="M8 15c-1 2 0 4 2 4s2-2 1-3"/>',
  text:'<path d="M5 6V4h14v2M12 4v16M9 20h6"/>',img:'<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M4 17l5-4.5 4 3.5 3-2.5 4 3.5"/>',
  undo:'<path d="M9 7L4 12l5 5"/><path d="M4 12h10a6 6 0 0 1 0 12h-2" transform="translate(0 -5)"/>',redo:'<path d="M15 7l5 5-5 5"/><path d="M20 12H10a6 6 0 0 0 0 12h2" transform="translate(0 -5)"/>',
- shape:'<path d="M12 3.5l8 5.8-3 9.2H7l-3-9.2z"/>',hand:'<path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V12M11 11V5a1.5 1.5 0 0 1 3 0v6M14 11V6.5a1.5 1.5 0 0 1 3 0V14c0 4-2.5 6.5-6 6.5-2.5 0-4-1-5.5-3.5L4 13.5a1.5 1.5 0 0 1 2.6-1.5L8 14"/>'};
+ shape:'<path d="M12 3.5l8 5.8-3 9.2H7l-3-9.2z"/>',tape:'<path d="M3.5 9.5l14-5.5 3 8.5-14 5.5z"/><path d="M7 8.3l3 8.3M11 6.8l3 8.3M15 5.3l2.4 6.8" opacity=".55"/>',hand:'<path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V12M11 11V5a1.5 1.5 0 0 1 3 0v6M14 11V6.5a1.5 1.5 0 0 1 3 0V14c0 4-2.5 6.5-6 6.5-2.5 0-4-1-5.5-3.5L4 13.5a1.5 1.5 0 0 1 2.6-1.5L8 14"/>'};
 const nbIco=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${NB_I[k]}</svg>`;
 
 /* ---- pürüzsüz çizgi: değişken kalınlıklı dolgu ---- */
@@ -4928,17 +4935,29 @@ function nbOutline(S){const p=S.pts,n=p.length/3,pt=S.pt||'fountain';const P=[];
   for(let i=0;i<n;i++){const X=p[i*3],Y=p[i*3+1],Q=p[i*3+2]||.5;if(i){x+=(X-x)*sl;y+=(Y-y)*sl;q+=(Q-q)*.3}else q=Q;const L=P[P.length-1];if(!L||Math.hypot(x-L[0],y-L[1])>.25)P.push([x,y,q])}
   if(n>1){const X=p[(n-1)*3],Y=p[(n-1)*3+1],L=P[P.length-1];if(Math.hypot(X-L[0],Y-L[1])>.25)P.push([X,Y,q])}
   const base=S.w/2,m=P.length,D=[0];for(let i=1;i<m;i++)D.push(D[i-1]+Math.hypot(P[i][0]-P[i-1][0],P[i][1]-P[i-1][1]));const len=D[m-1]||0;
-  const f=q=>pt==='ball'?.82+.3*q:pt==='brush'?.18+1.9*q:pt==='pencil'?.75+.4*q:.42+1.16*q;
-  const R=P.map((a,i)=>{let r=base*f(a[2]);if(pt==='brush'){const t=Math.min(1,D[i]/(base*5),(len-D[i])/(base*5));r*=Math.max(.12,t)}else if(pt==='fountain'){r*=Math.max(.55,Math.min(1,(len-D[i])/(base*3)+.4))}return Math.max(.35,r)});
+  const f=q=>pt==='ball'||pt==='glitter'?.82+.3*q:pt==='brush'?.18+1.9*q:pt==='pencil'?.75+.4*q:pt==='marker'?1.05+.12*q:pt==='calli'?.9+.25*q:.42+1.16*q;
+  const R=P.map((a,i)=>{let r=base*f(a[2]);if(pt==='calli'){const A=P[Math.max(0,i-2)],B=P[Math.min(m-1,i+2)];r*=.2+1.3*Math.abs(Math.sin(Math.atan2(B[1]-A[1],B[0]-A[0])-.62))}else if(pt==='brush'){const t=Math.min(1,D[i]/(base*5),(len-D[i])/(base*5));r*=Math.max(.12,t)}else if(pt==='fountain'){r*=Math.max(.55,Math.min(1,(len-D[i])/(base*3)+.4))}return Math.max(.35,r)});
   const Lt=[],Rt=[];for(let i=0;i<m;i++){const a=P[Math.max(0,i-1)],b=P[Math.min(m-1,i+1)];let dx=b[0]-a[0],dy=b[1]-a[1];const d=Math.hypot(dx,dy)||1;dx/=d;dy/=d;const nx=-dy,ny=dx,r=R[i];Lt.push([P[i][0]+nx*r,P[i][1]+ny*r]);Rt.push([P[i][0]-nx*r,P[i][1]-ny*r])}
   return {P,R,Lt,Rt}}
 const nbPat={};
+function nbGlitFill(ctx,c){const k='g'+c;if(nbPat[k])return nbPat[k];const cv=document.createElement('canvas');cv.width=cv.height=40;const g=cv.getContext('2d');g.fillStyle=c;g.fillRect(0,0,40,40);
+  for(let i=0;i<90;i++){const x=Math.random()*40,y=Math.random()*40,r=Math.random()*1.3+.3;g.fillStyle=Math.random()<.55?'rgba(255,255,255,'+(.5+Math.random()*.5)+')':Math.random()<.5?'rgba(255,230,150,.9)':'rgba(0,0,0,.18)';g.beginPath();g.arc(x,y,r,0,7);g.fill()}
+  for(let i=0;i<5;i++){const x=Math.random()*40,y=Math.random()*40;g.strokeStyle='rgba(255,255,255,.95)';g.lineWidth=.8;g.beginPath();g.moveTo(x-2.5,y);g.lineTo(x+2.5,y);g.moveTo(x,y-2.5);g.lineTo(x,y+2.5);g.stroke()}return nbPat[k]=ctx.createPattern(cv,'repeat')}
+function nbTape(ctx,S,alpha){const p=S.pts,x0=p[0],y0=p[1],x1=p[p.length-3],y1=p[p.length-2],L=Math.max(10,Math.hypot(x1-x0,y1-y0)),a=Math.atan2(y1-y0,x1-x0),w=S.w||34,h=w/2,z=4.5;
+  ctx.save();ctx.translate(x0,y0);ctx.rotate(a);ctx.globalAlpha=(alpha??1)*.84;ctx.beginPath();ctx.moveTo(0,-h);ctx.lineTo(L,-h);let j=0;for(let y=-h;y<h;y+=z)ctx.lineTo(L+((j++)%2?2.6:-2.6),Math.min(h,y+z));ctx.lineTo(0,h);j=0;for(let y=h;y>-h;y-=z)ctx.lineTo(((j++)%2?2.6:-2.6),Math.max(-h,y-z));ctx.closePath();
+  ctx.fillStyle=S.c;ctx.fill();ctx.clip();ctx.globalAlpha=(alpha??1)*.55;ctx.fillStyle='#fff';ctx.strokeStyle='#fff';const pat=S.pat||'stripes';
+  if(pat==='stripes'){ctx.lineWidth=w/6;ctx.beginPath();for(let x=-w;x<L+w;x+=w/2.2){ctx.moveTo(x,-h);ctx.lineTo(x+w*.7,h)}ctx.stroke()}
+  else if(pat==='dots'){let r=0;for(let y=-h+w/6;y<h;y+=w/3.2,r++)for(let x=(r%2?w/5:0)+4;x<L;x+=w/2.6){ctx.beginPath();ctx.arc(x,y,w/14,0,7);ctx.fill()}}
+  else if(pat==='grid'){ctx.lineWidth=1.3;ctx.beginPath();for(let x=0;x<L;x+=w/4){ctx.moveTo(x,-h);ctx.lineTo(x,h)}for(let y=-h;y<h;y+=w/4){ctx.moveTo(0,y);ctx.lineTo(L,y)}ctx.stroke()}
+  else if(pat==='hearts'){ctx.globalAlpha=(alpha??1)*.8;ctx.font=Math.round(w*.42)+'px sans-serif';ctx.textBaseline='middle';ctx.textAlign='center';let k=0;for(let x=w/3;x<L-4;x+=w*.6,k++)ctx.fillText('♥',x,k%2?-w/5:w/5)}
+  ctx.globalAlpha=(alpha??1)*.12;ctx.fillStyle='#000';ctx.fillRect(0,h-2,L,2);ctx.restore()}
+
 function nbPencilFill(ctx,c){if(nbPat[c])return nbPat[c];const cv=document.createElement('canvas');cv.width=cv.height=48;const g=cv.getContext('2d');const im=g.createImageData(48,48);const h=c.replace('#','');const r=parseInt(h.slice(0,2),16)||40,gg=parseInt(h.slice(2,4),16)||40,b=parseInt(h.slice(4,6),16)||40;
   for(let i=0;i<im.data.length;i+=4){im.data[i]=r;im.data[i+1]=gg;im.data[i+2]=b;im.data[i+3]=Math.random()<.18?40+Math.random()*90:150+Math.random()*105}g.putImageData(im,0,0);return nbPat[c]=ctx.createPattern(cv,'repeat')}
-function nbStroke(ctx,S,alpha){const p=S.pts,n=p.length/3;if(!n)return;ctx.save();if(alpha!=null)ctx.globalAlpha=alpha;
+function nbStroke(ctx,S,alpha){const p=S.pts,n=p.length/3;if(!n)return;if(S.k==='tape'){nbTape(ctx,S,alpha);return}ctx.save();if(alpha!=null)ctx.globalAlpha=alpha;
   if(S.k==='hl'){ctx.globalAlpha=(alpha??1)*.36;ctx.globalCompositeOperation='multiply';ctx.strokeStyle=S.c;ctx.lineWidth=S.w;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(p[0],p[1]);
     for(let i=3;i<p.length-3;i+=3){const mx=(p[i]+p[i+3])/2,my=(p[i+1]+p[i+4])/2;ctx.quadraticCurveTo(p[i],p[i+1],mx,my)}if(n>1)ctx.lineTo(p[p.length-3],p[p.length-2]);else ctx.lineTo(p[0]+.1,p[1]);ctx.stroke();ctx.restore();return}
-  ctx.fillStyle=S.pt==='pencil'?nbPencilFill(ctx,S.c):S.c;if(S.pt==='pencil')ctx.globalAlpha=(alpha??1)*.92;
+  ctx.fillStyle=S.pt==='pencil'?nbPencilFill(ctx,S.c):S.pt==='glitter'?nbGlitFill(ctx,S.c):S.c;if(S.pt==='pencil')ctx.globalAlpha=(alpha??1)*.92;else if(S.pt==='marker')ctx.globalAlpha=(alpha??1)*.9;
   const {P,R,Lt,Rt}=nbOutline(S),m=P.length;ctx.beginPath();
   if(m<2){ctx.arc(P[0][0],P[0][1],R[0],0,7);ctx.fill();ctx.restore();return}
   const ang=(i,side)=>{const a=P[Math.max(0,i-1)],b=P[Math.min(m-1,i+1)];return Math.atan2(b[1]-a[1],b[0]-a[0])+(side?Math.PI/2:-Math.PI/2)};
@@ -4946,7 +4965,7 @@ function nbStroke(ctx,S,alpha){const p=S.pts,n=p.length/3;if(!n)return;ctx.save(
   const ae=ang(m-1,1);ctx.arc(P[m-1][0],P[m-1][1],R[m-1],ae,ae-Math.PI,true);
   ctx.lineTo(Rt[m-1][0],Rt[m-1][1]);for(let i=m-2;i>0;i--){ctx.quadraticCurveTo(Rt[i][0],Rt[i][1],(Rt[i][0]+Rt[i-1][0])/2,(Rt[i][1]+Rt[i-1][1])/2)}ctx.lineTo(Rt[0][0],Rt[0][1]);
   const as=ang(0,1);ctx.arc(P[0][0],P[0][1],R[0],as+Math.PI,as,true);ctx.closePath();ctx.fill();ctx.restore()}
-function nbLiveDraw(){NB.liveRaf=0;const c=NB.cur;if(!c||!c.S)return;const el=NB.down&&NB.down.el;if(!el)return;const ctx=nbLive(el);if(!ctx)return;nbStroke(ctx,c.S)}
+function nbLiveDraw(){NB.liveRaf=0;const c=NB.cur;if(!c||!c.S)return;const el=NB.down&&NB.down.el;if(!el)return;const ctx=nbLive(el);if(!ctx)return;nbStroke(ctx,c.pred&&c.pred.length?Object.assign({},c.S,{pts:c.S.pts.concat(c.pred)}):c.S)}
 
 /* ---- işaretçi (kalem/fare) ---- */
 function nbCan(e){if(e.pointerType==='pen'){NB.penSeen=true;return true}if(e.pointerType==='mouse')return e.button===0;return NB.finger&&!NB.multi}
@@ -4962,7 +4981,7 @@ function nbDown(e){const el=e.target.closest('.nbp');if(!el||e.target.closest('.
   if(t==='text'){NB.textAt=Date.now();nbAddText(pg,x,y);return}
   if(t==='er'){nbPush(pg);NB.cur={pid:pg.id,er:true,hit:0};nbEraseAt(pg,x,y,el);return}
   if(t==='lasso'){NB.cur={pid:pg.id,lasso:[x,y]};return}
-  const S={k:t==='hl'?'hl':'pen',c:t==='hl'?NB.hl:NB.color,w:NB_W[t==='hl'?'hl':'pen'][NB.w]||2,pts:[x,y,nbPress(e)]};if(S.k==='pen')S.pt=NB.pt;
+  const S=t==='tape'?{k:'tape',c:NB.tapeC||NB_TAPE[0],pat:NB.tapePat||'stripes',w:NB.tapeW||34,pts:[x,y,.5]}:{k:t==='hl'?'hl':'pen',c:t==='hl'?NB.hl:NB.color,w:NB_W[t==='hl'?'hl':'pen'][NB.w]||2,pts:[x,y,nbPress(e)]};if(S.k==='pen')S.pt=NB.pt;
   if(NB.rec&&NB.rec.bid===NB.bid){S.a=NB.rec.idx;S.t=performance.now()-NB.rec.t0}
   NB.cur={pid:pg.id,S};nbLive(el);nbLiveDraw();nbHold()}
 function nbHold(){clearTimeout(NB.holdT);if(!NB.shape||NB.tool!=='pen')return;NB.holdT=setTimeout(()=>{const c=NB.cur;if(!c||!c.S||c.snapped)return;const sh=nbShape(c.S.pts);if(!sh)return;c.S.pts=sh;c.S.pt=c.S.pt==='brush'?'ball':c.S.pt;c.snapped=true;c.S.bb=null;nbLiveDraw();if(navigator.vibrate)navigator.vibrate(8)},520)}
@@ -4974,6 +4993,7 @@ function nbMove(e){const c=NB.cur,d=NB.drag;if(!c&&!d)return;const el=NB.down&&N
   if(c.lasso){for(const ev of evs){const [a,b]=nbLogical(ev,el);c.lasso.push(a,b)}const ctx=nbLive(el);if(!ctx)return;ctx.strokeStyle='#3b82f6';ctx.lineWidth=2;ctx.setLineDash([7,6]);ctx.beginPath();ctx.moveTo(c.lasso[0],c.lasso[1]);for(let i=2;i<c.lasso.length;i+=2)ctx.lineTo(c.lasso[i],c.lasso[i+1]);ctx.stroke();ctx.setLineDash([]);return}
   const S=c.S;if(c.snapped)return;let moved=false;
   for(const ev of evs){let [a,b]=nbLogical(ev,el);const _k=NB_STK[nbStab()];if(_k<1&&S.k==='pen'){if(c.sx==null){c.sx=S.pts[0];c.sy=S.pts[1]}c.rx=a;c.ry=b;c.sx+=(a-c.sx)*_k;c.sy+=(b-c.sy)*_k;a=c.sx;b=c.sy}const p=S.pts,lx=p[p.length-3],ly=p[p.length-2];const dd=Math.hypot(a-lx,b-ly);if(dd<.5/NB.zoom)continue;p.push(a,b,nbPress(ev));if(dd>2.5)moved=true}
+  c.pred=null;if(S.k==='pen'&&e.getPredictedEvents){try{const pe=e.getPredictedEvents();if(pe&&pe.length){const A=[];for(const ev of pe.slice(0,4)){const [a,b]=nbLogical(ev,el);A.push(a,b,nbPress(ev))}c.pred=A}}catch(x){}}
   if(moved)nbHold();if(!NB.liveRaf)NB.liveRaf=requestAnimationFrame(nbLiveDraw)}
 function nbLiveClear(){if(NB.live){const x=NB.live.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,NB.live.width,NB.live.height)}}
 function nbUp(e){clearTimeout(NB.holdT);if(NB.liveRaf){cancelAnimationFrame(NB.liveRaf);NB.liveRaf=0}const c=NB.cur,d=NB.drag,dn=NB.down;NB.cur=null;NB.drag=null;
@@ -4987,7 +5007,7 @@ function nbUp(e){clearTimeout(NB.holdT);if(NB.liveRaf){cancelAnimationFrame(NB.l
   const S=c.S;if(e&&e.type==='pointercancel'&&S.pts.length<6){nbLiveClear();return}
   if(NB.playIdx!=null&&dn&&performance.now()-dn.t<320&&S.pts.length<=12){const [x,y]=[dn.x,dn.y];let best=null,bd=28;for(const T of pg.strokes){if(T.a==null)continue;const b=nbBB(T);if(x<b.x-bd||x>b.x+b.w+bd||y<b.y-bd||y>b.y+b.h+bd)continue;for(let i=0;i<T.pts.length;i+=3){const dd=Math.hypot(T.pts[i]-x,T.pts[i+1]-y);if(dd<bd){bd=dd;best=T}}}
     if(best){nbLiveClear();nbSeek(best.a,best.t);return}}
-  if(S.k==='pen')nbStabEnd(S,c);nbPush(pg);pg.strokes.push(S);const cv=NB.cvs.get(pg.id);
+  if(S.k==='pen')nbStabEnd(S,c);if(S.k==='tape'){const q=S.pts;S.pts=[q[0],q[1],.5,q[q.length-3],q[q.length-2],.5];S.bb=null}nbPush(pg);pg.strokes.push(S);const cv=NB.cvs.get(pg.id);
   if(cv){const ctx=cv.getContext('2d');ctx.setTransform(cv.width/1000,0,0,cv.width/1000,0,0);nbStroke(ctx,S);ctx.setTransform(1,0,0,1,0,0)}nbLiveClear();nbSave(pg)}
 
 /* ---- silgi: tüm çizgi ya da parça ---- */
@@ -5033,17 +5053,18 @@ function nbBind(){const sc=$('nbScroll');let T=null;
   const ro=new ResizeObserver(()=>{clearTimeout(nbBind.rt);nbBind.rt=setTimeout(()=>{const p=document.querySelector('#nbPages .nbp');if(p&&Math.abs(parseFloat(p.style.width)-nbBaseW()*NB.zoom)>4)nbBodyRender(true)},180)});ro.observe(sc)}
 
 /* ---- yeni araç çubuğu ---- */
-function nbTools(){const el=$('nbTools');if(!el)return;const t=NB.tool,hl=t==='hl',pal=hl?NB_HL:NB_PEN,cur=hl?NB.hl:NB.color;
+function nbTools(){const el=$('nbTools');if(!el)return;const t=NB.tool,hl=t==='hl',pal=hl?NB_HL:((NB_PALS[NB.pal]||NB_PALS.klasik)[1]),cur=hl?NB.hl:NB.color;
   const tb=(k,ic,l,act)=>`<button type="button" class="nbt-b${act?' on':''}" data-ne="${k==='img'?'img':'tool'}" data-v="${k}" aria-pressed="${!!act}">${nbIco(ic)}<span>${l}</span></button>`;
   const cols=`<div class="nbt-cols">${pal.map(c=>`<button type="button" class="nb-col" data-ne="col" data-v="${c}" style="--c:${c}" aria-pressed="${c===cur}" aria-label="Renk"></button>`).join('')}<label class="nb-col nb-colx" title="Başka renk" style="--c:${cur}"><input type="color" id="nbColX" value="${cur}"></label></div>`;
   const sizes=`<div class="nbt-sz">${NB_W[hl?'hl':'pen'].map((w,i)=>`<button type="button" data-ne="w" data-v="${i}" aria-pressed="${NB.w===i}" aria-label="Kalınlık ${i+1}"><i style="width:${Math.min(22,hl?6+i*4:2+w*1.6)}px;height:${Math.min(22,hl?6+i*4:2+w*1.6)}px;background:${cur}"></i></button>`).join('')}</div>`;
   let opts='';
-  if(t==='pen')opts=`<div class="nbt-pt">${Object.entries(NB_PT).map(([k,[l,h]])=>`<button type="button" data-n3="pt" data-v="${k}" aria-pressed="${NB.pt===k}" title="${h}"><svg viewBox="0 0 60 16"><path d="M4 11 C14 2, 22 2, 30 8 S 46 14, 56 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="${k==='ball'?2.4:k==='brush'?4.5:3}" ${k==='pencil'?'stroke-dasharray="1.5 1" opacity=".75"':''}/></svg><span>${l}</span></button>`).join('')}</div>${cols}${sizes}<button type="button" class="chip" data-ne="shape" aria-pressed="${NB.shape}" title="Çizip kalemi bekletince düzgün şekle dönüşür">${nbIco('shape')} Şekil düzelt</button><span class="nbt-stab" title="Titremeyi azaltır, çizgileri yumuşatır"><span class="hint">Sabitleme</span>${['Kapalı','Az','Orta','Çok'].map((l,i)=>`<button type="button" data-nstab="${i}" aria-pressed="${nbStab()===i}">${l}</button>`).join('')}</span>`;
+  if(t==='pen')opts=`<div class="nbt-pt">${Object.entries(NB_PT).map(([k,[l,h]])=>`<button type="button" data-n3="pt" data-v="${k}" aria-pressed="${NB.pt===k}" title="${h}"><svg viewBox="0 0 60 16"><path d="M4 11 C14 2, 22 2, 30 8 S 46 14, 56 5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="${k==='ball'?2.4:k==='brush'?4.5:3}" ${k==='pencil'?'stroke-dasharray="1.5 1" opacity=".75"':''}/></svg><span>${l}</span></button>`).join('')}</div><div class="seg nbt-pal">${Object.entries(NB_PALS).map(([k,[l]])=>`<button type="button" data-n3="pal" data-v="${k}" aria-pressed="${(NB.pal||'klasik')===k}">${l}</button>`).join('')}</div>${cols}${sizes}<button type="button" class="chip" data-ne="shape" aria-pressed="${NB.shape}" title="Çizip kalemi bekletince düzgün şekle dönüşür">${nbIco('shape')} Şekil düzelt</button><span class="nbt-stab" title="Titremeyi azaltır, çizgileri yumuşatır"><span class="hint">Sabitleme</span>${['Kapalı','Az','Orta','Çok'].map((l,i)=>`<button type="button" data-nstab="${i}" aria-pressed="${nbStab()===i}">${l}</button>`).join('')}</span>`;
+  else if(t==='tape')opts=`<div class="seg">${Object.entries(NB_TAPEPAT).map(([k,l])=>`<button type="button" data-n3="tpat" data-v="${k}" aria-pressed="${(NB.tapePat||'stripes')===k}">${l}</button>`).join('')}</div><div class="nbt-cols">${NB_TAPE.map(c=>`<button type="button" class="nb-col" data-n3="tcol" data-v="${c}" style="--c:${c}" aria-pressed="${(NB.tapeC||NB_TAPE[0])===c}" aria-label="Bant rengi"></button>`).join('')}</div><div class="seg">${[[24,'İnce'],[34,'Orta'],[48,'Kalın']].map(([w,l])=>`<button type="button" data-n3="tw" data-v="${w}" aria-pressed="${(NB.tapeW||34)===w}">${l}</button>`).join('')}</div><span class="hint">Bandı yapıştırmak istediğin yerde çiz; düz bir şerit olur. Silgi ya da kementle kaldırabilirsin.</span>`;
   else if(hl)opts=cols+sizes;
   else if(t==='er')opts=`<div class="seg"><button type="button" data-n3="em" data-v="stroke" aria-pressed="${NB.em==='stroke'}">Tüm çizgiyi sil</button><button type="button" data-n3="em" data-v="part" aria-pressed="${NB.em==='part'}">Dokunduğun yeri sil</button></div><div class="nbt-sz">${[0,1,2].map(i=>`<button type="button" data-n3="ew" data-v="${i}" aria-pressed="${NB.ew===i}" aria-label="Silgi boyu ${i+1}"><i style="width:${[8,13,20][i]}px;height:${[8,13,20][i]}px;background:transparent;border:1.5px solid currentColor"></i></button>`).join('')}</div><button type="button" class="chip" data-n3="clear">🗑 Sayfayı temizle</button>`;
   else if(t==='lasso')opts=`<span class="hint">Seçmek istediğin yazının etrafını çiz → sürükle, köşeden büyüt, rengini değiştir ya da sil.</span>`;
   else if(t==='text')opts=`${cols}<div class="seg">${[18,24,32,44].map(s=>`<button type="button" data-n3="fs" data-v="${s}" aria-pressed="${NB.fs===s}" style="font-size:${10+s/4}px">A</button>`).join('')}</div><span class="hint">Sayfada yazı eklemek istediğin yere dokun.</span>`;
-  el.innerHTML=`<div class="nbt-main">${tb('pen','pen','Kalem',t==='pen')}${tb('hl','hl','Fosforlu',hl)}${tb('er','er','Silgi',t==='er')}${tb('lasso','lasso','Kement',t==='lasso')}${tb('text','text','Yazı',t==='text')}${tb('img','img','Görsel',false)}<button type="button" class="nbt-b" data-ne="stk" aria-pressed="false"><b style="font-size:20px;line-height:1">🧠</b><span>Çıkartma</span></button>
+  el.innerHTML=`<div class="nbt-main">${tb('pen','pen','Kalem',t==='pen')}${tb('hl','hl','Fosforlu',hl)}${tb('tape','tape','Bant',t==='tape')}${tb('er','er','Silgi',t==='er')}${tb('lasso','lasso','Kement',t==='lasso')}${tb('text','text','Yazı',t==='text')}${tb('img','img','Görsel',false)}<button type="button" class="nbt-b" data-ne="stk" aria-pressed="false"><b style="font-size:20px;line-height:1">🧠</b><span>Çıkartma</span></button>
     <span class="nbt-sep"></span><button type="button" class="nbt-b" data-ne="undo">${nbIco('undo')}<span>Geri al</span></button><button type="button" class="nbt-b" data-ne="redo">${nbIco('redo')}<span>Yinele</span></button>
     <span class="nbt-sep"></span><button type="button" class="nbt-b nbt-sm" data-ne="zoom" data-v="-1" aria-label="Uzaklaştır"><b>−</b><span>${Math.round(NB.zoom*100)}%</span></button><button type="button" class="nbt-b nbt-sm" data-ne="zoom" data-v="1" aria-label="Yakınlaştır"><b>+</b><span>Büyüt</span></button>
     <button type="button" class="nbt-b${NB.finger?' on':''}" data-ne="finger" aria-pressed="${NB.finger}">${nbIco('hand')}<span>${NB.finger?'Parmak yazar':'Parmak kaydırır'}</span></button></div>
@@ -5053,6 +5074,8 @@ function nbTools(){const el=$('nbTools');if(!el)return;const t=NB.tool,hl=t==='h
   const bk=nbBook();if(bk&&bk.kind==='doc'){const pg=NB.docPid&&nbPg(NB.docPid);el.hidden=!(pg&&pg.type==='ink')}else el.hidden=false}
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-n3]');if(!b)return;const k=b.dataset.n3,v=b.dataset.v;
   if(k==='pt'){NB.pt=v;NB.tool='pen';nbUi3();nbTools();return}
+  if(k==='pal'){NB.pal=v;const P=(NB_PALS[v]||NB_PALS.klasik)[1];if(!P.includes(NB.color))NB.color=P[0];nbUi3();nbTools();return}
+  if(k==='tpat'||k==='tcol'||k==='tw'){if(k==='tpat')NB.tapePat=v;else if(k==='tcol')NB.tapeC=v;else NB.tapeW=+v;NB.tool='tape';nbUi3();nbTools();return}
   if(k==='em'){NB.em=v;nbUi3();nbTools();toast(v==='part'?'Silgi artık sadece dokunduğu yeri siler':'Silgi dokunduğu çizginin tamamını siler');return}
   if(k==='ew'){NB.ew=+v;nbUi3();nbTools();return}
   if(k==='fs'){NB.fs=+v;nbUi3();nbTools();return}
@@ -5149,7 +5172,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v70';
+const DK_VER='v71';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
