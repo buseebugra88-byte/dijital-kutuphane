@@ -1285,6 +1285,7 @@ body.kindle-soft #listArea .bk-ban{padding:8px 12px;font-size:14px}
     <div class="kinds" role="radiogroup" aria-label="Tür">
       <label><input type="radio" name="kind" value="kitap" id="kind-kitap" checked><span>📗 Basılı kitap</span></label>
       <label><input type="radio" name="kind" value="pdf" id="kind-pdf"><span>PDF</span></label>
+      <label><input type="radio" name="kind" value="pdf" id="kind-epub"><span>EPUB</span></label>
       <label><input type="radio" name="kind" value="makale" id="kind-makale"><span>Makale</span></label>
       <label><input type="radio" name="kind" value="roman" id="kind-roman"><span>Kendi romanım</span></label>
     </div>
@@ -1876,6 +1877,7 @@ function syncKind(keepStatus){
   $('lAuthor').textContent=k==='roman'?'Tür / alt başlık':k==='makale'?'Yazarlar (; ile ayır, ör. Ayşe Yılmaz; John A. Smith)':'Yazar';
   $('acadFields').hidden=k!=='makale';if(k==='makale')apaRefresh();
   $('lPages').textContent=k==='roman'?'Bölüm sayısı':'Sayfa sayısı';
+  {const ep=$('kind-epub').checked;$('fFile').accept=ep?'application/epub+zip,.epub':'application/pdf,.pdf,application/epub+zip,.epub';const fl=document.querySelector('label[for=fFile]');if(fl)fl.textContent=ep?'EPUB dosyası':'PDF dosyası';if(ep)FTsel='epub';else if(k==='pdf'&&FTsel==='epub'&&!(st.editing&&isEpubB(st.editing)))FTsel=null}
   syncDone();
 }
 function syncDone(){const k=kindVal();$('curField').hidden=k==='roman';$('rateField').hidden=k==='roman';starsUI();$('fDone').closest('.f').hidden=k==='roman'||$('fStatus').value!=='okundu'}
@@ -1888,7 +1890,7 @@ function openForm(b){
   $('formTitle').textContent=b?'Kaydı düzenle':'Yeni ekle';$('delBtn').hidden=!b;$('cardBtn').hidden=!(b&&b.kind!=='roman'&&b.status==='okundu');
   {const sim=b&&b.kind!=='roman'&&b.kind!=='makale'?similarBooks(b):[];$('simRow').hidden=!sim.length;$('simRow').innerHTML=sim.length?`<span class="hint">Benzer kitapların:</span>${sim.map(x=>`<button type="button" class="chip" data-sim="${x.id}">${esc(x.title)}</button>`).join('')}`:''}
   const kind=b?b.kind:(st.tab==='all'?'kitap':st.tab==='epub'?'pdf':st.tab);
-  $('kind-'+kind).checked=true;syncKind(b&&b.status);setTimeout(tropeChips,0);
+  ((kind==='pdf'&&(b?isEpubB(b):st.tab==='epub'))?$('kind-epub'):$('kind-'+kind)).checked=true;syncKind(b&&b.status);setTimeout(tropeChips,0);
   {const so=b?seriesOf(b):null;$('fSeries').value=b&&b.series?b.series:'';$('fSeriesNo').value=b&&b.series?(b.seriesNo||''):'';$('fSeries').placeholder=so&&!b.series?so.name+' (başlıktan)':'ör. Empyrean';$('seriesOpts').innerHTML=[...new Set(st.books.map(x=>seriesOf(x)).filter(Boolean).map(x=>x.name))].map(n=>`<option value="${esc(n)}">`).join('')}
   if(b){$('fTitle').value=b.title||'';$('fAuthor').value=b.author||'';$('fShelf').value=b.shelf||'';$('fTags').value=(b.tags||[]).join(', ');
     formRating=b.rating||0;$('fReview').value=b.review||'';
@@ -1930,7 +1932,7 @@ form.addEventListener('submit',async e=>{
   try{
     let coverBytes=null;
     const UPERR=err=>({ui:'PDF yüklenemedi: '+errText(err)+'.'});
-    if(file&&kind!=='kitap'){data.fileSize=file.size;data.source='';data.driveId='';data.driveUrl='';data.fileType=/\.epub$/i.test(file.name)?'epub':'pdf';data.fileRemoved=false;
+    if(file&&kind!=='kitap'){data.fileSize=file.size;data.source='';data.driveId='';data.driveUrl='';data.fileType=($('kind-epub').checked||/\.epub$/i.test(file.name))?'epub':'pdf';data.fileRemoved=false;
       if(data.fileType==='pdf'&&file.size>=SQ_MIN){file=await maybeSqueezeFile(file,m=>{$('saveBtn').textContent=m[0].toUpperCase()+m.slice(1)+'…'});data.fileSize=file.size}
       if(data.fileType==='epub'){try{const r=await uploadEpubFile(file,m=>{$('saveBtn').textContent=m==='kapak'?'Kapak hazırlanıyor…':'Yükleniyor…'});data.assetId=r.assetId;data.parts=[];data.fileName=file.name;if(r.coverId&&(!data.coverId||data.autoCover)){data.coverId=r.coverId;data.autoCover=true}if(!data.pages)data.pages=r.pages}catch(err){throw err&&err.ui?err:UPERR(err)}}
       else if(file.size<=MAXB){
@@ -5200,7 +5202,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v78';
+const DK_VER='v79';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
