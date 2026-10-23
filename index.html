@@ -1157,6 +1157,10 @@ html body .tools input[type=search]{flex:1 1 100%!important}
 html,body{overflow-x:clip;max-width:100%}
 @media (max-width:420px){html body .lf-faces{flex-wrap:wrap;justify-content:center}html body .lf-faces.big button{font-size:28px;padding:3px 6px}}
 :root:not(#_):not(#__):not(#___) select:not([multiple]):not([size]):not(.bare):not([data-bare]){padding-right:34px!important}
+.amb-box{display:grid;gap:8px}.amb-box input[type=range]{accent-color:var(--accent)}.amb-h{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.amb-p{display:flex;flex-wrap:wrap;gap:6px}.amb-b{display:flex;align-items:center;gap:8px;text-align:left;padding:11px 12px!important;font-size:14px!important}.amb-e{font-size:20px}
+.amb-mix{display:grid;gap:6px}.amb-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(90px,1.3fr) auto;gap:10px;align-items:center;font-size:14px;background:var(--bg);border-radius:14px;padding:6px 10px}
+.amb-x{border:0;background:none;cursor:pointer;color:var(--muted);font-size:15px;padding:4px}.amb-foot{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px}
 </style>
 
 </head><body>
@@ -5121,7 +5125,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v66';
+const DK_VER='v67';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6892,37 +6896,113 @@ document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[da
 
 /* ---------- Okuyucu ekleri 2: daha fazla menüsü, okuma sesleri, tahmin kutusu, kitap karakterleri, sesli not, duvar kâğıdı, ruh haline göre ---------- */
 function rxMore(){const b=$('rMoreBtn').getBoundingClientRect();rxPopClose();const m=document.createElement('div');m.className='rxpop rxmore';m.id='rxPop';m.dataset.id='';const nP=(LF.preds||[]).filter(x=>x.book===R.book.id).length,nC=(LF.bchars||[]).filter(x=>x.book===R.book.id).length;
-  m.innerHTML=`<button type="button" data-rxm="snd"><span>🎧</span>Okuma sesleri${AMB.on?` <small>· ${AMB_L[AMB.on]}</small>`:''}</button><button type="button" data-rxm="pred"><span>🔮</span>Tahmin kutusu${nP?` <small>· ${nP}</small>`:''}</button><button type="button" data-rxm="chars"><span>👤</span>Karakterler${nC?` <small>· ${nC}</small>`:''}</button><button type="button" data-rxm="voice"><span>🎙</span>${VN.rec?'Kaydı bitir':'Sesli not'}</button><button type="button" data-rxm="list"><span>📒</span>Vurgularım ve notlarım</button>`;
+  m.innerHTML=`<button type="button" data-rxm="snd"><span>🎧</span>Okuma sesleri${AMB.on?` <small>· ${ambLabel()}</small>`:''}</button><button type="button" data-rxm="pred"><span>🔮</span>Tahmin kutusu${nP?` <small>· ${nP}</small>`:''}</button><button type="button" data-rxm="chars"><span>👤</span>Karakterler${nC?` <small>· ${nC}</small>`:''}</button><button type="button" data-rxm="voice"><span>🎙</span>${VN.rec?'Kaydı bitir':'Sesli not'}</button><button type="button" data-rxm="list"><span>📒</span>Vurgularım ve notlarım</button>`;
   document.body.appendChild(m);m.style.left=Math.max(8,Math.min(innerWidth-m.offsetWidth-8,b.right-m.offsetWidth))+'px';m.style.top=(b.bottom+8)+'px'}
 document.addEventListener('click',e=>{const x=e.target.closest&&e.target.closest('[data-rxm]');if(!x)return;e.stopPropagation();const k=x.dataset.rxm;rxPopClose();
   if(k==='snd')ambDlg();else if(k==='pred')prDlg();else if(k==='chars')bcDlg();else if(k==='voice')(VN.rec?vnStop():vnStart());else if(k==='list')rxListDlg()},true);
 (function(){const bar=document.querySelector('#reader .rbar');if(!bar)return;const m=document.createElement('button');m.className='iconbtn';m.id='rMoreBtn';m.type='button';m.title='Daha fazla';m.setAttribute('aria-label','Daha fazla');m.textContent='⋯';bar.insertBefore(m,$('rModeBtn'));m.addEventListener('click',e=>{e.stopPropagation();if(!R.book)return;rxMore()})})();
 
 /* --- okuma sesleri (WebAudio ile üretilir, internet gerekmez) --- */
-const AMB={ctx:null,nodes:[],on:'',vol:.5,timers:[]};const AMB_L={rain:'🌧 Yağmur',fire:'🔥 Şömine',sea:'🌊 Dalga',wind:'🍃 Rüzgâr',cafe:'☕ Kafe'};
-try{const v=parseFloat(localStorage.getItem('dk-ambv'));if(v>=0)AMB.vol=v}catch(e){}
-function ambNoise(ctx,kind){const n=ctx.sampleRate*4,b=ctx.createBuffer(2,n,ctx.sampleRate);for(let ch=0;ch<2;ch++){const d=b.getChannelData(ch);let last=0,b0=0,b1=0,b2=0;for(let i=0;i<n;i++){const w=Math.random()*2-1;
-  if(kind==='brown'){last=(last+0.02*w)/1.02;d[i]=last*3.5}else if(kind==='pink'){b0=0.99765*b0+w*0.099046;b1=0.963*b1+w*0.2965164;b2=0.57*b2+w*1.0526913;d[i]=(b0+b1+b2+w*0.1848)*0.2}else d[i]=w*0.5}}
-  const s=ctx.createBufferSource();s.buffer=b;s.loop=true;return s}
-function ambStop(){AMB.timers.forEach(clearInterval);AMB.timers=[];AMB.nodes.forEach(n=>{try{n.stop&&n.stop()}catch(e){}try{n.disconnect()}catch(e){}});AMB.nodes=[];AMB.on=''}
-function ambStart(k){ambStop();if(!k)return;try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}
-  const C=AMB.ctx||(AMB.ctx=new (window.AudioContext||window.webkitAudioContext)());C.resume&&C.resume();const out=C.createGain();out.gain.value=AMB.vol;out.connect(C.destination);AMB.out=out;AMB.nodes.push(out);
-  const add=(src,filt,g)=>{let n=src;for(const f of filt){n.connect(f);n=f;AMB.nodes.push(f)}const gg=C.createGain();gg.gain.value=g;n.connect(gg);gg.connect(out);AMB.nodes.push(src,gg);src.start&&src.start();return gg};
-  const bq=(type,f,q)=>{const x=C.createBiquadFilter();x.type=type;x.frequency.value=f;if(q)x.Q.value=q;return x};
-  if(k==='rain'){add(ambNoise(C,'pink'),[bq('highpass',400),bq('lowpass',7000)],.9);add(ambNoise(C,'brown'),[bq('lowpass',600)],.35);
-    AMB.timers.push(setInterval(()=>{for(let i=0;i<3;i++){const o=C.createBufferSource(),bb=C.createBuffer(1,800,C.sampleRate),d=bb.getChannelData(0);for(let j=0;j<800;j++)d[j]=(Math.random()*2-1)*Math.exp(-j/90);o.buffer=bb;const f=bq('bandpass',2000+Math.random()*4000,2),g=C.createGain();g.gain.value=.08+Math.random()*.12;o.connect(f);f.connect(g);g.connect(out);o.start(C.currentTime+Math.random()*.1)}},90))}
-  if(k==='fire'){add(ambNoise(C,'brown'),[bq('lowpass',500)],1.1);
-    AMB.timers.push(setInterval(()=>{if(Math.random()<.55){const o=C.createBufferSource(),L=300+Math.random()*900,bb=C.createBuffer(1,L,C.sampleRate),d=bb.getChannelData(0);for(let j=0;j<L;j++)d[j]=(Math.random()*2-1)*Math.exp(-j/(40+Math.random()*120));o.buffer=bb;const f=bq('highpass',900+Math.random()*2500),g=C.createGain();g.gain.value=.15+Math.random()*.35;o.connect(f);f.connect(g);g.connect(out);o.start()}},110))}
-  if(k==='sea'){const g=add(ambNoise(C,'pink'),[bq('lowpass',1200)],.2);const lfo=C.createOscillator(),lg=C.createGain();lfo.frequency.value=.09;lg.gain.value=.55;lfo.connect(lg);lg.connect(g.gain);lfo.start();AMB.nodes.push(lfo,lg);add(ambNoise(C,'brown'),[bq('lowpass',300)],.5)}
-  if(k==='wind'){const f=bq('bandpass',500,.8);const g=add(ambNoise(C,'pink'),[f],.9);const lfo=C.createOscillator(),lg=C.createGain();lfo.frequency.value=.05;lg.gain.value=300;lfo.connect(lg);lg.connect(f.frequency);lfo.start();const l2=C.createOscillator(),g2=C.createGain();l2.frequency.value=.13;g2.gain.value=.35;l2.connect(g2);g2.connect(g.gain);l2.start();AMB.nodes.push(lfo,lg,l2,g2)}
-  if(k==='cafe'){const g=add(ambNoise(C,'pink'),[bq('bandpass',700,.7),bq('lowpass',2200)],.75);const lfo=C.createOscillator(),lg=C.createGain();lfo.frequency.value=.7;lg.gain.value=.15;lfo.connect(lg);lg.connect(g.gain);lfo.start();AMB.nodes.push(lfo,lg);add(ambNoise(C,'brown'),[bq('lowpass',250)],.4);
-    AMB.timers.push(setInterval(()=>{if(Math.random()<.18){const o=C.createOscillator(),gg=C.createGain();o.type='sine';o.frequency.value=2200+Math.random()*2400;gg.gain.setValueAtTime(.05,C.currentTime);gg.gain.exponentialRampToValueAtTime(.0005,C.currentTime+.6);o.connect(gg);gg.connect(out);o.start();o.stop(C.currentTime+.65)}},700))}
-  AMB.on=k}
-function ambDlg(){msModal(`<div class="eyebrow">🎧 Okuma sesleri</div><p class="hint" style="margin:0">Arkada hafif bir ses açık kalsın; kitabı kapatınca durur. iPad sessizdeyse ses gelmeyebilir.</p>
-  <div class="amb-g">${Object.entries(AMB_L).map(([k,l])=>`<button type="button" class="amb-b" data-amb="${k}" aria-pressed="${AMB.on===k}">${l}</button>`).join('')}<button type="button" class="amb-b" data-amb="" aria-pressed="${!AMB.on}">🔇 Kapalı</button></div>
-  <label class="hint cl-chk">Ses <input id="ambVol" type="range" min="0" max="1" step="0.05" value="${AMB.vol}" style="flex:1"></label>`)}
-document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-amb]');if(!b)return;ambStart(b.dataset.amb);try{localStorage.setItem('dk-amb',b.dataset.amb)}catch(x){}document.querySelectorAll('[data-amb]').forEach(x=>x.setAttribute('aria-pressed',x===b))});
-document.addEventListener('input',e=>{if(e.target.id==='ambVol'){AMB.vol=+e.target.value;if(AMB.out)AMB.out.gain.value=AMB.vol;try{localStorage.setItem('dk-ambv',AMB.vol)}catch(x){}}});
+const AMB={ctx:null,out:null,vol:.5,layers:{},buf:{},mix:{}};
+Object.defineProperty(AMB,'on',{get(){return Object.keys(AMB.layers).join('+')}});
+const AMB_S=[['library','📚','Kütüphane','Mekân'],['cafe','☕','Kafe','Mekân'],['train','🚂','Tren yolculuğu','Mekân'],['clock','🕰','Saat tik takı','Mekân'],['purr','🐱','Kedi mırlaması','Mekân'],
+ ['rain','🌧','Yağmur','Doğa'],['storm','⛈','Fırtına','Doğa'],['fire','🔥','Şömine','Doğa'],['sea','🌊','Dalga','Doğa'],['stream','🏞','Dere','Doğa'],['wind','🍃','Rüzgâr','Doğa'],['birds','🐦','Orman kuşları','Doğa'],['night','🌙','Gece böcekleri','Doğa'],
+ ['brown','🟤','Kahverengi gürültü','Odak'],['pink','🌸','Pembe gürültü','Odak']];
+const AMB_L=Object.fromEntries(AMB_S.map(([k,e,n])=>[k,e+' '+n]));
+const AMB_P=[['📚🌧 Yağmurlu kütüphane',{library:.9,rain:.4}],['☕🌧 Yağmurlu kafe',{cafe:.9,rain:.35}],['🔥⛈ Fırtınalı gece',{fire:.8,storm:.5}],['🐱🔥 Kedili şömine',{purr:.8,fire:.5}],['🚂🌧 Yağmurlu tren',{train:.8,rain:.3}],['🌙🏞 Gece deresi',{night:.7,stream:.45}],['📚🕰 Sessiz çalışma',{library:.8,clock:.35}]];
+function ambLabel(){const k=Object.keys(AMB.layers);return k.length===1?AMB_L[k[0]]:k.map(x=>AMB_L[x].split(' ')[0]).join(' ')}
+try{const v=parseFloat(localStorage.getItem('dk-ambv'));if(v>=0)AMB.vol=v;AMB.mix=JSON.parse(localStorage.getItem('dk-ambm')||'{}')||{}}catch(e){}
+function ambCtx(){if(!AMB.ctx){const C=AMB.ctx=new (window.AudioContext||window.webkitAudioContext)();const comp=C.createDynamicsCompressor();comp.threshold.value=-16;comp.ratio.value=4;comp.connect(C.destination);const o=C.createGain();o.gain.value=AMB.vol;o.connect(comp);AMB.out=o}
+  try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}AMB.ctx.resume&&AMB.ctx.resume();return AMB.ctx}
+function ambBuf(C,kind){if(AMB.buf[kind])return AMB.buf[kind];const n=C.sampleRate*(kind==='white'?3:6),F=Math.floor(C.sampleRate*.25),b=C.createBuffer(2,n,C.sampleRate);
+  for(let ch=0;ch<2;ch++){const x=new Float32Array(n+F);let last=0,b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+    for(let i=0;i<n+F;i++){const w=Math.random()*2-1;if(kind==='brown'){last=(last+0.02*w)/1.02;x[i]=last*3.5}
+      else if(kind==='pink'){b0=0.99886*b0+w*0.0555179;b1=0.99332*b1+w*0.0750759;b2=0.969*b2+w*0.153852;b3=0.8665*b3+w*0.3104856;b4=0.55*b4+w*0.5329522;b5=-0.7616*b5-w*0.016898;x[i]=(b0+b1+b2+b3+b4+b5+b6+w*0.5362)*0.11;b6=w*0.115926}else x[i]=w*.5}
+    const d=b.getChannelData(ch);for(let i=0;i<n;i++)d[i]=x[i];for(let i=0;i<F;i++){const a=i/F;d[i]=x[i]*a+x[n+i]*(1-a)}}
+  return AMB.buf[kind]=b}
+const AMB_B={
+ library(H){const{loop,bq,burst,tone,every,rnd}=H;loop('brown',[bq('lowpass',160)],.55);loop('pink',[bq('bandpass',500,.4),bq('lowpass',1200)],.035);
+  every(5,13,t=>{const p=rnd(-.6,.6),d=rnd(.35,.7),b=burst(t,d,[bq('bandpass',1800,1.2),bq('highpass',600)],rnd(.12,.22),{a:d*.35,pan:p}),f=b.f[0];f.frequency.setValueAtTime(1200,t);f.frequency.exponentialRampToValueAtTime(rnd(3500,5000),t+d*.6);f.frequency.exponentialRampToValueAtTime(1500,t+d);burst(t+d*.85,.09,[bq('lowpass',500)],.16,{a:.004,pan:p})});
+  every(9,22,t=>{const p=rnd(-.5,.5);let x=t;const end=t+rnd(1.5,4);while(x<end){const d=rnd(.05,.18);burst(x,d,[bq('bandpass',rnd(3000,5500),3)],rnd(.04,.08),{a:d*.3,pan:p});x+=d+rnd(.02,.09);if(Math.random()<.12)x+=rnd(.2,.5)}});
+  every(18,40,t=>{const n=Math.floor(rnd(5,10)),p0=rnd(-.8,.8);for(let i=0;i<n;i++){const x=t+i*rnd(.5,.6),k=Math.sin(Math.PI*(i+.5)/n),p=p0-2*p0*i/n;burst(x,.12,[bq('lowpass',300)],.03+.14*k,{a:.006,pan:p});tone(x,rnd(60,80),.1,.02+.05*k,{pan:p})}});
+  every(25,55,t=>{if(Math.random()<.5){burst(t,.18,[bq('lowpass',220)],.24,{a:.003,pan:rnd(-.7,.7)});tone(t,rnd(90,120),.15,.07)}else{const b=burst(t,rnd(.3,.6),[bq('bandpass',400,6)],.05,{a:.08,pan:rnd(-.7,.7)});b.f[0].frequency.exponentialRampToValueAtTime(rnd(600,900),t+.4)}})},
+ cafe(H){const{C,L,loop,bq,burst,tone,every,beat,rnd,pan}=H;loop('brown',[bq('lowpass',300)],.45);loop('pink',[bq('bandpass',900,.6),bq('lowpass',2400)],.05);
+  for(let v=0;v<6;v++){const s=C.createBufferSource();s.buffer=ambBuf(C,'pink');s.loop=true;const f1=bq('bandpass',rnd(350,700),3),f2=bq('bandpass',rnd(1100,2200),4),g2=C.createGain(),lp=bq('lowpass',2600),vg=C.createGain(),lvl=rnd(.35,1);
+    g2.gain.value=.5;vg.gain.value=.0001;const ng=C.createGain();ng.gain.value=.35;s.connect(ng);ng.connect(f1);ng.connect(f2);const base=rnd(105,230),o=C.createOscillator();o.type='sawtooth';o.frequency.value=base;const og=C.createGain();og.gain.value=.09;o.connect(og);og.connect(f1);og.connect(f2);o.start();H.keep(ng,o,og);f2.connect(g2);f1.connect(lp);g2.connect(lp);lp.connect(vg);vg.connect(pan(rnd(-.9,.9),L.g));s.start(0,Math.random()*5);H.keep(s,f1,f2,g2,lp,vg);
+    let talkEnd=0,low=rnd(.9,1.15);
+    let next=H.T()+rnd(0,3);H.loopT(()=>{while(next<H.T()+.4){const t=next;if(t>talkEnd&&Math.random()<.5){talkEnd=t+rnd(1.5,6);}if(t>talkEnd){next=t+rnd(.8,4);talkEnd=next+rnd(1.5,6);continue}
+      const d=rnd(.08,.26),pk=rnd(.5,1.4)*lvl;vg.gain.setTargetAtTime(pk,t,d*.25);vg.gain.setTargetAtTime(.0001,t+d*.7,d*.2);f1.frequency.setTargetAtTime(rnd(300,800)*low,t,.03);o.frequency.setTargetAtTime(base*rnd(.85,1.2),t,.05);f2.frequency.setTargetAtTime(rnd(1000,2400)*low,t,.03);next=t+d+rnd(.03,.12)}})}
+  every(2.5,8,t=>{const p=rnd(-.8,.8);if(Math.random()<.25){const n=Math.floor(rnd(3,7));for(let i=0;i<n;i++)tone(t+i*rnd(.1,.16),rnd(4200,5200),.12,.015,{pan:p})}else{const f=rnd(1700,3200),g=rnd(.02,.045),d=rnd(.25,.6);tone(t,f,d,g,{pan:p});tone(t,f*2.76,d*.6,g*.5,{pan:p});tone(t,f*5.4,d*.3,g*.25,{pan:p});if(Math.random()<.3)tone(t+.12,f*1.07,d*.8,g*.7,{pan:p})}});
+  every(35,80,t=>{const d=rnd(3,6);burst(t,d,[bq('highpass',2500),bq('lowpass',8000)],.05,{a:.4,hold:d-1,pan:rnd(-.9,-.4)});burst(t+.2,d*.7,[bq('lowpass',400)],.05,{a:.3,pan:-.6,kind:'brown'})});
+  every(50,120,t=>{tone(t,1318,1.2,.02,{pan:.7});tone(t+.25,1046,1.4,.02,{pan:.7})})},
+ train(H){const{loop,bq,burst,tone,beat,lfo,rnd}=H;const r=loop('brown',[bq('lowpass',140)],.9);loop('pink',[bq('bandpass',280,.7)],.12);lfo(r.gain,.18,.2);
+  let i=0;beat(()=>(++i%2)?.13:1.05+rnd(-.02,.02),t=>{burst(t,.11,[bq('lowpass',700)],.32,{a:.003,pan:.15});tone(t,rnd(70,85),.12,.14,{pan:.15});burst(t,.05,[bq('bandpass',2500,2)],.03,{a:.002})})},
+ clock(H){const{loop,bq,burst,tone,beat}=H;loop('brown',[bq('lowpass',120)],.12);let k=0;beat(()=>1,t=>{const f=(++k%2)?3200:2600;burst(t,.035,[bq('bandpass',f,6),bq('highpass',1200)],.4,{a:.001});tone(t,f*.5,.03,.025)})},
+ purr(H){const{C,L,bq,lfo,loop}=H;const s=C.createBufferSource();s.buffer=ambBuf(C,'brown');s.loop=true;const lp=bq('lowpass',320),am=C.createGain(),env=C.createGain();am.gain.value=.5;env.gain.value=.65;s.connect(lp);lp.connect(am);am.connect(env);env.connect(L.g);s.start();
+  const o=C.createOscillator();o.type='triangle';o.frequency.value=25;const od=C.createGain();od.gain.value=.45;o.connect(od);od.connect(am.gain);o.start();H.keep(s,lp,am,env,o,od);lfo(env.gain,.42,.3);lfo(o.frequency,.42,2.5);loop('pink',[bq('bandpass',160,1)],.08)},
+ rain(H,x){const{loop,bq,burst,beat,rnd}=H;const k=x||1;loop('pink',[bq('highpass',400),bq('lowpass',7000)],.85*k);loop('brown',[bq('lowpass',600)],.35*k);
+  beat(()=>rnd(.015,.05)/k,t=>burst(t,rnd(.012,.03),[bq('bandpass',rnd(2000,6500),2)],rnd(.04,.13),{a:.001,pan:rnd(-1,1)}))},
+ storm(H){const{bq,burst,every,rnd}=H;AMB_B.rain(H,1.35);every(12,35,t=>{const d=rnd(3,7),p=rnd(-.7,.7);if(Math.random()<.5)burst(t,.25,[bq('highpass',1200)],.22,{a:.005,pan:p});const b=burst(t+.1,d,[bq('lowpass',220)],rnd(.6,1),{a:rnd(.05,.6),pan:p,kind:'brown'});b.f[0].frequency.exponentialRampToValueAtTime(70,t+d)})},
+ fire(H){const{loop,bq,burst,beat,every,lfo,rnd}=H;const r=loop('brown',[bq('lowpass',500)],1);lfo(r.gain,.11,.25);
+  beat(()=>rnd(.04,.25),t=>burst(t,rnd(.004,.03),[bq('highpass',rnd(900,3400))],rnd(.08,.35),{a:.001,pan:rnd(-.4,.4)}));
+  every(3,9,t=>{burst(t,.06,[bq('bandpass',rnd(500,1200),1)],.45,{a:.002,pan:rnd(-.3,.3)})})},
+ sea(H){const{loop,bq,burst,every,rnd}=H;loop('brown',[bq('lowpass',300)],.35);loop('pink',[bq('lowpass',900)],.05);
+  every(5,9,t=>{const d=rnd(5,8),b=burst(t,d,[bq('lowpass',500)],rnd(.35,.6),{a:d*.45,kind:'pink',pan:rnd(-.4,.4)}),f=b.f[0];f.frequency.setValueAtTime(400,t);f.frequency.exponentialRampToValueAtTime(rnd(1800,3000),t+d*.5);f.frequency.exponentialRampToValueAtTime(500,t+d)})},
+ stream(H){const{loop,bq,beat,tone,rnd}=H;loop('pink',[bq('bandpass',1400,.6)],.3);const hi=loop('pink',[bq('highpass',2500)],.08);
+  beat(()=>.07,t=>hi.gain.setTargetAtTime(rnd(.03,.14),t,.03));beat(()=>rnd(.05,.35),t=>tone(t,rnd(350,700),rnd(.03,.07),rnd(.01,.03),{f2:rnd(900,1800),pan:rnd(-.8,.8)}))},
+ wind(H){const{loop,bq,lfo,burst,every,rnd}=H;const f=bq('bandpass',500,.8),g=loop('pink',[f],.8);lfo(f.frequency,.05,300);lfo(g.gain,.13,.3);
+  every(8,20,t=>{const d=rnd(3,6),b=burst(t,d,[bq('bandpass',700,1.5)],.35,{a:d*.4,kind:'pink',pan:rnd(-.8,.8)});b.f[0].frequency.exponentialRampToValueAtTime(rnd(900,1400),t+d*.5)})},
+ birds(H){const{loop,bq,burst,tone,every,rnd}=H;loop('pink',[bq('bandpass',600,.5)],.06);
+  every(4,10,t=>burst(t,rnd(1,2.5),[bq('highpass',2500)],.04,{a:.5,pan:rnd(-1,1)}));
+  every(1.2,5,t=>{const p=rnd(-.9,.9),g=rnd(.03,.07),kind=Math.floor(Math.random()*4);
+   if(kind===0){const n=Math.floor(rnd(3,7)),f=rnd(2500,3500);for(let i=0;i<n;i++)tone(t+i*.11,f,.07,g,{f2:f*1.5,pan:p})}
+   else if(kind===1){const f=rnd(1800,2600);tone(t,f,.28,g,{f2:f*1.05,pan:p,a:.03});tone(t+.33,f*.82,.38,g,{f2:f*.78,pan:p,a:.03})}
+   else if(kind===2){const n=Math.floor(rnd(8,18)),f=rnd(3200,4200);for(let i=0;i<n;i++)tone(t+i*.045,f+rnd(-150,150),.035,g*.7,{pan:p})}
+   else{const f=rnd(4000,5500);tone(t,f,.12,g*.8,{f2:f*.6,pan:p});tone(t+.18,f*.9,.1,g*.6,{f2:f*.7,pan:p})}})},
+ night(H){const{loop,bq,beat,tone,every,rnd}=H;loop('brown',[bq('lowpass',200)],.25);
+  for(let c=0;c<3;c++){const f=rnd(4200,5200),p=rnd(-.9,.9),per=rnd(.55,1.1),g=rnd(.008,.02);beat(()=>per*rnd(.95,1.05),t=>{for(let i=0;i<3;i++)tone(t+i*.035,f,.022,g,{pan:p,a:.003})})}
+  every(30,70,t=>{const f=rnd(360,420),p=rnd(-.8,.8);tone(t,f,.45,.04,{f2:f*.92,pan:p,a:.06});tone(t+.6,f,.6,.04,{f2:f*.88,pan:p,a:.06})})},
+ brown(H){H.loop('brown',[H.bq('lowpass',800)],1)},
+ pink(H){H.loop('pink',[H.bq('lowpass',8000)],.7)}
+};
+const AMB_T={birds:8,clock:3,stream:3.3,night:2,purr:1.5,sea:1.6,wind:1.6,library:1.25,cafe:1.2,brown:.7,fire:.75,storm:.8};
+function ambLayer(k,vol){const C=ambCtx(),L={k,vol,g:C.createGain(),timers:[],nodes:[],alive:true},tr=AMB_T[k]||1;L.g.gain.value=.0001;L.g.connect(AMB.out);L.g.gain.setTargetAtTime(vol*tr,C.currentTime,.6);
+ const T=()=>C.currentTime,rnd=(a,b)=>a+Math.random()*(b-a),keep=(...n)=>L.nodes.push(...n);
+ const bq=(type,f,q)=>{const x=C.createBiquadFilter();x.type=type;x.frequency.value=f;if(q!=null)x.Q.value=q;return x};
+ const pan=(p,dst)=>{if(!C.createStereoPanner||!p)return dst;const s=C.createStereoPanner();s.pan.value=Math.max(-1,Math.min(1,p));s.connect(dst);return s};
+ const chain=(src,fs,dst)=>{let n=src;for(const f of fs){n.connect(f);n=f}n.connect(dst)};
+ const loop=(kind,fs,g,p)=>{const s=C.createBufferSource();s.buffer=ambBuf(C,kind);s.loop=true;const gg=C.createGain();gg.gain.value=g;chain(s,fs,gg);gg.connect(pan(p,L.g));s.start(0,Math.random()*4);keep(s,gg,...fs);return gg};
+ const lfo=(param,f,depth)=>{const o=C.createOscillator();o.frequency.value=f;const d=C.createGain();d.gain.value=depth;o.connect(d);d.connect(param);o.start();keep(o,d)};
+ const burst=(t,dur,fs,peak,o={})=>{if(!L.alive)return{f:fs};const s=C.createBufferSource();s.buffer=ambBuf(C,o.kind||'white');s.loop=true;const g=C.createGain(),a=o.a!=null?Math.max(.001,o.a):Math.min(.01,dur/4);
+   g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0002,peak),t+a);if(o.hold)g.gain.setValueAtTime(Math.max(.0002,peak),t+a+o.hold);g.gain.exponentialRampToValueAtTime(.0001,t+Math.max(dur,a+.002));
+   chain(s,fs,g);g.connect(pan(o.pan||0,L.g));s.start(t,Math.random()*2);s.stop(t+dur+.05);s.onended=()=>{try{g.disconnect()}catch(e){}};return{s,g,f:fs}};
+ const tone=(t,f,dur,peak,o={})=>{if(!L.alive)return;const s=C.createOscillator();s.type=o.type||'sine';s.frequency.setValueAtTime(f,t);if(o.f2)s.frequency.exponentialRampToValueAtTime(o.f2,t+(o.glide||dur));const g=C.createGain(),a=o.a||.005;
+   g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0002,peak),t+a);g.gain.exponentialRampToValueAtTime(.0001,t+Math.max(dur,a+.002));s.connect(g);g.connect(pan(o.pan||0,L.g));s.start(t);s.stop(t+dur+.05);s.onended=()=>{try{g.disconnect()}catch(e){}}};
+ const every=(min,max,fn)=>{const go=()=>{if(!L.alive)return;try{fn(T()+.05)}catch(e){}L.timers.push(setTimeout(go,rnd(min,max)*1000))};L.timers.push(setTimeout(go,rnd(min,max)*400))};
+ const loopT=fn=>{const tick=()=>{if(L.alive)try{fn()}catch(e){}};L.timers.push(setInterval(tick,100));tick()};
+ const beat=(per,fn,noop)=>{if(noop)return;let next=T()+.1;loopT(()=>{while(next<T()+.35){fn(next);next+=Math.max(.005,per())}})};
+ const H={C,L,T,rnd,keep,bq,pan,loop,lfo,burst,tone,every,beat,loopT};
+ try{AMB_B[k](H)}catch(e){console.warn('ses',k,e)}
+ L.setVol=v=>{L.vol=v;L.g.gain.setTargetAtTime(v*tr,C.currentTime,.1)};
+ L.stop=()=>{L.alive=false;L.timers.forEach(x=>{clearTimeout(x);clearInterval(x)});L.timers=[];L.g.gain.setTargetAtTime(.0001,C.currentTime,.15);setTimeout(()=>{L.nodes.forEach(n=>{try{n.stop&&n.stop()}catch(e){}try{n.disconnect()}catch(e){}});try{L.g.disconnect()}catch(e){}},700)};
+ return L}
+window.__amb={toggle:k=>ambToggle(k),stop:()=>ambStop(),preset:i=>ambPreset(i),A:AMB,dlg:()=>ambDlg()};
+function ambSave(){try{localStorage.setItem('dk-ambm',JSON.stringify(AMB.mix))}catch(e){}ambPaint()}
+function ambOff(k){const L=AMB.layers[k];if(!L)return;delete AMB.layers[k];L.stop()}
+function ambStop(){Object.keys(AMB.layers).forEach(ambOff);ambPaint()}
+function ambToggle(k){if(AMB.layers[k])ambOff(k);else{if(Object.keys(AMB.layers).length>=4){toast('En fazla 4 sesi birlikte çalabilirsin');return}AMB.layers[k]=ambLayer(k,AMB.mix[k]!=null?AMB.mix[k]:.8)}ambSave()}
+function ambStart(k){ambStop();if(k)ambToggle(k)}
+function ambPreset(i){ambStop();const m=AMB_P[i][1];for(const k in m){AMB.mix[k]=m[k];AMB.layers[k]=ambLayer(k,m[k])}ambSave()}
+function ambDlg(){msModal(`<div class="eyebrow">🎧 Okuma sesleri</div><p class="hint" style="margin:0">Bir ya da birkaç ses seç, birbirine karışsın. Kitabı kapatınca durur. iPhone ya da iPad sessizdeyse ses gelmeyebilir.</p><div id="ambBox" class="amb-box"></div>`);ambPaint()}
+function ambPaint(){const b=document.getElementById('ambBox');if(!b)return;const on=AMB.layers,ks=Object.keys(on);
+ b.innerHTML=`<div class="amb-h">Hazır karışımlar</div><div class="amb-p">${AMB_P.map(([n],i)=>`<button type="button" class="chip" data-ambp="${i}">${n}</button>`).join('')}</div>`+
+  ['Mekân','Doğa','Odak'].map(g=>`<div class="amb-h">${g}</div><div class="amb-g">${AMB_S.filter(x=>x[3]===g).map(([k,e,n])=>`<button type="button" class="amb-b" data-amb="${k}" aria-pressed="${!!on[k]}"><span class="amb-e">${e}</span>${n}</button>`).join('')}</div>`).join('')+
+  (ks.length?`<div class="amb-h">Çalanlar · ses ayarı</div><div class="amb-mix">${ks.map(k=>`<div class="amb-row"><span>${AMB_L[k]}</span><input type="range" min="0" max="1.2" step="0.05" value="${on[k].vol}" data-ambv="${k}" aria-label="${AMB_L[k]} sesi"><button type="button" class="amb-x" data-amb="${k}" aria-label="Kapat">✕</button></div>`).join('')}</div>`:'')+
+  `<div class="amb-foot"><label class="hint cl-chk" style="flex:1">Genel ses <input id="ambVol" type="range" min="0" max="1" step="0.05" value="${AMB.vol}" style="flex:1"></label>${ks.length?'<button type="button" class="btn" data-amb="">🔇 Hepsini kapat</button>':''}</div>`}
+document.addEventListener('click',e=>{const p=e.target.closest&&e.target.closest('[data-ambp]');if(p){ambPreset(+p.dataset.ambp);return}
+  const b=e.target.closest&&e.target.closest('[data-amb]');if(!b)return;if(!b.dataset.amb)ambStop();else ambToggle(b.dataset.amb)});
+document.addEventListener('input',e=>{if(e.target.id==='ambVol'){AMB.vol=+e.target.value;if(AMB.out)AMB.out.gain.value=AMB.vol;try{localStorage.setItem('dk-ambv',AMB.vol)}catch(x){}}
+  const v=e.target.dataset&&e.target.dataset.ambv;if(v&&AMB.layers[v]){AMB.layers[v].setVol(+e.target.value);AMB.mix[v]=+e.target.value;try{localStorage.setItem('dk-ambm',JSON.stringify(AMB.mix))}catch(x){}}});
 
 /* --- tahmin kutusu --- */
 const prMine=()=>(LF.preds||[]).filter(x=>R.book&&x.book===R.book.id).sort((a,b)=>(a.at||'').localeCompare(b.at||''));
