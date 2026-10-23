@@ -1187,6 +1187,15 @@ html[data-preset=kindle] .bk-ban,html[data-preset=pastelk] .bk-ban{background:co
 html[data-preset=kindle] body,html[data-preset=pastelk] body{background-image:none!important}
 body.kindle-soft{background-image:none!important}
 body.kindle-soft .bk-ban{background:color-mix(in srgb,var(--brass) 16%,var(--paper));border-color:var(--line)}
+.epdiag .epd-t{display:grid;gap:4px;max-width:420px;margin:10px auto;text-align:left;font-size:14px}.epdiag .epd-t div{display:flex;justify-content:space-between;gap:12px;padding:6px 10px;border-radius:10px;background:var(--bg)}
+body.kindle-soft #listArea .lf-faces button{filter:grayscale(.55) opacity(.85);background:transparent}
+body.kindle-soft #listArea .lf-faces button[aria-pressed="true"]{filter:none}
+body.kindle-soft #listArea :is(.exp-c,.hs-h,.pill,.hs-g,.wg,.d-quote){filter:saturate(.55)}
+body.kindle-soft #listArea .hs-today{grid-template-columns:1fr 1fr;gap:10px}
+body.kindle-soft #listArea .hs-g{padding:12px 14px;border-radius:16px}
+body.kindle-soft #listArea .ns-hc p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+body.kindle-soft #listArea .lfc,body.kindle-soft #listArea .hs-g,body.kindle-soft #listArea .hs-c,body.kindle-soft #listArea .dcard{box-shadow:none!important;border:1px solid var(--line)}
+body.kindle-soft #listArea .bk-ban{padding:8px 12px;font-size:14px}
 </style>
 
 </head><body>
@@ -1646,7 +1655,7 @@ function renderList(){
   if(!st.books.length){area.innerHTML=`<div class="empty">${catHtml()}<h2>Rafların boş</h2><p>Bir kitap ekleyerek ya da PDF/EPUB klasörünü toplu ekleyerek başla. Dosyaların yalnızca bu cihazda saklanır.</p><div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="btn primary" type="button" data-add>+ İlk kitabı ekle</button><button class="btn" type="button" onclick="document.getElementById('bulkBtn').click()">📁 Klasörden ekle</button></div></div>`;return}
   if(st.view==='panel'){area.innerHTML=dashHtml();queueCovers(st.books.filter(b=>b.status==='okunuyor'||b.currentPage>0).slice(0,8));return}
   const list=filtered(),calls=callNumbers();
-  if(!list.length){area.innerHTML=`<div class="empty"><svg class="scene ln" viewBox="0 0 64 64" style="width:110px" aria-hidden="true"><use href="#i-glasses"/></svg><h2>Eşleşen kayıt yok</h2>${rmBar()}<p>Aramayı ya da filtreleri değiştirmeyi dene.</p><button class="btn" type="button" data-clear>Filtreleri temizle</button></div>`;return}
+  if(!list.length&&st.tab==='epub'&&!st.q){area.innerHTML=epDiagHtml();return}if(!list.length){area.innerHTML=`<div class="empty"><svg class="scene ln" viewBox="0 0 64 64" style="width:110px" aria-hidden="true"><use href="#i-glasses"/></svg><h2>Eşleşen kayıt yok</h2>${rmBar()}<p>Aramayı ya da filtreleri değiştirmeyi dene.</p><button class="btn" type="button" data-clear>Filtreleri temizle</button></div>`;return}
   if(st.view==='panel'){area.innerHTML=dashHtml();queueCovers(st.books.filter(b=>b.status==='okunuyor'||b.currentPage>0).slice(0,8));return}
   if(st.view==='raf'){area.innerHTML=rmBar()+qmBar()+shelfHtml(list);queueCovers(list);return}
   area.innerHTML=rmBar()+qmBar()+'<div class="list">'+list.map(b=>{
@@ -5192,7 +5201,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v76';
+const DK_VER='v77';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6742,6 +6751,15 @@ setInterval(()=>{if(R.epub&&!$('reader').hidden&&document.visibilityState==='vis
 /*EP2*/
 let FTsel=null;document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#fFT [data-ft]');if(!b)return;FTsel=b.dataset.ft;$('fFT').querySelectorAll('[data-ft]').forEach(x=>x.setAttribute('aria-pressed',x===b))});
 window.__dkdiag=()=>{const B=__dk.st().books;const c={};B.forEach(b=>{const k=[b.kind,b.fileType||'-',b.source||'yerel',(b.fileName||'').split('.').pop().toLowerCase().slice(0,6)].join('|');c[k]=(c[k]||0)+1});return c};
+
+function epDiagHtml(){const B=st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'),c={};let sn={};try{sn=JSON.parse(localStorage.getItem('dk-sniff')||'{}')}catch(e){}
+  B.forEach(b=>{const ext=((b.fileName||'').match(/\.([a-z0-9]{2,6})$/i)||[,'adsız'])[1].toLowerCase(),src=b.source==='drive'?'Drive':(b.assetId?'cihazda':(b.fileRemoved?'dosya kaldırılmış':'dosyasız')),k=`${b.fileType||'tür yok'} · ${src} · .${ext}`;c[k]=(c[k]||0)+1});
+  const sc={};Object.values(sn).forEach(v=>{sc[v]=(sc[v]||0)+1});const rows=Object.entries(c).sort((a,b)=>b[1]-a[1]);
+  return `<div class="empty epdiag"><h2>EPUB rafı boş</h2><p>Kitaplarının içinde EPUB bulamadım. Sebebini bulmak için bu kutunun ekran görüntüsünü Claude'a gönder.</p>
+   <div class="epd-t">${rows.map(([k,n])=>`<div><span>${esc(k)}</span><b>${n}</b></div>`).join('')}</div>
+   <p class="hint">Dosya içi tarama: ${Object.keys(sc).length?Object.entries(sc).map(([k,n])=>`${esc(k)} ${n}`).join(' · '):'henüz yapılmadı'} · ${typeof LOCAL!=='undefined'?'yerel sürüm':'claude.ai sürümü'} · ${typeof DK_VER!=='undefined'?esc(DK_VER):''}</p>
+   <button class="btn" type="button" data-eprescan>🔍 Yeniden tara</button></div>`}
+document.addEventListener('click',e=>{if(!(e.target.closest&&e.target.closest('[data-eprescan]')))return;try{localStorage.removeItem('dk-sniff')}catch(x){}toast('Kitapların taranıyor…');location.reload()});
 /* EPUB tanıma: etiket boşsa dosya adına, o da yetmezse dosyanın içine bak; yanlış etiketi düzelt */
 function isEpubB(b){return !!b&&(b.fileType==='epub'||/\.(k?epub)(\.zip)?$/i.test(b.fileName||'')||/\.epub$/i.test(b.title||'')&&!b.fileType)}
 async function epSniff(b){if(typeof LOCAL==='undefined'||!LOCAL.fetchAsset||!b.assetId)return null;try{const r=await LOCAL.fetchAsset(b.assetId);if(!r.ok)return null;const ct=r.headers.get('content-type')||'';if(/epub/i.test(ct))return 'epub';
