@@ -2070,6 +2070,7 @@ const BODYF={nunito:'"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif',dms
 const FONTS={fraunces:'"Fraunces",Georgia,serif',quicksand:'"Quicksand",system-ui,sans-serif',cormorant:'"Cormorant Garamond","Iowan Old Style",Georgia,serif',playfair:'"Playfair Display",Georgia,serif',lora:'"Lora",Georgia,serif',caveat:'"Caveat","Segoe Print","Bradley Hand",cursive',playpen:'"Playpen Sans","Segoe Print","Chalkboard SE",cursive',shantell:'"Shantell Sans","Chalkboard SE",cursive',patrick:'"Patrick Hand","Chalkboard SE",cursive'};
 const UIDEF={preset:'sage',mode:'auto',accent:'',pattern:'check',font:'playfair',body:'nunito',cover:'m',illus:'on',deco:'emblem',stamps:'on',soft:'on',art:'cat',name:'',title:"Dijital Kütüphanem",sub:'Kitapların, PDF ve EPUB\'ların tek bir okuma köşesinde. Her şey yalnızca bu cihazda, tarayıcında saklanır.'};
 let UI={...UIDEF};try{const c=JSON.parse(localStorage.getItem('dk-ui')||'null');if(c)UI={...UIDEF,...c}}catch(e){}
+if(!UI.kindleMig){UI.kindleMig=1;UI.preset='kindle';UI.kindle='on';UI.accent='';UI.bgc='';try{localStorage.setItem('dk-ui',JSON.stringify(UI))}catch(e){}}
 const mq=window.matchMedia?matchMedia('(prefers-color-scheme: dark)'):null;
 function isDark(){const t=document.documentElement.getAttribute('data-theme');if(UI.mode==='dark')return true;if(UI.mode==='light')return false;if(t)return t==='dark';return !!(mq&&mq.matches)}
 const TOK=['bg','paper','ink','muted','line','check','accent','accent-soft','brass','brass-soft','k','p','r'];
@@ -5191,7 +5192,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v75';
+const DK_VER='v76';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
