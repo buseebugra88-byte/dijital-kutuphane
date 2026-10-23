@@ -1182,6 +1182,9 @@ html,body{overflow-x:clip;max-width:100%}
 ::highlight(dktts){background-color:rgba(127,170,110,.35);color:inherit}
 .tts-p{background:rgba(127,170,110,.18);border-radius:6px}
 .nbt-pal{border-radius:14px}.nbt-pal button{font-size:12px;padding:4px 10px}
+html body .btn.primary{color:var(--on-brass,var(--paper))}
+html[data-preset=kindle] .bk-ban,html[data-preset=pastelk] .bk-ban{background:color-mix(in srgb,var(--brass) 18%,var(--paper));border-color:var(--line)}
+html[data-preset=kindle] body,html[data-preset=pastelk] body{background-image:none!important}
 </style>
 
 </head><body>
@@ -1961,6 +1964,12 @@ $('confirmYes').addEventListener('click',async()=>{
 /* görünüm */
 const PRESETS={
   sage:{name:'Adaçayı & Pudra',light:null,dark:null,sw:['#e7eedb','#7f9a68','#c4847a','#fdfbf4']},
+  kindle:{name:'Kindle kâğıdı',sw:['#efece4','#7b8a78','#a89a86','#f7f5ef'],
+    light:{bg:'#efece4',paper:'#f7f5ef',ink:'#2f2e2b',muted:'#7d7a72',line:'#e2ded4',check:'#e8e4da',accent:'#7b8a78','accent-soft':'#e6e9e1',brass:'#d6ccbb','on-brass':'#2f2e2b','brass-soft':'#ece6dc',k:'#d8d2c6',p:'#c9cfc3',r:'#9aa596'},
+    dark:{bg:'#1c1c1b',paper:'#262624',ink:'#e6e2d8',muted:'#a39f95',line:'#3a3936',check:'#222220',accent:'#b9c4b0','accent-soft':'#33362f',brass:'#cbbfa8','brass-soft':'#3b3730',k:'#8f8a80',p:'#8e958a',r:'#b9c4b0'}},
+  pastelk:{name:'Pastel kâğıt',sw:['#f3efe9','#9fb3a4','#d8b4b0','#c9c3df'],
+    light:{bg:'#f3efe9',paper:'#fbf9f5',ink:'#4a4642',muted:'#9a948d',line:'#ebe5dc',check:'#eee8de',accent:'#9fb3a4','accent-soft':'#e9efe9',brass:'#ebcdc8','on-brass':'#4a4642','brass-soft':'#f4e8e6',k:'#e8d7cf',p:'#d9e2d6',r:'#c9c3df'},
+    dark:{bg:'#232220',paper:'#2d2b29',ink:'#ebe6df',muted:'#ada69e',line:'#403d3a',check:'#282624',accent:'#b8c9bb','accent-soft':'#39403b',brass:'#e3c4c0','brass-soft':'#4a3f3e',k:'#9a8e88',p:'#8e9a8f',r:'#a8a3c4'}},
   coffee:{name:'Kahve & Krem',sw:['#efe6d8','#5e6b48','#a3693d','#3b2a20'],
     light:{bg:'#efe6d8',paper:'#faf5ec',ink:'#3b2a20',muted:'#87705f',line:'#e0d3bf',check:'#e6dac7',accent:'#5e6b48','accent-soft':'#e3e4d2',brass:'#a3693d','brass-soft':'#f2e1cc',k:'#7a5236',p:'#a3693d',r:'#5e6b48'},
     dark:{bg:'#1f1814',paper:'#2a211b',ink:'#f0e5d6',muted:'#b39d89',line:'#3d3128',check:'#261e19',accent:'#b1bd8f','accent-soft':'#353a29',brass:'#dba475','brass-soft':'#40301f',k:'#d9ae8a',p:'#dba475',r:'#b1bd8f'}},
@@ -2067,7 +2076,7 @@ function applyUI(){
   const root=document.documentElement,body=document.body;
   if(UI.mode==='auto'){if(root.dataset.ktSet){root.removeAttribute('data-theme');delete root.dataset.ktSet}}else{root.setAttribute('data-theme',UI.mode);root.dataset.ktSet='1'}
   const pr=PRESETS[UI.preset]||PRESETS.sage,set=isDark()?pr.dark:pr.light;
-  TOK.forEach(t=>root.style.removeProperty('--'+t));
+  TOK.forEach(t=>root.style.removeProperty('--'+t));root.style.removeProperty('--on-brass');try{document.documentElement.dataset.preset=UI.preset||'sage'}catch(e){}
   if(set)Object.entries(set).forEach(([k,v])=>root.style.setProperty('--'+k,v));
   {const dk=isDark(),ink=(set&&set.ink)||(dk?'#f1e8e2':'#4a3a35'),pap=(set&&set.paper)||(dk?'#272c24':'#fdfbf4'),mut=(set&&set.muted)||(dk?'#b0a59d':'#8a7a72');
    const sf=UI.soft==='off'?0:(dk?0.14:0.24);root.style.setProperty('--ink',mixHex(ink,pap,sf));root.style.setProperty('--muted',mixHex(mut,pap,sf*0.35))}
@@ -5174,7 +5183,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v73';
+const DK_VER='v74';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
