@@ -1196,6 +1196,8 @@ body.kindle-soft #listArea .hs-g{padding:12px 14px;border-radius:16px}
 body.kindle-soft #listArea .ns-hc p{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 body.kindle-soft #listArea .lfc,body.kindle-soft #listArea .hs-g,body.kindle-soft #listArea .hs-c,body.kindle-soft #listArea .dcard{box-shadow:none!important;border:1px solid var(--line)}
 body.kindle-soft #listArea .bk-ban{padding:8px 12px;font-size:14px}
+.hs-first .hs-c{padding:16px}.hs-first .hs-c .bk{--cw:96px;--ch:144px}
+.hs-lite .lft>.lfc:nth-child(n+3){display:none}
 </style>
 
 </head><body>
@@ -4375,7 +4377,7 @@ function homeSimple(){document.body.classList.add('home-simple');
   const W=TL.writing||{sessions:[],goal:500},wd={};(W.sessions||[]).forEach(s=>{wd[s.date]=(wd[s.date]||0)+(+s.words||0)});let ws=0;for(let i=0;i<365;i++){const d=new Date();d.setDate(d.getDate()-i);if(wd[todayKey(d)])ws++;else if(i>0)break}
   const pg=log[todayKey()]||0,pgGoal=(typeof wgData==='function'?wgData().pageGoal:30)||30,wt=wd[todayKey()]||0,wGoal=W.goal||500;
   const cards=[];
-  now.slice(0,2).forEach(b=>{const tot=b.pages||0,p=tot?Math.min(100,Math.round((b.currentPage||0)/tot*100)):0;
+  now.slice(0,1).forEach(b=>{const tot=b.pages||0,p=tot?Math.min(100,Math.round((b.currentPage||0)/tot*100)):0;
     cards.push(`<div class="hs-c">${bookHtml(b)}<div class="hs-ct"><span class="hs-k">📖 Okuyorsun</span><b>${esc(b.title)}</b><span class="hint">${tot?`${b.fileType==='epub'?'Bölüm':'Sayfa'} ${b.currentPage||0} / ${tot}`:esc(b.author||'')}</span>${tot?`<div class="bar2"><i style="width:${p}%"></i></div>`:''}${hasFile(b)?`<button class="btn primary" type="button" data-read="${b.id}">Devam et</button>`:''}</div></div>`)});
   const nb=[...NB.books].sort((a,b)=>(b.opened||'').localeCompare(a.opened||''))[0];
   if(nb)cards.push(`<div class="hs-c"><div class="hs-nb" style="--c:${nb.color||'#9cc5a1'}">${nb.kind==='doc'?'📝':'📓'}</div><div class="hs-ct"><span class="hs-k">✏️ Defterin</span><b>${esc(nb.title||'Defter')}</b><span class="hint">${nbPagesOf(nb.id).length} sayfa</span><button class="btn primary" type="button" data-nb="open" data-id="${nb.id}">Aç</button></div></div>`);
@@ -4385,13 +4387,10 @@ function homeSimple(){document.body.classList.add('home-simple');
   const qc=typeof quoteCard==='function'?quoteCard():'';
   return `<div class="hs">
    <section class="hs-hello"><div><div class="eyebrow">${esc(trDate(t))}</div><h2>${greet}${name?', '+esc(name):''}</h2></div><div class="hs-acts"><button class="btn primary" type="button" data-hs="add">＋ Yeni ekle</button><button class="btn" type="button" data-hs="idea">💡 Fikir</button><button class="btn" type="button" data-mx="sbopen" title="Sade bugün">🌙 Sade bugün</button></div></section>
-   ${bkBanner()}${wkNudge()}
-   ${nsHomeCard()}<section class="hs-today2"><h3 class="hs-h">☀️ Bugün <button class="lf-lnk" type="button" data-lf="go" data-v="today" style="font-size:13px;margin-left:6px">Hayatım →</button></h3>${lfTodayBox(true)}<div style="margin-top:12px">${expCard(true)}</div></section>
-   ${cards.length?`<section><h3 class="hs-h">Kaldığın yerler</h3><div class="hs-cont">${cards.join('')}</div></section>`:`<section class="hs-empty"><b>Hoş geldin 🌿</b><span class="hint">Bir kitap ekleyerek ya da Defterlerim'den bir defter açarak başla.</span></section>`}
-   <section class="hs-today"><div class="hs-g"><span>📖 Bugün okuma</span><b>${pg} <small>/ ${pgGoal} sayfa</small></b>${bar(pg,pgGoal)}<span class="hint">${pg>=pgGoal?'Hedef tamam 🎉':rs>1?rs+' gündür okuyorsun 🌿':'Okuyucuda sayfa çevirdikçe dolar'}</span></div>
-     <div class="hs-g"><span>✍️ Bugün yazma</span><b>${wt.toLocaleString('tr-TR')} <small>/ ${wGoal.toLocaleString('tr-TR')} kelime</small></b>${bar(wt,wGoal)}<span class="hint">${wt>=wGoal?'Hedef tamam 🎉':ws>1?ws+' gündür yazıyorsun 🔥':'Yazı odasında yazdıkça dolar'}</span></div></section>
-   ${qc}
-   <details class="hs-more" id="hsMore" ${UI.homeMore?'open':''}><summary>Daha fazlası <span class="hint">· widget'lar, takvim, raflar, öneriler</span></summary>${typeof widgetsHtml==='function'?widgetsHtml():''}${dashFull(true)}<div class="hs-sw"><button class="btn" type="button" data-hs="full">Eski ayrıntılı ana sayfaya dön</button></div></details>
+   ${cards.length?`<section class="hs-first"><h3 class="hs-h">Kaldığın yerden devam et</h3>${cards[0]}</section>`:`<section class="hs-empty"><b>Hoş geldin 🌿</b><span class="hint">Bir kitap ekleyerek ya da Defterlerim'den bir defter açarak başla.</span></section>`}
+   ${bkBanner()}
+   <section class="hs-today2 hs-lite"><h3 class="hs-h">Bugün <button class="lf-lnk" type="button" data-lf="go" data-v="today" style="font-size:13px;margin-left:6px">Hayatım →</button></h3>${lfTodayBox(true)}</section>
+   <details class="hs-more" id="hsMore" ${UI.homeMore?'open':''}><summary>Daha fazlası <span class="hint">· hedefler, nörobilim, deneyim, alıntı</span></summary>${wkNudge()}${cards.length>1?`<section><h3 class="hs-h">Diğer kaldığın yerler</h3><div class="hs-cont">${cards.slice(1).join('')}</div></section>`:''}<section class="hs-today"><div class="hs-g"><span>📖 Bugün okuma</span><b>${pg} <small>/ ${pgGoal} sayfa</small></b>${bar(pg,pgGoal)}</div><div class="hs-g"><span>✍️ Bugün yazma</span><b>${wt.toLocaleString('tr-TR')} <small>/ ${wGoal.toLocaleString('tr-TR')} kelime</small></b>${bar(wt,wGoal)}</div></section>${nsHomeCard()}<div style="margin-top:12px">${expCard(true)}</div>${qc}${typeof widgetsHtml==='function'?widgetsHtml():''}${dashFull(true)}<div class="hs-sw"><button class="btn" type="button" data-hs="full">Eski ayrıntılı ana sayfaya dön</button></div></details>
   </div>`}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-hs]');if(!b)return;const k=b.dataset.hs;
   if(k==='add'){$('addBtn').click();return}if(k==='idea'){$('ideaBtn').click();return}
@@ -5201,7 +5200,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v77';
+const DK_VER='v78';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&b.fileType!=='epub'&&!b.fileRemoved}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
