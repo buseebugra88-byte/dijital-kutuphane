@@ -1221,6 +1221,11 @@ html body .sidenav .sn-more{display:flex!important}
 .gb-b p{margin:6px 0 10px;line-height:1.6}.gb-otd{margin:6px 0 0;padding:0;list-style:none;display:grid;gap:8px}.gb-otd li{display:grid;grid-template-columns:56px 1fr;gap:10px;line-height:1.5}.gb-otd li span{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
 .gb-src{display:inline-block;margin-top:8px}
 body.kindle-soft :is(.chip,.seg button,.btn.on)[aria-pressed="true"]{background:var(--brass)!important;border-color:transparent!important;color:var(--on-brass,var(--paper))!important}
+.pgwrap.flipping{animation-duration:.22s!important}
+.in-next{animation:pgIn .24s cubic-bezier(.2,.7,.3,1) both}.in-prev{animation:pgInP .24s cubic-bezier(.2,.7,.3,1) both}
+@keyframes pgIn{from{transform:translateX(7%);opacity:.0}to{transform:none;opacity:1}}@keyframes pgInP{from{transform:translateX(-7%);opacity:0}to{transform:none;opacity:1}}
+.rstage article.epub.ep-in{animation:epIn .18s ease-out both}@keyframes epIn{from{opacity:0}to{opacity:1}}
+.rstage.ep-paged{touch-action:pan-y}
 </style>
 
 </head><body>
@@ -5230,7 +5235,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v87';
+const DK_VER='v88';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6963,7 +6968,8 @@ function epPgUI(){let el=$('epPg');if(!el){el=document.createElement('span');el.
   const L=EP.len[R.book.id];if(!L){el.textContent=EPG.on?`Sayfa ${EPG.n+1} / ${EPG.pages}`:'';epLens().then(x=>{if(x)epPgUI()});return}
   const i=R.page-1,sp=EPG.on&&EPG.spread?2:1,cpp=EPG.on?Math.max(250,(L[i]||1)/(EPG.pages*sp)):1500;let before=0;for(let k=0;k<i;k++)before+=L[k]||0;const tot=L.reduce((a,b)=>a+b,0);
   const cur=Math.round(before/cpp)+(EPG.on?EPG.n*sp+1:Math.floor(epFrac()*(L[i]||0)/cpp)+1),all=Math.max(cur+sp-1,Math.ceil(tot/cpp));el.textContent=sp>1?`Sayfa ${cur}–${cur+1} / ${all}`:`Sayfa ${cur} / ${all}`;el.title=epChTitle(i)||('Bölüm '+(i+1));const bk=R.book;if(bk&&(bk.epPage!==cur||bk.epPages!==all)){bk.epPage=cur;bk.epPages=all;clearTimeout(EPG.svT);EPG.svT=setTimeout(()=>{try{st.db.collection('books').doc(bk.id).update({epPage:bk.epPage,epPages:bk.epPages})}catch(e){}},2500)}}
-function epSetPage(n,smooth){const art=epArt();if(!art)return;EPG.n=Math.max(0,Math.min(EPG.pages-1,n));art.scrollTo({left:EPG.n*EPG.step,behavior:smooth?'smooth':'auto'});epPgUI();
+function epAnim(art,to,ms){cancelAnimationFrame(EPG.raf);const from=art.scrollLeft,d=to-from;if(!ms||Math.abs(d)<1||matchMedia('(prefers-reduced-motion: reduce)').matches){art.scrollLeft=to;return}const t0=performance.now();const step=t=>{const k=Math.min(1,(t-t0)/ms),e=1-Math.pow(1-k,3);art.scrollLeft=from+d*e;if(k<1)EPG.raf=requestAnimationFrame(step)};EPG.raf=requestAnimationFrame(step)}
+function epSetPage(n,smooth){const art=epArt();if(!art)return;EPG.n=Math.max(0,Math.min(EPG.pages-1,n));epAnim(art,EPG.n*EPG.step,smooth?230:0);epPgUI();
   R.pos=Math.round(epFrac()*1000)/1000;clearTimeout(EPG.t);EPG.t=setTimeout(()=>{try{saveMark(true)}catch(e){}epEta()},1200)}
 function epTurn(d){if(!EPG.on)return;const n=EPG.n+d;if(n<0){if(R.page>1){EPG.atEnd=true;goPage(R.page-1)}return}if(n>=EPG.pages){if(R.page<R.doc.numPages)goPage(R.page+1);return}epSetPage(n,true)}
 function epShowRect(rect){if(!rect)return;const st_=$('rStage'),sr=st_.getBoundingClientRect();
@@ -7015,6 +7021,15 @@ function epTtsMark(c){const art=epArt();if(!art||!c)return;art.querySelectorAll(
   if(rg&&epHasHl())CSS.highlights.set('dktts',new Highlight(rg));else{const P=epParas(art);P[c.p]&&P[c.p].classList.add('tts-p')}
   if(rg){const rs=rg.getClientRects();epShowRect(rs[rs.length-1]||rg.getBoundingClientRect())}}
 function epTtsClear(){try{if(epHasHl())CSS.highlights.delete('dktts')}catch(e){}document.querySelectorAll('.tts-p').forEach(x=>x.classList.remove('tts-p'));TTS.ep=null}
+
+/* EPUB: parmakla sürükleyerek sayfa çevirme */
+(function(){const st_=$('rStage');let D=null;
+  st_.addEventListener('touchstart',e=>{if(!R.epub||!EPG.on||e.touches.length!==1)return;const art=epArt();if(!art)return;cancelAnimationFrame(EPG.raf);D={x:e.touches[0].clientX,y:e.touches[0].clientY,s:EPG.n*EPG.step,art,dir:0,t:performance.now()}},{passive:true});
+  st_.addEventListener('touchmove',e=>{if(!D)return;const dx=e.touches[0].clientX-D.x,dy=e.touches[0].clientY-D.y;if(!D.dir){if(Math.abs(dx)<8&&Math.abs(dy)<8)return;D.dir=Math.abs(dx)>Math.abs(dy)?1:-1}
+    if(D.dir<0||String(getSelection()||'').trim()){return}e.preventDefault();const max=(EPG.pages-1)*EPG.step;let x=D.s-dx;if(x<0)x=x/3;else if(x>max)x=max+(x-max)/3;D.art.scrollLeft=x},{passive:false});
+  st_.addEventListener('touchend',e=>{if(!D)return;const d=D;D=null;if(d.dir!==1)return;const dx=e.changedTouches[0].clientX-d.x,v=Math.abs(dx)/Math.max(1,performance.now()-d.t);
+    if(Math.abs(dx)>Math.min(90,EPG.step*.18)||(v>.45&&Math.abs(dx)>25))epTurn(dx<0?1:-1);else epAnim(d.art,EPG.n*EPG.step,180)});
+  st_.addEventListener('touchcancel',()=>{if(D){epAnim(D.art,EPG.n*EPG.step,180);D=null}});})();
 /* düğmeler ve olaylar */
 (function(){const bar=document.querySelector('#reader .rbar'),ref=$('rHlBtn');if(!bar||!ref)return;
   const mk=(id,tx,ti)=>{const b=document.createElement('button');b.className='iconbtn ep-only';b.id=id;b.type='button';b.title=ti;b.setAttribute('aria-label',ti);b.textContent=tx;bar.insertBefore(b,ref);return b};
@@ -7952,7 +7967,7 @@ async function openReader(b){
 async function renderEpub(){
   const stage=$('rStage'),ep=R.epub,i=R.page-1;
   const html=await epubChapter(ep,i);if(R.epub!==ep)return;
-  stage.innerHTML=`<article class="epub" lang="${esc(ep.lang||'')}" style="font-size:${Math.round(18*R.scale)}px">${html}</article>`;
+  stage.innerHTML=`<article class="epub ep-in" lang="${esc(ep.lang||'')}" style="font-size:${Math.round(18*R.scale)}px">${html}</article>`;
   const rp=R.restorePos,atEnd=EPG.atEnd;R.restorePos=null;EPG.atEnd=false;$('reader').classList.add('is-epub');
   if(epFlowNow()==='page'){stage.scrollTop=0;await new Promise(z=>requestAnimationFrame(z));epPagedSetup(rp||0,atEnd);const art_=stage.querySelector('article.epub');art_&&art_.querySelectorAll('img').forEach(im=>{if(!im.complete)im.addEventListener('load',()=>{if(EPG.on){const f=epFrac();epPagedSetup(f)}},{once:true})});try{document.fonts&&document.fonts.ready.then(()=>{if(EPG.on&&R.epub===ep)epPagedSetup(epFrac())})}catch(e){}}
   else{epUnpage();if(rp!=null){requestAnimationFrame(()=>{stage.scrollTop=rp*(stage.scrollHeight-stage.clientHeight)})}else stage.scrollTop=0}
@@ -7975,9 +7990,7 @@ function pdfSpread(){return !!(R.doc&&!R.epub&&spreadOK()&&!isScroll()&&R.scale<
     const pg=await R.doc.getPage(R.page),stage=$('rStage');
     const base=pg.getViewport({scale:1}),cs=getComputedStyle(stage),avH=stage.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0)-8,fitW=Math.min(900,stage.clientWidth-32)/base.width,fit=avH>200?Math.min(fitW,avH/base.height):fitW;
     const vp=pg.getViewport({scale:fit*R.scale}),dpr=rdDpr(vp);
-    const c=document.createElement('canvas');c.width=Math.floor(vp.width*dpr);c.height=Math.floor(vp.height*dpr);
-    c.style.width=Math.floor(vp.width)+'px';c.setAttribute('aria-label','Sayfa '+R.page);
-    await pg.render({canvasContext:c.getContext('2d'),viewport:vp,transform:dpr!==1?[dpr,0,0,dpr,0,0]:null}).promise;
+    const c=await pcGet(pg,R.page,vp,dpr);c.setAttribute('aria-label','Sayfa '+R.page);PC.fit=fit;
     const wrap=document.createElement('div');wrap.className='pgwrap';wrap.style.width=c.style.width;
     const ink=document.createElement('canvas');ink.className='inklayer';ink.width=c.width;ink.height=c.height;
     wrap.appendChild(c);wrap.appendChild(ink);stage.classList.remove('scrollflow');SCR.key='';
@@ -7985,21 +7998,33 @@ function pdfSpread(){return !!(R.doc&&!R.epub&&spreadOK()&&!isScroll()&&R.scale<
     if(old&&dir&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const r=old.getBoundingClientRect(),sr=stage.getBoundingClientRect();ob={l:r.left-sr.left+stage.scrollLeft,t:r.top-sr.top+stage.scrollTop,w:r.width}}
     stage.querySelectorAll(':scope>.pgwrap:not(.flipping)').forEach(w=>{if(w!==old||!ob)rdFree(w)});stage.innerHTML='';stage.appendChild(wrap);
     if(ob){old.querySelectorAll('.inklayer').forEach(x=>x.remove());old.classList.add('flipping',dir>0?'fl-next':'fl-prev');Object.assign(old.style,{position:'absolute',left:ob.l+'px',top:ob.t+'px',width:ob.w+'px',margin:'0'});stage.appendChild(old);const rm=()=>{rdFree(old);old.remove()};old.addEventListener('animationend',rm);setTimeout(rm,700)}stage.scrollTop=0;
-    inkAttach(ink,R.book,R.page,dpr);rdW=stage.clientWidth;rdH=stage.clientHeight;try{rxAttach(wrap,R.page)}catch(e){}
+    if(dir&&!matchMedia('(prefers-reduced-motion: reduce)').matches)wrap.classList.add(dir>0?'in-next':'in-prev');
+    inkAttach(ink,R.book,R.page,dpr);rdW=stage.clientWidth;rdH=stage.clientHeight;try{rxAttach(wrap,R.page)}catch(e){}pcAhead(R.page,dir||1);
   }catch(e){}
   R.rendering=false;
   $('rPage').value=R.page;$('rPrev').disabled=R.page<=1;$('rNext').disabled=R.page>=R.doc.numPages;try{rxEta();rxOutline()}catch(e){}
   if(R.pending){R.pending=false;renderPage()}
 }
 
+
+/* PDF: sonraki sayfayı önceden çiz, çevirince anında gelsin */
+const PC={m:new Map(),fit:0,busy:false};
+function pcKey(n,vp,dpr){return (R.book&&R.book.id)+'|'+n+'|'+Math.round(vp.width)+'|'+dpr}
+async function pcRender(pg,vp,dpr){const c=document.createElement('canvas');c.width=Math.floor(vp.width*dpr);c.height=Math.floor(vp.height*dpr);c.style.width=Math.floor(vp.width)+'px';await pg.render({canvasContext:c.getContext('2d'),viewport:vp,transform:dpr!==1?[dpr,0,0,dpr,0,0]:null}).promise;return c}
+async function pcGet(pg,n,vp,dpr){const k=pcKey(n,vp,dpr),h=PC.m.get(k);if(h){PC.m.delete(k);return h}return await pcRender(pg,vp,dpr)}
+function pcTrim(keep){for(const [k,c] of PC.m){if(!keep.includes(k)){try{c.width=0;c.height=0}catch(e){}PC.m.delete(k)}}}
+function pcAhead(n,dir){clearTimeout(PC.t);PC.t=setTimeout(async()=>{if(PC.busy||!R.doc||R.epub||isScroll()||$('reader').hidden)return;PC.busy=true;const bk=R.book;
+  try{const targets=pdfSpread()?[n+2,n+3].map(x=>(n%2?x:x-1)):[n+dir];const keep=[];
+    for(const t of targets){if(t<1||t>R.doc.numPages||R.book!==bk)continue;const pg=await R.doc.getPage(t),base=pg.getViewport({scale:1});
+      const fit=pdfSpread()?PC.sfit:PC.fit;if(!fit)continue;const vp=pg.getViewport({scale:fit*(pdfSpread()?1:R.scale)}),dpr=rdDpr(vp),k=pcKey(t,vp,dpr);keep.push(k);if(!PC.m.has(k))PC.m.set(k,await pcRender(pg,vp,dpr))}
+    pcTrim(keep)}catch(e){}PC.busy=false},140)}
 async function renderSpread(){const stage=$('rStage'),L=R.page%2?R.page:R.page-1,nums=[L,L+1].filter(n=>n>=1&&n<=R.doc.numPages);
   const pgs=await Promise.all(nums.map(n=>R.doc.getPage(n))),b0=pgs[0].getViewport({scale:1}),cs=getComputedStyle(stage),avH=stage.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0)-8;
   const gap=14,fit=Math.min((stage.clientWidth-40-gap)/(b0.width*2),avH/b0.height);const box=document.createElement('div');box.className='pgspread';
-  for(let k=0;k<pgs.length;k++){const pg=pgs[k],vp=pg.getViewport({scale:fit}),dpr=rdDpr(vp),c=document.createElement('canvas');c.width=Math.floor(vp.width*dpr);c.height=Math.floor(vp.height*dpr);c.style.width=Math.floor(vp.width)+'px';c.setAttribute('aria-label','Sayfa '+nums[k]);
-    await pg.render({canvasContext:c.getContext('2d'),viewport:vp,transform:dpr!==1?[dpr,0,0,dpr,0,0]:null}).promise;
+  PC.sfit=fit;for(let k=0;k<pgs.length;k++){const pg=pgs[k],vp=pg.getViewport({scale:fit}),dpr=rdDpr(vp),c=await pcGet(pg,nums[k],vp,dpr);c.setAttribute('aria-label','Sayfa '+nums[k]);
     const w=document.createElement('div');w.className='pgwrap sp-'+(k?'r':'l');w.dataset.p=nums[k];w.style.width=c.style.width;const ink=document.createElement('canvas');ink.className='inklayer';ink.width=c.width;ink.height=c.height;w.appendChild(c);w.appendChild(ink);box.appendChild(w);
     try{inkAttach(ink,R.book,nums[k],dpr)}catch(e){}try{rxAttach(w,nums[k])}catch(e){}}
-  stage.querySelectorAll('.pgwrap').forEach(w=>rdFree(w));stage.classList.remove('scrollflow');SCR.key='';stage.innerHTML='';stage.appendChild(box);stage.scrollTop=0;rdW=stage.clientWidth;rdH=stage.clientHeight;R.flipDir=0}
+  stage.querySelectorAll('.pgwrap').forEach(w=>rdFree(w));stage.classList.remove('scrollflow');SCR.key='';stage.innerHTML='';const dir_=R.flipDir;if(dir_&&!matchMedia('(prefers-reduced-motion: reduce)').matches)box.classList.add(dir_>0?'in-next':'in-prev');stage.appendChild(box);stage.scrollTop=0;rdW=stage.clientWidth;rdH=stage.clientHeight;R.flipDir=0;pcAhead(L,1)}
 let posT;document.addEventListener('DOMContentLoaded',()=>{});
 $('rStage').addEventListener('scroll',()=>{if(!R.epub)return;const st_=$('rStage');R.pos=Math.round((st_.scrollTop/Math.max(1,st_.scrollHeight-st_.clientHeight))*1000)/1000;clearTimeout(posT);posT=setTimeout(()=>{if(Math.abs(R.pos-R.lastPos)>0.02)saveMark(true)},1500)},{passive:true});
 
@@ -8073,7 +8098,7 @@ document.addEventListener('keydown',e=>{
   else if(e.key==='Escape')closeReader();
 });
 let rx=null;$('rStage').addEventListener('touchstart',e=>{rx=(e.touches.length===1&&e.touches[0].touchType!=='stylus'&&!INK.finger)?e.touches[0].clientX:null},{passive:true});
-$('rStage').addEventListener('touchend',e=>{if(rx==null)return;const dx=e.changedTouches[0].clientX-rx;if(Math.abs(dx)>60&&(R.epub||R.scale<=1.01)&&!isScroll()){if(R.epub&&EPG.on){if(!String(getSelection()||'').trim())epTurn(dx<0?1:-1)}else goPage(R.page+(dx<0?1:-1))}rx=null});
+$('rStage').addEventListener('touchend',e=>{if(rx==null)return;const dx=e.changedTouches[0].clientX-rx;if(Math.abs(dx)>60&&(R.epub||R.scale<=1.01)&&!isScroll()){if(R.epub&&EPG.on){}else goPage(R.page+(dx<0?1:-1))}rx=null});
 window.addEventListener('resize',()=>{if(!$('reader').hidden){clearTimeout(R.rz);R.rz=setTimeout(renderPage,200)}});
 window.addEventListener('pagehide',()=>{saveMark()});
 
