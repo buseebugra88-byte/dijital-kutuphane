@@ -1815,8 +1815,8 @@ function dashFull(inner){setTimeout(maybeRecs,1500);
   const sh={};reads.forEach(b=>{const k=b.shelf||'Rafsız';sh[k]=(sh[k]||0)+1});const shk=Object.entries(sh).sort((a,b)=>b[1]-a[1]).slice(0,6),mx=Math.max(1,...shk.map(x=>x[1]));
   const recent=[...reads].sort((a,b)=>(b.addedAt||'').localeCompare(a.addedAt||'')).slice(0,10);
   const novels=B.filter(b=>b.kind==='roman');
-  const nowHtml=now.length?`<div class="nowlist">${now.map(b=>{const tot=b.pages||0,p=tot?Math.min(100,Math.round((b.currentPage||0)/tot*100)):0;
-      return `<div class="nowitem">${bookHtml(b)}<div><b>${esc(b.title)}</b><span class="hint">${esc(b.author||'')}</span>${tot?`<div class="bar2"><i style="width:${p}%"></i></div><span class="hint">${b.fileType==='epub'?'Bölüm':'Sayfa'} ${b.currentPage||0} / ${tot} · %${p}</span>`:`<div class="hint">${b.currentPage?'Sayfa '+b.currentPage:'Yeni başladın'}</div>`}${hasFile(b)?`<div style="margin-top:6px"><button class="readbtn" type="button" data-read="${b.id}">Devam et</button></div>`:''}</div></div>`}).join('')}</div>`
+  const nowHtml=now.length?`<div class="nowlist">${now.map(b=>{const G=bkProg(b),tot=G.t,p=G.p;
+      return `<div class="nowitem">${bookHtml(b)}<div><b>${esc(b.title)}</b><span class="hint">${esc(b.author||'')}</span>${tot?`<div class="bar2"><i style="width:${p}%"></i></div><span class="hint">${G.txt}${G.u?' · %'+p:''}</span>`:`<div class="hint">${b.currentPage?'Sayfa '+b.currentPage:'Yeni başladın'}</div>`}${hasFile(b)?`<div style="margin-top:6px"><button class="readbtn" type="button" data-read="${b.id}">Devam et</button></div>`:''}</div></div>`}).join('')}</div>`
     :`<p class="hint" style="margin:0">Şu an okuduğun bir kitap yok. Rafından birini aç ya da <b>🎲 Ne okusam?</b> de.</p>`;
   return `<div class="dash">
     ${widgetsHtml()}
@@ -1837,10 +1837,11 @@ function dashFull(inner){setTimeout(maybeRecs,1500);
       <div style="justify-self:end">${stampSvg('bunny',74)}</div></section>
   </div>`;
 }
+function bkProg(b){if(isEpubB(b)&&b.epPages>0){const c=Math.min(b.epPage||1,b.epPages),p=Math.min(100,Math.round(c/b.epPages*100));return {c,t:b.epPages,p,u:'Sayfa',txt:`Sayfa ${c} / ${b.epPages}`}}const t=b.pages||0,p=t?Math.min(100,Math.round((b.currentPage||0)/t*100)):0;if(isEpubB(b))return {c:b.currentPage||0,t,p,u:'',txt:`%${p} okundu`};return {c:b.currentPage||0,t,p,u:'Sayfa',txt:`Sayfa ${b.currentPage||0} / ${t}`}}
 function progHtml(b){
   if(b.kind==='roman'||!(b.currentPage>0))return'';
-  const tot=b.pages||0,pct=tot?Math.min(100,Math.round(b.currentPage/tot*100)):0;
-  return `<div class="prog">${tot?`<div class="track"><i style="width:${pct}%"></i></div>`:''}<span>🔖 ${b.fileType==='epub'?'Bölüm':'Sayfa'} ${b.currentPage}${tot?' / '+tot+' · %'+pct:''}</span></div>`;
+  const G=bkProg(b),tot=G.t,pct=G.p;
+  return `<div class="prog">${tot?`<div class="track"><i style="width:${pct}%"></i></div>`:''}<span>🔖 ${tot?G.txt+(G.u?' · %'+pct:''):G.u+' '+G.c}</span></div>`;
 }
 function render(){applySec();$('litBtn').hidden=true;$("vPanel").setAttribute("aria-pressed",st.view==="panel");document.body.classList.toggle("panel-mode",st.view==="panel");$("vRaf").setAttribute("aria-pressed",st.view==="raf");$("vKart").setAttribute("aria-pressed",st.view==="kart");renderGoal();renderTabs();renderSide();renderList()}
 
@@ -4394,8 +4395,8 @@ function homeSimple(){document.body.classList.add('home-simple');
   const W=TL.writing||{sessions:[],goal:500},wd={};(W.sessions||[]).forEach(s=>{wd[s.date]=(wd[s.date]||0)+(+s.words||0)});let ws=0;for(let i=0;i<365;i++){const d=new Date();d.setDate(d.getDate()-i);if(wd[todayKey(d)])ws++;else if(i>0)break}
   const pg=log[todayKey()]||0,pgGoal=(typeof wgData==='function'?wgData().pageGoal:30)||30,wt=wd[todayKey()]||0,wGoal=W.goal||500;
   const cards=[];
-  now.slice(0,1).forEach(b=>{const tot=b.pages||0,p=tot?Math.min(100,Math.round((b.currentPage||0)/tot*100)):0;
-    cards.push(`<div class="hs-c">${bookHtml(b)}<div class="hs-ct"><span class="hs-k">📖 Okuyorsun</span><b>${esc(b.title)}</b><span class="hint">${tot?`${b.fileType==='epub'?'Bölüm':'Sayfa'} ${b.currentPage||0} / ${tot}`:esc(b.author||'')}</span>${tot?`<div class="bar2"><i style="width:${p}%"></i></div>`:''}${hasFile(b)?`<button class="btn primary" type="button" data-read="${b.id}">Devam et</button>`:''}</div></div>`)});
+  now.slice(0,1).forEach(b=>{const G=bkProg(b),tot=G.t,p=G.p;
+    cards.push(`<div class="hs-c">${bookHtml(b)}<div class="hs-ct"><span class="hs-k">📖 Okuyorsun</span><b>${esc(b.title)}</b><span class="hint">${tot?G.txt:esc(b.author||'')}</span>${tot?`<div class="bar2"><i style="width:${p}%"></i></div>`:''}${hasFile(b)?`<button class="btn primary" type="button" data-read="${b.id}">Devam et</button>`:''}</div></div>`)});
   const nb=[...NB.books].sort((a,b)=>(b.opened||'').localeCompare(a.opened||''))[0];
   if(nb)cards.push(`<div class="hs-c"><div class="hs-nb" style="--c:${nb.color||'#9cc5a1'}">${nb.kind==='doc'?'📝':'📓'}</div><div class="hs-ct"><span class="hs-k">✏️ Defterin</span><b>${esc(nb.title||'Defter')}</b><span class="hint">${nbPagesOf(nb.id).length} sayfa</span><button class="btn primary" type="button" data-nb="open" data-id="${nb.id}">Aç</button></div></div>`);
   const ch=(TL.chapters||[]).filter(c=>c.updatedAt).sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||''))[0];const nv=ch&&B.find(b=>b.id===ch.novel);
@@ -5217,7 +5218,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v83';
+const DK_VER='v84';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6832,7 +6833,7 @@ function epRelayout(){if(!R.epub||$('reader').hidden||!epArt())return;if(epFlowN
 function epPgUI(){let el=$('epPg');if(!el){el=document.createElement('span');el.id='epPg';el.className='eppg';const f=document.querySelector('#reader .rfoot');if(f)f.insertBefore(el,$('rEta')||$('rSaved'))}if(!el)return;if(!R.epub||!R.book){el.textContent='';return}
   const L=EP.len[R.book.id];if(!L){el.textContent=EPG.on?`Sayfa ${EPG.n+1} / ${EPG.pages}`:'';epLens().then(x=>{if(x)epPgUI()});return}
   const i=R.page-1,cpp=EPG.on?Math.max(250,(L[i]||1)/EPG.pages):1500;let before=0;for(let k=0;k<i;k++)before+=L[k]||0;const tot=L.reduce((a,b)=>a+b,0);
-  const cur=Math.round(before/cpp)+(EPG.on?EPG.n+1:Math.floor(epFrac()*(L[i]||0)/cpp)+1),all=Math.max(cur,Math.ceil(tot/cpp));el.textContent=`Sayfa ${cur} / ${all}`;el.title=epChTitle(i)||('Bölüm '+(i+1))}
+  const cur=Math.round(before/cpp)+(EPG.on?EPG.n+1:Math.floor(epFrac()*(L[i]||0)/cpp)+1),all=Math.max(cur,Math.ceil(tot/cpp));el.textContent=`Sayfa ${cur} / ${all}`;el.title=epChTitle(i)||('Bölüm '+(i+1));const bk=R.book;if(bk&&(bk.epPage!==cur||bk.epPages!==all)){bk.epPage=cur;bk.epPages=all;clearTimeout(EPG.svT);EPG.svT=setTimeout(()=>{try{st.db.collection('books').doc(bk.id).update({epPage:bk.epPage,epPages:bk.epPages})}catch(e){}},2500)}}
 function epSetPage(n,smooth){const art=epArt();if(!art)return;EPG.n=Math.max(0,Math.min(EPG.pages-1,n));art.scrollTo({left:EPG.n*EPG.step,behavior:smooth?'smooth':'auto'});epPgUI();
   R.pos=Math.round(epFrac()*1000)/1000;clearTimeout(EPG.t);EPG.t=setTimeout(()=>{try{saveMark(true)}catch(e){}epEta()},1200)}
 function epTurn(d){if(!EPG.on)return;const n=EPG.n+d;if(n<0){if(R.page>1){EPG.atEnd=true;goPage(R.page-1)}return}if(n>=EPG.pages){if(R.page<R.doc.numPages)goPage(R.page+1);return}epSetPage(n,true)}
