@@ -1213,6 +1213,10 @@ html body .sidenav .sn-more{display:flex!important}
 .sn-div{display:block;height:1px;background:var(--line);margin:8px 12px}
 @media (max-width:860px){.sn-div{display:none}}
 @media (min-width:600px) and (max-width:860px){html body .sidenav{left:50%!important;right:auto!important;transform:translateX(-50%);width:min(560px,92vw)}html body .sidenav .sn-item .sn-ic svg{width:25px;height:25px}html body .sidenav .sn-item .sn-l::after{font-size:12.5px}html body .sidenav .sn-item{padding:9px 0 7px!important}.sn-pop{right:calc(50% - min(280px,46vw))}}
+.pgspread{display:flex;gap:14px;justify-content:center;align-items:flex-start}
+.pgspread .pgwrap{margin:0!important;box-shadow:0 10px 26px -14px rgba(0,0,0,.4)}
+.pgspread .sp-l{border-radius:6px 2px 2px 6px}.pgspread .sp-r{border-radius:2px 6px 6px 2px}
+.rstage.ep-paged article.epub.ep-spread{background-image:linear-gradient(90deg,transparent calc(50% - 14px),color-mix(in srgb,var(--ink) 7%,transparent) 50%,transparent calc(50% + 14px))}
 </style>
 
 </head><body>
@@ -1371,6 +1375,7 @@ html body .sidenav .sn-more{display:flex!important}
   </div>
   <div class="rpop" id="rPop" hidden>
     <div class="f"><label>Okuma şekli</label><div class="seg" id="rFlow"><button type="button" data-flow="scroll">Aşağı kaydır</button><button type="button" data-flow="page">Sayfa çevir</button></div></div>
+    <div class="f"><label>Yan tutunca</label><div class="seg" id="rSpread"><button type="button" data-spread="on">📖 İki sayfa</button><button type="button" data-spread="off">Tek sayfa</button></div></div>
     <div class="f"><label>Okurken üst ve alt çubuk</label><div class="seg" id="rAh"><button type="button" data-ah="1">Kendiliğinden gizle</button><button type="button" data-ah="0">Hep görünsün</button></div></div>
     <div class="f"><label>Sayfa rengi</label><div class="seg" id="rModes"><button type="button" data-m="light">Açık</button><button type="button" data-m="sepia">Sepya</button><button type="button" data-m="night">Gece</button></div></div>
     <div class="f"><label>Yazı tipi <span class="hint">(EPUB)</span></label><div class="seg" id="rFonts"><button type="button" data-f="lora" style="font-family:Lora,serif">Lora</button><button type="button" data-f="cormorant" style="font-family:'Cormorant Garamond',serif">Cormorant</button><button type="button" data-f="sans" style="font-family:'DM Sans',sans-serif">Sade</button><button type="button" data-f="literata" style="font-family:Literata,serif">Literata</button><button type="button" data-f="merri" style="font-family:Merriweather,serif">Merriweather</button><button type="button" data-f="garamond" style="font-family:'EB Garamond',serif">Garamond</button><button type="button" data-f="nunito" style="font-family:Nunito,sans-serif">Yuvarlak</button><button type="button" data-f="atkinson" style="font-family:'Atkinson Hyperlegible',sans-serif">Okunaklı</button></div></div>
@@ -2339,13 +2344,14 @@ let RS={mode:'light',font:'lora',line:'1.75',flow:'scroll',ah:'1'};try{const c=J
 const RFONT={lora:'"Lora",Georgia,serif',cormorant:'"Cormorant Garamond",Georgia,serif',sans:'"DM Sans",system-ui,sans-serif',literata:'"Literata",Georgia,serif',merri:'"Merriweather",Georgia,serif',garamond:'"EB Garamond",Georgia,serif',atkinson:'"Atkinson Hyperlegible",system-ui,sans-serif',nunito:'"Nunito",system-ui,sans-serif'};
 function applyRS(){const r=$('reader');r.classList.remove('mode-light','mode-sepia','mode-night');r.classList.add('mode-'+RS.mode);
   r.classList.toggle('ah',RS.ah==='1');if(RS.ah!=='1')r.classList.remove('bars-off');r.style.setProperty('--efont',RFONT[RS.font]||RFONT.lora);r.style.setProperty('--eline',RS.line);r.style.setProperty('--ewidth',{n:'560px',m:'680px',w:'900px'}[RS.marg||'m']);r.dataset.align=RS.align||'left';
-  [['rModes','m',RS.mode],['rFonts','f',RS.font],['rLines','l',RS.line],['rFlow','flow',epFlowNow()],['rAh','ah',RS.ah],['rMarg','marg',RS.marg||'m'],['rAlign','align',RS.align||'left']].forEach(([id,k,v])=>$(id).querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset[k]===v)));
+  [['rModes','m',RS.mode],['rFonts','f',RS.font],['rLines','l',RS.line],['rFlow','flow',epFlowNow()],['rAh','ah',RS.ah],['rSpread','spread',RS.spread||'on'],['rMarg','marg',RS.marg||'m'],['rAlign','align',RS.align||'left']].forEach(([id,k,v])=>$(id).querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset[k]===v)));
   try{localStorage.setItem('dk-read',JSON.stringify(RS))}catch(e){}try{if(typeof EPG!=='undefined'&&R.epub)requestAnimationFrame(epRelayout)}catch(e){}}
 $('rModeBtn').addEventListener('click',()=>{const h=!$('rPop').hidden;$('rPop').hidden=h;$('rModeBtn').setAttribute('aria-expanded',!h);$('rAskBox').hidden=true});
 $('rModes').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if(b){RS.mode=b.dataset.m;applyRS()}});
 $('rFonts').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b){RS.font=b.dataset.f;applyRS()}});
 $('rLines').addEventListener('click',e=>{const b=e.target.closest('[data-l]');if(b){RS.line=b.dataset.l;applyRS()}});
 $('rFlow').addEventListener('click',e=>{const b=e.target.closest('[data-flow]');if(b){if(R.epub){RS.eflow=b.dataset.flow;applyRS();epRelayout()}else if(RS.flow!==b.dataset.flow){RS.flow=b.dataset.flow;applyRS();SCR.key='';if(R.doc)renderPage()}}});
+$('rSpread').addEventListener('click',e=>{const b=e.target.closest('[data-spread]');if(!b)return;RS.spread=b.dataset.spread;applyRS();if(R.epub)epRelayout();else if(R.doc){SCR.key='';renderPage()}});
 $('rAh').addEventListener('click',e=>{const b=e.target.closest('[data-ah]');if(b){RS.ah=b.dataset.ah;applyRS()}});
 $('rStage').addEventListener('click',e=>{const wasOpen=!$('rPop').hidden;$('rPop').hidden=true;$('rModeBtn').setAttribute('aria-expanded','false');if(wasOpen||e.target.closest('a,button,input,select,textarea,[data-epl],mark.rxm'))return;if(R.epub&&EPG.on&&!String(getSelection()||'').trim()){const w=$('rStage').clientWidth,x=e.clientX-$('rStage').getBoundingClientRect().left;if(x>w*0.7)return epTurn(1);if(x<w*0.3)return epTurn(-1)}if(R.doc&&!R.epub&&!isScroll()&&$('inkBar').hidden){const w=$('rStage').clientWidth,x=e.clientX-$('rStage').getBoundingClientRect().left;if(x>w*0.7)return goPage(R.page+1);if(x<w*0.3)return goPage(R.page-1)}barsToggle()});
 applyRS();
@@ -5218,7 +5224,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v85';
+const DK_VER='v86';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6685,7 +6691,7 @@ async function rxDefine(w,x,y){if(!w)return;const old=$('rxDef');if(old)old.remo
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-rxd="x"]')){const d=$('rxDef');d&&d.remove()}});
 (function(){const st_=$('rStage');let T=null,P=null;
   st_.addEventListener('pointerdown',e=>{if(RX.mode||!$('inkBar').hidden||R.epub||e.button>0)return;if(e.target.closest('.rxh,.rxe'))return;const host=e.target.closest('.pgwrap,.spage');if(!host)return;
-    P={x:e.clientX,y:e.clientY};clearTimeout(T);T=setTimeout(async()=>{const n=host.classList.contains('spage')?+host.dataset.p:R.page;const w=await rxWordAt(host,n,P.x,P.y);if(w){RX.lp=Date.now();rxDefine(w,P.x,P.y)}},520)});
+    P={x:e.clientX,y:e.clientY};clearTimeout(T);T=setTimeout(async()=>{const n=host.dataset.p?+host.dataset.p:R.page;const w=await rxWordAt(host,n,P.x,P.y);if(w){RX.lp=Date.now();rxDefine(w,P.x,P.y)}},520)});
   st_.addEventListener('pointermove',e=>{if(P&&Math.hypot(e.clientX-P.x,e.clientY-P.y)>10){clearTimeout(T);P=null}});
   ['pointerup','pointercancel'].forEach(t=>st_.addEventListener(t,()=>{clearTimeout(T);P=null}));
   st_.addEventListener('click',e=>{if(Date.now()-(RX.lp||0)<700){e.stopPropagation();e.preventDefault()}},true);
@@ -6825,17 +6831,18 @@ function epHasHl(){return !!(window.CSS&&CSS.highlights&&window.Highlight)}
 /* sayfa sayfa çevirme */
 function epPagedSetup(frac,atEnd){const stage=$('rStage'),art=epArt();if(!art)return;stage.classList.add('ep-paged');EPG.on=true;stage.scrollTop=0;
   const cs=getComputedStyle(stage),H=stage.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom)-4;art.style.setProperty('--eph',Math.max(240,H)+'px');
-  const ac=getComputedStyle(art);EPG.padL=parseFloat(ac.paddingLeft);const cw=art.clientWidth-EPG.padL-parseFloat(ac.paddingRight),G=Math.round(EPG.padL*2);EPG.cw=cw;EPG.step=cw+G;
+  EPG.spread=spreadOK();art.classList.toggle('ep-spread',EPG.spread);art.style.maxWidth=EPG.spread?Math.min(stage.clientWidth-24,1500)+'px':'';
+  const ac=getComputedStyle(art);EPG.padL=parseFloat(ac.paddingLeft);const CW=art.clientWidth-EPG.padL-parseFloat(ac.paddingRight),G=Math.round(EPG.padL*2);const cw=EPG.spread?(CW-G)/2:CW;EPG.cw=CW;EPG.step=CW+G;
   art.style.setProperty('--epcw',cw+'px');art.style.setProperty('--epg',G+'px');
   EPG.pages=Math.max(1,Math.round((art.scrollWidth-EPG.padL-parseFloat(ac.paddingRight)+G)/EPG.step));
   EPG.n=atEnd?EPG.pages-1:Math.max(0,Math.min(EPG.pages-1,Math.round((frac||0)*(EPG.pages-1))));art.scrollLeft=EPG.n*EPG.step;epPgUI()}
-function epUnpage(){const stage=$('rStage');stage.classList.remove('ep-paged');EPG.on=false;const art=epArt();if(art){art.scrollLeft=0;['--eph','--epcw','--epg'].forEach(k=>art.style.removeProperty(k))}epPgUI()}
+function epUnpage(){const stage=$('rStage');stage.classList.remove('ep-paged');EPG.on=false;EPG.spread=false;const art=epArt();if(art){art.scrollLeft=0;art.style.maxWidth='';art.classList.remove('ep-spread');['--eph','--epcw','--epg'].forEach(k=>art.style.removeProperty(k))}epPgUI()}
 function epFrac(){if(EPG.on)return EPG.pages>1?EPG.n/(EPG.pages-1):0;const st_=$('rStage');return st_.scrollHeight>st_.clientHeight+4?st_.scrollTop/(st_.scrollHeight-st_.clientHeight):0}
 function epRelayout(){if(!R.epub||$('reader').hidden||!epArt())return;if(epFlowNow()==='page'){const f=EPG.pend!=null?EPG.pend:epFrac();EPG.pend=f;epUnpage();requestAnimationFrame(()=>{EPG.pend=null;epPagedSetup(f)})}else if(EPG.on){const f=epFrac();epUnpage();const st_=$('rStage');st_.scrollTop=f*(st_.scrollHeight-st_.clientHeight)}}
 function epPgUI(){let el=$('epPg');if(!el){el=document.createElement('span');el.id='epPg';el.className='eppg';const f=document.querySelector('#reader .rfoot');if(f)f.insertBefore(el,$('rEta')||$('rSaved'))}if(!el)return;if(!R.epub||!R.book){el.textContent='';return}
   const L=EP.len[R.book.id];if(!L){el.textContent=EPG.on?`Sayfa ${EPG.n+1} / ${EPG.pages}`:'';epLens().then(x=>{if(x)epPgUI()});return}
-  const i=R.page-1,cpp=EPG.on?Math.max(250,(L[i]||1)/EPG.pages):1500;let before=0;for(let k=0;k<i;k++)before+=L[k]||0;const tot=L.reduce((a,b)=>a+b,0);
-  const cur=Math.round(before/cpp)+(EPG.on?EPG.n+1:Math.floor(epFrac()*(L[i]||0)/cpp)+1),all=Math.max(cur,Math.ceil(tot/cpp));el.textContent=`Sayfa ${cur} / ${all}`;el.title=epChTitle(i)||('Bölüm '+(i+1));const bk=R.book;if(bk&&(bk.epPage!==cur||bk.epPages!==all)){bk.epPage=cur;bk.epPages=all;clearTimeout(EPG.svT);EPG.svT=setTimeout(()=>{try{st.db.collection('books').doc(bk.id).update({epPage:bk.epPage,epPages:bk.epPages})}catch(e){}},2500)}}
+  const i=R.page-1,sp=EPG.on&&EPG.spread?2:1,cpp=EPG.on?Math.max(250,(L[i]||1)/(EPG.pages*sp)):1500;let before=0;for(let k=0;k<i;k++)before+=L[k]||0;const tot=L.reduce((a,b)=>a+b,0);
+  const cur=Math.round(before/cpp)+(EPG.on?EPG.n*sp+1:Math.floor(epFrac()*(L[i]||0)/cpp)+1),all=Math.max(cur+sp-1,Math.ceil(tot/cpp));el.textContent=sp>1?`Sayfa ${cur}–${cur+1} / ${all}`:`Sayfa ${cur} / ${all}`;el.title=epChTitle(i)||('Bölüm '+(i+1));const bk=R.book;if(bk&&(bk.epPage!==cur||bk.epPages!==all)){bk.epPage=cur;bk.epPages=all;clearTimeout(EPG.svT);EPG.svT=setTimeout(()=>{try{st.db.collection('books').doc(bk.id).update({epPage:bk.epPage,epPages:bk.epPages})}catch(e){}},2500)}}
 function epSetPage(n,smooth){const art=epArt();if(!art)return;EPG.n=Math.max(0,Math.min(EPG.pages-1,n));art.scrollTo({left:EPG.n*EPG.step,behavior:smooth?'smooth':'auto'});epPgUI();
   R.pos=Math.round(epFrac()*1000)/1000;clearTimeout(EPG.t);EPG.t=setTimeout(()=>{try{saveMark(true)}catch(e){}epEta()},1200)}
 function epTurn(d){if(!EPG.on)return;const n=EPG.n+d;if(n<0){if(R.page>1){EPG.atEnd=true;goPage(R.page-1)}return}if(n>=EPG.pages){if(R.page<R.doc.numPages)goPage(R.page+1);return}epSetPage(n,true)}
@@ -7835,12 +7842,15 @@ function rdDpr(vp){const d=Math.min(2.5,window.devicePixelRatio||1),max=/iP(hone
 function rdFree(root){if(!root)return;root.querySelectorAll('canvas').forEach(c=>{try{c.width=0;c.height=0}catch(e){}})}
 let rdRz,rdW=0,rdH=0;function rdResize(){if(!R.book||$('reader').hidden||R.epub||!R.doc)return;const st_=$('rStage');if(Math.abs(st_.clientWidth-rdW)<4&&Math.abs(st_.clientHeight-rdH)<40)return;rdW=st_.clientWidth;rdH=st_.clientHeight;SCR.key='';R.flipDir=0;renderPage()}
 window.addEventListener('resize',()=>{clearTimeout(rdRz);rdRz=setTimeout(rdResize,250)});window.addEventListener('orientationchange',()=>{clearTimeout(rdRz);rdRz=setTimeout(rdResize,400)});
-async function renderPage(){
+function spreadOK(){return RS.spread!=='off'&&innerWidth>=900&&innerWidth>innerHeight}
+function pdfSpread(){return !!(R.doc&&!R.epub&&spreadOK()&&!isScroll()&&R.scale<=1.01)}
+ async function renderPage(){
   if(!R.doc)return;$('reader').classList.toggle('is-epub',!!R.epub);if(!R.epub&&EPG.on)epUnpage();
   if(R.epub){if(R.firstEpub!==R.book){R.firstEpub=R.book;R.restorePos=R.pos||0}return renderEpub()}
   if(isScroll())return renderScroll();
   if(R.rendering){R.pending=true;return}
   R.rendering=true;
+  if(pdfSpread()){try{await renderSpread()}catch(e){console.warn(e)}R.rendering=false;$('rPage').value=R.page;$('rPrev').disabled=R.page<=1;$('rNext').disabled=(R.page%2?R.page:R.page-1)+1>=R.doc.numPages;try{rxEta();rxOutline()}catch(e){}if(R.pending){R.pending=false;renderPage()}return}
   try{
     const pg=await R.doc.getPage(R.page),stage=$('rStage');
     const base=pg.getViewport({scale:1}),cs=getComputedStyle(stage),avH=stage.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0)-8,fitW=Math.min(900,stage.clientWidth-32)/base.width,fit=avH>200?Math.min(fitW,avH/base.height):fitW;
@@ -7861,6 +7871,15 @@ async function renderPage(){
   $('rPage').value=R.page;$('rPrev').disabled=R.page<=1;$('rNext').disabled=R.page>=R.doc.numPages;try{rxEta();rxOutline()}catch(e){}
   if(R.pending){R.pending=false;renderPage()}
 }
+
+async function renderSpread(){const stage=$('rStage'),L=R.page%2?R.page:R.page-1,nums=[L,L+1].filter(n=>n>=1&&n<=R.doc.numPages);
+  const pgs=await Promise.all(nums.map(n=>R.doc.getPage(n))),b0=pgs[0].getViewport({scale:1}),cs=getComputedStyle(stage),avH=stage.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0)-8;
+  const gap=14,fit=Math.min((stage.clientWidth-40-gap)/(b0.width*2),avH/b0.height);const box=document.createElement('div');box.className='pgspread';
+  for(let k=0;k<pgs.length;k++){const pg=pgs[k],vp=pg.getViewport({scale:fit}),dpr=rdDpr(vp),c=document.createElement('canvas');c.width=Math.floor(vp.width*dpr);c.height=Math.floor(vp.height*dpr);c.style.width=Math.floor(vp.width)+'px';c.setAttribute('aria-label','Sayfa '+nums[k]);
+    await pg.render({canvasContext:c.getContext('2d'),viewport:vp,transform:dpr!==1?[dpr,0,0,dpr,0,0]:null}).promise;
+    const w=document.createElement('div');w.className='pgwrap sp-'+(k?'r':'l');w.dataset.p=nums[k];w.style.width=c.style.width;const ink=document.createElement('canvas');ink.className='inklayer';ink.width=c.width;ink.height=c.height;w.appendChild(c);w.appendChild(ink);box.appendChild(w);
+    try{inkAttach(ink,R.book,nums[k],dpr)}catch(e){}try{rxAttach(w,nums[k])}catch(e){}}
+  stage.querySelectorAll('.pgwrap').forEach(w=>rdFree(w));stage.classList.remove('scrollflow');SCR.key='';stage.innerHTML='';stage.appendChild(box);stage.scrollTop=0;rdW=stage.clientWidth;rdH=stage.clientHeight;R.flipDir=0}
 let posT;document.addEventListener('DOMContentLoaded',()=>{});
 $('rStage').addEventListener('scroll',()=>{if(!R.epub)return;const st_=$('rStage');R.pos=Math.round((st_.scrollTop/Math.max(1,st_.scrollHeight-st_.clientHeight))*1000)/1000;clearTimeout(posT);posT=setTimeout(()=>{if(Math.abs(R.pos-R.lastPos)>0.02)saveMark(true)},1500)},{passive:true});
 
@@ -7908,7 +7927,7 @@ $('rStage').addEventListener('scroll',()=>{
     while(lo<hi){const m=(lo+hi+1)>>1;if(SCR.els[m].offsetTop<=mid)lo=m;else hi=m-1}
     const n=lo+1;if(n!==R.page){R.page=n;footSync();queueSave()}})},{passive:true});
 function goPage(n){
-  if(!R.doc)return;n=Math.max(1,Math.min(R.doc.numPages,n|0));if(n===R.page){$('rPage').value=n;return}
+  if(!R.doc)return;if(pdfSpread()){const L=R.page%2?R.page:R.page-1;if(n===R.page+1)n=L+2;else if(n===R.page-1)n=Math.max(1,L-2);if(n>R.doc.numPages&&L+1<=R.doc.numPages&&n===L+2)return}n=Math.max(1,Math.min(R.doc.numPages,n|0));if(n===R.page){$('rPage').value=n;return}
   R.flipDir=n>R.page?1:-1;R.page=n;R.pos=0;if(isScroll()){scrollToPage(n);footSync()}else{renderPage();barsHide()}queueSave();
 }
 function queueSave(){clearTimeout(R.saveT);$('rSaved').textContent='';R.saveT=setTimeout(saveMark,1200)}
