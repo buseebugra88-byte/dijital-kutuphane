@@ -5217,7 +5217,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v82';
+const DK_VER='v83';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -5254,7 +5254,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-dk="sharea
 let DKAS={busy:false};
 async function dkAutoShare(){if(DKAS.busy||typeof LOCAL==='undefined'||typeof GAUTH==='undefined'||!GAUTH.configured||!GAUTH.configured()||!GAUTH.signedIn||!GAUTH.signedIn()||UI.autoShare==='off'||!st.ready)return;
   let since='';try{since=localStorage.getItem('dk-as-since')||''}catch(e){}if(!since){since=new Date().toISOString();try{localStorage.setItem('dk-as-since',since)}catch(e){}}
-  const L=st.books.filter(b=>dkHere(b)&&(b.addedAt||'')>=since&&!(b.fileSize>80*1048576));if(!L.length)return;DKAS.busy=true;let n=0;
+  const L=st.books.filter(b=>dkHere(b)&&(b.addedAt||'')>=since&&!(b.fileSize>80*1048576)).slice(0,12);if(!L.length)return;DKAS.busy=true;let n=0;
   for(const b of L){try{await dkShareBook(b);n++}catch(e){if(e&&/Drive bağlantısı/.test(e.ui||''))break}}DKAS.busy=false;if(n)toast(`☁️ ${n} yeni kitap tüm cihazlarına gönderildi`)}
 setTimeout(dkAutoShare,6000);setInterval(dkAutoShare,90000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(dkAutoShare,3000)});
 /* sürüm kontrolü */
@@ -7549,7 +7549,7 @@ function bulkMark(){
     const key=it.file.size+'|'+it.file.name;
     const dr=driveRec(it.file);it.migrate=null;it.wish=false;
     const wk=trLow(it.title||'').replace(/[^\p{L}\p{N} ]/gu,'').trim(),wm=st.books.find(b=>!b.assetId&&(!b.driveId||!driveCanOpen(b))&&b.fileName&&trLow(b.fileName)===trLow(it.file.name))||(wk.length>2?st.books.find(b=>!b.assetId&&(!b.driveId||!driveCanOpen(b))&&b.kind!=='makale'&&trLow(b.title||'').replace(/[^\p{L}\p{N} ]/gu,'').trim()===wk):null);
-    if(sizes.has(it.file.size)||names.has(trLow(it.file.name))){it.state='skip';it.msg='zaten rafta'}
+    if(sizes.has(it.file.size)||names.has(trLow(it.file.name))){const r_=local.find(b=>b.fileSize===it.file.size||trLow(b.fileName||'')===trLow(it.file.name));it.attach=null;if(r_&&typeof LOCAL!=='undefined'&&r_.assetId&&!LOCAL.has(r_.assetId)&&!(r_.parts&&r_.parts.length>1)){it.attach=r_.id;it.title=r_.title;if(!wasOff){it.state='wait';it.msg='rafta var, dosyası bu cihaza eklenecek ✨'}}else{it.state='skip';it.msg='zaten rafta'}}
     else if(dr&&driveCanOpen(dr)){it.state='skip';it.msg="Drive'da, açılabiliyor"}
     else if(dr){it.migrate=dr.id;it.title=dr.title;it.author=dr.author;it.shelf=dr.shelf;if(!wasOff){it.state='wait';it.msg="Drive'dan uygulamaya taşınacak"}}
     else if(wm){it.migrate=wm.id;it.wish=true;it.title=wm.title;if(!wasOff){it.state='wait';it.msg='rafındaki kayda bağlanacak ✨'}}
@@ -7601,6 +7601,7 @@ async function bulkRun(){
     if(!(toDrive&&!DRIVE_SLOW)&&used+est>cap){it.state='err';it.msg='depolama dolu · Ayarlar → Depolama';bulkRender();continue}
     it.state='run';const row=()=>{const el=$('bulkList').querySelector(`[data-i="${i}"]`);if(el){el.outerHTML=bulkRow(it,i);const ne=$('bulkList').querySelector(`[data-i="${i}"]`);ne&&ne.scrollIntoView({block:'nearest'})}};
     it.msg='hazırlanıyor';row();
+    if(it.attach){const r_=st.books.find(b=>b.id===it.attach);try{await LOCAL.assets.putId(r_.assetId,new Blob([await it.file.arrayBuffer()],{type:(/\.epub$/i.test(it.file.name)||isEpubB(r_))?'application/epub+zip':'application/pdf'}));used+=it.file.size;it.state='ok';it.msg='dosyası bu cihaza eklendi ✓'}catch(e){it.state='err';it.msg=errText(e)}row();bulkRender();continue}
     try{
       if(toDrive&&!DRIVE_SLOW){let r2=null;try{it.msg='hazırlanıyor';row();r2=await uploadPdfToDriveParts(it.file,m=>{it.msg=m;row()})}
         catch(de){console.warn('drive parça',de);if(B.stop||used+it.file.size*1.05>cap)throw de;DRIVE_SLOW=true;it.msg='Drive yanıt vermedi, uygulamaya taşınıyor';row()}
