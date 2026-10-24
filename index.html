@@ -5218,7 +5218,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v84';
+const DK_VER='v85';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -5233,13 +5233,15 @@ async function dkShareBook(b,onP){if(typeof GAUTH==='undefined'||!GAUTH.configur
     id=(await (await gfetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',1,{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+bd},body})).json()).id}
   if(!id)throw{ui:'Drive\'a yüklenemedi.'};
   try{const C=await caches.open('dk-books');await C.put('https://dk-offline/drive/'+encodeURIComponent(id),new Response(blob,{headers:{'Content-Type':'application/octet-stream'}}))}catch(e){}
-  await st.db.collection('books').doc(b.id).update({source:'drive',driveId:id,fileType:isEpubB(b)?'epub':'pdf'});Object.assign(b,{source:'drive',driveId:id});return id}
+  await st.db.collection('books').doc(b.id).update({source:'drive',driveId:id,fileType:isEpubB(b)?'epub':'pdf',wantDrive:false});Object.assign(b,{source:'drive',driveId:id,wantDrive:false});return id}
 function dkMissingDlg(b){const drive=typeof GAUTH!=='undefined'&&GAUTH.configured&&GAUTH.configured();
   const FT_=isEpubB(b)?'EPUB':'PDF';msModal(`<div class="eyebrow">📄 ${FT_} bu cihazda yok</div><b>${esc(b.title)}</b>
    <p class="hint" style="margin:0">Bu kitabı başka bir cihazından eklemişsin. Kaldığın yer buraya geldi ama ${FT_} dosyası o cihazda duruyor. Dosyayı bir kez Drive'a gönderirsen artık her cihazında açılır.</p>
    <div class="lfc"><b>En kolayı:</b><ol class="lf-ol" style="margin:4px 0"><li>Kitabı eklediğin cihazda uygulamayı aç.</li><li>Bu kitabı aç → çıkan <b>“☁️ Tüm cihazlarda aç”</b>a bas<br><span class="hint">ya da Ayarlar → Depolama → “Kitaplarımı tüm cihazlarda aç”.</span></li><li>Burada kitap kendiliğinden açılır.</li></ol></div>
-   <div class="lfc"><b>Ya da</b> PDF bu cihazda da varsa (Dosyalar'da) şimdi seç:<input type="file" id="dkMF" accept="application/pdf,.pdf,application/epub+zip,.epub"><span class="hint" id="dkMM"></span></div>
+   <div class="lfc"><b>☁️ Diğer cihazımdan iste</b><span class="hint">Kitabın olduğu cihaz (ör. telefonun) uygulamayı bir sonraki açışında dosyayı kendiliğinden Drive'a gönderir; sonra burada açılır. İki cihazda da Google'a giriş yapılmış olmalı.</span><button class="btn primary" type="button" id="dkWant" ${b.wantDrive?'disabled':''}>${b.wantDrive?'İstendi ✓ — diğer cihazını aç':'Diğer cihazımdan iste'}</button></div>
+   <div class="lfc"><b>Ya da</b> dosya bu cihazda da varsa (Dosyalar'da) şimdi seç:<input type="file" id="dkMF" accept="application/pdf,.pdf,application/epub+zip,.epub"><span class="hint" id="dkMM"></span></div>
    ${drive?'':'<span class="hint">Not: Tüm cihazlarda açmak için Ayarlar → Google Drive\'a bağlanman gerekir.</span>'}`);
+  $('dkWant').addEventListener('click',async e=>{const x=e.currentTarget;x.disabled=true;try{await st.db.collection('books').doc(b.id).update({wantDrive:true});b.wantDrive=true;x.textContent='İstendi ✓ — diğer cihazını aç';try{if(typeof driveSync==='function')Promise.resolve(driveSync(true)).catch(()=>{})}catch(_){}}catch(_){x.disabled=false;toast('Olmadı, tekrar dene')}});
   $('dkMF').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;$('dkMM').textContent='Ekleniyor…';try{await LOCAL.assets.putId(b.assetId,new Blob([await f.arrayBuffer()],{type:isEpubB(b)?'application/epub+zip':'application/pdf'}));msClose();toast('Kitap bu cihaza eklendi ✓');openReader(b)}catch(x){$('dkMM').textContent='Eklenemedi'}})}
 function dkShareBar(b){const old=$('dkShareBar');if(old)old.remove();if(!dkHere(b)||typeof GAUTH==='undefined'||!GAUTH.configured())return;try{if(localStorage.getItem('dk-share-no-'+b.id))return}catch(e){}
   const d=document.createElement('div');d.id='dkShareBar';d.className='dk-share';d.innerHTML=`<span>☁️ Bu kitap şu an sadece bu cihazda. iPad'inde ve telefonunda da açılsın mı?</span><button class="btn primary" type="button" id="dkSY">Tüm cihazlarda aç</button><button class="btn" type="button" id="dkSN">Şimdi değil</button>`;
@@ -5255,8 +5257,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-dk="sharea
 let DKAS={busy:false};
 async function dkAutoShare(){if(DKAS.busy||typeof LOCAL==='undefined'||typeof GAUTH==='undefined'||!GAUTH.configured||!GAUTH.configured()||!GAUTH.signedIn||!GAUTH.signedIn()||UI.autoShare==='off'||!st.ready)return;
   let since='';try{since=localStorage.getItem('dk-as-since')||''}catch(e){}if(!since){since=new Date().toISOString();try{localStorage.setItem('dk-as-since',since)}catch(e){}}
-  const L=st.books.filter(b=>dkHere(b)&&(b.addedAt||'')>=since&&!(b.fileSize>80*1048576)).slice(0,12);if(!L.length)return;DKAS.busy=true;let n=0;
-  for(const b of L){try{await dkShareBook(b);n++}catch(e){if(e&&/Drive bağlantısı/.test(e.ui||''))break}}DKAS.busy=false;if(n)toast(`☁️ ${n} yeni kitap tüm cihazlarına gönderildi`)}
+  const L=st.books.filter(b=>dkHere(b)&&(b.wantDrive||((b.addedAt||'')>=since&&!(b.fileSize>80*1048576)))).sort((a,b)=>(b.wantDrive?1:0)-(a.wantDrive?1:0)).slice(0,12);if(!L.length)return;DKAS.busy=true;let n=0;
+  for(const b of L){try{await dkShareBook(b);n++}catch(e){if(e&&/Drive bağlantısı/.test(e.ui||''))break}}DKAS.busy=false;if(n){toast(`☁️ ${n} kitap tüm cihazlarına gönderildi`);try{if(typeof driveSync==='function')setTimeout(()=>Promise.resolve(driveSync(true)).catch(()=>{}),1500)}catch(e){}}}
 setTimeout(dkAutoShare,6000);setInterval(dkAutoShare,90000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(dkAutoShare,3000)});
 /* sürüm kontrolü */
 async function dkVerCheck(){if(typeof LOCAL==='undefined'||DK_VER.startsWith('__'))return;try{const t=await (await fetch('sw.js?'+Date.now(),{cache:'no-store'})).text();const m=/kutuphane-(v\d+)/.exec(t);if(m&&m[1]!==DK_VER&&!$('dkVer')){const d=document.createElement('button');d.id='dkVer';d.type='button';d.className='dk-ver';d.textContent='✨ Yeni sürüm hazır — dokun, yenilensin';
