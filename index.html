@@ -5271,7 +5271,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v96';
+const DK_VER='v97';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6911,7 +6911,11 @@ async function pbStores(isbn,diag){const q=encodeURIComponent(isbn);const S=[
   try{return await Promise.any(S.map(one))}catch(e){return null}}
 async function pbLookup(isbn){if(PB.busy)return;PB.busy=true;const btn=$('pbGo');if(btn)btn.disabled=true;pbInfo('🔎 İnternette aranıyor…');
   try{const t=$('fTitle').value.trim(),a=$('fAuthor').value.trim();if(!isbn&&!t){pbInfo('Önce barkodu çek, ISBN yaz ya da kitabın adını yaz.');return}
-    const diag=[];let gst='';const gb=async(q,lang)=>{try{const r=await fetch('https://www.googleapis.com/books/v1/volumes?maxResults=8&printType=books&q='+encodeURIComponent(q)+(lang?'&langRestrict='+lang:'')+gbKey());if(!r.ok){gst=r.status===429?'Google Books şu an yoğun (kota)':'Google Books hata '+r.status;return []}return ((await r.json()).items||[]).map(x=>x.volumeInfo||{})}catch(e){return []}};
+    const diag=[];let gst='';const GS=[];const gb=async(q,lang)=>{for(let t=0;t<3;t++){if(GS.filter(x=>x>=500).length>=5)return [];try{const r=await fetch('https://www.googleapis.com/books/v1/volumes?maxResults=8&printType=books&q='+encodeURIComponent(q)+(lang?'&langRestrict='+lang:'')+gbKey(),{cache:'no-store'});
+      if(r.ok){const it=((await r.json()).items||[]).map(x=>x.volumeInfo||{});GS.push(it.length?'✓':'0');return it}
+      GS.push(r.status);let m='';try{m=((await r.json()).error||{}).message||''}catch(e){}
+      gst=r.status===429?'Google Books şu an yoğun (kota)':'Google Books hata '+r.status+(m?' ('+m.slice(0,80)+')':'');
+      if(![500,502,503,504].includes(r.status))return [];await new Promise(x=>setTimeout(x,700*(t+1)))}catch(e){GS.push('ağ');gst='Google Books’a ulaşılamadı'}}return []};
     const pick=(it,tw)=>{if(tw){const n=x=>blNorm((x.title||'')+' '+(x.subtitle||''));it=it.filter(x=>tw.filter(w=>n(x).includes(w)).length>=Math.ceil(tw.length*.6))}return it.find(x=>x.description&&x.imageLinks)||it.find(x=>x.imageLinks)||it[0]||null};
     let v=null,byTitle=false;
     if(isbn){const i10=isbn.length===13&&isbn.startsWith('978')?(()=>{const c=isbn.slice(3,12);let t=0;for(let k=0;k<9;k++)t+=(+c[k])*(10-k);const d=(11-t%11)%11;return c+(d===10?'X':d)})():'';
@@ -6922,7 +6926,7 @@ async function pbLookup(isbn){if(PB.busy)return;PB.busy=true;const btn=$('pbGo')
     if(!v&&t){byTitle=true;const tw=blNorm(t).split(' ').filter(Boolean),al=blNorm(a).split(' ').filter(w=>w.length>1).pop()||'';
       for(const q of [`intitle:${t}${al?' inauthor:'+al:''}`,`${t} ${a}`.trim(),`intitle:${t}`]){for(const lang of ['tr','']){v=pick(await gb(q,lang),tw);if(v)break}if(v)break}
       if(!v){pbInfo('🔎 Türk kitapçılarında aranıyor…');v=await pbStores(t+(a?' '+a:''),diag)}}
-    if(!v){if(isbn&&!t){pbInfo(`Bu ISBN (${esc(isbn)}) internetteki kitap kayıtlarında yok; küçük yayınevlerinin kitaplarında bu olabiliyor. <b>Kitabın adını yaz</b> (yazarı da yazarsan daha iyi) ve tekrar <b>🔎 Getir</b>'e bas; adından ararım.<br>Adını görmek için: <a href="https://www.kitapyurdu.com/index.php?route=product/search&filter_name=${esc(isbn)}" target="_blank" rel="noopener">kitapyurdu</a> · <a href="https://www.google.com/search?q=${esc(isbn)}" target="_blank" rel="noopener">Google</a><br><small class="pb-diag">${esc([gst||'Google Books: sonuç yok',...diag].filter(Boolean).join(' · '))}</small>`);try{$('fTitle').focus()}catch(e){}}else pbInfo(`İnternette bulunamadı. Adı ya da yazarı biraz farklı yazmayı dene; bilgileri elle de girebilirsin.<br><small class="pb-diag">${esc([gst||'Google Books: sonuç yok',...diag].filter(Boolean).join(' · '))}</small>`);return}
+    if(!v){if(isbn&&!t){pbInfo(`Bu ISBN (${esc(isbn)}) internetteki kitap kayıtlarında yok; küçük yayınevlerinin kitaplarında bu olabiliyor. <b>Kitabın adını yaz</b> (yazarı da yazarsan daha iyi) ve tekrar <b>🔎 Getir</b>'e bas; adından ararım.<br>Adını görmek için: <a href="https://www.kitapyurdu.com/index.php?route=product/search&filter_name=${esc(isbn)}" target="_blank" rel="noopener">kitapyurdu</a> · <a href="https://www.google.com/search?q=${esc(isbn)}" target="_blank" rel="noopener">Google</a><br><small class="pb-diag">${esc([(gst&&!GS.includes('0')?gst:'Google Books: sonuç yok')+(GS.length?' ['+Object.entries(GS.reduce((o,x)=>(o[x]=(o[x]||0)+1,o),{})).map(([k,v])=>k+(v>1?'×'+v:'')).join(', ')+']':''),...diag].filter(Boolean).join(' · '))}</small>`);try{$('fTitle').focus()}catch(e){}}else pbInfo(`İnternette bulunamadı. Adı ya da yazarı biraz farklı yazmayı dene; bilgileri elle de girebilirsin.<br><small class="pb-diag">${esc([(gst&&!GS.includes('0')?gst:'Google Books: sonuç yok')+(GS.length?' ['+Object.entries(GS.reduce((o,x)=>(o[x]=(o[x]||0)+1,o),{})).map(([k,v])=>k+(v>1?'×'+v:'')).join(', ')+']':''),...diag].filter(Boolean).join(' · '))}</small>`);return}
     if(byTitle)isbn=isbn||'';const over=!!isbn&&!byTitle;
     const filled=[];if(v.title&&(!t||over)){$('fTitle').value=v.title+(v.subtitle&&v.subtitle.length<40?': '+v.subtitle:'');filled.push('ad')}
     if(v.authors&&v.authors.length&&(!a||over)){$('fAuthor').value=v.authors.join(', ');filled.push('yazar')}
@@ -7974,19 +7978,26 @@ async function zipLib(){if(!window.JSZip)await loadScript(JSZIP);return window.J
 function b64enc(u8){let s='';const CH=0x8000;for(let i=0;i<u8.length;i+=CH)s+=String.fromCharCode.apply(null,u8.subarray(i,i+CH));return btoa(s)}
 function b64dec(b64){b64=b64.replace(/\s/g,'');const bin=atob(b64),n=bin.length,u=new Uint8Array(n);for(let i=0;i<n;i++)u[i]=bin.charCodeAt(i);return u}
 function pathJoin(base,rel){if(/^[a-z]+:/i.test(rel))return rel;const out=(base?base.split('/'):[]);out.pop();rel.split('#')[0].split('/').forEach(seg=>{if(seg==='..')out.pop();else if(seg&&seg!=='.')out.push(seg)});return out.join('/')}
+function zFile(zip,p){if(!p)return null;let f=zip.file(p);if(f)return f;const low=p.replace(/^\/+/,'').toLowerCase();const k=Object.keys(zip.files).find(x=>x.toLowerCase()===low||decodeURIComponent(x).toLowerCase()===low);return k?zip.file(k):null}
+function xmlDoc(t){let d=new DOMParser().parseFromString(t,'application/xml');if(d.getElementsByTagName('parsererror').length||!d.documentElement)d=new DOMParser().parseFromString(t,'text/html');return d}
+function xTags(d,n){let r=[...d.getElementsByTagNameNS('*',n)];if(!r.length)r=[...d.getElementsByTagName(n)];if(!r.length)r=[...d.getElementsByTagName('opf:'+n)];return r}
 async function epubOpen(bytes){
   const Z=await zipLib(),zip=await Z.loadAsync(bytes);
-  const cont=await zip.file('META-INF/container.xml').async('string');
-  const opfPath=new DOMParser().parseFromString(cont,'application/xml').querySelector('rootfile').getAttribute('full-path');
-  const opf=new DOMParser().parseFromString(await zip.file(opfPath).async('string'),'application/xml');
-  const man={};opf.querySelectorAll('manifest > item').forEach(it=>{man[it.getAttribute('id')]={href:pathJoin(opfPath,decodeURIComponent(it.getAttribute('href'))),type:it.getAttribute('media-type')||'',props:it.getAttribute('properties')||''}});
-  const spine=[...opf.querySelectorAll('spine > itemref')].map(r=>man[r.getAttribute('idref')]).filter(x=>x&&/html|xml/.test(x.type)).map(x=>x.href);
+  let opfPath='';const cf=zFile(zip,'META-INF/container.xml');
+  if(cf){const cont=await cf.async('string');const rf=xTags(xmlDoc(cont),'rootfile').find(x=>x.getAttribute('full-path'));opfPath=rf?rf.getAttribute('full-path'):((/full-path\s*=\s*["']([^"']+)/i.exec(cont)||[])[1]||'')}
+  if(!zFile(zip,opfPath)){opfPath=Object.keys(zip.files).find(x=>/\.opf$/i.test(x))||''}
+  const of=zFile(zip,opfPath);if(!of)throw new Error('EPUB içinde kitap bilgisi (OPF) bulunamadı; dosya bozuk olabilir');
+  const opf=xmlDoc(await of.async('string'));
+  const man={};xTags(opf,'item').forEach(it=>{const id=it.getAttribute('id'),h=it.getAttribute('href');if(!id||!h)return;let hd=h;try{hd=decodeURIComponent(h)}catch(e){}man[id]={href:pathJoin(opfPath,hd),type:(it.getAttribute('media-type')||'').toLowerCase(),props:it.getAttribute('properties')||''}});
+  const spine=xTags(opf,'itemref').map(r=>man[r.getAttribute('idref')]).filter(x=>x&&(/html|xml/.test(x.type)||/\.x?html?$/i.test(x.href))).map(x=>x.href).filter(h=>zFile(zip,h)).map(h=>zFile(zip,h).name);
+  if(!spine.length)throw new Error('EPUB içinde okunacak sayfa bulunamadı');
   let cov=Object.values(man).find(x=>/cover-image/.test(x.props));
-  if(!cov){const m=opf.querySelector('meta[name="cover"]');if(m&&man[m.getAttribute('content')])cov=man[m.getAttribute('content')]}
+  if(!cov){const m=xTags(opf,'meta').find(x=>x.getAttribute('name')==='cover');if(m&&man[m.getAttribute('content')])cov=man[m.getAttribute('content')]}
   if(!cov)cov=Object.values(man).find(x=>/^image\//.test(x.type)&&/cover/i.test(x.href));
-  const sp_=opf.querySelector('spine'),lg=opf.getElementsByTagNameNS('*','language')[0];
+  if(cov){const cf_=zFile(zip,cov.href);if(cf_)cov={...cov,href:cf_.name}}const sp_=xTags(opf,'spine')[0],lg=xTags(opf,'language')[0];
   return {zip,spine,cover:cov&&/^image\//.test(cov.type)?cov:null,urls:{},man,opfPath,tocId:sp_&&sp_.getAttribute('toc'),lang:lg?lg.textContent.trim().slice(0,12):''};
 }
+window.__epo=(...a)=>epubOpen(...a);
 async function epubCover(ep){
   if(!ep.cover)return null;const f=ep.zip.file(ep.cover.href);if(!f)return null;
   const blob=new Blob([await f.async('uint8array')],{type:ep.cover.type});
@@ -8149,8 +8160,8 @@ async function openReader(b){
     renderPage();
   }catch(err){
     console.warn('okuyucu',err);
-    if(b.source==='drive')rMsg(`${bigDrive(b)?'Bu kitap Google Drive bağlantısının tek seferde getirebildiğinden (yaklaşık 6 MB) büyük. Dosyayı bir kez seçersen uygulamaya eklenir, sıkıştırılır ve bundan sonra hep burada açılır. Seçim ekranında Google Drive\'ı da seçebilirsin.<button class="btn primary" id="rAttach" type="button">Dosyayı seç, uygulamaya ekle</button>':esc(driveErr(err))}${b.driveUrl?`<a class="btn" href="${esc(b.driveUrl)}" target="_blank" rel="noopener">Google Drive'da aç</a>`:''}`);
-    else if(b.fileType==='epub')rMsg('Bu EPUB açılamadı. Dosya bozuk ya da şifreli (DRM korumalı) olabilir.');
+    if(b.source==='drive'&&(bigDrive(b)||(err&&(err.code||err.ui))))rMsg(`${bigDrive(b)?'Bu kitap Google Drive bağlantısının tek seferde getirebildiğinden (yaklaşık 6 MB) büyük. Dosyayı bir kez seçersen uygulamaya eklenir, sıkıştırılır ve bundan sonra hep burada açılır. Seçim ekranında Google Drive\'ı da seçebilirsin.<button class="btn primary" id="rAttach" type="button">Dosyayı seç, uygulamaya ekle</button>':esc(driveErr(err))}${b.driveUrl?`<a class="btn" href="${esc(b.driveUrl)}" target="_blank" rel="noopener">Google Drive'da aç</a>`:''}`);
+    else if(isEpubB(b))rMsg('Bu EPUB açılamadı. Dosya bozuk ya da şifreli (DRM korumalı) olabilir.<br><small class="hint">'+esc(String(err&&err.message||err||'').slice(0,140))+'</small>');
     else rMsg('Bu PDF açılamadı. Dosya bozuk ya da şifreli olabilir.');
     const ra=$('rAttach');if(ra)ra.onclick=()=>{const bb=st.books.find(x=>x.id===b.id)||b;st.openAfter=b.id;closeReader();openForm(bb);const fi=$('fFile');if(fi)fi.click()};
   }
