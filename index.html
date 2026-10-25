@@ -1261,6 +1261,7 @@ body.tm-on #listArea [data-bk]{position:relative;cursor:copy}
 .ky-mode{display:flex;flex-wrap:wrap;gap:6px}.ky-lines{display:grid;gap:4px;max-height:38vh;overflow:auto;padding:4px;border:1px solid var(--line);border-radius:12px}
 .ky-l{text-align:left;font:inherit;font-size:14px;padding:6px 10px;border-radius:8px;border:0;background:color-mix(in srgb,var(--brass) 6%,transparent);color:var(--ink);cursor:pointer}.ky-l.on{background:color-mix(in srgb,var(--brass) 30%,transparent)}
 @media(max-width:520px){.ky-f{grid-template-columns:1fr}}
+#kindKitapL[hidden]{display:none!important}
 </style>
 
 </head><body>
@@ -1346,7 +1347,7 @@ body.tm-on #listArea [data-bk]{position:relative;cursor:copy}
   <form class="panel" id="form" novalidate>
     <h2 id="formTitle">Yeni ekle</h2>
     <div class="kinds" role="radiogroup" aria-label="Tür">
-      <label><input type="radio" name="kind" value="kitap" id="kind-kitap" checked><span>📗 Basılı kitap</span></label>
+      <label id="kindKitapL" hidden><input type="radio" name="kind" value="kitap" id="kind-kitap"><span>📗 Basılı kitap</span></label>
       <label><input type="radio" name="kind" value="pdf" id="kind-pdf"><span>📱 E-kitap</span></label>
       <label style="display:none"><input type="radio" name="kind" value="pdf" id="kind-epub"><span>EPUB</span></label>
       <label><input type="radio" name="kind" value="makale" id="kind-makale"><span>Makale</span></label>
@@ -1957,8 +1958,8 @@ function openForm(b){
   $('fileHint').textContent=b&&b.fileRemoved&&!hasFile(b)?`Bu kitabın dosyası yer açmak için kaldırılmıştı${b.fileName?' ('+b.fileName+')':''}. Okumak için dosyayı buradan yeniden seç.`:'Büyük taranmış PDF\'ler otomatik küçültülür; 20 MB\'tan büyükler parçalara bölünür.';
   $('formTitle').textContent=b?'Kaydı düzenle':'Yeni ekle';$('delBtn').hidden=!b;$('cardBtn').hidden=!(b&&b.kind!=='roman'&&b.status==='okundu');
   {const sim=b&&b.kind!=='roman'&&b.kind!=='makale'?similarBooks(b):[];$('simRow').hidden=!sim.length;$('simRow').innerHTML=sim.length?`<span class="hint">Benzer kitapların:</span>${sim.map(x=>`<button type="button" class="chip" data-sim="${x.id}">${esc(x.title)}</button>`).join('')}`:''}
-  const kind=b?b.kind:(['all','done'].includes(st.tab)?'kitap':st.tab==='epub'?'pdf':st.tab);
-  $('kind-'+kind).checked=true;syncKind(b&&b.status);setTimeout(tropeChips,0);
+  let kind=b?b.kind:(['all','done','epub','kitap'].includes(st.tab)?'pdf':st.tab);if(!$('kind-'+kind))kind='pdf';
+  $('kindKitapL').hidden=!(b&&b.kind==='kitap');$('kind-'+kind).checked=true;syncKind(b&&b.status);setTimeout(tropeChips,0);
   {const so=b?seriesOf(b):null;$('fSeries').value=b&&b.series?b.series:'';$('fSeriesNo').value=b&&b.series?(b.seriesNo||''):'';$('fSeries').placeholder=so&&!b.series?so.name+' (başlıktan)':'ör. Empyrean';$('seriesOpts').innerHTML=[...new Set(st.books.map(x=>seriesOf(x)).filter(Boolean).map(x=>x.name))].map(n=>`<option value="${esc(n)}">`).join('')}
   if(b){$('fTitle').value=b.title||'';$('fAuthor').value=b.author||'';$('fShelf').value=b.shelf||'';$('fTags').value=(b.tags||[]).join(', ');
     formRating=b.rating||0;$('fReview').value=b.review||'';
@@ -5275,7 +5276,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v98';
+const DK_VER='v99';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
