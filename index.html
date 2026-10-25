@@ -1226,6 +1226,17 @@ body.kindle-soft :is(.chip,.seg button,.btn.on)[aria-pressed="true"]{background:
 @keyframes pgIn{from{transform:translateX(7%);opacity:.0}to{transform:none;opacity:1}}@keyframes pgInP{from{transform:translateX(-7%);opacity:0}to{transform:none;opacity:1}}
 .rstage article.epub.ep-in{animation:epIn .18s ease-out both}@keyframes epIn{from{opacity:0}to{opacity:1}}
 .rstage.ep-paged{touch-action:pan-y}
+.reader.mode-eink{--eink:#e9e6de;--eink-ink:#2a2927}
+.reader.mode-eink,.reader.mode-eink .rbar,.reader.mode-eink .rfoot{background-color:#e3dfd6!important;color:var(--eink-ink)}
+.reader.mode-eink .rstage{background:#dedad1 url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .28  0 0 0 0 .25  0 0 0 .09 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+.reader.mode-eink .rstage article.epub{background:var(--eink) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .28  0 0 0 0 .25  0 0 0 .09 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");color:var(--eink-ink);box-shadow:0 1px 0 rgba(0,0,0,.04),0 12px 30px -22px rgba(0,0,0,.35);text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+.reader.mode-eink .rstage article.epub :is(h1,h2,h3,h4){color:#1f1e1c}
+.reader.mode-eink .rstage article.epub a{color:#4b4a46}
+.reader.mode-eink .rstage article.epub img{filter:grayscale(.55) contrast(.95);mix-blend-mode:multiply}
+.reader.mode-eink .pgwrap,.reader.mode-eink .spage{background:var(--eink) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .3  0 0 0 0 .28  0 0 0 0 .25  0 0 0 .09 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+.reader.mode-eink .pgwrap canvas:not(.inklayer),.reader.mode-eink .spage canvas:not(.inklayer){mix-blend-mode:multiply;filter:grayscale(.5) contrast(1.04) brightness(.98)}
+.reader.mode-eink .rstage.ep-paged article.epub:not(.ep-spread){box-shadow:inset 18px 0 22px -22px rgba(0,0,0,.28),0 12px 30px -22px rgba(0,0,0,.35)}
+.reader.mode-eink .iconbtn,.reader.mode-eink .btn{background:#ebe7df;border-color:#cfcac0;color:var(--eink-ink)}
 </style>
 
 </head><body>
@@ -1386,7 +1397,7 @@ body.kindle-soft :is(.chip,.seg button,.btn.on)[aria-pressed="true"]{background:
     <div class="f"><label>Okuma şekli</label><div class="seg" id="rFlow"><button type="button" data-flow="scroll">Aşağı kaydır</button><button type="button" data-flow="page">Sayfa çevir</button></div></div>
     <div class="f"><label>Yan tutunca</label><div class="seg" id="rSpread"><button type="button" data-spread="on">📖 İki sayfa</button><button type="button" data-spread="off">Tek sayfa</button></div></div>
     <div class="f"><label>Okurken üst ve alt çubuk</label><div class="seg" id="rAh"><button type="button" data-ah="1">Kendiliğinden gizle</button><button type="button" data-ah="0">Hep görünsün</button></div></div>
-    <div class="f"><label>Sayfa rengi</label><div class="seg" id="rModes"><button type="button" data-m="light">Açık</button><button type="button" data-m="sepia">Sepya</button><button type="button" data-m="night">Gece</button></div></div>
+    <div class="f"><label>Sayfa rengi</label><div class="seg" id="rModes"><button type="button" data-m="eink">📖 Kâğıt</button><button type="button" data-m="light">Açık</button><button type="button" data-m="sepia">Sepya</button><button type="button" data-m="night">Gece</button></div></div>
     <div class="f"><label>Yazı tipi <span class="hint">(EPUB)</span></label><div class="seg" id="rFonts"><button type="button" data-f="lora" style="font-family:Lora,serif">Lora</button><button type="button" data-f="cormorant" style="font-family:'Cormorant Garamond',serif">Cormorant</button><button type="button" data-f="sans" style="font-family:'DM Sans',sans-serif">Sade</button><button type="button" data-f="literata" style="font-family:Literata,serif">Literata</button><button type="button" data-f="merri" style="font-family:Merriweather,serif">Merriweather</button><button type="button" data-f="garamond" style="font-family:'EB Garamond',serif">Garamond</button><button type="button" data-f="nunito" style="font-family:Nunito,sans-serif">Yuvarlak</button><button type="button" data-f="atkinson" style="font-family:'Atkinson Hyperlegible',sans-serif">Okunaklı</button></div></div>
     <div class="f"><label>Satır aralığı <span class="hint">(EPUB)</span></label><div class="seg" id="rLines"><button type="button" data-l="1.5">Sık</button><button type="button" data-l="1.75">Orta</button><button type="button" data-l="2.05">Ferah</button><button type="button" data-l="2.35">Çok ferah</button></div></div>
     <div class="f"><label>Kenar boşluğu <span class="hint">(EPUB)</span></label><div class="seg" id="rMarg"><button type="button" data-marg="w">Dar</button><button type="button" data-marg="m">Orta</button><button type="button" data-marg="n">Geniş</button></div></div>
@@ -2352,9 +2363,10 @@ $('rSum').addEventListener('click',async()=>{const b=R.book&&st.books.find(x=>x.
   out.textContent='Hazırlanıyor…';try{const upd=await summarize(b,m=>{out.textContent=m});out.innerHTML=ozetHtml(upd.ozet)+'<p class="hint" style="font-size:12px">Özet makalenin kaydına eklendi; literatür tablosunda da görünür.</p>'}
   catch(err){out.textContent=err&&err.ui?err.ui:sampleErr(err)}});
 /* okuma modları */
-let RS={mode:'light',font:'lora',line:'1.75',flow:'scroll',ah:'1'};try{const c=JSON.parse(localStorage.getItem('dk-read')||'null');if(c)RS={...RS,...c}}catch(e){}
+let RS={mode:'eink',font:'lora',line:'1.75',flow:'scroll',ah:'1'};try{const c=JSON.parse(localStorage.getItem('dk-read')||'null');if(c)RS={...RS,...c}}catch(e){}
+if(!RS.einkMig){RS.einkMig=1;if(RS.mode==='light')RS.mode='eink';try{localStorage.setItem('dk-read',JSON.stringify(RS))}catch(e){}}
 const RFONT={lora:'"Lora",Georgia,serif',cormorant:'"Cormorant Garamond",Georgia,serif',sans:'"DM Sans",system-ui,sans-serif',literata:'"Literata",Georgia,serif',merri:'"Merriweather",Georgia,serif',garamond:'"EB Garamond",Georgia,serif',atkinson:'"Atkinson Hyperlegible",system-ui,sans-serif',nunito:'"Nunito",system-ui,sans-serif'};
-function applyRS(){const r=$('reader');r.classList.remove('mode-light','mode-sepia','mode-night');r.classList.add('mode-'+RS.mode);
+function applyRS(){const r=$('reader');r.classList.remove('mode-light','mode-sepia','mode-night','mode-eink');r.classList.add('mode-'+RS.mode);
   r.classList.toggle('ah',RS.ah==='1');if(RS.ah!=='1')r.classList.remove('bars-off');r.style.setProperty('--efont',RFONT[RS.font]||RFONT.lora);r.style.setProperty('--eline',RS.line);r.style.setProperty('--ewidth',{n:'560px',m:'680px',w:'900px'}[RS.marg||'m']);r.dataset.align=RS.align||'left';
   [['rModes','m',RS.mode],['rFonts','f',RS.font],['rLines','l',RS.line],['rFlow','flow',epFlowNow()],['rAh','ah',RS.ah],['rSpread','spread',RS.spread||'on'],['rMarg','marg',RS.marg||'m'],['rAlign','align',RS.align||'left']].forEach(([id,k,v])=>$(id).querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset[k]===v)));
   try{localStorage.setItem('dk-read',JSON.stringify(RS))}catch(e){}try{if(typeof EPG!=='undefined'&&R.epub)requestAnimationFrame(epRelayout)}catch(e){}}
@@ -5237,7 +5249,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v89';
+const DK_VER='v90';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
