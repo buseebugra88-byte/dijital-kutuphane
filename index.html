@@ -1257,6 +1257,10 @@ body.tm-on #listArea [data-bk]{position:relative;cursor:copy}
 #ssChip{font-size:16px;display:grid;place-items:center}#ssChip .ss-ic{width:18px;height:18px;display:block}#ssChip .ss-n,#ssChip .ss-ok{position:absolute;right:-5px;top:-5px;min-width:16px;height:16px;padding:0 3px;border-radius:9px;font-size:10px;font-style:normal;line-height:16px;background:#d98b5f;color:#fff;font-weight:700}#ssChip .ss-ok{background:#8fb47e}
 .ss-spin{display:inline-block;animation:ssp 1.4s ease-in-out infinite}@keyframes ssp{50%{opacity:.35}}
 .ss-box{display:grid;gap:6px}.ss-box details summary{cursor:pointer;font-size:14px}.ss-l{font-size:12px;color:var(--muted);margin:4px 0 0 14px;line-height:1.5}.ss-r{font-size:14px}.ss-r.ok{color:var(--muted)}
+.ky-f{display:grid;grid-template-columns:1fr 1fr;gap:8px}.ky-f label{display:grid;gap:3px;font-size:12px;color:var(--muted)}.ky-f input{font-size:15px}
+.ky-mode{display:flex;flex-wrap:wrap;gap:6px}.ky-lines{display:grid;gap:4px;max-height:38vh;overflow:auto;padding:4px;border:1px solid var(--line);border-radius:12px}
+.ky-l{text-align:left;font:inherit;font-size:14px;padding:6px 10px;border-radius:8px;border:0;background:color-mix(in srgb,var(--brass) 6%,transparent);color:var(--ink);cursor:pointer}.ky-l.on{background:color-mix(in srgb,var(--brass) 30%,transparent)}
+@media(max-width:520px){.ky-f{grid-template-columns:1fr}}
 </style>
 
 </head><body>
@@ -1348,7 +1352,7 @@ body.tm-on #listArea [data-bk]{position:relative;cursor:copy}
       <label><input type="radio" name="kind" value="makale" id="kind-makale"><span>Makale</span></label>
       <label><input type="radio" name="kind" value="roman" id="kind-roman"><span>Kendi romanım</span></label>
     </div>
-    <div class="f pb-f" id="pbField" hidden><label>📷 Bilgileri otomatik getir</label><div class="pb-row"><button class="btn primary" type="button" id="pbScanBtn">📷 Barkodu tara</button><label class="btn" for="pbCam">🖼 Fotoğraf</label><input id="pbCam" type="file" accept="image/*" capture="environment" hidden><input id="pbIsbn" inputmode="numeric" placeholder="ya da ISBN yaz (978…)" autocomplete="off"><button class="btn" type="button" id="pbGo">🔎 Getir</button><button class="btn pb-key" type="button" id="pbKey">🔑 Google anahtarı ekle</button></div><div class="pb-out"><div id="pbPrev" class="pb-prev"></div><span class="hint" id="pbInfo"></span></div></div>
+    <div class="f pb-f" id="pbField" hidden><label>📷 Bilgileri otomatik getir</label><div class="pb-row"><button class="btn primary" type="button" id="pbScanBtn">📷 Barkodu tara</button><label class="btn" for="pbCam">🖼 Fotoğraf</label><label class="btn" for="kyCam">📄 Künye sayfası</label><input id="kyCam" type="file" accept="image/*" capture="environment" hidden><input id="pbCam" type="file" accept="image/*" capture="environment" hidden><input id="pbIsbn" inputmode="numeric" placeholder="ya da ISBN yaz (978…)" autocomplete="off"><button class="btn" type="button" id="pbGo">🔎 Getir</button><button class="btn pb-key" type="button" id="pbKey">🔑 Google anahtarı ekle</button></div><div class="pb-out"><div id="pbPrev" class="pb-prev"></div><span class="hint" id="pbInfo"></span></div></div>
     <div class="f"><label for="fTitle">Ad</label><input id="fTitle" required></div>
     <div class="row">
       <div class="f"><label for="fAuthor" id="lAuthor">Yazar</label><input id="fAuthor"></div>
@@ -1988,7 +1992,7 @@ form.addEventListener('submit',async e=>{
     tags:[...new Set($('fTags').value.split(',').map(t=>t.trim().replace(/^#/,'')).filter(Boolean))],
     pages:parseInt($('fPages').value)||0,finishedAt:(kind!=='roman'&&status==='okundu')?($('fDone').value||new Date().toISOString().slice(0,10)):'',
     rating:kind==='roman'?0:formRating,review:kind==='roman'?'':$('fReview').value.trim(),year:$('fYear').value.trim(),journal:$('fJournal').value.trim(),volume:$('fVol').value.trim(),issue:$('fIssue').value.trim(),pagesRange:$('fPgs').value.trim(),doi:$('fDoi').value.trim().replace(/^https?:\/\/(dx\.)?doi\.org\//i,''),ozet:b&&b.ozet?b.ozet:null,
-    coverUrl:$('fCover').files[0]?'':(PB.coverUrl||(b&&!b.coverId&&b.coverUrl)||''),isbn:($('pbIsbn').value||'').replace(/[^0-9Xx]/g,'')||(b&&b.isbn)||'',blurb:$('fBlurb').value.trim(),blurbLang:$('fBlurb').value.trim()?(BL.lang||'tr'):'',blurbNone:b?!!b.blurbNone:false,note:$('fNote').value.trim(),coverId:b?(b.coverId||''):'',autoCover:b?!!b.autoCover:false,currentPage:kind==='roman'?0:(parseInt($('fCurrent').value)||0),lastReadAt:b?(b.lastReadAt||''):'',assetId:b&&kind!=='kitap'?(b.assetId||''):'',parts:b&&kind!=='kitap'?(b.parts||[]):[],fileName:b&&kind!=='kitap'?(b.fileName||''):'',fileSize:b&&kind!=='kitap'?(b.fileSize||0):0,fileType:b&&kind!=='kitap'?(FTsel||b.fileType||''):'',source:b&&kind!=='kitap'?(b.source||''):'',driveId:b&&kind!=='kitap'?(b.driveId||''):'',driveUrl:b&&kind!=='kitap'?(b.driveUrl||''):'',
+    publisher:PB.publisher||(b&&b.publisher)||'',coverUrl:$('fCover').files[0]?'':(PB.coverUrl||(b&&!b.coverId&&b.coverUrl)||''),isbn:($('pbIsbn').value||'').replace(/[^0-9Xx]/g,'')||(b&&b.isbn)||'',blurb:$('fBlurb').value.trim(),blurbLang:$('fBlurb').value.trim()?(BL.lang||'tr'):'',blurbNone:b?!!b.blurbNone:false,note:$('fNote').value.trim(),coverId:b?(b.coverId||''):'',autoCover:b?!!b.autoCover:false,currentPage:kind==='roman'?0:(parseInt($('fCurrent').value)||0),lastReadAt:b?(b.lastReadAt||''):'',assetId:b&&kind!=='kitap'?(b.assetId||''):'',parts:b&&kind!=='kitap'?(b.parts||[]):[],fileName:b&&kind!=='kitap'?(b.fileName||''):'',fileSize:b&&kind!=='kitap'?(b.fileSize||0):0,fileType:b&&kind!=='kitap'?(FTsel||b.fileType||''):'',source:b&&kind!=='kitap'?(b.source||''):'',driveId:b&&kind!=='kitap'?(b.driveId||''):'',driveUrl:b&&kind!=='kitap'?(b.driveUrl||''):'',
     addedAt:b?b.addedAt:new Date().toISOString()};
   let file=$('fFile').files[0];
   if((file||$('fCover').files[0])&&!(await ensureUploadPerm())){showErr('Dosya yükleme izni kapalı. Sayfa menüsündeki İzinler bölümünden izin ver.');return}
@@ -5271,7 +5275,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v97';
+const DK_VER='v98';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6876,6 +6880,46 @@ async function pbScanStart(){if(!navigator.mediaDevices||!navigator.mediaDevices
     if(got){try{navigator.vibrate&&navigator.vibrate(60)}catch(e){}pbScanStop();$('pbIsbn').value=got;pbInfo('✓ Barkod okundu: '+got);pbLookup(got);return}
     PBS.timer=setTimeout(tick,120)};tick()}
 window.__pb={zxLoad,zxRead,cvCrop,cvRot,pbImg,pbBarcode};
+/* ---------- 📄 Künye sayfasından bilgi okuma (Drive OCR) ---------- */
+async function driveOcr(blob,type){const b='dkk'+Date.now();const body=new Blob(['--'+b+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify({name:'dk-kunye-'+Date.now(),mimeType:'application/vnd.google-apps.document'})+'\r\n--'+b+'\r\nContent-Type: '+(type||'image/jpeg')+'\r\n\r\n',blob,'\r\n--'+b+'--']);
+  const j=await (await gfetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&ocrLanguage=tr&fields=id',1,{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body})).json();if(!j.id)throw {ui:'Drive yazıyı okuyamadı'};
+  let txt='';try{txt=await (await gfetch(GD+'/'+encodeURIComponent(j.id)+'/export?mimeType=text%2Fplain')).text()}finally{gfetch(GD+'/'+encodeURIComponent(j.id),1,{method:'DELETE'}).catch(()=>{})}
+  return txt.replace(/^﻿/,'').replace(/\r/g,'')}
+function kyTitleCase(s){return /[a-zçğıöşü]/.test(s)?s:s.toLocaleLowerCase('tr-TR').replace(/(^|[\s'’(-])(\p{L})/gu,(m,a,c)=>a+c.toLocaleUpperCase('tr-TR')).replace(/ (Ve|İle|Ya Da|Veya|De|Da|Ki) /g,m=>m.toLocaleLowerCase('tr-TR'))}
+function kyParse(txt){const L=txt.split('\n').map(x=>x.replace(/\s+/g,' ').trim()).filter(Boolean);const out={lines:L};
+  const all=L.join('\n');const im=/ISBN[\s:：-]*((?:97[89][\s-]?)?(?:\d[\s-]?){9}[\dXx])/i.exec(all);if(im){const d=im[1].replace(/[^\dXx]/g,'');if(isbnOK(d))out.isbn=d}
+  const lab=(re)=>{for(const l of L){const m=re.exec(l);if(m&&m[1]&&m[1].trim().length>1)return m[1].trim()}return ''};
+  out.title=lab(/^(?:kitab[ıi]n (?:ad[ıi]|ismi)|eser(?:in)? ad[ıi]|kitap ad[ıi]|t[üu]rk[çc]e ad[ıi])\s*[:：]\s*(.+)$/i);
+  out.author=lab(/^(?:yazar[ıi]?|yazan|author)\s*[:：]\s*(.+)$/i);
+  out.translator=lab(/^(?:[çc]eviren|[çc]eviri|t[üu]rk[çc]esi|translated by)\s*[:：]?\s*(.+)$/i);
+  out.publisher='';for(const l of L){if(/yay[ıi]n(?:lar[ıi]|c[ıi]l[ıi]k|evi)|kitapl[ıi][ğg][ıi]|yay\./i.test(l)&&l.length<60&&!/haklar|izni|sertifika|matbaa|bask[ıi]/i.test(l)){out.publisher=kyTitleCase(l.replace(/\s*[-–—]\s*\d+\s*$/,'').replace(/\s*\d+\s*$/,'').trim());break}}
+  if(!out.author){for(const l of L){const m=/(?:copyright|telif)?\s*(?:©|\(c\)|copyright)\s*(?:\d{4}\s*,?\s*)?([^,©\d]{3,60}?)\s*(?:,|\d{4}|$)/i.exec(l);if(m){const a=m[1].replace(/^(by|by:)\s*/i,'').trim();if(a&&!/yay[ıi]n|ltd|inc|haklar|reserved|şti|a\.ş|press|publish|books|agency|t[üu]m/i.test(a)&&a.split(' ').length<=4){out.author=a;break}}}}
+  if(!out.title&&out.author){const an=trLow(out.author);const idx=L.findIndex((l,i)=>i>0&&trLow(l)===an);if(idx>0){const t=L[idx-1];if(t.length<80&&!/isbn|©|copyright|yay[ıi]n|bask[ıi]/i.test(t))out.title=t}}
+  if(!out.title){const om=/^(?:orijinal|[öo]zg[üu]n|original) (?:ad[ıi]|title)\s*[:：]\s*(.+)$/i;for(const l of L){if(om.test(l)){out.orig=om.exec(l)[1];break}}}
+  if(!out.title){const bad=/isbn|©|copyright|yay[ıi]n|bask[ıi]|haklar|[çc]eviren|[çc]eviri|editör|kapak|tasar[ıi]m|matbaa|sertifika|ltd|inc\.|www|@|:|\d{3}/i;const C=L.filter(l=>!bad.test(l)&&l.length>2&&l.length<70);
+    const cap=C.findIndex(l=>/\p{Lu}/u.test(l)&&l===l.toLocaleUpperCase('tr-TR')&&/\p{L}{3}/u.test(l));if(cap>=0){out.title=C[cap];const nx=C[cap+1];if(!out.author&&nx&&nx.split(' ').length>=2&&nx.split(' ').length<=4&&/^\p{Lu}/u.test(nx))out.author=nx}}
+  if(out.title)out.title=kyTitleCase(out.title);if(out.author)out.author=kyTitleCase(out.author);return out}
+function kyDlg(k){const lines=k.lines.filter(l=>l.length>1&&l.length<90).slice(0,60);
+  msModal(`<div class="eyebrow">📄 Künyeden okunanlar</div><p class="hint" style="margin:0">Yanlış olan varsa aşağıdaki satırlardan doğrusuna dokun: önce <b>Ad</b> ya da <b>Yazar</b>'ı seç, sonra satıra dokun.</p>
+   <div class="ky-f"><label>Ad <input id="kyT" value="${esc(k.title||'')}"></label><label>Yazar <input id="kyA" value="${esc(k.author||'')}"></label><label>Yayınevi <input id="kyP" value="${esc(k.publisher||'')}"></label><label>ISBN <input id="kyI" inputmode="numeric" value="${esc(k.isbn||'')}"></label></div>
+   <div class="ky-mode"><button class="chip" type="button" data-kym="kyT" aria-pressed="true">Satıra dokununca → Ad</button><button class="chip" type="button" data-kym="kyA" aria-pressed="false">→ Yazar</button><button class="chip" type="button" data-kym="kyP" aria-pressed="false">→ Yayınevi</button></div>
+   <div class="ky-lines">${lines.map((l,i)=>`<button type="button" class="ky-l" data-kyl="${i}">${esc(l)}</button>`).join('')}</div>
+   <div class="lf-row"><button class="btn primary" type="button" id="kyOk">Forma yaz</button><button class="btn" type="button" data-ms="close">Vazgeç</button></div>`);
+  let tgt='kyT';const box=$('msModal');
+  box.addEventListener('click',e=>{const m=e.target.closest('[data-kym]');if(m){tgt=m.dataset.kym;box.querySelectorAll('[data-kym]').forEach(x=>x.setAttribute('aria-pressed',x===m));return}
+    const l=e.target.closest('[data-kyl]');if(l){$(tgt).value=kyTitleCase(lines[+l.dataset.kyl]);l.classList.add('on');return}
+    if(e.target.closest('[data-ms="close"]'))msClose()});
+  $('kyOk').onclick=()=>{const t=$('kyT').value.trim(),a=$('kyA').value.trim(),p=$('kyP').value.trim(),i=$('kyI').value.replace(/[^0-9Xx]/g,'');
+    if(t)$('fTitle').value=t;if(a)$('fAuthor').value=a;if(i)$('pbIsbn').value=i;if(p)PB.publisher=p
+    msClose();const got=[t&&'ad',a&&'yazar',p&&'yayınevi',i&&'ISBN'].filter(Boolean);
+    pbInfo(`✓ Künyeden yazıldı: ${got.join(', ')||'—'}. Kapak ve tanıtım için internette bakıyorum…`);if(t)setTimeout(()=>pbLookup(''),50)}}
+async function kyRun(file){if(typeof GAUTH==='undefined'||!GAUTH.configured()||!GAUTH.signedIn()){pbInfo('Künyeyi okumak için Google Drive girişi gerekiyor: Ayarlar → Google Drive\'a bağlan.');return}
+  pbInfo('📄 Künye okunuyor… (birkaç saniye)');try{const c=await pbImg(file,2000);const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.9));const txt=await driveOcr(blob,'image/jpeg');const k=kyParse(txt);
+    if(!k.lines.length){pbInfo('Fotoğrafta yazı okunamadı. Sayfayı düz ve yakından, iyi ışıkta çekmeyi dene.');return}
+    pbInfo('Künye okundu, kontrol et.');kyDlg(k)}catch(e){pbInfo((e&&e.ui)||'Künye okunamadı; internet bağlantını ya da Drive girişini kontrol et.')}}
+$('kyCam').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)kyRun(f)});
+window.__ky={kyParse};
+
 async function pbCoverBlob(url){try{const r=await fetch(url,{mode:'cors'});if(!r.ok)return null;const b=await r.blob();if(!/^image\//.test(b.type)||b.size<1500)return null;return b}catch(e){return null}}
 function pbSetCover(blob,url){PB.coverUrl='';if(blob){try{const dt=new DataTransfer();dt.items.add(new File([blob],'kapak.jpg',{type:blob.type||'image/jpeg'}));$('fCover').files=dt.files}catch(e){PB.coverUrl=url||''}}else PB.coverUrl=url||'';
   const p=$('pbPrev');if(p){const src=blob?URL.createObjectURL(blob):url;p.innerHTML=src?`<img src="${esc(src)}" alt="" onerror="this.remove()">`:''}}
@@ -6943,7 +6987,7 @@ $('pbCam').addEventListener('change',async e=>{const f=e.target.files[0];e.targe
 $('pbScanBtn').addEventListener('click',()=>pbScanStart());
 $('pbKey').addEventListener('click',()=>{if(gbKeyAsk()){const v=$('pbIsbn').value.replace(/[^0-9Xx]/g,'');if(v||$('fTitle').value.trim())pbLookup(v)}});pbKeyUi();
 $('pbGo').addEventListener('click',()=>{const v=$('pbIsbn').value.replace(/[^0-9Xx]/g,'');if(v&&!isbnOK(v)){pbInfo('Bu ISBN geçerli görünmüyor, rakamları kontrol et.');return}pbLookup(v||'')});
-function pbReset(b){PB.coverUrl='';PB.photoCover=false;const p=$('pbPrev');if(p)p.innerHTML='';const i=$('pbIsbn');if(i)i.value=b&&b.isbn||'';pbInfo('<b>📷 Barkodu tara</b>\'ya bas, kamerayı kitabın arkasındaki barkoda tut: adı, yazarı, sayfa sayısı, tanıtımı ve kapağı internetten gelsin. Barkod yoksa adını yazıp <b>🔎 Getir</b>\'e bas.')}
+function pbReset(b){PB.coverUrl='';PB.publisher='';PB.photoCover=false;const p=$('pbPrev');if(p)p.innerHTML='';const i=$('pbIsbn');if(i)i.value=b&&b.isbn||'';pbInfo('<b>📷 Barkodu tara</b>\'ya bas, kamerayı kitabın arkasındaki barkoda tut: adı, yazarı, sayfa sayısı, tanıtımı ve kapağı internetten gelsin. Barkodla bulunmazsa <b>📄 Künye sayfası</b>\'nı çek (ISBN\'in yazdığı sayfa), adı ve yazarı oradan okurum.')}
 async function fileIsEpub(f){if(!f)return false;if(/\.epub$/i.test(f.name)||/epub/i.test(f.type||''))return true;if(/\.pdf$/i.test(f.name))return false;try{const u=new Uint8Array(await f.slice(0,4).arrayBuffer());return u[0]===0x50&&u[1]===0x4b}catch(e){return false}}
 
 /* ---------- ☀️ Günün bilgileri: tarihte bugün, bilim, nörobilim, edebiyat, beden ---------- */
