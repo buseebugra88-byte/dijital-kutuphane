@@ -1239,7 +1239,7 @@ body.kindle-soft :is(.chip,.seg button,.btn.on)[aria-pressed="true"]{background:
 .reader.mode-eink .iconbtn,.reader.mode-eink .btn{background:#ebe7df;border-color:#cfcac0;color:var(--eink-ink)}
 .pb-f{background:color-mix(in srgb,var(--brass) 10%,var(--paper));border:1px dashed var(--line);border-radius:16px;padding:12px}
 .pb-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.pb-row input{flex:1 1 150px;min-width:0}
-.pb-out{display:flex;gap:10px;align-items:flex-start;margin-top:8px}.pb-prev img{width:62px;height:92px;object-fit:cover;border-radius:6px;box-shadow:0 4px 12px -6px rgba(0,0,0,.4)}.pb-out .hint{font-size:13px;line-height:1.5}.pb-diag{opacity:.7;font-size:11px}
+.pb-out{display:flex;gap:10px;align-items:flex-start;margin-top:8px}.pb-prev img{width:62px;height:92px;object-fit:cover;border-radius:6px;box-shadow:0 4px 12px -6px rgba(0,0,0,.4)}.pb-out .hint{font-size:13px;line-height:1.5}.pb-diag{opacity:.7;font-size:11px}.pb-key{font-size:12px;padding:6px 10px;opacity:.85}
 .tur-chips{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 8px}.tur-chips .chip,.tm-chips .chip{font-size:13px;padding:5px 11px}
 .tm-bar{background:color-mix(in srgb,var(--brass) 14%,var(--paper,#fff));border-color:var(--brass);gap:8px}.qm-bar>.tm-chips{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:6px;flex:1 1 100%;scrollbar-width:none;padding-bottom:2px}.tm-chips .chip{flex:none}
 @media(max-width:700px){.tm-bar>div:first-child span{display:none}.tm-bar>div:first-child{flex:1 1 auto}}
@@ -1348,7 +1348,7 @@ body.tm-on #listArea [data-bk]{position:relative;cursor:copy}
       <label><input type="radio" name="kind" value="makale" id="kind-makale"><span>Makale</span></label>
       <label><input type="radio" name="kind" value="roman" id="kind-roman"><span>Kendi romanım</span></label>
     </div>
-    <div class="f pb-f" id="pbField" hidden><label>📷 Bilgileri otomatik getir</label><div class="pb-row"><button class="btn primary" type="button" id="pbScanBtn">📷 Barkodu tara</button><label class="btn" for="pbCam">🖼 Fotoğraf</label><input id="pbCam" type="file" accept="image/*" capture="environment" hidden><input id="pbIsbn" inputmode="numeric" placeholder="ya da ISBN yaz (978…)" autocomplete="off"><button class="btn" type="button" id="pbGo">🔎 Getir</button></div><div class="pb-out"><div id="pbPrev" class="pb-prev"></div><span class="hint" id="pbInfo"></span></div></div>
+    <div class="f pb-f" id="pbField" hidden><label>📷 Bilgileri otomatik getir</label><div class="pb-row"><button class="btn primary" type="button" id="pbScanBtn">📷 Barkodu tara</button><label class="btn" for="pbCam">🖼 Fotoğraf</label><input id="pbCam" type="file" accept="image/*" capture="environment" hidden><input id="pbIsbn" inputmode="numeric" placeholder="ya da ISBN yaz (978…)" autocomplete="off"><button class="btn" type="button" id="pbGo">🔎 Getir</button><button class="btn pb-key" type="button" id="pbKey">🔑 Google anahtarı ekle</button></div><div class="pb-out"><div id="pbPrev" class="pb-prev"></div><span class="hint" id="pbInfo"></span></div></div>
     <div class="f"><label for="fTitle">Ad</label><input id="fTitle" required></div>
     <div class="row">
       <div class="f"><label for="fAuthor" id="lAuthor">Yazar</label><input id="fAuthor"></div>
@@ -5271,7 +5271,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v95';
+const DK_VER='v96';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6880,7 +6880,10 @@ async function pbCoverBlob(url){try{const r=await fetch(url,{mode:'cors'});if(!r
 function pbSetCover(blob,url){PB.coverUrl='';if(blob){try{const dt=new DataTransfer();dt.items.add(new File([blob],'kapak.jpg',{type:blob.type||'image/jpeg'}));$('fCover').files=dt.files}catch(e){PB.coverUrl=url||''}}else PB.coverUrl=url||'';
   const p=$('pbPrev');if(p){const src=blob?URL.createObjectURL(blob):url;p.innerHTML=src?`<img src="${esc(src)}" alt="" onerror="this.remove()">`:''}}
 /* Türk kitapçıları (ISBN ile) — CORS köprüsü üzerinden; yalnızca ISBN gönderilir */
-function gbKey(){const k=(window.DK_CONFIG||{}).googleBooksKey;return k?'&key='+encodeURIComponent(k):''}
+function gbKeyRaw(){let k='';try{k=localStorage.getItem('dk-gbkey')||''}catch(e){}return k||(window.DK_CONFIG||{}).googleBooksKey||''}
+function gbKey(){const k=gbKeyRaw();return k?'&key='+encodeURIComponent(k):''}
+function gbKeyAsk(){const v=(prompt('Google Books API anahtarını yapıştır (AIza… ile başlar). Boş bırakırsan silinir.',gbKeyRaw())||'').trim();if(v&&!/^AIza[0-9A-Za-z_\-]{30,}$/.test(v)){toast('Bu bir Google API anahtarına benzemiyor');return false}try{v?localStorage.setItem('dk-gbkey',v):localStorage.removeItem('dk-gbkey')}catch(e){}toast(v?'🔑 Anahtar bu cihaza kaydedildi':'Anahtar silindi');pbKeyUi();return true}
+function pbKeyUi(){const b=$('pbKey');if(b)b.textContent=gbKeyRaw()?'🔑 Anahtar ekli':'🔑 Google anahtarı ekle'}
 const PX=[u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),u=>'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u)];
 async function pxGet(u,kind){const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),9000);
   const one=async p=>{const r=await fetch(p(u),{signal:ac.signal});if(!r.ok)throw 0;const x=kind==='blob'?await r.blob():await r.text();if(kind!=='blob'&&x.length<200)throw 0;return x};
@@ -6934,6 +6937,7 @@ $('pbCam').addEventListener('change',async e=>{const f=e.target.files[0];e.targe
   try{const c=await pbImg(f,900);const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',.86));pbSetCover(blob,'');PB.photoCover=true}catch(x){}
   pbInfo('Barkod bulunamadı, çektiğin fotoğrafı <b>kapak</b> yaptım. Kitabın adını yaz ve <b>🔎 Getir</b>\'e bas; yazar, sayfa sayısı ve tanıtım internetten gelsin. (Barkodu yakından ve düz çekersen otomatik okunur.)')});
 $('pbScanBtn').addEventListener('click',()=>pbScanStart());
+$('pbKey').addEventListener('click',()=>{if(gbKeyAsk()){const v=$('pbIsbn').value.replace(/[^0-9Xx]/g,'');if(v||$('fTitle').value.trim())pbLookup(v)}});pbKeyUi();
 $('pbGo').addEventListener('click',()=>{const v=$('pbIsbn').value.replace(/[^0-9Xx]/g,'');if(v&&!isbnOK(v)){pbInfo('Bu ISBN geçerli görünmüyor, rakamları kontrol et.');return}pbLookup(v||'')});
 function pbReset(b){PB.coverUrl='';PB.photoCover=false;const p=$('pbPrev');if(p)p.innerHTML='';const i=$('pbIsbn');if(i)i.value=b&&b.isbn||'';pbInfo('<b>📷 Barkodu tara</b>\'ya bas, kamerayı kitabın arkasındaki barkoda tut: adı, yazarı, sayfa sayısı, tanıtımı ve kapağı internetten gelsin. Barkod yoksa adını yazıp <b>🔎 Getir</b>\'e bas.')}
 async function fileIsEpub(f){if(!f)return false;if(/\.epub$/i.test(f.name)||/epub/i.test(f.type||''))return true;if(/\.pdf$/i.test(f.name))return false;try{const u=new Uint8Array(await f.slice(0,4).arrayBuffer());return u[0]===0x50&&u[1]===0x4b}catch(e){return false}}
