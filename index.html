@@ -5279,7 +5279,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v101';
+const DK_VER='v102';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -8321,7 +8321,7 @@ async function renderScroll(){
   rdFree(stage);stage.innerHTML='';stage.classList.add('scrollflow');stage.appendChild(frag);
   SCR.io=new IntersectionObserver(ents=>{for(const en of ents)if(en.isIntersecting)scrDraw(+en.target.dataset.p,doc,key)},{root:stage,rootMargin:'120% 0px'});
   SCR.els.forEach(el=>SCR.io.observe(el));
-  scrollToPage(R.page);SCR.lastTop=stage.scrollTop;footSync();
+  scrollToPage(R.page);SCR.lastTop=stage.scrollTop;footSync();SCR.fail={};setTimeout(scrEnsure,400)
 }
 async function scrDraw(n,doc,key){
   const el=SCR.els[n-1];if(!el||el.dataset.done||SCR.busy.has(n))return;SCR.busy.add(n);
@@ -8332,16 +8332,20 @@ async function scrDraw(n,doc,key){
     const before=el.offsetTop<stage.scrollTop,oh=el.offsetHeight;
     el.style.width=Math.floor(vp.width)+'px';el.style.height=Math.floor(vp.height)+'px';el.innerHTML='';el.appendChild(c);el.dataset.done='1';try{rxAttach(el,n)}catch(e){}
     if(before)stage.scrollTop+=el.offsetHeight-oh;
-    SCR.els.forEach((o,i)=>{if(o.dataset.done&&Math.abs(i+1-R.page)>3){rdFree(o);o.innerHTML='';delete o.dataset.done}});
-  }catch(e){}finally{SCR.busy.delete(n)}
+    scrFree();
+  }catch(e){SCR.fail=(SCR.fail||{});SCR.fail[n]=(SCR.fail[n]||0)+1;if(SCR.fail[n]<4){scrFree(true);setTimeout(()=>scrEnsure(),350*SCR.fail[n])}}finally{SCR.busy.delete(n)}
 }
+function scrVis(){const stage=$('rStage');if(!SCR.els.length)return [0,0];const top=stage.scrollTop,bot=top+stage.clientHeight;let lo=0,hi=SCR.els.length-1;
+  while(lo<hi){const m=(lo+hi+1)>>1;if(SCR.els[m].offsetTop<=top)lo=m;else hi=m-1}let a=lo,b=lo;while(b+1<SCR.els.length&&SCR.els[b+1].offsetTop<bot)b++;return [a+1,b+1]}
+function scrFree(hard){const [a,b]=scrVis();const keep=hard?1:3;SCR.els.forEach((o,i)=>{const n=i+1;if(o.dataset.done&&(n<a-keep||n>b+keep)){rdFree(o);o.innerHTML='';delete o.dataset.done}})}
+function scrEnsure(){if(!isScroll()||!SCR.els.length||$('reader').hidden||!R.doc)return;const [a,b]=scrVis();for(let n=Math.max(1,a-1);n<=Math.min(SCR.els.length,b+1);n++){const el=SCR.els[n-1];if(!el.dataset.done&&!SCR.busy.has(n))scrDraw(n,R.doc,SCR.key)}}
 $('rStage').addEventListener('scroll',()=>{
   if($('reader').hidden)return;const stage=$('rStage'),t=stage.scrollTop,d=t-SCR.lastTop;
   if(Math.abs(d)>14){if(d>0&&t>40)barsHide();SCR.lastTop=t}
   if(!isScroll()||!SCR.els.length)return;cancelAnimationFrame(SCR.raf);SCR.raf=requestAnimationFrame(()=>{
     const mid=stage.scrollTop+stage.clientHeight*0.35;let lo=0,hi=SCR.els.length-1;
     while(lo<hi){const m=(lo+hi+1)>>1;if(SCR.els[m].offsetTop<=mid)lo=m;else hi=m-1}
-    const n=lo+1;if(n!==R.page){R.page=n;footSync();queueSave()}})},{passive:true});
+    const n=lo+1;if(n!==R.page){R.page=n;footSync();queueSave()}clearTimeout(SCR.et);SCR.et=setTimeout(scrEnsure,180)})},{passive:true});
 function goPage(n){
   if(!R.doc)return;if(pdfSpread()){const L=R.page%2?R.page:R.page-1;if(n===R.page+1)n=L+2;else if(n===R.page-1)n=Math.max(1,L-2);if(n>R.doc.numPages&&L+1<=R.doc.numPages&&n===L+2)return}n=Math.max(1,Math.min(R.doc.numPages,n|0));if(n===R.page){$('rPage').value=n;return}
   R.flipDir=n>R.page?1:-1;R.page=n;R.pos=0;if(isScroll()){scrollToPage(n);footSync()}else{renderPage();barsHide()}queueSave();
