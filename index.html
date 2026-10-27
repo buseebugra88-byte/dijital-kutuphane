@@ -5286,7 +5286,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v109';
+const DK_VER='v110';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -8441,7 +8441,7 @@ async function renderEpub(){
   else{epUnpage();if(rp!=null){requestAnimationFrame(()=>{stage.scrollTop=rp*(stage.scrollHeight-stage.clientHeight)})}else stage.scrollTop=0}
   $('rPage').value=R.page;$('rPrev').disabled=R.page<=1&&!EPG.on;$('rNext').disabled=R.page>=R.doc.numPages&&!EPG.on;try{epAfter();epToc(ep).then(()=>{}).catch(()=>{});if(EP.goFrag!=null)epAfterGo();if(EP.find)epFindShow();if(TTS.epNext&&TTS.on){TTS.epNext=false;epTtsStart(0)}}catch(e){console.warn(e)}
 }
-function rdDpr(vp){const d=Math.min(2.5,window.devicePixelRatio||1),max=/iP(hone|ad|od)|Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1?9e6:16e6;const a=vp.width*vp.height;return Math.max(1,Math.min(d,Math.sqrt(max/Math.max(1,a))))}
+function rdDpr(vp){const d=Math.min(2.5,window.devicePixelRatio||1),max=/iP(hone|ad|od)|Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1?4.6e6:16e6;const a=vp.width*vp.height;return Math.max(1,Math.min(d,Math.sqrt(max/Math.max(1,a))))}
 function rdFree(root){if(!root)return;root.querySelectorAll('canvas').forEach(c=>{try{c.width=0;c.height=0}catch(e){}})}
 let rdRz,rdW=0,rdH=0;function rdResize(){if(!R.book||$('reader').hidden||R.epub||!R.doc)return;const st_=$('rStage');if(Math.abs(st_.clientWidth-rdW)<4&&Math.abs(st_.clientHeight-rdH)<40)return;rdW=st_.clientWidth;rdH=st_.clientHeight;SCR.key='';R.flipDir=0;renderPage()}
 window.addEventListener('resize',()=>{clearTimeout(rdRz);rdRz=setTimeout(rdResize,250)});window.addEventListener('orientationchange',()=>{clearTimeout(rdRz);rdRz=setTimeout(rdResize,400)});
@@ -8458,16 +8458,18 @@ function pdfSpread(){return !!(R.doc&&!R.epub&&spreadOK()&&!isScroll()&&R.scale<
     const pg=await R.doc.getPage(R.page),stage=$('rStage');
     const base=pg.getViewport({scale:1}),cs=getComputedStyle(stage),avH=stage.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0)-8,fitW=Math.min(900,stage.clientWidth-32)/base.width,fit=avH>200?Math.min(fitW,avH/base.height):fitW;
     const vp=pg.getViewport({scale:fit*R.scale}),dpr=rdDpr(vp);
-    const c=await pcGet(pg,R.page,vp,dpr);c.setAttribute('aria-label','Sayfa '+R.page);PC.fit=fit;
+    const hit=PC.m.has(pcKey(R.page,vp,dpr)),lo=!hit&&dpr>1.05,pgNo=R.page;
+    const c=hit?await pcGet(pg,R.page,vp,dpr):await pcRender(pg,vp,lo?1:dpr);c.setAttribute('aria-label','Sayfa '+R.page);PC.fit=fit;
     const wrap=document.createElement('div');wrap.className='pgwrap';wrap.style.width=c.style.width;
-    const ink=document.createElement('canvas');ink.className='inklayer';ink.width=c.width;ink.height=c.height;
+    const idpr=Math.min(dpr,1.5),ink=document.createElement('canvas');ink.className='inklayer';ink.width=Math.round(vp.width*idpr);ink.height=Math.round(vp.height*idpr);
+    if(lo)setTimeout(async()=>{try{if(!wrap.isConnected||R.page!==pgNo)return;const hc=await pcRender(pg,vp,dpr);if(!wrap.isConnected||!c.parentNode){hc.width=0;hc.height=0;return}hc.setAttribute('aria-label',c.getAttribute('aria-label'));c.parentNode.replaceChild(hc,c);c.width=0;c.height=0}catch(e){}},40);
     wrap.appendChild(c);wrap.appendChild(ink);stage.classList.remove('scrollflow');SCR.key='';
     const old=stage.querySelector(':scope>.pgwrap'),dir=R.flipDir;R.flipDir=0;let ob=null;
     if(old&&dir&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const r=old.getBoundingClientRect(),sr=stage.getBoundingClientRect();ob={l:r.left-sr.left+stage.scrollLeft,t:r.top-sr.top+stage.scrollTop,w:r.width}}
     stage.querySelectorAll(':scope>.pgwrap:not(.flipping)').forEach(w=>{if(w!==old||!ob)rdFree(w)});stage.innerHTML='';stage.appendChild(wrap);
     if(ob){old.querySelectorAll('.inklayer').forEach(x=>x.remove());old.classList.add('flipping',dir>0?'fl-next':'fl-prev');Object.assign(old.style,{position:'absolute',left:ob.l+'px',top:ob.t+'px',width:ob.w+'px',margin:'0'});stage.appendChild(old);const rm=()=>{rdFree(old);old.remove()};old.addEventListener('animationend',rm);setTimeout(rm,700)}stage.scrollTop=0;
     if(dir&&!matchMedia('(prefers-reduced-motion: reduce)').matches)wrap.classList.add(dir>0?'in-next':'in-prev');
-    inkAttach(ink,R.book,R.page,dpr);rdW=stage.clientWidth;rdH=stage.clientHeight;try{rxAttach(wrap,R.page)}catch(e){}pcAhead(R.page,dir||1);
+    inkAttach(ink,R.book,R.page,idpr);rdW=stage.clientWidth;rdH=stage.clientHeight;try{rxAttach(wrap,R.page)}catch(e){}pcAhead(R.page,dir||1);
   }catch(e){}
   R.rendering=false;
   $('rPage').value=R.page;$('rPrev').disabled=R.page<=1;$('rNext').disabled=R.page>=R.doc.numPages;try{rxEta();rxOutline()}catch(e){}
@@ -8489,10 +8491,11 @@ function pcAhead(n,dir){clearTimeout(PC.t);PC.t=setTimeout(async()=>{if(PC.busy|
 async function renderSpread(){const stage=$('rStage'),L=R.page%2?R.page:R.page-1,nums=[L,L+1].filter(n=>n>=1&&n<=R.doc.numPages);
   const pgs=await Promise.all(nums.map(n=>R.doc.getPage(n))),b0=pgs[0].getViewport({scale:1}),cs=getComputedStyle(stage),avH=stage.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0)-8;
   const gap=14,fit=Math.min((stage.clientWidth-40-gap)/(b0.width*2),avH/b0.height);const box=document.createElement('div');box.className='pgspread';
-  PC.sfit=fit;for(let k=0;k<pgs.length;k++){const pg=pgs[k],vp=pg.getViewport({scale:fit}),dpr=rdDpr(vp),c=await pcGet(pg,nums[k],vp,dpr);c.setAttribute('aria-label','Sayfa '+nums[k]);
-    const w=document.createElement('div');w.className='pgwrap sp-'+(k?'r':'l');w.dataset.p=nums[k];w.style.width=c.style.width;const ink=document.createElement('canvas');ink.className='inklayer';ink.width=c.width;ink.height=c.height;w.appendChild(c);w.appendChild(ink);box.appendChild(w);
-    try{inkAttach(ink,R.book,nums[k],dpr)}catch(e){}try{rxAttach(w,nums[k])}catch(e){}}
-  stage.querySelectorAll('.pgwrap').forEach(w=>rdFree(w));stage.classList.remove('scrollflow');SCR.key='';stage.innerHTML='';const dir_=R.flipDir;if(dir_&&!matchMedia('(prefers-reduced-motion: reduce)').matches)box.classList.add(dir_>0?'in-next':'in-prev');stage.appendChild(box);stage.scrollTop=0;rdW=stage.clientWidth;rdH=stage.clientHeight;R.flipDir=0;pcAhead(L,1)}
+  PC.sfit=fit;const ups=[];for(let k=0;k<pgs.length;k++){const pg=pgs[k],vp=pg.getViewport({scale:fit}),dpr=rdDpr(vp),hit=PC.m.has(pcKey(nums[k],vp,dpr)),lo=!hit&&dpr>1.05,c=hit?await pcGet(pg,nums[k],vp,dpr):await pcRender(pg,vp,lo?1:dpr);c.setAttribute('aria-label','Sayfa '+nums[k]);if(lo)ups.push([pg,vp,dpr,c]);
+    const w=document.createElement('div');w.className='pgwrap sp-'+(k?'r':'l');w.dataset.p=nums[k];w.style.width=c.style.width;const idpr=Math.min(dpr,1.5),ink=document.createElement('canvas');ink.className='inklayer';ink.width=Math.round(vp.width*idpr);ink.height=Math.round(vp.height*idpr);w.appendChild(c);w.appendChild(ink);box.appendChild(w);
+    try{inkAttach(ink,R.book,nums[k],idpr)}catch(e){}try{rxAttach(w,nums[k])}catch(e){}}
+  stage.querySelectorAll('.pgwrap').forEach(w=>rdFree(w));stage.classList.remove('scrollflow');SCR.key='';stage.innerHTML='';const dir_=R.flipDir;if(dir_&&!matchMedia('(prefers-reduced-motion: reduce)').matches)box.classList.add(dir_>0?'in-next':'in-prev');stage.appendChild(box);stage.scrollTop=0;rdW=stage.clientWidth;rdH=stage.clientHeight;R.flipDir=0;
+  if(ups.length)setTimeout(async()=>{for(const [pg,vp,dpr,c] of ups){try{if(!box.isConnected||!c.parentNode)return;const hc=await pcRender(pg,vp,dpr);if(!c.parentNode){hc.width=0;hc.height=0;return}hc.setAttribute('aria-label',c.getAttribute('aria-label'));c.parentNode.replaceChild(hc,c);c.width=0;c.height=0}catch(e){}}pcAhead(L,1)},40);else pcAhead(L,1)}
 let posT;document.addEventListener('DOMContentLoaded',()=>{});
 $('rStage').addEventListener('scroll',()=>{if(!R.epub)return;const st_=$('rStage');R.pos=Math.round((st_.scrollTop/Math.max(1,st_.scrollHeight-st_.clientHeight))*1000)/1000;clearTimeout(posT);posT=setTimeout(()=>{if(Math.abs(R.pos-R.lastPos)>0.02)saveMark(true)},1500)},{passive:true});
 
