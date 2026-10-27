@@ -1265,6 +1265,7 @@ body.tm-on #listArea [data-bk]{position:relative;cursor:copy}
 .card .c-bl{margin:6px 0 2px;font-size:13.5px;line-height:1.5;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .card .c-bladd{margin:6px 0 2px;font:inherit;font-size:12.5px;color:var(--muted);background:none;border:1px dashed var(--line);border-radius:99px;padding:3px 10px;cursor:pointer}
 .c-ai{font-size:11px}.qm-bar.off{flex-wrap:wrap}
+.sim-it{padding:10px 0;border-bottom:1px solid var(--line)}.sim-it p{margin:4px 0 8px;font-size:14px}
 </style>
 
 </head><body>
@@ -1482,7 +1483,7 @@ body.tm-on #listArea [data-bk]{position:relative;cursor:copy}
 <div class="veil" id="pickVeil" hidden>
   <div class="panel" role="dialog" aria-labelledby="pickTitle">
     <h2 id="pickTitle">Ne okusam?</h2>
-    <div class="seg" id="pickTabs"><button type="button" data-t="raf" aria-pressed="true">Raflarımdan seç</button><button type="button" data-t="claude" id="pickClaudeTab" hidden>✨ Claude'a sor</button><button type="button" data-t="yeni" id="pickNewTab" hidden>✨ Kitap bul</button></div>
+    <div class="seg" id="pickTabs"><button type="button" data-t="raf" aria-pressed="true">Raflarımdan seç</button><button type="button" data-t="claude" id="pickClaudeTab" hidden>✨ Ruh halime göre</button><button type="button" data-t="yeni" id="pickNewTab" hidden>✨ Kitap bul</button></div>
     <div id="pickRaf">
       <div class="chips" id="pickMoods"></div>
       <div id="pickOut" class="pick-out"></div>
@@ -1813,8 +1814,8 @@ function seriesList(){const g={};st.books.filter(b=>b.kind!=='roman'&&b.kind!=='
   return Object.values(g).filter(x=>x.books.length>1||x.books.some(y=>y.no>1)).map(x=>{x.books.sort((a,b)=>a.no-b.no);x.max=Math.max(...x.books.map(y=>y.no),x.books.length);
     const byNo={};x.books.forEach(y=>{if(y.no)byNo[y.no]=y.b});x.byNo=byNo;
     x.next=x.books.find(y=>y.b.status!=='okundu');x.done=x.books.filter(y=>y.b.status==='okundu').length;return x}).sort((a,b)=>(b.next?1:0)-(a.next?1:0)||a.name.localeCompare(b.name,TR))}
-function seriesCard(span){const L=seriesList();if(!L.length&&!st.sample)return '';
-  return `<section class="dcard d-series" style="grid-column:span ${span}"><h3>Serilerim <small>${L.length?L.length+' seri ':''}${st.sample?`<button class="btn" type="button" data-serai style="padding:4px 12px" ${SR.busy?'disabled':''}>✨ Claude bulsun</button>`:''}</small></h3>${serPropsHtml()}${!L.length&&!SR.props&&!SR.busy&&!SR.err?'<p class="hint" style="margin:0">Dosya adları karışıksa Claude rafındaki serileri ve sıralarını bulabilir.</p>':''}<div class="serlist">${L.slice(0,SR.all?60:6).map(x=>`<div class="ser"><div class="ser-h"><b>${esc(x.name)}</b><span class="hint">${x.done}/${x.max} okundu</span></div>
+function seriesCard(span){const L=seriesList();if(!L.length&&!BS())return '';
+  return `<section class="dcard d-series" style="grid-column:span ${span}"><h3>Serilerim <small>${L.length?L.length+' seri ':''}${BS()?`<button class="btn" type="button" data-serai style="padding:4px 12px" ${SR.busy?'disabled':''}>✨ Claude bulsun</button>`:''}</small></h3>${serPropsHtml()}${!L.length&&!SR.props&&!SR.busy&&!SR.err?'<p class="hint" style="margin:0">Dosya adları karışıksa Claude rafındaki serileri ve sıralarını bulabilir.</p>':''}<div class="serlist">${L.slice(0,SR.all?60:6).map(x=>`<div class="ser"><div class="ser-h"><b>${esc(x.name)}</b><span class="hint">${x.done}/${x.max} okundu</span></div>
     <div class="ser-dots">${[...Array(Math.min(x.max,14))].map((_,i)=>{const b=x.byNo[i+1];const c=!b?'miss':b.status==='okundu'?'done':b.status==='okunuyor'?'now':'have';return `<span class="sd ${c}" title="#${i+1}${b?' · '+esc(b.title):' · rafında yok'}">${i+1}</span>`}).join('')}</div>
     ${x.next?`<button class="btn" type="button" data-${hasFile(x.next.b)?'read':'edit'}="${x.next.b.id}" style="justify-self:start;padding:4px 12px">Sıradaki: ${esc(x.next.b.title)}${x.next.no?' (#'+x.next.no+')':''} →</button>`:'<span class="hint">Seriyi bitirdin 🎉</span>'}
     ${[...Array(Math.min(x.max,14))].some((_,i)=>!x.byNo[i+1])?`<span class="hint" style="font-size:11px">Eksik: ${[...Array(Math.min(x.max,14))].map((_,i)=>x.byNo[i+1]?'':'#'+(i+1)).filter(Boolean).join(', ')}</span>`:''}</div>`).join('')}</div>${L.length>6?`<button class="btn" type="button" data-serall style="justify-self:start;padding:3px 12px;font-size:13px">${SR.all?'Daha az göster':'Tümünü göster ('+L.length+')'}</button>`:''}</section>`}
@@ -2421,7 +2422,7 @@ let askCtl=null;
 $('rAsk').addEventListener('click',()=>{const h=!$('rAskBox').hidden;$('rAskBox').hidden=h;$('rPop').hidden=true;if(!h)setTimeout(()=>$('rAskQ').focus(),30)});
 $('rAskClose').addEventListener('click',()=>{askCtl&&askCtl.abort();$('rAskBox').hidden=true});
 $('rAskForm').addEventListener('submit',async e=>{
-  e.preventDefault();const q=$('rAskQ').value.trim();if(!q||!st.sample||!R.book)return;
+  e.preventDefault();const q=$('rAskQ').value.trim();if(!q||!BS()||!R.book)return;
   const out=$('rAskOut');out.textContent='Düşünüyor…';$('rAskGo').disabled=true;askCtl&&askCtl.abort();askCtl=new AbortController();
   const txt=(await pageText()).slice(0,60000),b=R.book;
   const prompt=`Bir okuma uygulamasında okuyucuya yardım ediyorsun. Türkçe, sıcak ve kısa cevap ver (en fazla birkaç paragraf).
@@ -2431,8 +2432,8 @@ Kural: Okuyucunun bu noktadan sonrasını bilmediğini varsay; kitabın ilerisin
 ${txt||'(Bu sayfadan metin alınamadı; görüntü olarak taranmış olabilir.)'}
 --- Soru ---
 ${q}`;
-  try{await st.sample(prompt,{signal:askCtl.signal,onText:({text})=>{out.textContent=text}})}
-  catch(err){out.textContent=(err&&err.text?err.text+'\n\n':'')+sampleErr(err)}
+  try{await BS()(prompt,{signal:askCtl.signal,onText:({text})=>{out.textContent=text}})}
+  catch(err){out.textContent=(err&&err.text?err.text+'\n\n':'')+aiErr(err)}
   finally{$('rAskGo').disabled=false}
 });
 
@@ -2459,7 +2460,7 @@ function pickRender(){
   $('pickInfo').textContent=`${pool.length} kitap arasından seçildi`;setTimeout(()=>blFix($('pickOut')),0);
 }
 function pickItem(b,why,ed){return `<div class="pick-item">${bookHtml(b)}<div><b>${esc(b.title)}</b> <span class="hint">${esc(b.author||'')}</span>${why?`<p>${esc(why)}</p>`:''}${blShow(b,4)}<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">${hasFile(b)?`<button class="btn" type="button" data-pickread="${b.id}">Okumaya başla</button>`:''}${ed?`<button class="btn" type="button" data-pickedit="${b.id}">Ayrıntılar</button>`:''}</div></div></div>`}
-$('pickBtn').addEventListener('click',()=>{$('pickVeil').hidden=false;$('pickClaudeTab').hidden=$('pickNewTab').hidden=!st.sample;pickRender()});
+$('pickBtn').addEventListener('click',()=>{$('pickVeil').hidden=false;$('pickClaudeTab').hidden=$('pickNewTab').hidden=!BS();pickRender()});
 $('pickClose').addEventListener('click',()=>{$('pickVeil').hidden=true});
 $('pickVeil').addEventListener('click',e=>{if(e.target===$('pickVeil'))$('pickVeil').hidden=true;
   const r=e.target.closest('[data-pickread]');if(r){$('pickVeil').hidden=true;openReader(st.books.find(b=>b.id===r.dataset.pickread));return}
@@ -2470,33 +2471,33 @@ $('pickAgain').addEventListener('click',pickRender);
 $('pickTabs').addEventListener('click',e=>{const t=e.target.closest('[data-t]');if(!t)return;$('pickTabs').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b===t));
   $('pickRaf').hidden=t.dataset.t!=='raf';$('pickClaude').hidden=t.dataset.t!=='claude';$('pickNew').hidden=t.dataset.t!=='yeni'});
 $('pickCForm').addEventListener('submit',async e=>{
-  e.preventDefault();const q=$('pickCQ').value.trim();if(!q||!st.sample)return;
+  e.preventDefault();const q=$('pickCQ').value.trim();if(!q||!BS())return;
   const pool=st.books.filter(b=>b.kind!=='roman'&&b.status==='okunacak').slice(0,300);
   if(!pool.length){$('pickCOut').innerHTML='<span class="hint">Okunacaklar rafın boş.</span>';return}
-  $('pickCOut').innerHTML='<span class="hint">Claude rafına bakıyor…</span>';
+  $('pickCOut').innerHTML='<span class="hint">'+aiName()+' rafına bakıyor…</span>';
   const list=pool.map(b=>({id:b.id,t:b.title,a:b.author||'',raf:b.shelf||'',etiket:(b.tags||[]).join(', ')}));
-  try{const r=await st.sample.json(`Bir okura okunacaklar rafından kitap seçiyorsun. Okurun isteği: "${q}".
+  try{const r=await BS().json(`Bir okura okunacaklar rafından kitap seçiyorsun. Okurun isteği: "${q}".
 Aşağıdaki listeden bu isteğe en uygun en fazla 3 kitabı seç. Kitapları genel bilginle değerlendir; tanımadığın kitaplarda başlık ve rafa göre tahmin et ama abartma.
 Sadece şu biçimde JSON dizi döndür: [{"id":"…","why":"Türkçe, bir-iki cümlelik neden"}]
 Liste: ${JSON.stringify(list)}`);
     const items=(Array.isArray(r)?r:[]).map(x=>({b:st.books.find(b=>b.id===x.id),why:x.why})).filter(x=>x.b);
     $('pickCOut').innerHTML=items.length?items.map(x=>pickItem(x.b,x.why)).join(''):'<span class="hint">Uygun bir kitap bulunamadı, isteğini biraz değiştirip tekrar dene.</span>';
-  }catch(err){$('pickCOut').innerHTML=`<span class="hint">${esc(sampleErr(err))}</span>`}
+  }catch(err){$('pickCOut').innerHTML=`<span class="hint">${esc(aiErr(err))}</span>`}
 });
 let pickNCtl=null;
 function inLib(t){const k=trLow(t||'').replace(/[^\p{L}\p{N} ]/gu,'').trim();return st.books.find(b=>{const x=trLow(b.title||'').replace(/[^\p{L}\p{N} ]/gu,'').trim();return x&&k&&(x===k||x.includes(k)||k.includes(x))})}
 async function findBooks(q){
-  if(!st.sample)return;const out=$('pickNOut');
+  if(!BS())return;const out=$('pickNOut');
   const read=st.books.filter(b=>b.kind!=='roman'&&(b.status==='okundu'||b.status==='okunuyor')),all=st.books.filter(b=>b.kind!=='roman');
   const taste=(read.length?read:all).slice(0,80).map(b=>`${b.title}${b.author?' — '+b.author:''}${b.shelf?' ['+b.shelf+']':''}`).join('\n');
-  out.innerHTML='<span class="hint">Claude kitap arıyor…</span>';$('pickNGo').disabled=true;
+  out.innerHTML='<span class="hint">'+aiName()+' kitap arıyor…</span>';$('pickNGo').disabled=true;
   const prompt=`Türk bir okura kitap öneriyorsun.
 ${q?`Okurun aradığı şey: "${q}"`:'Okur bir şey belirtmedi; zevkine göre öner.'}
 Okurun zevkini anlaman için kütüphanesindeki bazı kitaplar:
 ${taste||'(henüz yok)'}
 Kurallar: Gerçekten var olan kitaplar öner, uydurma. Mümkünse Türkçe çevirisi olanları seç ve Türkçe adını yaz. Okurun zaten okuduğu kitapları önerme. 6 öneri ver; isteğe en uygun olandan başla.
 Sadece şu biçimde JSON dizi döndür: [{"t":"kitabın Türkçe adı","orig":"orijinal adı (farklıysa, yoksa boş)","a":"yazar","tur":"tür (ör. Distopya, Romantik)","why":"Türkçe, bu isteğe neden uygun olduğunu anlatan 1-2 cümle, spoiler yok"}]`;
-  try{const r=await st.sample.json(prompt,{modelTier:'default'});const items=(Array.isArray(r)?r:[]).filter(x=>x&&x.t);
+  try{const r=await BS().json(prompt,{modelTier:'default'});const items=(Array.isArray(r)?r:[]).filter(x=>x&&x.t);
     if(!items.length){out.innerHTML='<span class="hint">Öneri gelmedi; isteğini biraz farklı anlatıp tekrar dene.</span>';return}
     out.innerHTML=items.map((x,i)=>{const have=inLib(x.t)||(x.orig&&inLib(x.orig));const q2=encodeURIComponent(x.t+(x.a?' '+x.a:''));
       return `<div class="pick-item">${have?bookHtml(have):`<div class="bk gen K" style="--cw:60px;--ch:90px" aria-hidden="true"><span class="t" style="font-size:11px">${esc(x.t)}</span>${ico(['openbook','sprigbook','cupbook','glasses'][i%4])}</div>`}
@@ -2504,7 +2505,7 @@ Sadece şu biçimde JSON dizi döndür: [{"t":"kitabın Türkçe adı","orig":"o
         <div style="display:flex;gap:6px;flex-wrap:wrap">${have?`<span class="pill s-okundu">Rafında var</span>${hasFile(have)?`<button class="btn" type="button" data-pickread="${have.id}">Okumaya başla</button>`:''}`:`<button class="btn" type="button" data-wish="${i}">+ İstek listeme ekle</button>`}
         <a class="btn" href="https://www.kitapyurdu.com/index.php?route=product/search&filter_name=${q2}" target="_blank" rel="noopener">Kitapyurdu ↗</a><a class="btn" href="https://www.goodreads.com/search?q=${q2}" target="_blank" rel="noopener">Goodreads ↗</a></div></div></div>`}).join('');
     out.dataset.items=JSON.stringify(items);
-  }catch(err){out.innerHTML=`<span class="hint">${esc(sampleErr(err))}</span>`}
+  }catch(err){out.innerHTML=`<span class="hint">${esc(aiErr(err))}</span>`}
   finally{$('pickNGo').disabled=false}
 }
 $('pickNForm').addEventListener('submit',e=>{e.preventDefault();findBooks($('pickNQ').value.trim())});
@@ -3070,16 +3071,16 @@ function shelfPick(){const fav=st.books.filter(b=>b.kind!=='roman'&&b.status==='
   const day=new Date().toDateString();const sc=cand.map(c=>{let s=0;base.forEach(f=>{if(similarBooks(f).includes(c))s++});return [s+(hashStr(day+c.id)%100)/1000,c]}).sort((a,b)=>b[0]-a[0]);
   const [s,c]=sc[0];const why=s>=1?base.filter(f=>similarBooks(f).includes(c)).slice(0,2).map(f=>f.title):[];return {b:c,why}}
 function recsCard(){const R=(TL.recs&&Array.isArray(TL.recs.items))?TL.recs.items.filter(x=>x&&x.t&&!inLib(x.t)):[];const sp=shelfPick();
-  if(!st.sample&&!sp)return '';
+  if(!BS()&&!sp)return '';
   const q2=x=>encodeURIComponent(x.t+(x.a?' '+x.a:''));
-  return `<section class="dcard d-recs"><h3>Senin için seçtiklerim <small>${st.sample?`<button class="btn" type="button" data-recnew style="padding:4px 12px" ${RC.busy?'disabled':''}>${RC.busy?'Claude düşünüyor…':'↻ Yenile'}</button>`:''}</small></h3>
+  return `<section class="dcard d-recs"><h3>Senin için seçtiklerim <small>${BS()?`<button class="btn" type="button" data-recnew style="padding:4px 12px" ${RC.busy?'disabled':''}>${RC.busy?'Claude düşünüyor…':'↻ Yenile'}</button>`:''}</small></h3>
     ${sp?`<div class="rec rec-shelf">${bookHtml(sp.b)}<div><div class="eyebrow">Rafından</div><b>${esc(sp.b.title)}</b> <span class="hint">${esc(sp.b.author||'')}</span><p>${sp.why.length?`${sp.why.map(t=>'“'+esc(t)+'”').join(' ve ')} sevdiysen bu da hoşuna gidebilir.`:'Okunacaklar rafında seni bekliyor.'}</p>${hasFile(sp.b)?`<button class="btn" type="button" data-read="${sp.b.id}" style="padding:4px 12px">Okumaya başla</button>`:''}</div></div>`:''}
     ${R.length?`<div class="recs">${R.slice(0,5).map((x,i)=>`<div class="rec"><div class="bk gen K" style="--cw:56px;--ch:84px" aria-hidden="true"><span class="t" style="font-size:10px">${esc(x.t)}</span>${ico(['openbook','sprigbook','cupbook','glasses'][i%4])}</div>
       <div><b>${esc(x.t)}</b> <span class="hint">${esc(x.a||'')}${x.tur?' · '+esc(x.tur):''}</span><p>${esc(x.why||'')}</p><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn" type="button" data-recwish="${i}" style="padding:4px 12px">+ İstek listem</button><a class="btn" style="padding:4px 12px" href="https://www.goodreads.com/search?q=${q2(x)}" target="_blank" rel="noopener">Goodreads ↗</a></div></div></div>`).join('')}</div>`
-      :st.sample?`<p class="hint" style="margin:0">${RC.busy?'Claude kütüphanene bakıyor…':RC.err?esc(RC.err):'Kütüphanene bakıp sana yeni kitaplar önermem için ↻ Yenile\'ye bas.'}</p>`:''}
+      :BS()?`<p class="hint" style="margin:0">${RC.busy?aiName()+' kütüphanene bakıyor…':RC.err?esc(RC.err):'Kütüphanene bakıp sana yeni kitaplar önermem için ↻ Yenile\'ye bas.'}</p>`:''}
     ${TL.recs&&TL.recs.at&&R.length?`<span class="hint" style="font-size:12px">${esc(fmtTR(TL.recs.at.slice(0,10)))} tarihli öneriler · haftada bir kendiliğinden yenilenir</span>`:''}</section>`}
-function maybeRecs(){if(RC.tried||!st.sample||!st.db||st.books.filter(b=>b.kind!=='roman').length<3)return;const at=TL.recs&&TL.recs.at?new Date(TL.recs.at):null;if(at&&Date.now()-at<7*864e5)return;RC.tried=true;fetchRecs()}
-async function fetchRecs(){if(!st.sample||RC.busy)return;RC.busy=true;RC.err='';if(st.view==='panel')renderList();
+function maybeRecs(){if(RC.tried||!BS()||!st.db||st.books.filter(b=>b.kind!=='roman').length<3)return;const at=TL.recs&&TL.recs.at?new Date(TL.recs.at):null;if(at&&Date.now()-at<7*864e5)return;RC.tried=true;fetchRecs()}
+async function fetchRecs(){if(!BS()||RC.busy)return;RC.busy=true;RC.err='';if(st.view==='panel')renderList();
   const R=st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale');const liked=R.filter(b=>b.status==='okundu'||b.status==='okunuyor').sort((a,b)=>(b.rating||0)-(a.rating||0));
   const line=b=>`${b.title}${b.author?' — '+b.author:''}${b.rating?' ['+b.rating+'/5]':''}${(b.tags||[]).length?' {'+b.tags.slice(0,4).join(', ')+'}':''}${b.shelf?' ('+b.shelf+')':''}`;
   const prompt=`Türk bir okura, kütüphanesine bakarak kendiliğinden kitap öneriyorsun (okur bir şey sormadı).
@@ -3089,9 +3090,9 @@ Okunacaklar rafında zaten olanlar (bunları önerme):
 ${R.filter(b=>b.status==='okunacak').slice(0,60).map(b=>b.title).join('; ')||'(yok)'}
 Kurallar: Gerçekten var olan kitaplar öner, uydurma. Kütüphanesinde olan hiçbir kitabı önerme. Yüksek puan verdiği kitaplara ve sevdiği türlere ağırlık ver; 1-2 tane de biraz farklı ama seveceği bir keşif ekle. Mümkünse Türkçe çevirisi olanları seç ve Türkçe adını yaz. 5 öneri.
 Sadece JSON dizi döndür: [{"t":"Türkçe adı","orig":"orijinal adı (farklıysa)","a":"yazar","tur":"tür","why":"hangi sevdiği kitaba benzediğini anlatan tek kısa cümle, spoiler yok"}]`;
-  try{const r=await st.sample.json(prompt,{modelTier:'default'});const items=(Array.isArray(r)?r:[]).filter(x=>x&&x.t&&!inLib(x.t)&&!(x.orig&&inLib(x.orig))).slice(0,6);
+  try{const r=await BS().json(prompt,{modelTier:'default'});const items=(Array.isArray(r)?r:[]).filter(x=>x&&x.t&&!inLib(x.t)&&!(x.orig&&inLib(x.orig))).slice(0,6);
     if(!items.length)throw{ui:'Öneri gelmedi, sonra tekrar dene.'};TL.recs={at:new Date().toISOString(),items};try{await st.db.doc('settings/recs').set(TL.recs)}catch(e){}}
-  catch(err){RC.err=err&&err.ui?err.ui:sampleErr(err)}
+  catch(err){RC.err=err&&err.ui?err.ui:aiErr(err)}
   finally{RC.busy=false;if(st.view==='panel')renderList()}}
 async function recWish(i){const R=(TL.recs.items||[]).filter(x=>x&&x.t&&!inLib(x.t)),x=R[i];if(!x||!st.db)return;
   try{await st.db.collection('books').doc().set({kind:'kitap',title:x.t,author:x.a||'',status:'okunacak',shelf:'İstek listem',tags:x.tur?[trLow(x.tur)]:[],pages:0,finishedAt:'',note:x.why?('Claude önerisi: '+x.why):'',assetId:'',parts:[],fileName:'',fileSize:0,fileType:'',source:'',driveId:'',driveUrl:'',coverId:'',autoCover:false,currentPage:0,lastReadAt:'',addedAt:new Date().toISOString()});toast('İstek listene eklendi 📚')}catch(e){toast('Eklenemedi')}}
@@ -3137,10 +3138,10 @@ async function stoRun(list){if(STO.busy)return;if(!(await ensureUploadPerm()))re
 
 /* ===== Serileri Claude belirlesin ===== */
 const SR={busy:false,props:null,err:''};
-async function serAI(){if(!st.sample||SR.busy)return;SR.busy=true;SR.err='';SR.props=null;if(st.view==='panel')renderList();
+async function serAI(){if(!BS()||SR.busy)return;SR.busy=true;SR.err='';SR.props=null;if(st.view==='panel')renderList();
   const L=st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale');
   const lines=L.map(b=>`${b.id} | ${b.title}${b.author?' | '+b.author:''}${b.fileName&&b.fileName!==b.title?' | dosya: '+b.fileName:''}${b.series?' | şu an: '+b.series+(b.seriesNo?' #'+b.seriesNo:''):''}`).join('\n');
-  try{const r=await st.sample.json(`Bir okurun kütüphanesindeki kitapların hangi SERİLERE ait olduğunu ve serideki SIRASINI belirliyorsun. Dosya adları karışık olabilir; Türkçe çeviri adları, orijinal adlar, "#2", "2. kitap", "II" gibi işaretler olabilir.
+  try{const r=await BS().json(`Bir okurun kütüphanesindeki kitapların hangi SERİLERE ait olduğunu ve serideki SIRASINI belirliyorsun. Dosya adları karışık olabilir; Türkçe çeviri adları, orijinal adlar, "#2", "2. kitap", "II" gibi işaretler olabilir.
 Kurallar:
 - Sadece gerçekten bir serinin parçası olduğundan EMİN olduğun kitapları döndür; tek kitaplık romanları atla.
 - Seri adını Türkçe yayın adıyla yaz (yoksa orijinal adıyla), aynı serinin tüm kitaplarında birebir aynı yaz.
@@ -3150,10 +3151,10 @@ Satır biçimi: id | başlık | yazar | dosya adı
 ${lines}
 Sadece JSON dizi döndür: [{"id":"…","seri":"Seri adı","no":2}]`,{modelTier:'default'});
     const ok=new Set(L.map(b=>b.id));SR.props=(Array.isArray(r)?r:[]).filter(x=>x&&ok.has(x.id)&&x.seri&&+x.no>0).map(x=>{const b=st.books.find(y=>y.id===x.id);return {id:x.id,title:b.title,series:String(x.seri).trim(),no:+x.no,on:!(b.series===String(x.seri).trim()&&+b.seriesNo===+x.no),same:b.series===String(x.seri).trim()&&+b.seriesNo===+x.no}});
-    if(!SR.props.length)SR.err='Claude rafında seri bulamadı.'}
-  catch(err){SR.err=sampleErr(err)}
+    if(!SR.props.length)SR.err=aiName()+' rafında seri bulamadı.'}
+  catch(err){SR.err=aiErr(err)}
   finally{SR.busy=false;if(st.view==='panel')renderList()}}
-function serPropsHtml(){if(SR.busy)return '<p class="hint" style="margin:0">Claude rafındaki serileri ve sıralarını buluyor…</p>';if(SR.err)return `<p class="hint" style="margin:0">${esc(SR.err)}</p>`;if(!SR.props)return '';
+function serPropsHtml(){if(SR.busy)return '<p class="hint" style="margin:0">'+aiName()+' rafındaki serileri ve sıralarını buluyor…</p>';if(SR.err)return `<p class="hint" style="margin:0">${esc(SR.err)}</p>`;if(!SR.props)return '';
   const g={};SR.props.forEach((x,i)=>{(g[x.series]=g[x.series]||[]).push([x,i])});const n=SR.props.filter(x=>x.on&&!x.same).length;
   return `<div class="ser-props"><div class="eyebrow">Claude'un bulduğu seriler · uygulamak istemediklerinin işaretini kaldır</div>${Object.entries(g).map(([k,arr])=>`<div><b>${esc(k)}</b>${arr.sort((a,b)=>a[0].no-b[0].no).map(([x,i])=>`<label class="ser-p"><input type="checkbox" data-serp="${i}" ${x.on?'checked':''} ${x.same?'disabled':''}> #${x.no} · ${esc(x.title)}${x.same?' <span class="hint">(zaten böyle)</span>':''}</label>`).join('')}</div>`).join('')}
     <div style="display:flex;gap:8px"><button class="btn primary" type="button" data-serapply ${n?'':'disabled'}>Uygula (${n})</button><button class="btn" type="button" data-serdrop>Vazgeç</button></div></div>`}
@@ -5280,7 +5281,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v104';
+const DK_VER='v105';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6934,12 +6935,15 @@ async function gmModel(){if(GM.model)return GM.model;try{const c=JSON.parse(loca
     const j=await r.json();const L=(j.models||[]).filter(x=>(x.supportedGenerationMethods||[]).includes('generateContent')&&/flash/.test(x.name)&&!/lite|image|tts|live|audio|embed|exp|preview|thinking|8b/.test(x.name));
     const ver=n=>{const v=/gemini-(\d+(?:\.\d+)?)/.exec(n);return v?parseFloat(v[1]):0};L.sort((a,b)=>ver(b.name)-ver(a.name)||a.name.length-b.name.length);if(L[0])m=L[0].name}catch(e){if(e&&e.ui)throw e}
   GM.model=m;try{localStorage.setItem('dk-gmmodel',JSON.stringify({m,at:Date.now()}))}catch(e){}return m}
-async function gmAsk(prompt){const k=gmKey();if(!k)throw {ui:'Önce Gemini anahtarını ekle.'};const m=await gmModel();
-  const r=await fetch(GMB+m+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':k},body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:.5,maxOutputTokens:4096}})});
+async function gmAsk(prompt,o){const k=gmKey();if(!k)throw {ui:'Önce Gemini anahtarını ekle.'};const m=await gmModel();
+  const r=await fetch(GMB+m+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':k},body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:.5,maxOutputTokens:8192,...(o&&o.json?{responseMimeType:'application/json'}:{})}})});
   const j=await r.json().catch(()=>({}));
   if(!r.ok){const msg=(j.error&&j.error.message)||'';if(r.status===429)throw {ui:'Gemini\'nin ücretsiz kullanım sınırı doldu; biraz (ya da yarın) sonra tekrar dene.',code:'rate_limited'};if(r.status===404){GM.model='';try{localStorage.removeItem('dk-gmmodel')}catch(e){}}
     throw {ui:'Gemini cevap vermedi ('+r.status+(msg?': '+msg.slice(0,90):'')+').'}}
   const c=(j.candidates||[])[0];const t=((c&&c.content&&c.content.parts)||[]).map(p=>p.text||'').join('').trim();if(!t)throw {ui:'Gemini boş cevap verdi'+(c&&c.finishReason?' ('+c.finishReason+')':'')+'.'};return {text:t}}
+function gmJson(t){t=String(t||'').replace(/^```(?:json)?\s*|\s*```$/g,'').trim();try{return JSON.parse(t)}catch(e){}const m=/[\[{][\s\S]*[\]}]/.exec(t);if(m)return JSON.parse(m[0]);throw {ui:'Gemini\'nin cevabı okunamadı, tekrar dene.'}}
+const GSAMPLE=Object.assign(async(p,o)=>{if(o&&o.signal&&o.signal.aborted)throw {code:'cancelled'};const r=await gmAsk(p);try{o&&o.onText&&o.onText({text:r.text,delta:r.text})}catch(e){}return r},{json:async(p,o)=>gmJson((await gmAsk(p+'\n\nYalnızca geçerli JSON döndür; açıklama ekleme.',{json:true})).text)});
+function BS(){return st.sample||(gmKey()?GSAMPLE:null)}
 async function bookAI(prompt,opts){if(st.sample)return st.sample(prompt,opts);return gmAsk(prompt)}
 function aiErr(e){return (e&&e.ui)||sampleErr(e)}
 function gmKeyAsk(){const v=(prompt('Gemini API anahtarını yapıştır (AQ. ya da AIza ile başlar). Boş bırakırsan silinir.\nBu anahtar yalnızca kitap tanıtımları için kullanılır; romanların, günlüğün ve notların gönderilmez.',gmKey())||'').trim();
@@ -6975,6 +6979,29 @@ async function aiShelf(){if(AIB.busy||!st.db||!aiOn())return;AIB.busy=true;AIB.s
     try{renderList()}catch(e){}await new Promise(z=>setTimeout(z,st.sample?400:4500))}
   AIB.busy=false;try{render()}catch(e){}toast(`✨ ${ok} kitap raflandı${no?` · ${no} kitabı tanımadı, onları sen rafla`:''}`)}
 $('listArea').addEventListener('click',e=>{if(e.target.closest('[data-aishelf]')){e.stopPropagation();aiShelf()}},true);
+/* ✨ otomatik trope etiketleri */
+function aiTagTodo(){return st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'&&!(b.tags||[]).length&&!b.tagAiNo)}
+async function aiTag(){if(AIB.busy||!st.db||!aiOn())return;AIB.busy=true;AIB.stop=false;const L=aiTagTodo();let ok=0,no=0;
+  for(let i=0;i<L.length&&!AIB.stop;i+=20){const part=L.slice(i,i+20);AIB.msg=`etiketleniyor ${Math.min(i+20,L.length)}/${L.length}`;{const x=$('aiTgBtn');if(x)x.textContent='✨ '+AIB.msg+' — durdur'}
+    const pr=`Aşağıdaki kitapların her biri için şu etiket listesinden kitaba GERÇEKTEN uyan en fazla 3 etiketi seç:\n${TROPES.join(', ')}\n\nKurallar: Yalnızca listedeki etiketleri aynen yaz. Kitabı tanımıyorsan ya da uyan etiket yoksa boş dizi ver, tahmin etme. Yalnızca JSON dizisi döndür: [{"i":1,"e":["slow burn","sahte ilişki"]}]\n\nKitaplar:\n`+part.map((b,k)=>`${k+1}. ${b.title}${b.author?' — '+b.author:''}${b.shelf?' ['+b.shelf+']':''}`).join('\n');
+    let arr=[];try{const r=await BS().json(pr,{modelTier:'quick'});arr=Array.isArray(r)?r:[]}catch(e){toast(aiErr(e));break}
+    const seen=new Set();for(const it of arr){const b=part[(+it.i||0)-1];if(!b)continue;seen.add(b.id);const tags=[...new Set((it.e||[]).map(x=>TROPES.find(t=>trLow(t)===trLow(String(x).trim()))).filter(Boolean))].slice(0,3);
+      const up=tags.length?{tags,tagAi:true}:{tagAiNo:true};try{await st.db.collection('books').doc(b.id).update(up);Object.assign(b,up)}catch(e){}tags.length?ok++:no++}
+    for(const b of part)if(!seen.has(b.id)){try{await st.db.collection('books').doc(b.id).update({tagAiNo:true});b.tagAiNo=true}catch(e){}}
+    try{renderList()}catch(e){}await new Promise(z=>setTimeout(z,st.sample?400:4500))}
+  AIB.busy=false;try{render()}catch(e){}toast(`✨ ${ok} kitap etiketlendi${no?` · ${no} kitapta emin olamadı`:''}`)}
+$('listArea').addEventListener('click',e=>{if(e.target.closest('[data-aitag]')){e.stopPropagation();aiTag()}},true);
+/* ✨ bunu sevdiysen — tek kitaba benzer öneriler */
+async function aiSimilar(b){const S=BS();if(!S)return;msModal(`<div class="eyebrow">✨ “${esc(b.title)}” sevdiysen</div><div id="simOut" class="hint">${aiName()} benzer kitaplar arıyor…</div>`);
+  const pr=`Bir okur "${b.title}"${b.author?' ('+b.author+')':''} kitabını sevdi.${b.blurb?' Kitabın tanıtımı: '+b.blurb.slice(0,500):''}
+Bu kitaba ton, tema ve trope açısından benzeyen, GERÇEKTEN VAR OLAN 5 kitap öner. Mümkünse Türkçe çevirisi olanları seç ve Türkçe adını yaz. Aynı yazarın başka kitabı en fazla 1 tane olsun. Uydurma; emin değilsen daha az öner.
+Sadece JSON dizi döndür: [{"t":"Türkçe adı","orig":"orijinal adı","a":"yazar","why":"neden benzer, 1 cümle, spoiler yok"}]`;
+  try{const r=await S.json(pr,{modelTier:'default'});const items=(Array.isArray(r)?r:[]).filter(x=>x&&x.t).slice(0,6);const o=$('simOut');if(!o)return;
+    o.className='';o.innerHTML=items.length?items.map(x=>{const have=inLib(x.t)||(x.orig&&inLib(x.orig));const q2=encodeURIComponent(x.t+(x.a?' '+x.a:''));
+      return `<div class="sim-it"><b>${esc(x.t)}</b> <span class="hint">${esc(x.a||'')}${x.orig&&x.orig!==x.t?' · '+esc(x.orig):''}</span>${have?' <span class="pill s-okundu">Rafında var</span>':''}<p>${esc(x.why||'')}</p><a class="btn" href="https://www.kitapyurdu.com/index.php?route=product/search&filter_name=${q2}" target="_blank" rel="noopener">Kitapyurdu ↗</a> <a class="btn" href="https://www.goodreads.com/search?q=${q2}" target="_blank" rel="noopener">Goodreads ↗</a></div>`}).join(''):'<p class="hint">Öneri gelmedi, sonra tekrar dene.</p>'}
+  catch(e){const o=$('simOut');if(o)o.textContent=aiErr(e)}}
+document.addEventListener('click',e=>{const s=e.target.closest('[data-simai]');if(!s)return;const b=st.books.find(x=>x.id===s.dataset.simai);if(b){const v=$('blVeil');if(v)v.hidden=true;aiSimilar(b)}});
+
 
 
 
@@ -7349,7 +7376,7 @@ window.__ep2={toc:()=>R.epub&&epToc(R.epub),pg:()=>({...EPG}),turn:d=>epTurn(d),
 const QM={on:false,n:0,date:''};
 function qmToday(){const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
 function qmBar(){if(st.tab==='roman')return '';
-  if(TM.on)return tmBar();if(!QM.on)return `<div class="qm-bar off">${(()=>{const n=blTodo().length;return BL.busy?`<button class="btn" type="button" id="blLibBtn" data-blstop>📖 ${esc(BL.msg||'')} — durdur</button>`:n?`<button class="btn" type="button" id="blLibBtn" data-blbulk>📖 ${n} kitabın tanıtımını bul</button>`:''})()}${(()=>{if(BL.busy)return '';if(AIB.busy)return `<button class="btn" type="button" id="aiLibBtn" data-aistop>✨ ${esc(AIB.msg||'')} — durdur</button>`;const m=aiTodo().length,sh=aiShelfTodo().length;if(!m&&!sh)return '';if(!aiOn())return `<button class="btn" type="button" data-gmkey>✨ Yapay zekâ (Gemini anahtarı ekle)</button>`;return (sh?`<button class="btn" type="button" id="aiShBtn" data-aishelf>✨ ${sh} kitabı otomatik rafla</button>`:'')+(m?`<button class="btn" type="button" id="aiLibBtn" data-aibulk>✨ ${m} tanıtımı yapay zekâ tamamlasın</button>`:'')})()}<button class="btn" type="button" data-tm="on">🏷 Hızlı tür ver</button><button class="btn" type="button" data-qm="on">✅ Bitenleri hızlı işaretle</button></div>`;
+  if(TM.on)return tmBar();if(!QM.on)return `<div class="qm-bar off">${(()=>{const n=blTodo().length;return BL.busy?`<button class="btn" type="button" id="blLibBtn" data-blstop>📖 ${esc(BL.msg||'')} — durdur</button>`:n?`<button class="btn" type="button" id="blLibBtn" data-blbulk>📖 ${n} kitabın tanıtımını bul</button>`:''})()}${(()=>{if(BL.busy)return '';if(AIB.busy)return `<button class="btn" type="button" id="aiLibBtn" data-aistop>✨ ${esc(AIB.msg||'')} — durdur</button>`;const m=aiTodo().length,sh=aiShelfTodo().length,tg=aiTagTodo().length;if(!m&&!sh&&!tg)return '';if(!aiOn())return `<button class="btn" type="button" data-gmkey>✨ Yapay zekâ (Gemini anahtarı ekle)</button>`;return (sh?`<button class="btn" type="button" id="aiShBtn" data-aishelf>✨ ${sh} kitabı otomatik rafla</button>`:'')+(tg?`<button class="btn" type="button" id="aiTgBtn" data-aitag>✨ ${tg} kitabı etiketle</button>`:'')+(m?`<button class="btn" type="button" id="aiLibBtn" data-aibulk>✨ ${m} tanıtımı yapay zekâ tamamlasın</button>`:'')})()}<button class="btn" type="button" data-tm="on">🏷 Hızlı tür ver</button><button class="btn" type="button" data-qm="on">✅ Bitenleri hızlı işaretle</button></div>`;
   return `<div class="qm-bar"><div><b>✅ Hızlı işaretleme</b><span>Bitirdiğin kitapların kapağına dokun; yeniden dokunursan geri alınır.${QM.n?` <b>${QM.n} kitap</b> işaretlendi.`:''}</span></div>
     <label class="qm-date">Bitirme tarihi <input type="date" id="qmDate" value="${esc(QM.date||qmToday())}" max="${qmToday()}"></label><button class="btn primary" type="button" data-qm="off">Bitti</button></div>`}
 function qmSet(on){QM.on=on;if(on&&TM.on){TM.on=false;document.body.classList.remove('tm-on')}if(on){QM.n=0;QM.date=QM.date||qmToday()}document.body.classList.toggle('qm-on',on);renderList()}
@@ -7434,7 +7461,7 @@ function blSheet(id){const b=st.books.find(x=>x.id===id);if(!b)return;let v=$('b
       const r=e.target.closest('[data-blread]');if(r){v.hidden=true;bkOpen(r.dataset.blread);return}
       const ed=e.target.closest('[data-bledit]');if(ed){v.hidden=true;openForm(st.books.find(x=>x.id===ed.dataset.bledit))}})}
   v.innerHTML=`<div class="panel bl-sheet" role="dialog" aria-label="${esc(b.title)} tanıtımı"><div class="bl-sh-top">${bookHtml(b)}<div><div class="eyebrow">${esc(b.shelf||'Rafsız')}</div><h2>${esc(b.title)}</h2><div class="hint">${esc(b.author||'')}${b.pages?' · '+b.pages+' sayfa':''}</div></div></div>${blShow(b,40)}
-    <div class="actions"><span></span><div class="r"><button class="btn" type="button" data-blclose>Kapat</button><button class="btn" type="button" data-bledit="${b.id}">Düzenle</button>${hasFile(b)?`<button class="btn primary" type="button" data-blread="${b.id}">Okumaya başla</button>`:''}</div></div></div>`;
+    <div class="actions"><span></span><div class="r"><button class="btn" type="button" data-blclose>Kapat</button>${BS()&&b.kind!=='roman'&&b.kind!=='makale'?`<button class="btn" type="button" data-simai="${b.id}">✨ Benzerleri</button>`:''}<button class="btn" type="button" data-bledit="${b.id}">Düzenle</button>${hasFile(b)?`<button class="btn primary" type="button" data-blread="${b.id}">Okumaya başla</button>`:''}</div></div></div>`;
   v.hidden=false;setTimeout(()=>blFix(v),0)}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('blVeil')&&!$('blVeil').hidden)$('blVeil').hidden=true});
 
@@ -8234,7 +8261,7 @@ function rMsg(html){$('rStage').innerHTML=`<div class="rmsg">${html}</div>`}
 async function openReader(b){
   if(!hasFile(b))return;if(dkLocalOnly(b)&&!LOCAL.has(b.assetId)){dkMissingDlg(b);return}setTimeout(()=>{if(R.book&&R.book.id===b.id&&!$('reader').hidden)dkShareBar(b)},1800);
   Object.assign(R,{sess:0,book:b,doc:null,epub:null,page:Math.max(1,b.currentPage||1),lastSaved:b.currentPage||0,pos:b.epubPos||0,lastPos:b.epubPos||0});
-  $('rPageLbl').textContent='Sayfa';$('reader').classList.toggle('ep-foot',b.fileType==='epub');$('rInkBtn').hidden=b.fileType==='epub';$('rSum').hidden=!(st.sample&&b.fileType!=='epub'&&(b.kind==='makale'||b.kind==='pdf'));$('rCards').hidden=!(st.sample&&b.fileType!=='epub'&&b.kind!=='roman');$('ttsBar').hidden=true;$('ttsBar').dataset.open='0';$('inkBar').hidden=true;
+  $('rPageLbl').textContent='Sayfa';try{$('rAsk').hidden=!BS()}catch(e){}$('reader').classList.toggle('ep-foot',b.fileType==='epub');$('rInkBtn').hidden=b.fileType==='epub';$('rSum').hidden=!(st.sample&&b.fileType!=='epub'&&(b.kind==='makale'||b.kind==='pdf'));$('rCards').hidden=!(st.sample&&b.fileType!=='epub'&&b.kind!=='roman');$('ttsBar').hidden=true;$('ttsBar').dataset.open='0';$('inkBar').hidden=true;
   try{const z=parseFloat(localStorage.getItem('dk-zoom'));if(z)R.scale=z}catch(e){}
   $('rTitle').textContent=b.title;$('rSaved').textContent='';$('rTotal').textContent='';$('rPage').value=R.page;
   $('reader').hidden=false;if(RS.ah==='1'){$('reader').classList.add('bars-off');try{if(!localStorage.getItem('kt-tiphint')){localStorage.setItem('kt-tiphint','1');setTimeout(()=>toast('Menüler için sayfanın ortasına bir kez dokun'),900)}}catch(e){}}document.body.style.overflow='hidden';rMsg(stampSvg('frog',88)+'Kitap açılıyor…');
