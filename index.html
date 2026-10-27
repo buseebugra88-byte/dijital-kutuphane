@@ -1268,6 +1268,7 @@ body.tm-on #listArea [data-bk]{position:relative;cursor:copy}
 .sim-it{padding:10px 0;border-bottom:1px solid var(--line)}.sim-it p{margin:4px 0 8px;font-size:14px}
 .hub-g{display:grid;gap:8px}.hub-r{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px}.hub-r>span:first-child{flex:1 1 180px}.hub-sel{display:flex;gap:6px;flex-wrap:wrap}.hub-sel select{max-width:220px}
 .hs-pin{font:inherit;font-size:11px;margin-left:6px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer;vertical-align:middle}.hs-pin.on{background:var(--brass);color:var(--on-brass,#fff);border-color:transparent}
+.ac-out{font-size:14.5px;line-height:1.6;max-height:60vh;overflow:auto}.tzl{display:grid;gap:6px;max-height:60vh;overflow:auto}.tzl-i{text-align:left;font:inherit;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);display:grid;gap:3px;cursor:pointer}.tzl-i b{font-size:12px;color:var(--brass)}.tzl-i span{font-size:13.5px}
 </style>
 
 </head><body>
@@ -1511,7 +1512,7 @@ body.tm-on #listArea [data-bk]{position:relative;cursor:copy}
     <h2 id="litTitle">📊 Literatür tablosu</h2>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><select id="litShelf" style="padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--bg)"></select><select id="litStatus" style="padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:var(--bg)"><option value="">Tüm durumlar</option><option value="okundu">Okundu</option><option value="okunuyor">Okunuyor</option><option value="okunacak">Okunacak</option></select><span class="hint" id="litInfo"></span></div>
     <div class="littable" id="litTable"></div>
-    <div class="actions"><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" type="button" id="litCopy">Tabloyu kopyala (Word/Excel)</button><button class="btn" type="button" id="litRefs">Kaynakçayı kopyala (APA 7)</button><button class="btn" type="button" id="litDoc">📄 Kaynakça (Word)</button></div><div class="r"><button class="btn" type="button" id="litClose">Kapat</button></div></div>
+    <div class="actions"><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" type="button" id="litCopy">Tabloyu kopyala (Word/Excel)</button><button class="btn" type="button" id="litRefs">Kaynakçayı kopyala (APA 7)</button><button class="btn" type="button" id="litDoc">📄 Kaynakça (Word)</button><button class="btn" type="button" id="litGapBtn">✨ Boşlukları bul</button><button class="btn" type="button" id="litAllSum">✨ Hepsini özetle</button></div><div class="r"><button class="btn" type="button" id="litClose">Kapat</button></div></div>
   </div>
 </div>
 <div class="veil" id="themeVeil" hidden>
@@ -2340,17 +2341,17 @@ $('apaCopy').addEventListener('click',e=>{const d=formBookDraft();copyRich(apaRe
 
 /* Akademik: Claude özeti */
 const OZK=[['amac','Amaç'],['yontem','Yöntem'],['orneklem','Örneklem'],['bulgular','Bulgular'],['sinirliliklar','Sınırlılıklar'],['sonuc','Sonuç / katkı']];
-function ozetHtml(o){if(!o)return '';return `<div class="ozet"><div class="ozet-h">✨ Claude özeti</div>${OZK.filter(([k])=>o[k]).map(([k,l])=>`<div><b>${l}</b><p>${esc(o[k])}</p></div>`).join('')}${(o.anahtar||[]).length?`<div class="chips">${o.anahtar.map(t=>`<span class="chip" aria-pressed="false">${esc(t)}</span>`).join('')}</div>`:''}</div>`}
+function ozetHtml(o){if(!o)return '';return `<div class="ozet"><div class="ozet-h">✨ Yapay zekâ özeti</div>${OZK.filter(([k])=>o[k]).map(([k,l])=>`<div><b>${l}</b><p>${esc(o[k])}</p></div>`).join('')}${(o.anahtar||[]).length?`<div class="chips">${o.anahtar.map(t=>`<span class="chip" aria-pressed="false">${esc(t)}</span>`).join('')}</div>`:''}</div>`}
 async function bookText(b,maxPages){
   let doc;if(R.book&&R.book.id===b.id&&R.doc&&!R.epub)doc=R.doc;else{const lib=await pdfLib();const bytes=await bookBytes(b);doc=await lib.getDocument({data:bytes}).promise}
   const n=Math.min(doc.numPages,maxPages||18);let t='';for(let i=1;i<=n;i++){const pg=await doc.getPage(i);const tc=await pg.getTextContent();t+=`\n[Sayfa ${i}]\n`+tc.items.map(x=>x.str).join(' ');if(t.length>90000)break}
   return t.slice(0,90000);
 }
 async function summarize(b,onMsg){
-  if(!st.sample)throw{ui:'Claude bu görünümde kullanılamıyor.'};if(!hasFile(b)||b.fileType==='epub')throw{ui:'Özet için makalenin PDF dosyası gerekli.'};
+  if(!BS())throw{ui:'Önce ✨ Yapay zekâ bölümünden Gemini anahtarını ekle.'};if(!hasFile(b)||b.fileType==='epub')throw{ui:'Özet için makalenin PDF dosyası gerekli.'};
   onMsg&&onMsg('Makale okunuyor…');const txt=await bookText(b,20);if(txt.replace(/\s|\[Sayfa \d+\]/g,'').length<300)throw{ui:'Bu PDF\'ten metin okunamadı (taranmış görüntü olabilir).'};
-  onMsg&&onMsg('Claude özetliyor…');
-  const r=await st.sample.json(`Bir yüksek lisans öğrencisi için akademik makale özeti çıkarıyorsun. Türkçe yaz; terimleri gerekirse parantez içinde orijinal diliyle ver. Uydurma; metinde yoksa boş bırak.
+  onMsg&&onMsg(aiName()+' özetliyor…');
+  const r=await BS().json(`Bir yüksek lisans öğrencisi için akademik makale özeti çıkarıyorsun. Türkçe yaz; terimleri gerekirse parantez içinde orijinal diliyle ver. Uydurma; metinde yoksa boş bırak.
 Sadece şu JSON nesnesini döndür:
 {"meta":{"baslik":"","yazarlar":["Ad Soyad", "..."],"yil":"","dergi":"","cilt":"","sayi":"","sayfalar":"","doi":""},
  "amac":"1-2 cümle","yontem":"desen, araçlar, analiz (2-3 cümle)","orneklem":"kim, kaç kişi, özellikler","bulgular":"ana bulgular, varsa sayılarla (3-4 cümle)","sinirliliklar":"1-2 cümle","sonuc":"katkı/çıkarım 1-2 cümle","anahtar":["3-6 anahtar kavram"]}
@@ -2373,7 +2374,7 @@ function litRender(){
   const rows=litRows();
   $('litTable').innerHTML=rows.length?`<table><thead><tr><th>Kaynak</th><th>Başlık</th><th>Amaç</th><th>Yöntem</th><th>Örneklem</th><th>Bulgular</th><th></th></tr></thead><tbody>${rows.map(b=>{const o=b.ozet||{};
     return `<tr><td><b>${esc(apaAuthorsShort(b)||'—')}</b><br><span class="hint">${esc(b.year||'')}</span></td><td>${esc(b.title)}${b.journal?`<br><i class="hint">${esc(b.journal)}</i>`:''}</td><td>${esc(o.amac||'')}</td><td>${esc(o.yontem||'')}</td><td>${esc(o.orneklem||'')}</td><td>${esc(o.bulgular||'')}</td>
-    <td>${o.amac||!st.sample?'':`<button class="btn" type="button" data-sum="${b.id}" ${st.sample&&hasFile(b)?'':'disabled'}>✨ Özetle</button>`}</td></tr>`}).join('')}</tbody></table>`
+    <td>${o.amac||!st.sample?'':`<button class="btn" type="button" data-sum="${b.id}" ${BS()&&hasFile(b)?'':'disabled'}>✨ Özetle</button>`}</td></tr>`}).join('')}</tbody></table>`
     :'<p class="hint">Akademik rafında makale yok. "Yeni ekle"den Makale türünü seç ya da Academic klasörünü toplu ekle.</p>';
   $('litInfo').textContent=`${rows.length} makale · ${rows.filter(b=>b.ozet&&b.ozet.amac).length} özetli`;
 }
@@ -2647,10 +2648,10 @@ function tCards(){
     return toolHead('🃏 '+esc(b?b.title:'Kartlar'))+`<div class="hint" style="text-align:center">${S.i+1} / ${S.order.length}</div><button type="button" class="flash ${S.flip?'flip':''}" data-act="cflip"><span class="fl-q">${esc(c.q)}</span>${S.flip?`<span class="fl-a">${esc(c.a)}</span>`:'<span class="hint">Cevabı görmek için dokun</span>'}</button>
       ${S.flip?`<div style="display:flex;gap:8px;justify-content:center"><button class="btn" type="button" data-act="cagain">🔁 Tekrar</button><button class="btn primary" type="button" data-act="cknow">✓ Biliyorum</button></div>`:''}<div style="text-align:center"><button class="btn" type="button" data-act="cback">Destelere dön</button></div>`}
   const decks=Object.entries(TL.cards).filter(([id,v])=>v&&(v.cards||[]).length);const cand=st.books.filter(b=>hasFile(b)&&b.fileType!=='epub'&&b.kind!=='roman');
-  return toolHead('🃏 Çalışma kartları')+`<p class="hint" style="margin:0;font-size:14px">${st.sample?"Claude bir makaleden ya da PDF'ten soru-cevap kartları hazırlasın ya da kendin yaz":'Kitap ya da makale için kendi soru-cevap kartlarını yaz'}; bildiklerin geriye, bilmediklerin öne gelsin.</p>
-    ${st.sample?`<div class="row"><div class="f"><label for="cBook">Kaynak</label><select id="cBook">${cand.map(b=>`<option value="${b.id}"${R.book&&R.book.id===b.id?' selected':''}>${esc(b.title)}</option>`).join('')}</select></div><div class="f"><label for="cRange">Sayfalar</label><input id="cRange" placeholder="ör. 1-15 (boşsa ilk 20)" value="${R.book&&!R.epub?R.page+'-'+(R.page+9):''}"></div></div>
+  return toolHead('🃏 Çalışma kartları')+`<p class="hint" style="margin:0;font-size:14px">${BS()?aiName()+" bir makaleden ya da PDF'ten soru-cevap kartları hazırlasın ya da kendin yaz":'Kitap ya da makale için kendi soru-cevap kartlarını yaz'}; bildiklerin geriye, bilmediklerin öne gelsin.</p>
+    ${BS()?`<div class="row"><div class="f"><label for="cBook">Kaynak</label><select id="cBook">${cand.map(b=>`<option value="${b.id}"${R.book&&R.book.id===b.id?' selected':''}>${esc(b.title)}</option>`).join('')}</select></div><div class="f"><label for="cRange">Sayfalar</label><input id="cRange" placeholder="ör. 1-15 (boşsa ilk 20)" value="${R.book&&!R.epub?R.page+'-'+(R.page+9):''}"></div></div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><button class="btn primary" type="button" data-act="cgen" ${cand.length?'':'disabled'}>✨ Kart hazırla</button><span class="hint" id="cMsg"></span></div>`:''}
-    <details class="cman" ${st.sample?'':'open'}><summary class="hint" style="cursor:pointer">✍️ Kendi kartını ekle</summary><div class="row"><div class="f"><label for="cmBook">Kitap</label><select id="cmBook">${st.books.filter(b=>b.kind!=='roman').map(b=>`<option value="${b.id}"${(R.book&&R.book.id===b.id)||TL.cmLast===b.id?' selected':''}>${esc(b.title)}</option>`).join('')}</select></div></div>
+    <details class="cman" ${BS()?'':'open'}><summary class="hint" style="cursor:pointer">✍️ Kendi kartını ekle</summary><div class="row"><div class="f"><label for="cmBook">Kitap</label><select id="cmBook">${st.books.filter(b=>b.kind!=='roman').map(b=>`<option value="${b.id}"${(R.book&&R.book.id===b.id)||TL.cmLast===b.id?' selected':''}>${esc(b.title)}</option>`).join('')}</select></div></div>
     <div class="f"><label for="cmQ">Soru</label><input id="cmQ" placeholder="ör. Bourdieu'nun 'habitus' kavramı nedir?"></div><div class="f"><label for="cmA">Cevap</label><textarea id="cmA" rows="2"></textarea></div>
     <div style="display:flex;gap:8px;align-items:center"><button class="btn primary" type="button" data-act="cman">+ Kartı ekle</button><span class="hint" id="cmMsg"></span></div></details>
     <div class="pick-list">${decks.map(([id,v])=>{const b=st.books.find(x=>x.id===id);const n=v.cards.length,k=v.cards.filter(c=>c.box>0).length;return b?`<div class="pick-item">${bookHtml(b)}<div><b>${esc(b.title)}</b><p>${n} kart · ${k} tanesini biliyorsun</p><div style="display:flex;gap:6px"><button class="btn primary" type="button" data-act="cstudy" data-book="${id}">Çalış</button><button class="btn" type="button" data-cdel="${id}">Sil</button></div></div></div>`:''}).join('')}</div>`;
@@ -2662,8 +2663,8 @@ async function genCards(){
     const a=rng?Math.max(1,+rng[1]):1,z=rng?Math.min(doc.numPages,+rng[2]):Math.min(doc.numPages,20);let t='';
     for(let i=a;i<=z;i++){const pg=await doc.getPage(i);t+=`\n[s.${i}] `+(await pg.getTextContent()).items.map(x=>x.str).join(' ');if(t.length>80000)break}
     if(t.replace(/\s|\[s\.\d+\]/g,'').length<200)throw{ui:'Bu sayfalardan metin okunamadı.'};
-    m.textContent='Claude kart hazırlıyor…';
-    const r=await st.sample.json(`Bir yüksek lisans öğrencisi için çalışma kartları hazırla. Türkçe yaz. Metindeki önemli kavramlar, tanımlar, yöntemler, bulgular ve sayılar hakkında 12-16 kart. Cevaplar kısa ve net (en fazla 2 cümle); metinde olmayanı uydurma.
+    m.textContent=aiName()+' kart hazırlıyor…';
+    const r=await BS().json(`Bir yüksek lisans öğrencisi için çalışma kartları hazırla. Türkçe yaz. Metindeki önemli kavramlar, tanımlar, yöntemler, bulgular ve sayılar hakkında 12-16 kart. Cevaplar kısa ve net (en fazla 2 cümle); metinde olmayanı uydurma.
 Sadece JSON dizi döndür: [{"q":"soru","a":"cevap"}]
 --- Metin (${esc(b.title)}, s.${a}-${z}) ---
 ${t}`,{modelTier:'default'});
@@ -4493,7 +4494,7 @@ function kyRender(host){host=host||$('secHost');const rows=kyRows(),en=KY.lang==
    <div class="seg"><button type="button" data-ky="lang" data-v="tr" aria-pressed="${!en}">Türkçe (ve, vd.)</button><button type="button" data-ky="lang" data-v="en" aria-pressed="${en}">English (&amp;, et al.)</button></div></div>
    <div class="msm-acts"><button class="btn primary" type="button" data-ky="copy">📋 Tümünü kopyala (Word'e yapıştır)</button><button class="btn" type="button" data-ky="doc">⬇ Word</button><button class="btn" type="button" data-ky="bib">⬇ BibTeX</button>
     <button class="btn" type="button" data-ky="fill" ${KY.busy?'disabled':''}>${KY.busy?'Aranıyor…':'🔎 Eksikleri internetten tamamla'}${miss&&!KY.busy?` (${miss})`:''}</button>
-    <label class="hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-ky="all" ${KY.all?'checked':''}> Alıntı yaptığım / okuduğum kitapları da ekle</label></div>
+    <button class="btn" type="button" data-kychk>✨ Kaynakçayı kontrol et</button><label class="hint" style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-ky="all" ${KY.all?'checked':''}> Alıntı yaptığım / okuduğum kitapları da ekle</label></div>
    <div class="ky-list">${rows.map(b=>{const m=kyMissing(b),msg=KY.msg[b.id];return `<div class="ky-r"><div class="ky-t">${kyL(kyRef(b,true))}${m.length?`<div class="ky-m">Eksik: ${m.join(', ')}</div>`:''}${msg?`<div class="hint" style="font-size:12px">${esc(msg)}</div>`:''}</div>
      <div class="ky-a"><button class="chip" type="button" data-ky="in" data-id="${b.id}" title="Metin içi atıfı kopyala">${esc(apaInText(b,en))}</button><button class="iconbtn" type="button" data-ky="edit" data-id="${b.id}" aria-label="Düzenle">✎</button></div></div>`}).join('')||'<p class="hint">Henüz akademik kaynak yok. Akademik → Makaleler\'den ekle.</p>'}</div></div>`}
 function kyFix(html){return html.replace(/ve, &amp; |, &amp; /g,m=>KY.lang==='en'?m:', ve ').replace(/, & /g,KY.lang==='en'?', & ':', ve ')}
@@ -5283,7 +5284,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v106';
+const DK_VER='v107';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6605,7 +6606,7 @@ function tzRender(host){host=host||$('secHost');const chs=tzChs(),F=tzFmt();
      <button class="btn primary" type="button" data-tz="export">⬇ Word / PDF</button></aside>
     <section class="lfc tz-ed">
      <div class="tz-top"><input id="tzTitle" class="tz-title" value="${esc(c.title)}" aria-label="Bölüm adı"><select id="tzKind" aria-label="Bölüm türü">${Object.entries(TZ_KIND).map(([k,l])=>`<option value="${k}"${c.kind===k?' selected':''}>${l}</option>`).join('')}</select></div>
-     <div class="tz-tools"><button class="btn" type="button" data-tz="h2" title="Alt başlık">＋ Alt başlık</button><button class="btn" type="button" data-tz="h3">＋ Alt-alt başlık</button><button class="btn" type="button" data-tz="cite">📑 Atıf ekle</button><button class="btn" type="button" data-tz="check">✨ Kontrol ettir</button><span class="tz-st hint" id="tzSt"></span></div>
+     <div class="tz-tools"><button class="btn" type="button" data-tz="h2" title="Alt başlık">＋ Alt başlık</button><button class="btn" type="button" data-tz="h3">＋ Alt-alt başlık</button><button class="btn" type="button" data-tz="cite">📑 Atıf ekle</button><button class="btn" type="button" data-tzlocal>🔍 Taslağı kontrol et</button><button class="btn" type="button" data-tzout>✨ İskelet öner</button><button class="btn" type="button" data-tz="check">✨ Dışarıda kontrol ettir</button><span class="tz-st hint" id="tzSt"></span></div>
      <textarea id="tzText" class="tz-text" rows="20" style="min-height:58vh" spellcheck="true" placeholder="Yazmaya başla…&#10;&#10;Alt başlık için satırın başına ## yaz, alt-alt başlık için ###.&#10;Atıflar [@…] olarak görünür; dışa aktarırken seçtiğin stile çevrilir.">${esc(c.text||'')}</textarea>
      <div class="tz-foot hint"><span id="tzWc">${mxN(tzWords(c.text))} kelime</span>${tzCiteIds(c.text).length?` · bu bölümde ${new Set(tzCiteIds(c.text)).size} kaynak`:''}<button class="lf-lnk" type="button" data-tz="del" style="margin-left:auto">${TZ.sure===c.id?'Emin misin? Tekrar bas':'Bölümü sil'}</button></div>
     </section></div></div>`}
@@ -6926,7 +6927,64 @@ async function kyRun(file){if(typeof GAUTH==='undefined'||!GAUTH.configured()||!
     if(!k.lines.length){pbInfo('Fotoğrafta yazı okunamadı. Sayfayı düz ve yakından, iyi ışıkta çekmeyi dene.');return}
     pbInfo('Künye okundu, kontrol et.');kyDlg(k)}catch(e){pbInfo((e&&e.ui)||'Künye okunamadı; internet bağlantını ya da Drive girişini kontrol et.')}}
 $('kyCam').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)kyRun(f)});
-window.__ky={kyParse};
+window.__ky={kyParse};/* ---------- 🎓 Akademik yapay zekâ + yerel taslak kontrolü ---------- */
+function acOut(title,html){msModal(`<div class="eyebrow">${title}</div><div id="acOut" class="ac-out">${html}</div>`,'hub-box')}
+function acText(t){return esc(String(t||'')).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/^#+\s*(.+)$/gm,'<b>$1</b>').replace(/\n/g,'<br>')}
+async function acAsk(title,prompt){const S=BS();if(!S){toast('Önce ✨ Yapay zekâ bölümünden Gemini anahtarını ekle');return}acOut(title,`<p class="hint">${aiName()} düşünüyor…</p>`);
+  try{const r=await S(prompt,{modelTier:'default'});const o=$('acOut');if(o)o.innerHTML=acText(r.text)+`<div class="msm-acts"><button class="btn" type="button" data-accopy>📋 Kopyala</button></div>`;if(o)o.dataset.raw=r.text}
+  catch(e){const o=$('acOut');if(o)o.textContent=aiErr(e)}}
+document.addEventListener('click',e=>{const c=e.target.closest('[data-accopy]');if(!c)return;const o=$('acOut');try{navigator.clipboard.writeText(o.dataset.raw||o.innerText);toast('Kopyalandı')}catch(x){}});
+/* literatürdeki boşluklar (yayımlanmış makalelerin özetleri gider) */
+function litGap(){const rows=litRows().filter(b=>b.ozet&&b.ozet.amac);if(rows.length<2){toast('Önce en az 2 makaleyi ✨ Özetle');return}
+  const L=rows.slice(0,60).map(b=>{const o=b.ozet;return `- ${apaAuthorsShort(b)||b.title} (${b.year||'t.y.'}): Amaç: ${o.amac} | Yöntem: ${o.yontem} | Örneklem: ${o.orneklem} | Bulgular: ${o.bulgular} | Sınırlılıklar: ${o.sinirliliklar||'-'}`}).join('\n');
+  acAsk('✨ Literatürdeki boşluklar',`Fizyoterapi ve rehabilitasyon alanında yüksek lisans yapan bir öğrencinin okuduğu makalelerin özetleri aşağıda. Türkçe yaz.
+1) Bu çalışmalarda ortak olan yöntem ve örneklem özelliklerini kısaca söyle.
+2) Literatürdeki olası BOŞLUKLARI madde madde yaz (çalışılmamış grup, ölçüm, yöntem, takip süresi, çelişen bulgular). Her maddede hangi makalelere dayandığını (Yazar, yıl) belirt.
+3) Bu boşluklardan çıkabilecek 3-4 araştırma sorusu öner.
+Sadece verilen özetlere dayan; özetlerde olmayan bir çalışmayı uydurma.
+Özetler:
+${L}`)}
+/* kaynakça kontrolü (yalnızca kaynak bilgileri gider) */
+function kyCheck(){const rows=kyRows();if(!rows.length)return;const L=rows.slice(0,120).map((b,i)=>`${i+1}. ${kyRef(b,false)}`).join('\n');
+  acAsk('✨ Kaynakça kontrolü',`Aşağıdaki kaynakçayı APA 7 kurallarına göre kontrol et. Türkçe yaz. Kaynakları yeniden yazma; sadece SORUNLU olanları numarasıyla listele ve sorunu kısaca söyle (eksik yıl/cilt/sayı/sayfa/DOI, yazar adı biçimi, büyük-küçük harf, dergi adı italik olmalı vb.). Sorunsuz kaynakları yazma. Emin olmadığın bilgi için "kontrol et" de; DOI ya da sayfa numarası uydurma.
+${L}`)}
+/* yapı önerisi — yalnızca başlık ve kısa konu açıklaması gider */
+function tzOutline(){const th=TL.thesis||{},F=tzFmt(),chs=tzChs(),c=chs.find(x=>x.id===TZ.sel);
+  msModal(`<div class="eyebrow">✨ İskelet öner</div><p class="hint" style="margin:0">Yalnızca tez başlığın, bölüm adı ve aşağıya yazdığın kısa konu açıklaması gönderilir; yazdığın metin gönderilmez. Öneri metnine eklenmez, sadece yol gösterir.</p>
+   <div class="f"><label for="tzoT">Tez başlığı</label><input id="tzoT" value="${esc(F.title||th.title||'')}"></div>
+   <div class="f"><label for="tzoS">Bölüm</label><input id="tzoS" value="${esc(c?c.title:'GİRİŞ')}"></div>
+   <div class="f"><label for="tzoN">Kısa konu (isteğe bağlı)</label><textarea id="tzoN" rows="3" placeholder="ör. kronik bel ağrılı bireylerde multifidus kalınlığı ile denge arasındaki ilişki; 40 katılımcı, USG ile ölçüm"></textarea></div>
+   <div class="msm-acts"><button class="btn primary" type="button" id="tzoGo">✨ İskelet öner</button></div>`);
+  $('tzoGo').onclick=()=>{const t=$('tzoT').value.trim(),s=$('tzoS').value.trim(),n=$('tzoN').value.trim();if(!t&&!n){toast('Başlık ya da konu yaz');return}
+    acAsk('✨ '+s+' için iskelet',`Fizyoterapi ve rehabilitasyon alanında, Hacettepe Üniversitesi Sağlık Bilimleri Enstitüsü yazım kurallarına uygun bir yüksek lisans tezinin "${s}" bölümü için İSKELET öner. Türkçe yaz.
+Tez başlığı: ${t||'-'}
+Konu: ${n||'-'}
+Kurallar: Metni yazma; yalnızca alt başlıkları ve her alt başlıkta nelerin anlatılması gerektiğini 1-2 kısa maddeyle yaz. Hangi tür kaynaklara ihtiyaç olacağını belirt ama belirli makale/yazar uydurma. Kısa tut.`)}}
+/* taslağı yerelde kontrol (hiçbir şey gönderilmez) */
+const TZ_STOP=new Set('olarak ancak ayrıca bununla birlikte nedeniyle tarafından üzerinde arasında olduğu olduğunu olan oldu olması olmak sonra önce daha çok gibi kadar şekilde ilgili yönelik için ile veya ve ya da bu şu bir her hem çalışmada çalışmanın'.split(' '));
+function tzLocal(c){const out=[],txt=c.text||'';const ids=new Set(st.books.map(b=>b.id));
+  [...new Set(tzCiteIds(txt))].filter(id=>!ids.has(id)).forEach(id=>out.push({k:'Kaynakçada olmayan atıf',s:'[@'+id+']',f:'[@'+id}));
+  const paras=txt.split(/\n+/).filter(p=>p.trim()&&!/^#/.test(p.trim()));
+  const claim=/(çalışmalar(da)?\s+(göster|bildir|saptan)|araştırmalar|literatürde|bildirilmiş|rapor edilmiş|gösterilmiştir|kanıtlanmış|bilinmektedir|belirtilmiştir|ortaya konmuş|saptanmıştır|bulunmuştur|yaygınlığı|prevalans|%\s?\d|\d+\s?%)/i;
+  for(const p of paras){const ss=p.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g)||[];let prevFirst='';
+    for(const raw of ss){const s=raw.trim();if(s.length<4)continue;const w=s.replace(/\[@[^\]]+\]/g,'').split(/\s+/).filter(Boolean);
+      if(w.length>40)out.push({k:'Çok uzun cümle ('+w.length+' kelime)',s,f:s.slice(0,40)});
+      if(claim.test(s)&&!/\[@/.test(s))out.push({k:'Kaynak gerektirebilir',s,f:s.slice(0,40)});
+      const cnt={};w.map(x=>trLow(x).replace(/[^\p{L}]/gu,'')).filter(x=>x.length>=5&&!TZ_STOP.has(x)).forEach(x=>cnt[x]=(cnt[x]||0)+1);const rep=Object.keys(cnt).filter(x=>cnt[x]>1);
+      if(rep.length)out.push({k:'Aynı cümlede tekrar: '+rep.join(', '),s,f:s.slice(0,40)});
+      const fw=trLow(w[0]||'').replace(/[^\p{L}]/gu,'');if(fw&&fw===prevFirst&&fw.length>2)out.push({k:'Art arda aynı kelimeyle başlayan cümle: '+fw,s,f:s.slice(0,40)});prevFirst=fw}}
+  return out}
+function tzLocalDlg(){const c=tzChs().find(x=>x.id===TZ.sel);if(!c)return;const L=tzLocal(c);
+  msModal(`<div class="eyebrow">🔍 Taslak kontrolü · ${esc(c.title)}</div><p class="hint" style="margin:0">Bu kontrol tamamen uygulamanın içinde yapılır, metnin hiçbir yere gönderilmez ve değiştirilmez. Bir maddeye dokununca cümle metinde seçilir.</p>
+   ${L.length?`<div class="tzl">${L.slice(0,80).map((x,i)=>`<button type="button" class="tzl-i" data-tzl="${i}"><b>${esc(x.k)}</b><span>${esc(x.s.length>220?x.s.slice(0,220)+'…':x.s)}</span></button>`).join('')}</div>`:'<p>✓ Gözüme çarpan bir şey yok.</p>'}`,'hub-box');
+  $('msModal').addEventListener('click',e=>{const b=e.target.closest('[data-tzl]');if(!b)return;const x=L[+b.dataset.tzl],ta=$('tzText');if(!ta)return;const i=ta.value.indexOf(x.f);msClose();if(i<0)return;ta.focus();ta.setSelectionRange(i,i+(x.s.length));const lh=parseFloat(getComputedStyle(ta).lineHeight)||20;ta.scrollTop=Math.max(0,(ta.value.slice(0,i).split('\n').length-3)*lh)})}
+window.__ac={tzLocal};
+
+document.addEventListener('click',e=>{if(e.target.closest('[data-tzlocal]')){e.preventDefault();Promise.resolve(typeof tzSaveNow==='function'&&tzSaveNow()).finally(tzLocalDlg);return}
+  if(e.target.closest('[data-tzout]')){e.preventDefault();tzOutline();return}if(e.target.closest('[data-kychk]')){e.preventDefault();kyCheck();return}
+  if(e.target.closest('#litGapBtn')){litGap();return}
+  if(e.target.closest('#litAllSum')){const rows=litRows().filter(b=>!(b.ozet&&b.ozet.amac)&&hasFile(b)&&b.fileType!=='epub');if(!BS()){toast('Önce Gemini anahtarını ekle');return}if(!rows.length){toast('Özetlenecek PDF makale yok');return}
+    (async()=>{const btn=$('litAllSum');let n=0;for(const b of rows){if(btn)btn.textContent=`✨ ${n+1}/${rows.length} özetleniyor…`;try{const u=await summarize(b);Object.assign(b,u);n++;try{litRender()}catch(x){}}catch(err){toast(aiErr(err));if(err&&err.code==='rate_limited')break}await new Promise(z=>setTimeout(z,st.sample?400:5000))}if(btn)btn.textContent='✨ Hepsini özetle';toast(n+' makale özetlendi')})()}});
 /* ---------- ✨ Kitaplar için yapay zekâ: Gemini (cihazdaki anahtarla) ya da Claude ---------- */
 const GM={model:''};const GMB='https://generativelanguage.googleapis.com/v1beta/';
 function gmKey(){try{return localStorage.getItem('dk-gmkey')||''}catch(e){return ''}}
@@ -8298,7 +8356,7 @@ function rMsg(html){$('rStage').innerHTML=`<div class="rmsg">${html}</div>`}
 async function openReader(b){
   if(!hasFile(b))return;if(dkLocalOnly(b)&&!LOCAL.has(b.assetId)){dkMissingDlg(b);return}setTimeout(()=>{if(R.book&&R.book.id===b.id&&!$('reader').hidden)dkShareBar(b)},1800);
   Object.assign(R,{sess:0,book:b,doc:null,epub:null,page:Math.max(1,b.currentPage||1),lastSaved:b.currentPage||0,pos:b.epubPos||0,lastPos:b.epubPos||0});
-  $('rPageLbl').textContent='Sayfa';try{$('rAsk').hidden=!BS()}catch(e){}$('reader').classList.toggle('ep-foot',b.fileType==='epub');$('rInkBtn').hidden=b.fileType==='epub';$('rSum').hidden=!(st.sample&&b.fileType!=='epub'&&(b.kind==='makale'||b.kind==='pdf'));$('rCards').hidden=!(st.sample&&b.fileType!=='epub'&&b.kind!=='roman');$('ttsBar').hidden=true;$('ttsBar').dataset.open='0';$('inkBar').hidden=true;
+  $('rPageLbl').textContent='Sayfa';try{$('rAsk').hidden=!BS()}catch(e){}$('reader').classList.toggle('ep-foot',b.fileType==='epub');$('rInkBtn').hidden=b.fileType==='epub';$('rSum').hidden=!(BS()&&b.fileType!=='epub'&&(b.kind==='makale'||b.kind==='pdf'));$('rCards').hidden=!(st.sample&&b.fileType!=='epub'&&b.kind!=='roman');$('ttsBar').hidden=true;$('ttsBar').dataset.open='0';$('inkBar').hidden=true;
   try{const z=parseFloat(localStorage.getItem('dk-zoom'));if(z)R.scale=z}catch(e){}
   $('rTitle').textContent=b.title;$('rSaved').textContent='';$('rTotal').textContent='';$('rPage').value=R.page;
   $('reader').hidden=false;if(RS.ah==='1'){$('reader').classList.add('bars-off');try{if(!localStorage.getItem('kt-tiphint')){localStorage.setItem('kt-tiphint','1');setTimeout(()=>toast('Menüler için sayfanın ortasına bir kez dokun'),900)}}catch(e){}}document.body.style.overflow='hidden';rMsg(stampSvg('frog',88)+'Kitap açılıyor…');
