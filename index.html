@@ -5280,7 +5280,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v103';
+const DK_VER='v104';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6930,20 +6930,20 @@ function gmKey(){try{return localStorage.getItem('dk-gmkey')||''}catch(e){return
 function aiOn(){return !!(st.sample||gmKey())}
 function aiName(){return st.sample?'Claude':'Gemini'}
 async function gmModel(){if(GM.model)return GM.model;try{const c=JSON.parse(localStorage.getItem('dk-gmmodel')||'null');if(c&&Date.now()-c.at<7*864e5){GM.model=c.m;return c.m}}catch(e){}
-  let m='models/gemini-2.5-flash';try{const r=await fetch(GMB+'models?pageSize=200&key='+encodeURIComponent(gmKey()));if(r.status===400||r.status===403){const j=await r.json().catch(()=>({}));throw {ui:'Gemini anahtarı kabul edilmedi'+(j.error&&j.error.message?' ('+j.error.message.slice(0,90)+')':'')+'.'}}
+  let m='models/gemini-2.5-flash';try{const r=await fetch(GMB+'models?pageSize=200',{headers:{'x-goog-api-key':gmKey()}});if(r.status===400||r.status===401||r.status===403){const j=await r.json().catch(()=>({}));throw {ui:'Gemini anahtarı kabul edilmedi'+(j.error&&j.error.message?' ('+j.error.message.slice(0,90)+')':'')+'.'}}
     const j=await r.json();const L=(j.models||[]).filter(x=>(x.supportedGenerationMethods||[]).includes('generateContent')&&/flash/.test(x.name)&&!/lite|image|tts|live|audio|embed|exp|preview|thinking|8b/.test(x.name));
     const ver=n=>{const v=/gemini-(\d+(?:\.\d+)?)/.exec(n);return v?parseFloat(v[1]):0};L.sort((a,b)=>ver(b.name)-ver(a.name)||a.name.length-b.name.length);if(L[0])m=L[0].name}catch(e){if(e&&e.ui)throw e}
   GM.model=m;try{localStorage.setItem('dk-gmmodel',JSON.stringify({m,at:Date.now()}))}catch(e){}return m}
 async function gmAsk(prompt){const k=gmKey();if(!k)throw {ui:'Önce Gemini anahtarını ekle.'};const m=await gmModel();
-  const r=await fetch(GMB+m+':generateContent?key='+encodeURIComponent(k),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:.5,maxOutputTokens:4096}})});
+  const r=await fetch(GMB+m+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':k},body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:.5,maxOutputTokens:4096}})});
   const j=await r.json().catch(()=>({}));
   if(!r.ok){const msg=(j.error&&j.error.message)||'';if(r.status===429)throw {ui:'Gemini\'nin ücretsiz kullanım sınırı doldu; biraz (ya da yarın) sonra tekrar dene.',code:'rate_limited'};if(r.status===404){GM.model='';try{localStorage.removeItem('dk-gmmodel')}catch(e){}}
     throw {ui:'Gemini cevap vermedi ('+r.status+(msg?': '+msg.slice(0,90):'')+').'}}
   const c=(j.candidates||[])[0];const t=((c&&c.content&&c.content.parts)||[]).map(p=>p.text||'').join('').trim();if(!t)throw {ui:'Gemini boş cevap verdi'+(c&&c.finishReason?' ('+c.finishReason+')':'')+'.'};return {text:t}}
 async function bookAI(prompt,opts){if(st.sample)return st.sample(prompt,opts);return gmAsk(prompt)}
 function aiErr(e){return (e&&e.ui)||sampleErr(e)}
-function gmKeyAsk(){const v=(prompt('Gemini API anahtarını yapıştır (AIza… ile başlar). Boş bırakırsan silinir.\nBu anahtar yalnızca kitap tanıtımları için kullanılır; romanların, günlüğün ve notların gönderilmez.',gmKey())||'').trim();
-  if(v&&!/^AIza[0-9A-Za-z_\-]{30,}$/.test(v)){toast('Bu bir Google API anahtarına benzemiyor');return false}
+function gmKeyAsk(){const v=(prompt('Gemini API anahtarını yapıştır (AQ. ya da AIza ile başlar). Boş bırakırsan silinir.\nBu anahtar yalnızca kitap tanıtımları için kullanılır; romanların, günlüğün ve notların gönderilmez.',gmKey())||'').trim();
+  if(v&&!/^(AIza[0-9A-Za-z_\-]{30,}|AQ\.[0-9A-Za-z_.\-]{20,})$/.test(v)){toast('Bu bir Gemini anahtarına benzemiyor');return false}
   try{v?localStorage.setItem('dk-gmkey',v):localStorage.removeItem('dk-gmkey');localStorage.removeItem('dk-gmmodel')}catch(e){}GM.model='';
   if(v){toast('🔑 Deneniyor…');gmModel().then(m=>toast('✨ Gemini hazır ('+m.replace('models/','')+')')).catch(e=>toast(aiErr(e)))}else toast('Gemini anahtarı silindi');
   try{blSync();renderList()}catch(e){}return true}
