@@ -1405,7 +1405,7 @@ body.tm-on #listArea [data-bk]{position:relative;cursor:copy}
     <div class="err" id="formErr" hidden></div>
     <div class="confirm" id="confirmBox" hidden>Bu kayıt kalıcı olarak silinsin mi?<button type="button" class="btn danger" id="confirmYes">Evet, sil</button><button type="button" class="btn" id="confirmNo">Vazgeç</button></div>
     <div class="actions">
-      <button type="button" class="btn danger" id="delBtn" hidden>Sil</button><button type="button" class="btn" id="cardBtn" hidden>🖼 Bitirme kartı</button>
+      <button type="button" class="btn danger" id="delBtn" hidden>Sil</button><button type="button" class="btn" id="cardBtn" hidden>🖼 Bitirme kartı</button><button type="button" class="btn" id="pinBtn" hidden>📌 Sabitle</button>
       <div class="r">
         <button type="button" class="btn" id="cancelBtn">Vazgeç</button>
         <button type="submit" class="btn primary" id="saveBtn">Kaydet</button>
@@ -1966,7 +1966,7 @@ $('fStatus').addEventListener('change',()=>{syncDone();if($('fStatus').value==='
 function openForm(b){
   st.editing=b;form.reset();formRating=0;$('formErr').hidden=true;$('confirmBox').hidden=true;
   $('fileHint').textContent=b&&b.fileRemoved&&!hasFile(b)?`Bu kitabın dosyası yer açmak için kaldırılmıştı${b.fileName?' ('+b.fileName+')':''}. Okumak için dosyayı buradan yeniden seç.`:'Büyük taranmış PDF\'ler otomatik küçültülür; 20 MB\'tan büyükler parçalara bölünür.';
-  $('formTitle').textContent=b?'Kaydı düzenle':'Yeni ekle';$('delBtn').hidden=!b;$('cardBtn').hidden=!(b&&b.kind!=='roman'&&b.status==='okundu');
+  $('formTitle').textContent=b?'Kaydı düzenle':'Yeni ekle';$('delBtn').hidden=!b;{const pb=$('pinBtn');pb.hidden=!(b&&b.kind!=='roman'&&b.kind!=='makale');if(b)pb.textContent=b.pinned?'📌 Sabitlemeyi kaldır':'📌 Ana sayfaya sabitle'}$('cardBtn').hidden=!(b&&b.kind!=='roman'&&b.status==='okundu');
   {const sim=b&&b.kind!=='roman'&&b.kind!=='makale'?similarBooks(b):[];$('simRow').hidden=!sim.length;$('simRow').innerHTML=sim.length?`<span class="hint">Benzer kitapların:</span>${sim.map(x=>`<button type="button" class="chip" data-sim="${x.id}">${esc(x.title)}</button>`).join('')}`:''}
   let kind=b?b.kind:(['all','done','epub','kitap'].includes(st.tab)?'pdf':st.tab);if(!$('kind-'+kind))kind='pdf';
   $('kindKitapL').hidden=!(b&&b.kind==='kitap');$('kind-'+kind).checked=true;syncKind(b&&b.status);setTimeout(tropeChips,0);
@@ -5286,7 +5286,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v108';
+const DK_VER='v109';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6982,6 +6982,7 @@ function tzLocalDlg(){const c=tzChs().find(x=>x.id===TZ.sel);if(!c)return;const 
    ${L.length?`<div class="tzl">${L.slice(0,80).map((x,i)=>`<button type="button" class="tzl-i" data-tzl="${i}"><b>${esc(x.k)}</b><span>${esc(x.s.length>220?x.s.slice(0,220)+'…':x.s)}</span></button>`).join('')}</div>`:'<p>✓ Gözüme çarpan bir şey yok.</p>'}`,'hub-box');
   $('msModal').addEventListener('click',e=>{const b=e.target.closest('[data-tzl]');if(!b)return;const x=L[+b.dataset.tzl],ta=$('tzText');if(!ta)return;const i=ta.value.indexOf(x.f);msClose();if(i<0)return;ta.focus();ta.setSelectionRange(i,i+(x.s.length));const lh=parseFloat(getComputedStyle(ta).lineHeight)||20;ta.scrollTop=Math.max(0,(ta.value.slice(0,i).split('\n').length-3)*lh)})}
 window.__ac={tzLocal};
+$('pinBtn').addEventListener('click',()=>{const b=st.editing;if(!b)return;closeForm();pinBook(b.id)});
 /* ✨ alıntı açıklama — yalnızca alıntının kendisi, kitap adı ve yazar gider */
 async function qExplain(text,title,author){const S=BS();if(!S){toast('Önce ✨ Yapay zekâ bölümünden Gemini anahtarını ekle');return}
   text=String(text||'').replace(/\s+/g,' ').trim().slice(0,1500);if(!text)return;
