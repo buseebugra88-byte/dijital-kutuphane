@@ -1266,6 +1266,8 @@ body.tm-on #listArea [data-bk]{position:relative;cursor:copy}
 .card .c-bladd{margin:6px 0 2px;font:inherit;font-size:12.5px;color:var(--muted);background:none;border:1px dashed var(--line);border-radius:99px;padding:3px 10px;cursor:pointer}
 .c-ai{font-size:11px}.qm-bar.off{flex-wrap:wrap}
 .sim-it{padding:10px 0;border-bottom:1px solid var(--line)}.sim-it p{margin:4px 0 8px;font-size:14px}
+.hub-g{display:grid;gap:8px}.hub-r{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px}.hub-r>span:first-child{flex:1 1 180px}.hub-sel{display:flex;gap:6px;flex-wrap:wrap}.hub-sel select{max-width:220px}
+.hs-pin{font:inherit;font-size:11px;margin-left:6px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer;vertical-align:middle}.hs-pin.on{background:var(--brass);color:var(--on-brass,#fff);border-color:transparent}
 </style>
 
 </head><body>
@@ -3156,7 +3158,7 @@ Sadece JSON dizi döndür: [{"id":"…","seri":"Seri adı","no":2}]`,{modelTier:
   finally{SR.busy=false;if(st.view==='panel')renderList()}}
 function serPropsHtml(){if(SR.busy)return '<p class="hint" style="margin:0">'+aiName()+' rafındaki serileri ve sıralarını buluyor…</p>';if(SR.err)return `<p class="hint" style="margin:0">${esc(SR.err)}</p>`;if(!SR.props)return '';
   const g={};SR.props.forEach((x,i)=>{(g[x.series]=g[x.series]||[]).push([x,i])});const n=SR.props.filter(x=>x.on&&!x.same).length;
-  return `<div class="ser-props"><div class="eyebrow">Claude'un bulduğu seriler · uygulamak istemediklerinin işaretini kaldır</div>${Object.entries(g).map(([k,arr])=>`<div><b>${esc(k)}</b>${arr.sort((a,b)=>a[0].no-b[0].no).map(([x,i])=>`<label class="ser-p"><input type="checkbox" data-serp="${i}" ${x.on?'checked':''} ${x.same?'disabled':''}> #${x.no} · ${esc(x.title)}${x.same?' <span class="hint">(zaten böyle)</span>':''}</label>`).join('')}</div>`).join('')}
+  return `<div class="ser-props"><div class="eyebrow">${aiName()} buldu: seriler · uygulamak istemediklerinin işaretini kaldır</div>${Object.entries(g).map(([k,arr])=>`<div><b>${esc(k)}</b>${arr.sort((a,b)=>a[0].no-b[0].no).map(([x,i])=>`<label class="ser-p"><input type="checkbox" data-serp="${i}" ${x.on?'checked':''} ${x.same?'disabled':''}> #${x.no} · ${esc(x.title)}${x.same?' <span class="hint">(zaten böyle)</span>':''}</label>`).join('')}</div>`).join('')}
     <div style="display:flex;gap:8px"><button class="btn primary" type="button" data-serapply ${n?'':'disabled'}>Uygula (${n})</button><button class="btn" type="button" data-serdrop>Vazgeç</button></div></div>`}
 async function serApply(){const P=(SR.props||[]).filter(x=>x.on&&!x.same);let n=0;for(const x of P){try{await st.db.collection('books').doc(x.id).update({series:x.series,seriesNo:x.no});n++}catch(e){}}SR.props=null;toast(n+' kitabın serisi güncellendi 📚');if(st.view==='panel')renderList()}
 
@@ -4452,13 +4454,13 @@ document.addEventListener('change',async e=>{if(e.target.id!=='nbWLink'||!e.targ
 /* ===================== Ana sayfa (sade) ===================== */
 function homeSimple(){document.body.classList.add('home-simple');
   const B=st.books,reads=B.filter(b=>b.kind!=='roman'),name=(UI.name||'').trim(),t=new Date(),h=t.getHours(),greet=h<6?'İyi geceler':h<12?'Günaydın':h<18?'Merhaba':'İyi akşamlar';
-  const now=reads.filter(b=>b.status==='okunuyor'||(b.currentPage>0&&b.status!=='okundu')).sort((a,b)=>(b.lastReadAt||'').localeCompare(a.lastReadAt||''));
+  const now=reads.filter(b=>b.pinned||b.status==='okunuyor'||(b.currentPage>0&&b.status!=='okundu')).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)||(b.lastReadAt||'').localeCompare(a.lastReadAt||''));
   const log=(st.log&&st.log.days)||{};let rs=0;for(let i=0;i<365;i++){const d=new Date();d.setDate(d.getDate()-i);if(log[todayKey(d)])rs++;else if(i>0)break}
   const W=TL.writing||{sessions:[],goal:500},wd={};(W.sessions||[]).forEach(s=>{wd[s.date]=(wd[s.date]||0)+(+s.words||0)});let ws=0;for(let i=0;i<365;i++){const d=new Date();d.setDate(d.getDate()-i);if(wd[todayKey(d)])ws++;else if(i>0)break}
   const pg=log[todayKey()]||0,pgGoal=(typeof wgData==='function'?wgData().pageGoal:30)||30,wt=wd[todayKey()]||0,wGoal=W.goal||500;
   const cards=[];
   now.slice(0,1).forEach(b=>{const G=bkProg(b),tot=G.t,p=G.p;
-    cards.push(`<div class="hs-c">${bookHtml(b)}<div class="hs-ct"><span class="hs-k">📖 Okuyorsun</span><b>${esc(b.title)}</b><span class="hint">${tot?G.txt:esc(b.author||'')}</span>${tot?`<div class="bar2"><i style="width:${p}%"></i></div>`:''}${hasFile(b)?`<button class="btn primary" type="button" data-read="${b.id}">Devam et</button>`:''}</div></div>`)});
+    cards.push(`<div class="hs-c">${bookHtml(b)}<div class="hs-ct"><span class="hs-k">📖 Okuyorsun <button type="button" class="hs-pin${b.pinned?' on':''}" data-pin="${b.id}" title="${b.pinned?'Sabitlemeyi kaldır':'Bu kitabı sabitle; başka kitaba bakınca değişmesin'}">📌 ${b.pinned?'Sabit':'Sabitle'}</button></span><b>${esc(b.title)}</b><span class="hint">${tot?G.txt:esc(b.author||'')}</span>${tot?`<div class="bar2"><i style="width:${p}%"></i></div>`:''}${hasFile(b)?`<button class="btn primary" type="button" data-read="${b.id}">Devam et</button>`:''}</div></div>`)});
   const nb=[...NB.books].sort((a,b)=>(b.opened||'').localeCompare(a.opened||''))[0];
   if(nb)cards.push(`<div class="hs-c"><div class="hs-nb" style="--c:${nb.color||'#9cc5a1'}">${nb.kind==='doc'?'📝':'📓'}</div><div class="hs-ct"><span class="hs-k">✏️ Defterin</span><b>${esc(nb.title||'Defter')}</b><span class="hint">${nbPagesOf(nb.id).length} sayfa</span><button class="btn primary" type="button" data-nb="open" data-id="${nb.id}">Aç</button></div></div>`);
   const ch=(TL.chapters||[]).filter(c=>c.updatedAt).sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||''))[0];const nv=ch&&B.find(b=>b.id===ch.novel);
@@ -4466,7 +4468,7 @@ function homeSimple(){document.body.classList.add('home-simple');
   const bar=(v,g)=>`<div class="bar2"><i style="width:${Math.min(100,Math.round(v/Math.max(1,g)*100))}%"></i></div>`;
   const qc=typeof quoteCard==='function'?quoteCard():'';
   return `<div class="hs">
-   <section class="hs-hello"><div><div class="eyebrow">${esc(trDate(t))}</div><h2>${greet}${name?', '+esc(name):''}</h2></div><div class="hs-acts"><button class="btn primary" type="button" data-hs="add">＋ Yeni ekle</button><button class="btn" type="button" data-hs="idea">💡 Fikir</button><button class="btn" type="button" data-mx="sbopen" title="Sade bugün">🌙 Sade bugün</button></div></section>
+   <section class="hs-hello"><div><div class="eyebrow">${esc(trDate(t))}</div><h2>${greet}${name?', '+esc(name):''}</h2></div><div class="hs-acts"><button class="btn primary" type="button" data-hs="add">＋ Yeni ekle</button><button class="btn" type="button" data-hs="idea">💡 Fikir</button><button class="btn" type="button" data-aihub>✨ Yapay zekâ</button><button class="btn" type="button" data-mx="sbopen" title="Sade bugün">🌙 Sade bugün</button></div></section>
    ${cards.length?`<section class="hs-first"><h3 class="hs-h">Kaldığın yerden devam et</h3>${cards[0]}</section>`:`<section class="hs-empty"><b>Hoş geldin 🌿</b><span class="hint">Bir kitap ekleyerek ya da Defterlerim'den bir defter açarak başla.</span></section>`}
    ${bkBanner()}
    <section class="hs-today2 hs-lite"><h3 class="hs-h">Bugün <button class="lf-lnk" type="button" data-lf="go" data-v="today" style="font-size:13px;margin-left:6px">Hayatım →</button></h3>${lfTodayBox(true)}</section>
@@ -5281,7 +5283,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v105';
+const DK_VER='v106';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -7000,6 +7002,41 @@ Sadece JSON dizi döndür: [{"t":"Türkçe adı","orig":"orijinal adı","a":"yaz
     o.className='';o.innerHTML=items.length?items.map(x=>{const have=inLib(x.t)||(x.orig&&inLib(x.orig));const q2=encodeURIComponent(x.t+(x.a?' '+x.a:''));
       return `<div class="sim-it"><b>${esc(x.t)}</b> <span class="hint">${esc(x.a||'')}${x.orig&&x.orig!==x.t?' · '+esc(x.orig):''}</span>${have?' <span class="pill s-okundu">Rafında var</span>':''}<p>${esc(x.why||'')}</p><a class="btn" href="https://www.kitapyurdu.com/index.php?route=product/search&filter_name=${q2}" target="_blank" rel="noopener">Kitapyurdu ↗</a> <a class="btn" href="https://www.goodreads.com/search?q=${q2}" target="_blank" rel="noopener">Goodreads ↗</a></div>`}).join(''):'<p class="hint">Öneri gelmedi, sonra tekrar dene.</p>'}
   catch(e){const o=$('simOut');if(o)o.textContent=aiErr(e)}}
+/* ✨ Yapay zekâ merkezi — hepsi tek sayfada */
+function aiHubHtml(){const on=aiOn();const sh=aiShelfTodo().length,tg=aiTagTodo().length,bl=aiTodo().length;
+  const cand=st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale').sort((a,b)=>(b.rating||0)-(a.rating||0)||(a.title||'').localeCompare(b.title||'',TR));
+  return `<div class="eyebrow">✨ Yapay zekâ</div><h2 style="margin:0">Kitaplarım için yapay zekâ</h2>
+  <p class="hint" style="margin:0">${on?`${aiName()} bağlı.`:'Henüz bağlı değil.'} Yalnızca kitap adları, yazarlar ve tanıtımlar gönderilir; romanların, günlüğün ve notların gönderilmez. <button class="btn pb-key" type="button" id="gmKeyBtn2">🔑 ${gmKey()?'Anahtarı değiştir':'Gemini anahtarı ekle'}</button></p>
+  ${on?`<div class="lfc hub-g"><b>📚 Kütüphanemi düzenle</b>
+    <div class="hub-r"><span>Rafı olmayan kitaplara tür ver</span><button class="btn" type="button" data-hub="shelf" ${sh?'':'disabled'}>${sh?'✨ '+sh+' kitabı rafla':'✓ Hepsi raflı'}</button></div>
+    <div class="hub-r"><span>Trope etiketleri ekle (slow burn, sahte ilişki…)</span><button class="btn" type="button" data-hub="tag" ${tg?'':'disabled'}>${tg?'✨ '+tg+' kitabı etiketle':'✓ Tamam'}</button></div>
+    <div class="hub-r"><span>Eksik tanıtımları yaz, İngilizceleri çevir</span><button class="btn" type="button" data-hub="blurb" ${bl?'':'disabled'}>${bl?'✨ '+bl+' tanıtım':'✓ Tamam'}</button></div>
+    <div class="hub-r"><span>Serileri ve sıralarını bul</span><button class="btn" type="button" data-hub="series">✨ Serileri bul</button></div>
+    <div id="hubSer"></div><div class="hint" id="hubMsg">${AIB.busy?esc(AIB.msg):''}</div></div>
+  <div class="lfc hub-g"><b>🎲 Ne okusam?</b>
+    <div class="hub-r"><span>Ruh haline göre okunacaklar rafından seç</span><button class="btn" type="button" data-hub="mood">✨ Ruh halime göre</button></div>
+    <div class="hub-r"><span>Kütüphanende olmayan yeni kitaplar öner</span><button class="btn" type="button" data-hub="new">✨ Kitap bul</button></div>
+    <div class="hub-r"><span>Bir kitabı sevdiysen benzerleri</span><span class="hub-sel"><select id="hubSim">${cand.map(b=>`<option value="${b.id}">${esc(b.title)}${b.rating?' '+'★'.repeat(b.rating):''}</option>`).join('')}</select><button class="btn" type="button" data-hub="sim">✨ Benzerleri</button></span></div></div>
+  <div class="lfc hub-g"><b>📖 Okurken</b><span class="hint">PDF okurken üstteki 💬 düğmesiyle “bu kelime ne demek?”, “bu bölümde ne oldu?” diye sorabilirsin. Bunda bulunduğun sayfanın yazısı da gönderilir; sonrasını anlatmaz.</span></div>`:''}`}
+function aiHub(){msModal(`<div id="hubWrap">${aiHubHtml()}</div>`,'hub-box')}
+function aiHubRefresh(){const w=$('hubWrap');if(w){const s=$('hubSim')&&$('hubSim').value;w.innerHTML=aiHubHtml();if(s&&$('hubSim'))$('hubSim').value=s}}
+function aiHubMsg(t){const m=$('hubMsg');if(m)m.textContent=t}
+document.addEventListener('click',async e=>{if(e.target.closest('[data-aihub]')){e.preventDefault();aiHub();return}
+  if(e.target.closest('#gmKeyBtn2')){gmKeyAsk();setTimeout(aiHubRefresh,300);return}
+  const h=e.target.closest('[data-hub]');if(!h)return;const k=h.dataset.hub;
+  if(['shelf','tag','blurb'].includes(k)){if(AIB.busy){AIB.stop=true;return}h.disabled=true;const iv=setInterval(()=>aiHubMsg(AIB.busy?'✨ '+AIB.msg+' (durdurmak için yeniden bas)':''),700);
+    try{await (k==='shelf'?aiShelf():k==='tag'?aiTag():aiBulk())}finally{clearInterval(iv);aiHubMsg('');aiHubRefresh()}return}
+  if(k==='series'){h.disabled=true;aiHubMsg(aiName()+' serileri arıyor…');await serAI();aiHubMsg('');const b=$('hubSer');if(b)b.innerHTML=serPropsHtml();h.disabled=false;return}
+  if(k==='mood'||k==='new'){msClose();$('pickBtn').click();setTimeout(()=>{const t=k==='mood'?$('pickClaudeTab'):$('pickNewTab');t&&t.click();const i=k==='mood'?$('pickCQ'):$('pickNQ');i&&i.focus()},60);return}
+  if(k==='sim'){const b=st.books.find(x=>x.id===$('hubSim').value);if(b){msClose();aiSimilar(b)}return}});
+document.addEventListener('click',async e=>{if(!e.target.closest('#hubSer'))return;if(e.target.closest('[data-serapply]')){await serApply();const b=$('hubSer');if(b)b.innerHTML='';return}if(e.target.closest('[data-serdrop]')){SR.props=null;const b=$('hubSer');if(b)b.innerHTML=''}
+  const sp=e.target.closest('[data-serp]');if(sp){setTimeout(()=>{const b=$('hubSer');if(b)b.innerHTML=serPropsHtml()},0)}});
+/* 📌 okuduğum kitabı sabitle */
+async function pinBook(id){const b=st.books.find(x=>x.id===id);if(!b||!st.db)return;const on=!b.pinned;
+  for(const x of st.books.filter(x=>x.pinned&&x.id!==id)){x.pinned=false;try{await st.db.collection('books').doc(x.id).update({pinned:false})}catch(e){}}
+  b.pinned=on;try{await st.db.collection('books').doc(b.id).update({pinned:on})}catch(e){}toast(on?'📌 “'+b.title+'” ana sayfada sabit':'Sabitleme kaldırıldı');try{renderList()}catch(e){}}
+document.addEventListener('click',e=>{const p=e.target.closest('[data-pin]');if(!p)return;e.preventDefault();e.stopPropagation();const v=$('blVeil');if(v&&p.closest('#blVeil'))v.hidden=true;pinBook(p.dataset.pin)},true);
+
 document.addEventListener('click',e=>{const s=e.target.closest('[data-simai]');if(!s)return;const b=st.books.find(x=>x.id===s.dataset.simai);if(b){const v=$('blVeil');if(v)v.hidden=true;aiSimilar(b)}});
 
 
@@ -7376,7 +7413,7 @@ window.__ep2={toc:()=>R.epub&&epToc(R.epub),pg:()=>({...EPG}),turn:d=>epTurn(d),
 const QM={on:false,n:0,date:''};
 function qmToday(){const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
 function qmBar(){if(st.tab==='roman')return '';
-  if(TM.on)return tmBar();if(!QM.on)return `<div class="qm-bar off">${(()=>{const n=blTodo().length;return BL.busy?`<button class="btn" type="button" id="blLibBtn" data-blstop>📖 ${esc(BL.msg||'')} — durdur</button>`:n?`<button class="btn" type="button" id="blLibBtn" data-blbulk>📖 ${n} kitabın tanıtımını bul</button>`:''})()}${(()=>{if(BL.busy)return '';if(AIB.busy)return `<button class="btn" type="button" id="aiLibBtn" data-aistop>✨ ${esc(AIB.msg||'')} — durdur</button>`;const m=aiTodo().length,sh=aiShelfTodo().length,tg=aiTagTodo().length;if(!m&&!sh&&!tg)return '';if(!aiOn())return `<button class="btn" type="button" data-gmkey>✨ Yapay zekâ (Gemini anahtarı ekle)</button>`;return (sh?`<button class="btn" type="button" id="aiShBtn" data-aishelf>✨ ${sh} kitabı otomatik rafla</button>`:'')+(tg?`<button class="btn" type="button" id="aiTgBtn" data-aitag>✨ ${tg} kitabı etiketle</button>`:'')+(m?`<button class="btn" type="button" id="aiLibBtn" data-aibulk>✨ ${m} tanıtımı yapay zekâ tamamlasın</button>`:'')})()}<button class="btn" type="button" data-tm="on">🏷 Hızlı tür ver</button><button class="btn" type="button" data-qm="on">✅ Bitenleri hızlı işaretle</button></div>`;
+  if(TM.on)return tmBar();if(!QM.on)return `<div class="qm-bar off"><button class="btn" type="button" data-aihub>✨ Yapay zekâ</button>${(()=>{const n=blTodo().length;return BL.busy?`<button class="btn" type="button" id="blLibBtn" data-blstop>📖 ${esc(BL.msg||'')} — durdur</button>`:n?`<button class="btn" type="button" id="blLibBtn" data-blbulk>📖 ${n} kitabın tanıtımını bul</button>`:''})()}<button class="btn" type="button" data-tm="on">🏷 Hızlı tür ver</button><button class="btn" type="button" data-qm="on">✅ Bitenleri hızlı işaretle</button></div>`;
   return `<div class="qm-bar"><div><b>✅ Hızlı işaretleme</b><span>Bitirdiğin kitapların kapağına dokun; yeniden dokunursan geri alınır.${QM.n?` <b>${QM.n} kitap</b> işaretlendi.`:''}</span></div>
     <label class="qm-date">Bitirme tarihi <input type="date" id="qmDate" value="${esc(QM.date||qmToday())}" max="${qmToday()}"></label><button class="btn primary" type="button" data-qm="off">Bitti</button></div>`}
 function qmSet(on){QM.on=on;if(on&&TM.on){TM.on=false;document.body.classList.remove('tm-on')}if(on){QM.n=0;QM.date=QM.date||qmToday()}document.body.classList.toggle('qm-on',on);renderList()}
@@ -7461,7 +7498,7 @@ function blSheet(id){const b=st.books.find(x=>x.id===id);if(!b)return;let v=$('b
       const r=e.target.closest('[data-blread]');if(r){v.hidden=true;bkOpen(r.dataset.blread);return}
       const ed=e.target.closest('[data-bledit]');if(ed){v.hidden=true;openForm(st.books.find(x=>x.id===ed.dataset.bledit))}})}
   v.innerHTML=`<div class="panel bl-sheet" role="dialog" aria-label="${esc(b.title)} tanıtımı"><div class="bl-sh-top">${bookHtml(b)}<div><div class="eyebrow">${esc(b.shelf||'Rafsız')}</div><h2>${esc(b.title)}</h2><div class="hint">${esc(b.author||'')}${b.pages?' · '+b.pages+' sayfa':''}</div></div></div>${blShow(b,40)}
-    <div class="actions"><span></span><div class="r"><button class="btn" type="button" data-blclose>Kapat</button>${BS()&&b.kind!=='roman'&&b.kind!=='makale'?`<button class="btn" type="button" data-simai="${b.id}">✨ Benzerleri</button>`:''}<button class="btn" type="button" data-bledit="${b.id}">Düzenle</button>${hasFile(b)?`<button class="btn primary" type="button" data-blread="${b.id}">Okumaya başla</button>`:''}</div></div></div>`;
+    <div class="actions"><span></span><div class="r"><button class="btn" type="button" data-blclose>Kapat</button>${b.kind!=='roman'&&b.kind!=='makale'?`<button class="btn" type="button" data-pin="${b.id}">📌 ${b.pinned?'Sabitlemeyi kaldır':'Okuduğum kitap yap'}</button>`:''}${BS()&&b.kind!=='roman'&&b.kind!=='makale'?`<button class="btn" type="button" data-simai="${b.id}">✨ Benzerleri</button>`:''}<button class="btn" type="button" data-bledit="${b.id}">Düzenle</button>${hasFile(b)?`<button class="btn primary" type="button" data-blread="${b.id}">Okumaya başla</button>`:''}</div></div></div>`;
   v.hidden=false;setTimeout(()=>blFix(v),0)}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('blVeil')&&!$('blVeil').hidden)$('blVeil').hidden=true});
 
