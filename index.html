@@ -1267,7 +1267,7 @@ body.tm-on #listArea [data-bk]{position:relative;cursor:copy}
 .card .c-bladd{margin:6px 0 2px;font:inherit;font-size:12.5px;color:var(--muted);background:none;border:1px dashed var(--line);border-radius:99px;padding:3px 10px;cursor:pointer}
 .c-ai{font-size:11px}.qm-bar.off{flex-wrap:wrap}
 .sim-it{padding:10px 0;border-bottom:1px solid var(--line)}.sim-it p{margin:4px 0 8px;font-size:14px}
-.hub-g{display:grid;gap:8px}.hub-r{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px}.hub-r>span:first-child{flex:1 1 180px}.hub-sel{display:flex;gap:6px;flex-wrap:wrap}.hub-sel select{max-width:220px}
+.hub-g{display:grid;gap:8px}.hub-r{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:14px}.hub-r>span:first-child{flex:1 1 180px}.hub-sel{display:flex;gap:6px;flex-wrap:wrap}.hub-sel{max-width:100%}.hub-sel select{max-width:min(260px,100%);min-width:0}
 .hs-pin{font:inherit;font-size:11px;margin-left:6px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);background:none;color:var(--muted);cursor:pointer;vertical-align:middle}.hs-pin.on{background:var(--brass);color:var(--on-brass,#fff);border-color:transparent}
 .ac-out{font-size:14.5px;line-height:1.6;max-height:60vh;overflow:auto}.tzl{display:grid;gap:6px;max-height:60vh;overflow:auto}.tzl-i{text-align:left;font:inherit;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--paper);color:var(--ink);display:grid;gap:3px;cursor:pointer}.tzl-i b{font-size:12px;color:var(--brass)}.tzl-i span{font-size:13.5px}
 .qx-q{margin:6px 0 2px;font-style:italic;font-size:15px;line-height:1.5;border-left:3px solid var(--brass);padding-left:10px}.sn-ai-ic{font-size:18px;width:22px;display:inline-grid;place-items:center}
@@ -5286,7 +5286,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v111';
+const DK_VER='v112';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -7036,16 +7036,16 @@ function aiTodo(){return st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'&
 const AIB={busy:false,stop:false,msg:''};
 function aiPrompt(b){return b.blurb?`Aşağıdaki kitap tanıtımını doğal ve akıcı bir Türkçeye çevir. Kitap adlarını ve özel isimleri değiştirme. Sadece çeviriyi yaz.\n\n${b.blurb}`:
   `"${b.title}"${b.author?' ('+b.author+')':''} adlı kitap için Türkçe, kısa bir arka kapak tanıtımı yaz. 50-90 kelime olsun, merak uyandırsın ama sonu ve büyük sürprizleri kesinlikle verme. Sadece tanıtım metnini yaz; başlık ya da açıklama ekleme. Bu kitabı gerçekten tanımıyorsan, emin değilsen ya da başka bir kitapla karıştırıyor olabileceğini düşünüyorsan yalnızca BILMIYORUM yaz; asla uydurma.`}
-async function aiBulk(){if(AIB.busy||!st.db||!aiOn())return;AIB.busy=true;AIB.stop=false;const L=aiTodo();let tr=0,wr=0,no=0;
+async function aiBulk(){if(AIB.busy||!st.db||!aiOn())return;AIB.busy=true;AIB.stop=false;AIB.err='';AIB.nerr=0;const L=aiTodo();let tr=0,wr=0,no=0;
   for(let i=0;i<L.length&&!AIB.stop;i++){const b=L[i];AIB.msg=`${i+1}/${L.length} · ${b.title}`;{const x=$('aiLibBtn');if(x)x.textContent='✨ '+AIB.msg+' — durdur'}
     let up;try{const r=await bookAI(aiPrompt(b),{modelTier:'quick'});const t=String(r.text||'').trim();
       if(b.blurb)up={blurb:t,blurbLang:'tr',blurbTrTry:true,blurbOrig:b.blurb,blurbAi:'çeviri'};
       else if(/BILMIYORUM/.test(t)||t.length<40)up={blurbAiNo:true};else up={blurb:t,blurbLang:'tr',blurbAi:'yazdı'};
       if(up.blurb){b.blurb?tr++:wr++}else no++}
-    catch(e){toast(aiErr(e));if(e&&e.code==='rate_limited')break;continue}
+    catch(e){AIB.err=aiErr(e);AIB.nerr=(AIB.nerr||0)+1;aiHubMsg('⚠️ '+AIB.err);if(e&&e.code==='rate_limited'||AIB.nerr>=3)break;continue}
     try{await st.db.collection('books').doc(b.id).update(up);Object.assign(b,up)}catch(e){}
     await new Promise(z=>setTimeout(z,st.sample?400:4500))}
-  AIB.busy=false;try{renderList()}catch(e){}toast(`✨ ${tr} tanıtım çevrildi, ${wr} tanıtım yazıldı${no?` · ${no} kitabı tanımıyor`:''}`)}
+  AIB.busy=false;try{renderList()}catch(e){}const msg=AIB.err&&!tr&&!wr?'⚠️ Olmadı: '+AIB.err:`✨ ${tr} tanıtım çevrildi, ${wr} tanıtım yazıldı${no?` · ${no} kitabı tanımıyor`:''}${AIB.err?' · son hata: '+AIB.err:''}`;toast(msg);AIB.last=msg}
 $('listArea').addEventListener('click',e=>{if(e.target.closest('[data-aibulk]')){e.stopPropagation();aiBulk();return}if(e.target.closest('[data-aistop]')){e.stopPropagation();AIB.stop=true;return}if(e.target.closest('[data-gmkey]')){e.stopPropagation();gmKeyAsk()}},true);
 document.addEventListener('click',e=>{if(e.target.closest('#gmKeyBtn')){e.preventDefault();gmKeyAsk()}});
 /* ✨ otomatik raflama (tür) — yalnızca kitap adı ve yazar gönderilir */
@@ -7053,7 +7053,7 @@ function aiShelfTodo(){return st.books.filter(b=>b.kind!=='roman'&&b.kind!=='mak
 async function aiShelf(){if(AIB.busy||!st.db||!aiOn())return;AIB.busy=true;AIB.stop=false;const L=aiShelfTodo(),T=turList();let ok=0,no=0;
   for(let i=0;i<L.length&&!AIB.stop;i+=25){const part=L.slice(i,i+25);AIB.msg=`raflanıyor ${Math.min(i+25,L.length)}/${L.length}`;{const x=$('aiLibBtn')||$('aiShBtn');if(x)x.textContent='✨ '+AIB.msg+' — durdur'}
     const pr=`Aşağıdaki kitapların her biri için şu tür listesinden EN UYGUN TEK türü seç:\n${T.join(', ')}\n\nKurallar: Yalnızca listedeki türlerden birini aynen yaz. Kitabı tanımıyorsan ya da emin değilsen "?" yaz, tahmin etme. Cevap olarak yalnızca JSON dizisi ver, başka hiçbir şey yazma. Biçim: [{"i":1,"t":"Romantik"}]\n\nKitaplar:\n`+part.map((b,k)=>`${k+1}. ${b.title}${b.author?' — '+b.author:''}`).join('\n');
-    let arr=[];try{const r=await bookAI(pr,{modelTier:'quick'});const m=/\[[\s\S]*\]/.exec(String(r.text||''));arr=m?JSON.parse(m[0]):[]}catch(e){toast(aiErr(e));if(!(e instanceof SyntaxError))break}
+    let arr=[];try{const r=await bookAI(pr,{modelTier:'quick'});const m=/\[[\s\S]*\]/.exec(String(r.text||''));arr=m?JSON.parse(m[0]):[]}catch(e){AIB.err=aiErr(e);aiHubMsg('⚠️ '+AIB.err);toast('⚠️ '+AIB.err);if(!(e instanceof SyntaxError))break}
     for(const it of arr){const b=part[(+it.i||0)-1];if(!b)continue;const t=T.find(x=>trLow(x)===trLow(String(it.t||'').trim()));const up=t?{shelf:t,shelfAi:true}:{shelfAiNo:true};
       try{await st.db.collection('books').doc(b.id).update(up);Object.assign(b,up)}catch(e){}t?ok++:no++}
     try{renderList()}catch(e){}await new Promise(z=>setTimeout(z,st.sample?400:4500))}
@@ -7064,7 +7064,7 @@ function aiTagTodo(){return st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makal
 async function aiTag(){if(AIB.busy||!st.db||!aiOn())return;AIB.busy=true;AIB.stop=false;const L=aiTagTodo();let ok=0,no=0;
   for(let i=0;i<L.length&&!AIB.stop;i+=20){const part=L.slice(i,i+20);AIB.msg=`etiketleniyor ${Math.min(i+20,L.length)}/${L.length}`;{const x=$('aiTgBtn');if(x)x.textContent='✨ '+AIB.msg+' — durdur'}
     const pr=`Aşağıdaki kitapların her biri için şu etiket listesinden kitaba GERÇEKTEN uyan en fazla 3 etiketi seç:\n${TROPES.join(', ')}\n\nKurallar: Yalnızca listedeki etiketleri aynen yaz. Kitabı tanımıyorsan ya da uyan etiket yoksa boş dizi ver, tahmin etme. Yalnızca JSON dizisi döndür: [{"i":1,"e":["slow burn","sahte ilişki"]}]\n\nKitaplar:\n`+part.map((b,k)=>`${k+1}. ${b.title}${b.author?' — '+b.author:''}${b.shelf?' ['+b.shelf+']':''}`).join('\n');
-    let arr=[];try{const r=await BS().json(pr,{modelTier:'quick'});arr=Array.isArray(r)?r:[]}catch(e){toast(aiErr(e));break}
+    let arr=[];try{const r=await BS().json(pr,{modelTier:'quick'});arr=Array.isArray(r)?r:[]}catch(e){AIB.err=aiErr(e);aiHubMsg('⚠️ '+AIB.err);toast('⚠️ '+AIB.err);break}
     const seen=new Set();for(const it of arr){const b=part[(+it.i||0)-1];if(!b)continue;seen.add(b.id);const tags=[...new Set((it.e||[]).map(x=>TROPES.find(t=>trLow(t)===trLow(String(x).trim()))).filter(Boolean))].slice(0,3);
       const up=tags.length?{tags,tagAi:true}:{tagAiNo:true};try{await st.db.collection('books').doc(b.id).update(up);Object.assign(b,up)}catch(e){}tags.length?ok++:no++}
     for(const b of part)if(!seen.has(b.id)){try{await st.db.collection('books').doc(b.id).update({tagAiNo:true});b.tagAiNo=true}catch(e){}}
@@ -7084,7 +7084,7 @@ Sadece JSON dizi döndür: [{"t":"Türkçe adı","orig":"orijinal adı","a":"yaz
 function aiHubHtml(){const on=aiOn();const sh=aiShelfTodo().length,tg=aiTagTodo().length,bl=aiTodo().length;
   const cand=st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale').sort((a,b)=>(b.rating||0)-(a.rating||0)||(a.title||'').localeCompare(b.title||'',TR));
   return `<div class="eyebrow">✨ Yapay zekâ</div><h2 style="margin:0">Kitaplarım için yapay zekâ</h2>
-  <p class="hint" style="margin:0">${on?`${aiName()} bağlı.`:'Henüz bağlı değil.'} Yalnızca kitap adları, yazarlar ve tanıtımlar gönderilir; romanların, günlüğün ve notların gönderilmez. <button class="btn pb-key" type="button" id="gmKeyBtn2">🔑 ${gmKey()?'Anahtarı değiştir':'Gemini anahtarı ekle'}</button></p>
+  <p class="hint" style="margin:0">${on?`${aiName()} bağlı.`:'Henüz bağlı değil.'} Yalnızca kitap adları, yazarlar ve tanıtımlar gönderilir; romanların, günlüğün ve notların gönderilmez. <button class="btn pb-key" type="button" id="gmKeyBtn2">🔑 ${gmKey()?'Anahtarı değiştir':'Gemini anahtarı ekle'}</button>${gmKey()?'<button class="btn pb-key" type="button" id="gmTest">🩺 Bağlantıyı dene</button>':''}</p><div class="hint" id="gmTestOut"></div>
   ${on?`<div class="lfc hub-g"><b>📚 Kütüphanemi düzenle</b>
     <div class="hub-r"><span>Rafı olmayan kitaplara tür ver</span><button class="btn" type="button" data-hub="shelf" ${sh?'':'disabled'}>${sh?'✨ '+sh+' kitabı rafla':'✓ Hepsi raflı'}</button></div>
     <div class="hub-r"><span>Trope etiketleri ekle (slow burn, sahte ilişki…)</span><button class="btn" type="button" data-hub="tag" ${tg?'':'disabled'}>${tg?'✨ '+tg+' kitabı etiketle':'✓ Tamam'}</button></div>
@@ -7101,9 +7101,10 @@ function aiHubRefresh(){const w=$('hubWrap');if(w){const s=$('hubSim')&&$('hubSi
 function aiHubMsg(t){const m=$('hubMsg');if(m)m.textContent=t}
 document.addEventListener('click',async e=>{if(e.target.closest('[data-aihub]')){e.preventDefault();aiHub();return}
   if(e.target.closest('#gmKeyBtn2')){gmKeyAsk();setTimeout(aiHubRefresh,300);return}
+  if(e.target.closest('#gmTest')){const o=$('gmTestOut');o.textContent='Deneniyor…';try{GM.model='';localStorage.removeItem('dk-gmmodel');const m=await gmModel();const r=await gmAsk('Sadece TAMAM yaz.');o.textContent='✓ Çalışıyor · model: '+m.replace('models/','')+' · cevap: '+String(r.text).slice(0,30)}catch(err){o.textContent='⚠️ '+aiErr(err)}return}
   const h=e.target.closest('[data-hub]');if(!h)return;const k=h.dataset.hub;
   if(['shelf','tag','blurb'].includes(k)){if(AIB.busy){AIB.stop=true;return}h.disabled=true;const iv=setInterval(()=>aiHubMsg(AIB.busy?'✨ '+AIB.msg+' (durdurmak için yeniden bas)':''),700);
-    try{await (k==='shelf'?aiShelf():k==='tag'?aiTag():aiBulk())}finally{clearInterval(iv);aiHubMsg('');aiHubRefresh()}return}
+    AIB.err='';try{await (k==='shelf'?aiShelf():k==='tag'?aiTag():aiBulk())}finally{clearInterval(iv);aiHubRefresh();if(AIB.err)aiHubMsg('⚠️ '+AIB.err)}return}
   if(k==='series'){h.disabled=true;aiHubMsg(aiName()+' serileri arıyor…');await serAI();aiHubMsg('');const b=$('hubSer');if(b)b.innerHTML=serPropsHtml();h.disabled=false;return}
   if(k==='mood'||k==='new'){msClose();$('pickBtn').click();setTimeout(()=>{const t=k==='mood'?$('pickClaudeTab'):$('pickNewTab');t&&t.click();const i=k==='mood'?$('pickCQ'):$('pickNQ');i&&i.focus()},60);return}
   if(k==='sim'){const b=st.books.find(x=>x.id===$('hubSim').value);if(b){msClose();aiSimilar(b)}return}});
