@@ -5286,7 +5286,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v110';
+const DK_VER='v111';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -5353,11 +5353,12 @@ function ssOpen(){msModal(`<div id="ssWrap">${ssBody()}</div>`);ssBind()}
 function ssBind(){const g=$('ssGo');if(g)g.onclick=()=>ssRun(true)}
 function ssRefresh(){const w=$('ssWrap');if(w){const open=[...w.querySelectorAll('details')].map(d=>d.open);w.innerHTML=ssBody();w.querySelectorAll('details').forEach((d,i)=>d.open=!!open[i]);ssBind()}ssChip()}
 async function ssRun(force){if(SS.busy||!ssOn()||!GAUTH.signedIn())return;SS.busy=true;SS.last=Date.now();SS.msg=force?'Eşitleniyor… Kapak çoksa biraz sürebilir, uygulamayı açık tut.':'';ssRefresh();
-  try{if(force){try{await dkAutoShare()}catch(e){}}await driveSync(true);SS.msg=force?'✓ Eşitlendi '+new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):''}
+  try{if(force){try{await dkAutoShare()}catch(e){}}await driveSync(!!force);SS.msg=force?'✓ Eşitlendi '+new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'}):''}
   catch(e){SS.msg=(e&&e.ui)||'Eşitlenemedi; internetini kontrol edip tekrar dene.'}
-  SS.busy=false;try{renderList()}catch(e){}ssRefresh()}
+  SS.busy=false;if(force)try{renderList()}catch(e){}ssRefresh()}
 /* bekleyen kapak varsa kısa sürede gönder / al (yarım kalan yükleme bir sonraki açılışta sürer) */
-setInterval(()=>{if(!ssOn()||document.hidden)return;ssChip();if(SS.busy||DBK.busy||!GAUTH.signedIn()||Date.now()-SS.last<45000||!navigator.onLine)return;const k=ssCount();if(k.up.length||k.down.length)ssRun(false)},15000);
+setInterval(()=>{if(!ssOn()||document.hidden)return;ssChip();if(SS.busy||DBK.busy||!GAUTH.signedIn()||!navigator.onLine)return;const k=ssCount();if(!k.up.length)return;
+  const sig=k.up.length;SS.wait=SS.wait||60000;if(Date.now()-SS.last<SS.wait)return;SS.wait=(SS.sig===sig)?Math.min(SS.wait*2,15*60000):60000;SS.sig=sig;ssRun(false)},20000);
 setTimeout(()=>{try{ssChip()}catch(e){}},4000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(()=>{try{ssChip()}catch(e){}},1500)});
 
 /* sürüm kontrolü */
