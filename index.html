@@ -1812,9 +1812,10 @@ async function logReading(delta,b){
   st.log={...(st.log||{}),days,hours};try{await st.db.doc('settings/log').set({...st.log,days,hours,updatedAt:d.toISOString()})}catch(e){}
 }
 /* seriler */
-function seriesOf(b){if(b.series)return {name:b.series.trim(),no:+b.seriesNo||0};
-  let m=(b.title||'').match(/^(.+?)\s*[#№]\s*(\d+)\s*$/);if(m)return {name:m[1].trim(),no:+m[2]};
-  m=(b.title||'').match(/\(([^()]+?)\s*[#,]\s*(\d+)\)/);if(m)return {name:m[1].trim(),no:+m[2]};return null}
+const SER_C=new Map();
+function seriesOf(b){if(b.series)return {name:b.series.trim(),no:+b.seriesNo||0};const t=b.title||'';if(!/[#№]|\(.*\d.*\)/.test(t))return null;if(SER_C.has(t))return SER_C.get(t);let r=null;
+  let m=t.match(/^(.+?)\s*[#№]\s*(\d+)\s*$/);if(m)r={name:m[1].trim(),no:+m[2]};
+  else{m=t.match(/\(([^()]+?)\s*[#,]\s*(\d+)\)/);if(m)r={name:m[1].trim(),no:+m[2]}}if(SER_C.size>3000)SER_C.clear();SER_C.set(t,r);return r}
 function seriesList(){const g={};st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale').forEach(b=>{const s=seriesOf(b);if(!s)return;const k=trLow(s.name);(g[k]=g[k]||{name:s.name,books:[]}).books.push({b,no:s.no})});
   return Object.values(g).filter(x=>x.books.length>1||x.books.some(y=>y.no>1)).map(x=>{x.books.sort((a,b)=>a.no-b.no);x.max=Math.max(...x.books.map(y=>y.no),x.books.length);
     const byNo={};x.books.forEach(y=>{if(y.no)byNo[y.no]=y.b});x.byNo=byNo;
@@ -3073,8 +3074,10 @@ function refsDoc(rows){const R=rows.slice().sort((a,b)=>apaRef(a,false).localeCo
 const RC={busy:false,tried:false,err:''};
 function shelfPick(){const fav=st.books.filter(b=>b.kind!=='roman'&&b.status==='okundu'&&(b.rating||0)>=4);const base=fav.length?fav:st.books.filter(b=>b.status==='okundu');
   const cand=st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'&&b.status==='okunacak'&&b.shelf!=='İstek listem');if(!cand.length)return null;
-  const day=new Date().toDateString();const sc=cand.map(c=>{let s=0;base.forEach(f=>{if(similarBooks(f).includes(c))s++});return [s+(hashStr(day+c.id)%100)/1000,c]}).sort((a,b)=>b[0]-a[0]);
-  const [s,c]=sc[0];const why=s>=1?base.filter(f=>similarBooks(f).includes(c)).slice(0,2).map(f=>f.title):[];return {b:c,why}}
+  const day=new Date().toDateString(),sig=day+'|'+st.books.length+'|'+base.length+'|'+cand.length;if(SP_C.sig===sig&&Date.now()-SP_C.at<180000&&st.books.includes(SP_C.r.b))return SP_C.r;
+  const sims=base.slice(0,60).map(f=>[f,new Set(similarBooks(f))]);const sc=cand.map(c=>{let s=0;for(const [,S] of sims)if(S.has(c))s++;return [s+(hashStr(day+c.id)%100)/1000,c]}).sort((a,b)=>b[0]-a[0]);
+  const [s,c]=sc[0];const why=s>=1?sims.filter(([,S])=>S.has(c)).slice(0,2).map(([f])=>f.title):[];const r={b:c,why};SP_C.sig=sig;SP_C.at=Date.now();SP_C.r=r;return r}
+const SP_C={sig:'',at:0,r:null};
 function recsCard(){const R=(TL.recs&&Array.isArray(TL.recs.items))?TL.recs.items.filter(x=>x&&x.t&&!inLib(x.t)):[];const sp=shelfPick();
   if(!BS()&&!sp)return '';
   const q2=x=>encodeURIComponent(x.t+(x.a?' '+x.a:''));
@@ -5286,7 +5289,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v113';
+const DK_VER='v114';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
