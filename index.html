@@ -1264,6 +1264,7 @@ body.tm-on #listArea [data-bk]{position:relative;cursor:copy}
 #kindKitapL[hidden]{display:none!important}
 .card .c-bl{margin:6px 0 2px;font-size:13.5px;line-height:1.5;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .card .c-bladd{margin:6px 0 2px;font:inherit;font-size:12.5px;color:var(--muted);background:none;border:1px dashed var(--line);border-radius:99px;padding:3px 10px;cursor:pointer}
+.c-ai{font-size:11px}.qm-bar.off{flex-wrap:wrap}
 </style>
 
 </head><body>
@@ -1366,7 +1367,7 @@ body.tm-on #listArea [data-bk]{position:relative;cursor:copy}
       <div class="f"><label for="fTags">Etiketler</label><input id="fTags" placeholder="virgülle ayır"></div>
     </div>
     <div class="chips trope-row" id="tropeRow" aria-label="Tropeler"></div>
-    <div class="f" id="blField"><label for="fBlurb">📖 Tanıtım <span class="hint" style="font-weight:400">(arka kapak yazısı)</span></label><textarea id="fBlurb" rows="4" placeholder="Kitap ne anlatıyor? Seçerken burası yardımcı olur."></textarea><div class="bl-acts"><button class="btn" type="button" id="blFind">🔎 Tanıtımı bul</button><button class="btn" type="button" id="blAi" hidden>✨ Claude yazsın</button><span class="hint" id="blInfo"></span></div></div>
+    <div class="f" id="blField"><label for="fBlurb">📖 Tanıtım <span class="hint" style="font-weight:400">(arka kapak yazısı)</span></label><textarea id="fBlurb" rows="4" placeholder="Kitap ne anlatıyor? Seçerken burası yardımcı olur."></textarea><div class="bl-acts"><button class="btn" type="button" id="blFind">🔎 Tanıtımı bul</button><button class="btn" type="button" id="blAi" hidden>✨ Yapay zekâ yazsın</button><button class="btn pb-key" type="button" id="gmKeyBtn" hidden>🔑 Gemini anahtarı ekle</button><span class="hint" id="blInfo"></span></div></div>
     <div class="row" id="seriesRow">
       <div class="f"><label for="fSeries">Seri</label><input id="fSeries" list="seriesOpts" placeholder="ör. Empyrean"><datalist id="seriesOpts"></datalist></div>
       <div class="f"><label for="fSeriesNo">Serideki sırası</label><input id="fSeriesNo" type="number" min="0" placeholder="ör. 3"></div>
@@ -1740,7 +1741,7 @@ function renderList(){
         ${b.rating?`<span class="tagt" style="color:var(--brass)">${'★'.repeat(b.rating)}</span>`:''}${b.status==='okundu'&&b.finishedAt?`<span class="tagt">${fmtDate(b.finishedAt)}</span>`:''}
         ${sub?`<span class="tagt">${sub}</span>`:''}
         ${(b.tags||[]).map(t=>`<span class="tagt">#${esc(t)}</span>`).join(' ')}</div>
-      ${b.kind!=='roman'&&b.kind!=='makale'?(b.blurb?`<p class="c-bl" lang="${esc(b.blurbLang||'tr')}">${esc(blCut(b.blurb,260))}</p>`:`<button class="c-bladd" type="button" data-blown="${b.id}">＋ Kısa açıklama yaz</button>`):''}
+      ${b.kind!=='roman'&&b.kind!=='makale'?(b.blurb?`<p class="c-bl" lang="${esc(b.blurbLang||'tr')}">${b.blurbAi?'<span class="c-ai" title="Yapay zekâ '+esc(b.blurbAi)+'">✨</span> ':''}${esc(blCut(b.blurb,260))}</p>`:`<button class="c-bladd" type="button" data-blown="${b.id}">＋ Kısa açıklama yaz</button>`):''}
       ${progHtml(b)}
       ${b.note?`<div class="note">${esc(b.note)}</div>`:''}
       ${hasFile(b)?`<button class="readbtn" type="button" data-read="${b.id}">${b.currentPage>1?'Kaldığım yerden oku · '+(b.fileType==='epub'?'bölüm ':'s. ')+b.currentPage:'Okumaya başla'}</button>`:''}
@@ -5279,7 +5280,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v102';
+const DK_VER='v103';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -6923,6 +6924,59 @@ async function kyRun(file){if(typeof GAUTH==='undefined'||!GAUTH.configured()||!
     pbInfo('Künye okundu, kontrol et.');kyDlg(k)}catch(e){pbInfo((e&&e.ui)||'Künye okunamadı; internet bağlantını ya da Drive girişini kontrol et.')}}
 $('kyCam').addEventListener('change',e=>{const f=e.target.files[0];e.target.value='';if(f)kyRun(f)});
 window.__ky={kyParse};
+/* ---------- ✨ Kitaplar için yapay zekâ: Gemini (cihazdaki anahtarla) ya da Claude ---------- */
+const GM={model:''};const GMB='https://generativelanguage.googleapis.com/v1beta/';
+function gmKey(){try{return localStorage.getItem('dk-gmkey')||''}catch(e){return ''}}
+function aiOn(){return !!(st.sample||gmKey())}
+function aiName(){return st.sample?'Claude':'Gemini'}
+async function gmModel(){if(GM.model)return GM.model;try{const c=JSON.parse(localStorage.getItem('dk-gmmodel')||'null');if(c&&Date.now()-c.at<7*864e5){GM.model=c.m;return c.m}}catch(e){}
+  let m='models/gemini-2.5-flash';try{const r=await fetch(GMB+'models?pageSize=200&key='+encodeURIComponent(gmKey()));if(r.status===400||r.status===403){const j=await r.json().catch(()=>({}));throw {ui:'Gemini anahtarı kabul edilmedi'+(j.error&&j.error.message?' ('+j.error.message.slice(0,90)+')':'')+'.'}}
+    const j=await r.json();const L=(j.models||[]).filter(x=>(x.supportedGenerationMethods||[]).includes('generateContent')&&/flash/.test(x.name)&&!/lite|image|tts|live|audio|embed|exp|preview|thinking|8b/.test(x.name));
+    const ver=n=>{const v=/gemini-(\d+(?:\.\d+)?)/.exec(n);return v?parseFloat(v[1]):0};L.sort((a,b)=>ver(b.name)-ver(a.name)||a.name.length-b.name.length);if(L[0])m=L[0].name}catch(e){if(e&&e.ui)throw e}
+  GM.model=m;try{localStorage.setItem('dk-gmmodel',JSON.stringify({m,at:Date.now()}))}catch(e){}return m}
+async function gmAsk(prompt){const k=gmKey();if(!k)throw {ui:'Önce Gemini anahtarını ekle.'};const m=await gmModel();
+  const r=await fetch(GMB+m+':generateContent?key='+encodeURIComponent(k),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:.5,maxOutputTokens:4096}})});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok){const msg=(j.error&&j.error.message)||'';if(r.status===429)throw {ui:'Gemini\'nin ücretsiz kullanım sınırı doldu; biraz (ya da yarın) sonra tekrar dene.',code:'rate_limited'};if(r.status===404){GM.model='';try{localStorage.removeItem('dk-gmmodel')}catch(e){}}
+    throw {ui:'Gemini cevap vermedi ('+r.status+(msg?': '+msg.slice(0,90):'')+').'}}
+  const c=(j.candidates||[])[0];const t=((c&&c.content&&c.content.parts)||[]).map(p=>p.text||'').join('').trim();if(!t)throw {ui:'Gemini boş cevap verdi'+(c&&c.finishReason?' ('+c.finishReason+')':'')+'.'};return {text:t}}
+async function bookAI(prompt,opts){if(st.sample)return st.sample(prompt,opts);return gmAsk(prompt)}
+function aiErr(e){return (e&&e.ui)||sampleErr(e)}
+function gmKeyAsk(){const v=(prompt('Gemini API anahtarını yapıştır (AIza… ile başlar). Boş bırakırsan silinir.\nBu anahtar yalnızca kitap tanıtımları için kullanılır; romanların, günlüğün ve notların gönderilmez.',gmKey())||'').trim();
+  if(v&&!/^AIza[0-9A-Za-z_\-]{30,}$/.test(v)){toast('Bu bir Google API anahtarına benzemiyor');return false}
+  try{v?localStorage.setItem('dk-gmkey',v):localStorage.removeItem('dk-gmkey');localStorage.removeItem('dk-gmmodel')}catch(e){}GM.model='';
+  if(v){toast('🔑 Deneniyor…');gmModel().then(m=>toast('✨ Gemini hazır ('+m.replace('models/','')+')')).catch(e=>toast(aiErr(e)))}else toast('Gemini anahtarı silindi');
+  try{blSync();renderList()}catch(e){}return true}
+/* toplu: İngilizceleri çevir, eksikleri yaz */
+function aiTodo(){return st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'&&!b.blurbOwn&&((b.blurb&&b.blurbLang&&b.blurbLang!=='tr'&&!b.blurbTrTry)||(!b.blurb&&!b.blurbAiNo)))}
+const AIB={busy:false,stop:false,msg:''};
+function aiPrompt(b){return b.blurb?`Aşağıdaki kitap tanıtımını doğal ve akıcı bir Türkçeye çevir. Kitap adlarını ve özel isimleri değiştirme. Sadece çeviriyi yaz.\n\n${b.blurb}`:
+  `"${b.title}"${b.author?' ('+b.author+')':''} adlı kitap için Türkçe, kısa bir arka kapak tanıtımı yaz. 50-90 kelime olsun, merak uyandırsın ama sonu ve büyük sürprizleri kesinlikle verme. Sadece tanıtım metnini yaz; başlık ya da açıklama ekleme. Bu kitabı gerçekten tanımıyorsan, emin değilsen ya da başka bir kitapla karıştırıyor olabileceğini düşünüyorsan yalnızca BILMIYORUM yaz; asla uydurma.`}
+async function aiBulk(){if(AIB.busy||!st.db||!aiOn())return;AIB.busy=true;AIB.stop=false;const L=aiTodo();let tr=0,wr=0,no=0;
+  for(let i=0;i<L.length&&!AIB.stop;i++){const b=L[i];AIB.msg=`${i+1}/${L.length} · ${b.title}`;{const x=$('aiLibBtn');if(x)x.textContent='✨ '+AIB.msg+' — durdur'}
+    let up;try{const r=await bookAI(aiPrompt(b),{modelTier:'quick'});const t=String(r.text||'').trim();
+      if(b.blurb)up={blurb:t,blurbLang:'tr',blurbTrTry:true,blurbOrig:b.blurb,blurbAi:'çeviri'};
+      else if(/BILMIYORUM/.test(t)||t.length<40)up={blurbAiNo:true};else up={blurb:t,blurbLang:'tr',blurbAi:'yazdı'};
+      if(up.blurb){b.blurb?tr++:wr++}else no++}
+    catch(e){toast(aiErr(e));if(e&&e.code==='rate_limited')break;continue}
+    try{await st.db.collection('books').doc(b.id).update(up);Object.assign(b,up)}catch(e){}
+    await new Promise(z=>setTimeout(z,st.sample?400:4500))}
+  AIB.busy=false;try{renderList()}catch(e){}toast(`✨ ${tr} tanıtım çevrildi, ${wr} tanıtım yazıldı${no?` · ${no} kitabı tanımıyor`:''}`)}
+$('listArea').addEventListener('click',e=>{if(e.target.closest('[data-aibulk]')){e.stopPropagation();aiBulk();return}if(e.target.closest('[data-aistop]')){e.stopPropagation();AIB.stop=true;return}if(e.target.closest('[data-gmkey]')){e.stopPropagation();gmKeyAsk()}},true);
+document.addEventListener('click',e=>{if(e.target.closest('#gmKeyBtn')){e.preventDefault();gmKeyAsk()}});
+/* ✨ otomatik raflama (tür) — yalnızca kitap adı ve yazar gönderilir */
+function aiShelfTodo(){return st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'&&!b.shelf&&!b.shelfAiNo)}
+async function aiShelf(){if(AIB.busy||!st.db||!aiOn())return;AIB.busy=true;AIB.stop=false;const L=aiShelfTodo(),T=turList();let ok=0,no=0;
+  for(let i=0;i<L.length&&!AIB.stop;i+=25){const part=L.slice(i,i+25);AIB.msg=`raflanıyor ${Math.min(i+25,L.length)}/${L.length}`;{const x=$('aiLibBtn')||$('aiShBtn');if(x)x.textContent='✨ '+AIB.msg+' — durdur'}
+    const pr=`Aşağıdaki kitapların her biri için şu tür listesinden EN UYGUN TEK türü seç:\n${T.join(', ')}\n\nKurallar: Yalnızca listedeki türlerden birini aynen yaz. Kitabı tanımıyorsan ya da emin değilsen "?" yaz, tahmin etme. Cevap olarak yalnızca JSON dizisi ver, başka hiçbir şey yazma. Biçim: [{"i":1,"t":"Romantik"}]\n\nKitaplar:\n`+part.map((b,k)=>`${k+1}. ${b.title}${b.author?' — '+b.author:''}`).join('\n');
+    let arr=[];try{const r=await bookAI(pr,{modelTier:'quick'});const m=/\[[\s\S]*\]/.exec(String(r.text||''));arr=m?JSON.parse(m[0]):[]}catch(e){toast(aiErr(e));if(!(e instanceof SyntaxError))break}
+    for(const it of arr){const b=part[(+it.i||0)-1];if(!b)continue;const t=T.find(x=>trLow(x)===trLow(String(it.t||'').trim()));const up=t?{shelf:t,shelfAi:true}:{shelfAiNo:true};
+      try{await st.db.collection('books').doc(b.id).update(up);Object.assign(b,up)}catch(e){}t?ok++:no++}
+    try{renderList()}catch(e){}await new Promise(z=>setTimeout(z,st.sample?400:4500))}
+  AIB.busy=false;try{render()}catch(e){}toast(`✨ ${ok} kitap raflandı${no?` · ${no} kitabı tanımadı, onları sen rafla`:''}`)}
+$('listArea').addEventListener('click',e=>{if(e.target.closest('[data-aishelf]')){e.stopPropagation();aiShelf()}},true);
+
+
 
 async function pbCoverBlob(url){try{const r=await fetch(url,{mode:'cors'});if(!r.ok)return null;const b=await r.blob();if(!/^image\//.test(b.type)||b.size<1500)return null;return b}catch(e){return null}}
 function pbSetCover(blob,url){PB.coverUrl='';if(blob){try{const dt=new DataTransfer();dt.items.add(new File([blob],'kapak.jpg',{type:blob.type||'image/jpeg'}));$('fCover').files=dt.files}catch(e){PB.coverUrl=url||''}}else PB.coverUrl=url||'';
@@ -7295,7 +7349,7 @@ window.__ep2={toc:()=>R.epub&&epToc(R.epub),pg:()=>({...EPG}),turn:d=>epTurn(d),
 const QM={on:false,n:0,date:''};
 function qmToday(){const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
 function qmBar(){if(st.tab==='roman')return '';
-  if(TM.on)return tmBar();if(!QM.on)return `<div class="qm-bar off">${(()=>{const n=blTodo().length;return BL.busy?`<button class="btn" type="button" id="blLibBtn" data-blstop>📖 ${esc(BL.msg||'')} — durdur</button>`:n?`<button class="btn" type="button" id="blLibBtn" data-blbulk>📖 ${n} kitabın tanıtımını bul</button>`:''})()}<button class="btn" type="button" data-tm="on">🏷 Hızlı tür ver</button><button class="btn" type="button" data-qm="on">✅ Bitenleri hızlı işaretle</button></div>`;
+  if(TM.on)return tmBar();if(!QM.on)return `<div class="qm-bar off">${(()=>{const n=blTodo().length;return BL.busy?`<button class="btn" type="button" id="blLibBtn" data-blstop>📖 ${esc(BL.msg||'')} — durdur</button>`:n?`<button class="btn" type="button" id="blLibBtn" data-blbulk>📖 ${n} kitabın tanıtımını bul</button>`:''})()}${(()=>{if(BL.busy)return '';if(AIB.busy)return `<button class="btn" type="button" id="aiLibBtn" data-aistop>✨ ${esc(AIB.msg||'')} — durdur</button>`;const m=aiTodo().length,sh=aiShelfTodo().length;if(!m&&!sh)return '';if(!aiOn())return `<button class="btn" type="button" data-gmkey>✨ Yapay zekâ (Gemini anahtarı ekle)</button>`;return (sh?`<button class="btn" type="button" id="aiShBtn" data-aishelf>✨ ${sh} kitabı otomatik rafla</button>`:'')+(m?`<button class="btn" type="button" id="aiLibBtn" data-aibulk>✨ ${m} tanıtımı yapay zekâ tamamlasın</button>`:'')})()}<button class="btn" type="button" data-tm="on">🏷 Hızlı tür ver</button><button class="btn" type="button" data-qm="on">✅ Bitenleri hızlı işaretle</button></div>`;
   return `<div class="qm-bar"><div><b>✅ Hızlı işaretleme</b><span>Bitirdiğin kitapların kapağına dokun; yeniden dokunursan geri alınır.${QM.n?` <b>${QM.n} kitap</b> işaretlendi.`:''}</span></div>
     <label class="qm-date">Bitirme tarihi <input type="date" id="qmDate" value="${esc(QM.date||qmToday())}" max="${qmToday()}"></label><button class="btn primary" type="button" data-qm="off">Bitti</button></div>`}
 function qmSet(on){QM.on=on;if(on&&TM.on){TM.on=false;document.body.classList.remove('tm-on')}if(on){QM.n=0;QM.date=QM.date||qmToday()}document.body.classList.toggle('qm-on',on);renderList()}
@@ -7347,31 +7401,31 @@ async function blOL(title,author){try{const t=String(title||'').replace(/\(.*?\)
 async function blFetch(title,author){let g=null;try{g=await blFetchG(title,author)}catch(e){}if(g&&g.lang==='tr')return g;
   const w=await blWiki('tr',title,author);if(w)return w;if(g)return g;
   return (await blOL(title,author))||(await blWiki('en',title,author))}
-function blShow(b,n){if(!b||!b.blurb)return '';return `<div class="bl-box" style="--bl:${n||5}"><p class="bl-txt">${esc(b.blurb)}</p><div class="bl-foot"><button type="button" class="bl-more" data-blmore>devamını oku</button>${b.blurbLang&&b.blurbLang!=='tr'?'<span class="bl-tag">İngilizce</span>':''}</div></div>`}
+function blShow(b,n){if(!b||!b.blurb)return '';return `<div class="bl-box" style="--bl:${n||5}"><p class="bl-txt">${esc(b.blurb)}</p><div class="bl-foot"><button type="button" class="bl-more" data-blmore>devamını oku</button>${b.blurbLang&&b.blurbLang!=='tr'?'<span class="bl-tag">İngilizce</span>':''}${b.blurbAi==='yazdı'?'<span class="bl-tag">✨ yapay zekâ yazdı, yanlış olabilir</span>':b.blurbAi==='çeviri'?'<span class="bl-tag">✨ yapay zekâ çevirisi</span>':''}</div></div>`}
 function blFix(root){(root||document).querySelectorAll('.bl-box').forEach(x=>{const p=x.querySelector('.bl-txt'),m=x.querySelector('.bl-more');if(p&&m&&!x.classList.contains('open'))m.hidden=p.scrollHeight<=p.clientHeight+2})}
 document.addEventListener('click',e=>{const m=e.target.closest('[data-blmore]');if(!m)return;e.stopPropagation();const x=m.closest('.bl-box');const o=x.classList.toggle('open');m.textContent=o?'kısalt':'devamını oku'},true);
 
 /* form alanı */
-function blSync(){const f=$('blField');if(!f)return;const k=kindVal();f.hidden=k==='roman'||k==='makale';$('blAi').hidden=!st.sample;blInfo('')}
+function blSync(){const f=$('blField');if(!f)return;const k=kindVal();f.hidden=k==='roman'||k==='makale';$('blAi').hidden=!aiOn();$('gmKeyBtn').hidden=aiOn();blInfo('')}
 function blInfo(h){const i=$('blInfo');if(i)i.innerHTML=h}
 document.querySelectorAll('input[name=kind]').forEach(r=>r.addEventListener('change',blSync));
 $('fBlurb').addEventListener('input',()=>{if(!BL.lang)BL.lang='tr'});
 $('blFind').addEventListener('click',async e=>{const btn=e.currentTarget,title=$('fTitle').value.trim();if(!title){$('fTitle').focus();return blInfo('Önce kitabın adını yaz.')}
   btn.disabled=true;blInfo('Aranıyor…');
   try{const r=await blFetch(title,$('fAuthor').value.trim());
-    if(!r)return blInfo(`Bulunamadı. Arka kapağı kendin yazabilirsin${st.sample?' ya da <b>✨ Claude yazsın</b>':''}.`);
+    if(!r)return blInfo(`Bulunamadı. Arka kapağı kendin yazabilirsin${aiOn()?' ya da <b>✨ Yapay zekâ yazsın</b>':''}.`);
     $('fBlurb').value=r.text;BL.lang=r.lang||'tr';if(!$('fPages').value&&r.pages)$('fPages').value=r.pages;
-    blInfo(r.lang==='tr'?`Bulundu (kaynak: ${r.src||'Google Books'}) ✓ Kaydet'e basmayı unutma.`:`Yalnızca İngilizcesi bulundu.${st.sample?' <b>✨ Claude yazsın</b> dersen Türkçeye çevirir.':''}`)}
+    blInfo(r.lang==='tr'?`Bulundu (kaynak: ${r.src||'Google Books'}) ✓ Kaydet'e basmayı unutma.`:`Yalnızca İngilizcesi bulundu.${aiOn()?' <b>✨ Yapay zekâ yazsın</b> dersen Türkçeye çevirir.':''}`)}
   finally{btn.disabled=false}});
-$('blAi').addEventListener('click',async e=>{const btn=e.currentTarget,title=$('fTitle').value.trim();if(!st.sample)return;if(!title){$('fTitle').focus();return blInfo('Önce kitabın adını yaz.')}
+$('blAi').addEventListener('click',async e=>{const btn=e.currentTarget,title=$('fTitle').value.trim();if(!aiOn())return;if(!title){$('fTitle').focus();return blInfo('Önce kitabın adını yaz.')}
   const cur=$('fBlurb').value.trim(),tr=cur&&BL.lang&&BL.lang!=='tr';const author=$('fAuthor').value.trim();
   const prompt=tr?`Aşağıdaki kitap tanıtımını doğal ve akıcı bir Türkçeye çevir. Sadece çeviriyi yaz.\n\n${cur}`:
     `"${title}"${author?' ('+author+')':''} adlı kitap için Türkçe bir arka kapak tanıtımı yaz. 70-110 kelime olsun, merak uyandırsın ama sonu ve büyük sürprizleri kesinlikle verme. Sadece tanıtım metnini yaz; başlık ya da açıklama ekleme. Bu kitabı gerçekten tanımıyorsan ya da emin değilsen yalnızca BILMIYORUM yaz, uydurma.`;
-  btn.disabled=true;blInfo(tr?'Çevriliyor…':'Claude yazıyor…');const keep=cur;
-  try{const r=await st.sample(prompt,{modelTier:'quick',onText:({text})=>{if(!/^BIL/.test(text))$('fBlurb').value=text}});const t=String(r.text||'').trim();
-    if(/BILMIYORUM/.test(t)){$('fBlurb').value=keep;return blInfo('Claude bu kitabı yeterince tanımıyor; uydurmasın diye boş bıraktı.')}
-    $('fBlurb').value=t;BL.lang='tr';blInfo(tr?'Türkçeye çevrildi ✓':'Claude yazdı. Bir göz at, Kaydet\'e bas.')}
-  catch(err){$('fBlurb').value=keep;blInfo(sampleErr(err))}finally{btn.disabled=false}});
+  btn.disabled=true;blInfo(tr?'Çevriliyor…':aiName()+' yazıyor…');const keep=cur;
+  try{const r=await bookAI(prompt,{modelTier:'quick',onText:({text})=>{if(!/^BIL/.test(text))$('fBlurb').value=text}});const t=String(r.text||'').trim();
+    if(/BILMIYORUM/.test(t)){$('fBlurb').value=keep;return blInfo(aiName()+' bu kitabı yeterince tanımıyor; uydurmasın diye boş bıraktı.')}
+    $('fBlurb').value=t;BL.lang='tr';blInfo(tr?'Türkçeye çevrildi ✓':aiName()+' yazdı. Bir göz at, Kaydet\'e bas.')}
+  catch(err){$('fBlurb').value=keep;blInfo(aiErr(err))}finally{btn.disabled=false}});
 
 /* kitap kartındaki 📖 */
 function blSheet(id){const b=st.books.find(x=>x.id===id);if(!b)return;let v=$('blVeil');
