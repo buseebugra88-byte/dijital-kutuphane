@@ -5286,7 +5286,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v112';
+const DK_VER='v113';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -7037,14 +7037,17 @@ const AIB={busy:false,stop:false,msg:''};
 function aiPrompt(b){return b.blurb?`Aşağıdaki kitap tanıtımını doğal ve akıcı bir Türkçeye çevir. Kitap adlarını ve özel isimleri değiştirme. Sadece çeviriyi yaz.\n\n${b.blurb}`:
   `"${b.title}"${b.author?' ('+b.author+')':''} adlı kitap için Türkçe, kısa bir arka kapak tanıtımı yaz. 50-90 kelime olsun, merak uyandırsın ama sonu ve büyük sürprizleri kesinlikle verme. Sadece tanıtım metnini yaz; başlık ya da açıklama ekleme. Bu kitabı gerçekten tanımıyorsan, emin değilsen ya da başka bir kitapla karıştırıyor olabileceğini düşünüyorsan yalnızca BILMIYORUM yaz; asla uydurma.`}
 async function aiBulk(){if(AIB.busy||!st.db||!aiOn())return;AIB.busy=true;AIB.stop=false;AIB.err='';AIB.nerr=0;const L=aiTodo();let tr=0,wr=0,no=0;
-  for(let i=0;i<L.length&&!AIB.stop;i++){const b=L[i];AIB.msg=`${i+1}/${L.length} · ${b.title}`;{const x=$('aiLibBtn');if(x)x.textContent='✨ '+AIB.msg+' — durdur'}
-    let up;try{const r=await bookAI(aiPrompt(b),{modelTier:'quick'});const t=String(r.text||'').trim();
-      if(b.blurb)up={blurb:t,blurbLang:'tr',blurbTrTry:true,blurbOrig:b.blurb,blurbAi:'çeviri'};
-      else if(/BILMIYORUM/.test(t)||t.length<40)up={blurbAiNo:true};else up={blurb:t,blurbLang:'tr',blurbAi:'yazdı'};
-      if(up.blurb){b.blurb?tr++:wr++}else no++}
-    catch(e){AIB.err=aiErr(e);AIB.nerr=(AIB.nerr||0)+1;aiHubMsg('⚠️ '+AIB.err);if(e&&e.code==='rate_limited'||AIB.nerr>=3)break;continue}
-    try{await st.db.collection('books').doc(b.id).update(up);Object.assign(b,up)}catch(e){}
-    await new Promise(z=>setTimeout(z,st.sample?400:4500))}
+  const T=L.filter(b=>b.blurb),W=L.filter(b=>!b.blurb);const groups=[];for(let i=0;i<T.length;i+=6)groups.push(['tr',T.slice(i,i+6)]);for(let i=0;i<W.length;i+=10)groups.push(['wr',W.slice(i,i+10)]);let done=0;
+  for(const [kind,part] of groups){if(AIB.stop)break;AIB.msg=`${done+part.length}/${L.length}`;{const x=$('aiLibBtn');if(x)x.textContent='✨ '+AIB.msg+' — durdur'}
+    const pr=kind==='tr'?`Aşağıdaki kitap tanıtımlarını doğal ve akıcı bir Türkçeye çevir. Kitap adlarını ve özel isimleri değiştirme. Yalnızca JSON dizisi döndür: [{"i":1,"t":"çeviri"}]\n\n`+part.map((b,k)=>`${k+1}. ${b.title}:\n${String(b.blurb).slice(0,1200)}`).join('\n\n')
+      :`Aşağıdaki kitapların her biri için Türkçe, kısa bir arka kapak tanıtımı yaz (40-70 kelime). Merak uyandırsın ama sonu ve büyük sürprizleri kesinlikle verme. Bir kitabı gerçekten tanımıyorsan, emin değilsen ya da başka bir kitapla karıştırıyor olabileceğini düşünüyorsan o kitap için "t" alanına yalnızca BILMIYORUM yaz; asla uydurma. Yalnızca JSON dizisi döndür: [{"i":1,"t":"tanıtım"}]\n\n`+part.map((b,k)=>`${k+1}. ${b.title}${b.author?' — '+b.author:''}`).join('\n');
+    let arr=[];try{const r=await BS().json(pr,{modelTier:'quick'});arr=Array.isArray(r)?r:[]}catch(e){AIB.err=aiErr(e);AIB.nerr++;aiHubMsg('⚠️ '+AIB.err);if(e&&e.code==='rate_limited'||AIB.nerr>=3)break;continue}
+    const seen=new Set();for(const it of arr){const b=part[(+it.i||0)-1];if(!b||seen.has(b.id))continue;seen.add(b.id);const t=String(it.t||'').trim();let up;
+      if(kind==='tr'){if(t.length<20)continue;up={blurb:t,blurbLang:'tr',blurbTrTry:true,blurbOrig:b.blurb,blurbAi:'çeviri'};tr++}
+      else if(/BILMIYORUM/.test(t)||t.length<40){up={blurbAiNo:true};no++}else{up={blurb:t,blurbLang:'tr',blurbAi:'yazdı'};wr++}
+      try{await st.db.collection('books').doc(b.id).update(up);Object.assign(b,up)}catch(e){}}
+    if(kind==='wr')for(const b of part)if(!seen.has(b.id)){try{await st.db.collection('books').doc(b.id).update({blurbAiNo:true});b.blurbAiNo=true}catch(e){}}
+    done+=part.length;try{renderList()}catch(e){}await new Promise(z=>setTimeout(z,st.sample?400:4500))}
   AIB.busy=false;try{renderList()}catch(e){}const msg=AIB.err&&!tr&&!wr?'⚠️ Olmadı: '+AIB.err:`✨ ${tr} tanıtım çevrildi, ${wr} tanıtım yazıldı${no?` · ${no} kitabı tanımıyor`:''}${AIB.err?' · son hata: '+AIB.err:''}`;toast(msg);AIB.last=msg}
 $('listArea').addEventListener('click',e=>{if(e.target.closest('[data-aibulk]')){e.stopPropagation();aiBulk();return}if(e.target.closest('[data-aistop]')){e.stopPropagation();AIB.stop=true;return}if(e.target.closest('[data-gmkey]')){e.stopPropagation();gmKeyAsk()}},true);
 document.addEventListener('click',e=>{if(e.target.closest('#gmKeyBtn')){e.preventDefault();gmKeyAsk()}});
