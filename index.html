@@ -694,6 +694,7 @@ body.sec-home.home-simple header.top,body.sec-home.home-simple .divider{display:
 .lf{display:grid;gap:16px}.lf-hd{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap}.lf-hd h2{margin:0;font:600 clamp(22px,3vw,28px)/1.2 var(--display)}
 .lfc{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:14px 16px;display:grid;gap:8px;align-content:start;min-width:0}.lfc h4{margin:0;font:600 15px var(--display)}
 .lf-h3{margin:4px 0 0;font:600 17px var(--display)}.lf-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.lf-addrow input,.lf-addrow select{min-width:0}
+.ml-card{max-width:520px}.ml-env{width:150px;height:auto;filter:drop-shadow(0 4px 8px rgba(90,60,30,.18))}
 .lf-lnk{border:0;background:none;color:var(--accent);cursor:pointer;font:inherit;font-size:13px;padding:2px 0;justify-self:start}
 .lf-x{border:0;background:none;color:var(--muted);cursor:pointer;font-size:17px;padding:0 6px;opacity:.6}.lf-x:hover{opacity:1}
 .lf-q{border:1px dashed var(--line) !important;background:transparent !important;border-radius:10px !important;padding:8px 10px !important}
@@ -4570,7 +4571,7 @@ function lfItems(k){const out=[];
   return out.sort((a,b)=>(a.time||'99').localeCompare(b.time||'99'))}
 
 /* ---- render ---- */
-function lfRender(){const host=$('secHost');if(!host||st.sec!=='life')return;const sub=curSub();const f={week:lfWeekView,today:lfToday,cal:lfCal,tasks:lfTasks,habits:lfHabits,mood:lfMood,calm:lfCalm,goals:lfGoals,money:lfMoney,lists:lfLists,food:lfFood,days:lfDays,mem:lfMem,film:lfFilm,songs:lfSongs,year:lfYear}[sub]||lfToday;
+function lfRender(){const host=$('secHost');if(!host||st.sec!=='life')return;const sub=curSub();const f={week:lfWeekView,today:lfToday,cal:lfCal,tasks:lfTasks,habits:lfHabits,mood:lfMood,calm:lfCalm,goals:lfGoals,money:lfMoney,lists:lfLists,food:lfFood,days:lfDays,mem:lfMem,letters:lfLetters,film:lfFilm,songs:lfSongs,year:lfYear}[sub]||lfToday;
   host.innerHTML=`<div class="lf lf-${sub}">${f()}</div>`;if(LF.focus){const e=$(LF.focus);if(e)e.focus();LF.focus=null}}
 const lfFaces=['','😞','😕','😐','🙂','😄'],lfFaceC=['','#8fa3c7','#a8b8d8','#e2d6b8','#a8d5a2','#6fc28b'];
 function lfTodayBox(compact){const k=lfK(),items=lfItems(k),T=lfTaskList('today').slice(0,compact?5:20),H=LF.habits.filter(h=>!h.off),md=LF.moods.find(m=>m.id===k);
@@ -5770,6 +5771,16 @@ const FM={cat:'psy',mood:'',rate:null};
 function fmQ(t,y){return encodeURIComponent(t+' '+y)}
 function fmLinks(t,y,arch){return `<a class="fm-l" href="https://www.google.com/search?q=${fmQ(t,y)}%20izle%20nerede" target="_blank" rel="noopener">🔎 Nerede izlerim?</a><a class="fm-l" href="https://www.youtube.com/results?search_query=${fmQ(t,y)}%20trailer" target="_blank" rel="noopener">▶ Fragman</a>${arch?`<a class="fm-l" href="https://archive.org/search?query=${encodeURIComponent(t)}&and[]=mediatype%3A%22movies%22" target="_blank" rel="noopener">🏛 Ücretsiz izle</a>`:''}`}
 function fmHave(t){return (LF.films||[]).find(f=>trLow(f.title)===trLow(t))}
+/* Mühürlü Mektuplar ayrı bir sayfa (mektup.html); mektuplar aynı tarayıcıda saklandığı için sayıyı buradan okuyabiliriz */
+function lfLetters(){let L=[];try{L=JSON.parse(localStorage.getItem('muhurlu-mektuplar-v1')||'[]')}catch(e){}
+  const today=new Date().toISOString().slice(0,10),wait=L.filter(l=>l.openAfter&&l.openAfter>today).length,unread=L.filter(l=>!l.opened&&!(l.openAfter&&l.openAfter>today)).length;
+  return `<div class="lf-hd"><h2>✉️ Mektuplarım</h2></div>
+  <div class="lfc ml-card"><svg viewBox="0 0 160 100" class="ml-env" aria-hidden="true"><rect x="4" y="8" width="152" height="88" rx="6" fill="#d9b98f"/><path d="M4 14 L80 62 L156 14" fill="none" stroke="#b8935f" stroke-width="2"/><path d="M4 96 L64 52 M156 96 L96 52" stroke="#c7a576" stroke-width="1.5"/><circle cx="80" cy="60" r="14" fill="#8a2a33"/><circle cx="80" cy="60" r="9" fill="none" stroke="#b14a52" stroke-width="1.5"/><path d="M80 54 C77 50 72 53 75 57 L80 62 L85 57 C88 53 83 50 80 54Z" fill="#b14a52"/><g transform="translate(118 18) rotate(6)"><rect width="26" height="30" fill="#f2d6c4" stroke="#fbfaf4" stroke-width="2.5" stroke-dasharray="2 1.5"/><path d="M13 24 V14 M8 9 C8 15 10 17 13 17 C16 17 18 15 18 9 L16 11 L13 7 L10 11Z" fill="#c23b35" stroke="#3f6b3a" stroke-width=".8"/></g></svg>
+   <h4>Mühürlü Mektuplar</h4>
+   <p class="muted" style="margin:0">Daktiloyla ya da el yazısıyla yaz, kuru çiçek ve mühürle süsle, zarfla. Her gün yeni bir kurgu seni bekliyor.</p>
+   ${L.length?`<p style="margin:0">Kutunda <b>${L.length}</b> mektup var${unread?`, <b>${unread}</b> tanesi henüz açılmadı`:''}${wait?`, <b>${wait}</b> tanesi açılış gününü bekliyor`:''}.</p>`:''}
+   <a class="btn primary" href="mektup.html" style="justify-self:start;text-decoration:none">Masaya geç →</a>
+   <p class="muted" style="margin:0;font-size:12.5px">Telefonda ayrı bir uygulama gibi de kullanabilirsin: mektup sayfasını açıp “Ana Ekrana Ekle” de.</p></div>`}
 function lfFilm(){const F=LF.films||[],W=F.filter(f=>f.st!=='done').sort((a,b)=>(b.at||'').localeCompare(a.at||'')),D=F.filter(f=>f.st==='done').sort((a,b)=>(b.date||'').localeCompare(a.date||''));
   let R=FILM_REC.filter(r=>!fmHave(r[0]));if(FM.mood==='sakin')R=R.filter(r=>/sakin/.test(r[4]||''));else R=R.filter(r=>r[2]===FM.cat);if(FM.mood!=='sakin'&&FM.cat!=='old'&&FM.hideHeavy)R=R.filter(r=>!/agir/.test(r[4]||''));
   const star=(n,id)=>[1,2,3,4,5].map(i=>`<button type="button" class="fm-s${i<=(n||0)?' on':''}" data-film="rate" data-id="${id}" data-v="${i}" aria-label="${i} yıldız">★</button>`).join('');
@@ -7958,7 +7969,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest&&e.target.c
 
 const SECS={
   home:{t:'Ana sayfa',tabs:[]},
-  life:{t:'Hayatım',tabs:[['today','☀️ Bugün'],['week','📆 Haftam'],['cal','🗓 Takvim'],['tasks','✅ Görevler'],['habits','🔁 Alışkanlıklar'],['mood','🌿 Günlük'],['calm','🫧 Sakinleş & destek'],['goals','🎯 Hedefler'],['money','💰 Bütçe'],['lists','📋 Listeler'],['food','🍲 Yemek'],['days','🎂 Önemli günler'],['mem','🗃 Anı kutusu'],['film','🎬 Filmler'],['songs','🎵 Şarkılarım'],['year','✨ Yılım']]},
+  life:{t:'Hayatım',tabs:[['today','☀️ Bugün'],['week','📆 Haftam'],['cal','🗓 Takvim'],['tasks','✅ Görevler'],['habits','🔁 Alışkanlıklar'],['mood','🌿 Günlük'],['calm','🫧 Sakinleş & destek'],['goals','🎯 Hedefler'],['money','💰 Bütçe'],['lists','📋 Listeler'],['food','🍲 Yemek'],['days','🎂 Önemli günler'],['mem','🗃 Anı kutusu'],['letters','✉️ Mektuplarım'],['film','🎬 Filmler'],['songs','🎵 Şarkılarım'],['year','✨ Yılım']]},
   library:{t:'Kütüphanem',tabs:[]},
   academic:{t:'Akademik',tabs:[['makale','📄 Makaleler'],['lit','📊 Literatür tablosu'],['thesis','🎓 Tez planlayıcı'],['tezyaz','✍️ Tez yazı odası'],['cards','🃏 Çalışma kartları'],['kaynak','📑 Kaynakça'],['mcard','🗂 Okuma kartları'],['neuro','🧠 Nörobilim'],['nb','📓 Defterlerim']]},
   notes:{t:'Defterlerim',tabs:[]},
