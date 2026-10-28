@@ -78,6 +78,11 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .ph-tel{position:absolute;left:0;right:0;top:0;height:44px;border-bottom:2px solid #9a7a3a;display:flex;justify-content:space-between;align-items:center;padding:0 16px 0 46px;font:700 .82rem "Courier Prime",monospace;letter-spacing:.24em;color:#6e5320;background:rgba(160,120,40,.12)}
 .ph-tel small{font-weight:400;letter-spacing:.06em;font-size:.72rem}
 .paper.p-telgraf{padding-top:60px}
+.esw{width:62px;height:39px;border-radius:3px;position:relative;display:block;box-shadow:0 1px 3px rgba(0,0,0,.2);overflow:hidden}
+.esw.airmail{border:3px solid transparent;border-image:repeating-linear-gradient(-45deg,#b8333a 0 4px,#fbfaf5 4px 6px,#2a4f8a 6px 10px,#fbfaf5 10px 12px) 3}
+.esw i{position:absolute;left:0;right:0;top:0;height:60%;filter:brightness(.9) drop-shadow(0 1px 0 rgba(0,0,0,.2))}
+.esw b{position:absolute;left:50%;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%)}
+.etile{width:70px}.etile[aria-pressed="true"] .esw{outline:2px solid var(--accent);outline-offset:2px}
 .ptiles{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:thin}
 .ptw{position:relative;flex:0 0 auto}
 .ptile{width:62px;border:0;background:none;display:flex;flex-direction:column;gap:5px;align-items:center;font:500 .7rem/1.15 var(--f-ui);color:var(--muted);cursor:pointer;padding:0;text-align:center}
@@ -186,6 +191,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .envfront.airmail{border:7px solid transparent;border-image:repeating-linear-gradient(-45deg,#b8333a 0 9px,#fbfaf5 9px 15px,#2a4f8a 15px 24px,#fbfaf5 24px 30px) 7}
 .envfront .stamp{position:absolute;top:8%;right:6%;width:17%}
 .envfront .pm{position:absolute;top:9%;right:19%;width:24%;opacity:.55;pointer-events:none}
+.envfront.gold::before{content:"";position:absolute;inset:6px;border:4px double #c9a85a;border-radius:2px;pointer-events:none}
+.envfront .from{position:absolute;top:22%;left:7%;max-width:40%;font-size:clamp(.75rem,2.6vw,1rem);opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .envfront .air{position:absolute;top:9%;left:7%;font:600 .55rem var(--f-ui);letter-spacing:.14em;color:#2a4f8a}
 .envfront .addr{position:absolute;left:14%;right:10%;bottom:16%;display:flex;flex-direction:column;gap:2px}
 .envfront .addr .k{font-size:clamp(1rem, 4.4vw, 1.6rem);border-bottom:1px solid rgba(0,0,0,.18);padding-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -194,21 +201,30 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 /* Envelope back (flap + seal) */
 .envback{position:relative;aspect-ratio:1.6/1;max-width:100%;perspective:900px}
 .envback .inside{position:absolute;inset:0;border-radius:4px;box-shadow:var(--shadow)}
-.envback .inside::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.2);border-radius:4px}
+.envback .pocket{clip-path:polygon(0 0,50% 58%,100% 0,100% 100%,0 100%)}
+.envback .pocket.bot{clip-path:polygon(0 100%,50% 50%,100% 100%);filter:brightness(.96)}
+.envback .folds{position:absolute;inset:0;width:100%;height:100%;z-index:3;pointer-events:none}
+.envback .inside::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.22);border-radius:4px}
 .envback .sheet{position:absolute;left:8%;right:8%;top:6%;height:88%;background:var(--paper);border-radius:2px;z-index:2;transform:translateY(0);transition:transform .9s cubic-bezier(.5,0,.2,1);
   background-image:repeating-linear-gradient(to bottom, transparent 0 11px, var(--rule) 11px 12px);background-position:0 14px}
 .envback .sheet.out{transform:translateY(-78%)}
-.envback .pocket{position:absolute;inset:0;z-index:3;width:100%;height:100%}
-.envback .flap{position:absolute;left:0;right:0;top:0;height:60%;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top center;z-index:4;transition:transform .7s cubic-bezier(.4,0,.2,1);filter:brightness(.95)}
+.envback .sheet{pointer-events:none}
+#pv-back{padding-top:42%}
+@media (max-width:560px){#pv-back{padding-top:40%}}
+.envback .pocket{position:absolute;inset:0;z-index:3;border-radius:4px}
+.envback .flap{position:absolute;left:0;right:0;top:0;height:60%;transform-origin:top center;z-index:4;transition:transform .7s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.envback .flap i{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:4px 4px 0 0}
+.envback .flap .fo{filter:brightness(.93)}
+.envback .flap .fl{transform:rotateX(180deg)}
 .envback.open .flap{transform:rotateX(180deg);z-index:1}
-.envback .seal{position:absolute;left:50%;top:60%;width:22%;transform:translate(-50%,-50%);z-index:5;transition:transform .45s cubic-bezier(.2,1.6,.4,1),opacity .3s}
+.envback .seal{position:absolute;left:50%;top:var(--sy,60%);width:22%;transform:translate(-50%,-50%);z-index:5;transition:transform .45s cubic-bezier(.2,1.6,.4,1),opacity .3s}
 .envback .seal svg{width:100%;height:auto;display:block;overflow:visible}
 .envback.open .seal{opacity:0;transform:translate(-50%,-50%) scale(.6)}
 .envback .seal.drop{animation:drop .5s cubic-bezier(.2,1.5,.4,1)}
 .envback .seal.crack .h1{transform:translate(-6px,4px) rotate(-14deg)} .envback .seal.crack .h2{transform:translate(6px,4px) rotate(14deg)}
 .envback .seal .h1,.envback .seal .h2{transition:transform .35s;transform-box:fill-box;transform-origin:center}
 @keyframes drop{from{transform:translate(-50%,-50%) scale(1.7);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
-button.sealbtn{position:absolute;left:50%;top:60%;width:26%;aspect-ratio:1;transform:translate(-50%,-50%);z-index:6;border-radius:50%;background:transparent;border:0;cursor:pointer}
+button.sealbtn{position:absolute;left:50%;top:var(--sy,60%);width:26%;aspect-ratio:1;transform:translate(-50%,-50%);z-index:6;border-radius:50%;background:transparent;border:0;cursor:pointer}
 
 .bench{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
 .bench > *{min-width:0}
@@ -226,6 +242,7 @@ button.sealbtn{position:absolute;left:50%;top:60%;width:26%;aspect-ratio:1;trans
 .box{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 @media (max-width:480px){.box{grid-template-columns:1fr}}
 .slot{border:0;background:none;padding:0;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;color:var(--fg);font:inherit}
+.slot .env{transform:rotate(var(--t,0deg));transition:transform .2s}.slot:hover .env{transform:rotate(0) translateY(-2px)}
 .slot .meta{display:flex;justify-content:space-between;gap:8px;font-size:.8rem;color:var(--muted)}
 .pill{font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--desk-2);color:var(--muted);white-space:nowrap}
 .pill.lock{background:#e8d9b5;color:#5a431a}
@@ -272,7 +289,48 @@ function ozPaper(tex){return tex&&tex.startsWith("u:")?OZ.papers.find(p=>p.id===
 const INKS={lacivert:"#1f3b73",siyah:"#222222",bordo:"#6e1b26",yesil:"#23523a",sepya:"#6b4a2b"};
 const INKN={lacivert:"Lacivert",siyah:"Siyah",bordo:"Bordo",yesil:"Yeşil",sepya:"Sepya"};
 const HANDS={caveat:"El yazısı",kalam:"Yuvarlak",zarif:"Zarif",daktilo:"Daktilo"};
-const ENVS={kraft:["Kraft","#c8a37c"],beyaz:["Beyaz","#f3f1ec"],ucak:["Uçak postası","#f6f4ee"],pudra:["Pudra","#e7cccd"],adacayi:["Adaçayı","#c5d2be"],gece:["Gece","#2f3d55"]};
+/* ---------- envelopes: exterior, liner (seen when the flap opens) and flap shape ---------- */
+const svgU=x=>`url("data:image/svg+xml,${encodeURIComponent(x)}")`;
+const flowerS=(cx,cy,r,c)=>[0,72,144,216,288].map(a=>{const t=a*Math.PI/180;return `<circle cx="${(cx+Math.cos(t)*r).toFixed(1)}" cy="${(cy+Math.sin(t)*r).toFixed(1)}" r="${(r*.85).toFixed(1)}" fill="${c}"/>`}).join("")+`<circle cx="${cx}" cy="${cy}" r="${(r*.6).toFixed(1)}" fill="#e9c46a"/>`;
+const FLORAL=`<svg xmlns="http://www.w3.org/2000/svg" width="44" height="44">${flowerS(11,12,3,"#d99595")}${flowerS(33,31,2.4,"#b9a6d3")}<g fill="#9cb38c"><ellipse cx="20" cy="18" rx="4" ry="1.6" transform="rotate(35 20 18)"/><ellipse cx="25" cy="26" rx="3.4" ry="1.4" transform="rotate(-30 25 26)"/><ellipse cx="6" cy="34" rx="3.4" ry="1.4" transform="rotate(20 6 34)"/></g></svg>`;
+const LEAVES=c=>`<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><g fill="none" stroke="${c}" stroke-width="1"><path d="M8 34 C14 24 18 16 30 6"/></g><g fill="${c}" opacity=".85"><ellipse cx="14" cy="24" rx="5" ry="2" transform="rotate(-60 14 24)"/><ellipse cx="20" cy="16" rx="5" ry="2" transform="rotate(20 20 16)"/><ellipse cx="24" cy="12" rx="4.5" ry="1.8" transform="rotate(-70 24 12)"/><ellipse cx="11" cy="30" rx="4" ry="1.6" transform="rotate(25 11 30)"/></g></svg>`;
+const STARS=`<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><g fill="#e3c77a"><path d="M10 4 L11.4 8.6 L16 10 L11.4 11.4 L10 16 L8.6 11.4 L4 10 L8.6 8.6Z"/><path d="M29 24 L30 27 L33 28 L30 29 L29 32 L28 29 L25 28 L28 27Z" opacity=".8"/><circle cx="30" cy="8" r=".9"/><circle cx="18" cy="30" r=".8"/><circle cx="4" cy="26" r=".6"/></g></svg>`;
+const DAMASK=`<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><g fill="#d9b56a" opacity=".55"><path d="M24 6 C31 14 31 21 24 28 C17 21 17 14 24 6Z"/><circle cx="16" cy="28" r="3"/><circle cx="32" cy="28" r="3"/><path d="M24 28 L24 40" stroke="#d9b56a" stroke-width="1.6"/><path d="M0 0 C6 6 6 6 0 12 M48 0 C42 6 42 6 48 12 M0 48 C6 42 6 42 0 36 M48 48 C42 42 42 42 48 36" stroke="#d9b56a" stroke-width="1.4" fill="none"/></g></svg>`;
+const EBRU=(()=>{const cols=["#9fb7d6","#d9a5a0","#e6c98a","#a9c4a6","#c3b2da"];let p="";for(let i=0;i<9;i++){const y=i*24-6,w=12+(i%3)*6;
+  p+=`<path d="M-30 ${y} C20 ${y-26} 60 ${y+26} 100 ${y} S180 ${y-26} 230 ${y}" stroke="${cols[i%5]}" stroke-width="${w}" fill="none" opacity=".85"/>`}
+  for(let x=10;x<200;x+=22)p+=`<path d="M${x} -10 C${x+10} 50 ${x-10} 130 ${x} 210" stroke="#fff" stroke-width="1" fill="none" opacity=".55"/>`;
+  [[40,60],[150,140],[110,40],[30,170]].forEach(([x,y],j)=>p+=`<circle cx="${x}" cy="${y}" r="${10+j*2}" fill="${cols[(j+2)%5]}" stroke="#fff" stroke-width="1.5" opacity=".9"/><circle cx="${x}" cy="${y}" r="${4+j}" fill="#f6efe2" opacity=".9"/>`);
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="200" height="200" fill="#f3ead8"/>${p}</svg>`})();
+const MAPT=`<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><g fill="none" stroke="#a88c5c" stroke-width="1" opacity=".5"><path d="M10 40c30-20 60 8 90-6s45 14 60 0"/><path d="M0 64c36-18 66 10 96-4s44 18 64 4"/><path d="M20 120c22 14 50-18 80 0s40-8 60 8"/><circle cx="110" cy="92" r="12"/><circle cx="110" cy="92" r="21"/><path d="M40 86l5 5m0-5l-5 5" stroke-width="1.5"/></g></svg>`;
+const FIBERS="repeating-linear-gradient(83deg, rgba(90,60,30,.06) 0 1px, transparent 1px 7px), repeating-linear-gradient(-12deg, rgba(255,255,255,.08) 0 1px, transparent 1px 11px)";
+const GING=c=>`linear-gradient(90deg, ${c} 50%, transparent 50%) 0 0/16px 16px, linear-gradient(${c} 50%, transparent 50%) 0 0/16px 16px`;
+const ENVS={
+ kraft:{n:"Kraft",c:"#c8a37c",ex:FIBERS,ln:`${svgU(LEAVES("#7d8f6a"))} 0 0/40px 40px, #efe6d2`,fl:"sivri"},
+ beyaz:{n:"Fildişi",c:"#f5f0e6",ln:`${svgU(FLORAL)} 0 0/44px 44px, #fbf1ef`,fl:"yumusak"},
+ ucak:{n:"Uçak postası",c:"#f6f4ee",ln:"repeating-linear-gradient(-45deg,#b8333a 0 8px,#f6f4ee 8px 14px,#2a4f8a 14px 22px,#f6f4ee 22px 28px)",fl:"sivri",b:"air"},
+ pudra:{n:"Pudra",c:"#ecd0d0",ln:"radial-gradient(#fff 2.2px, transparent 2.7px) 0 0/14px 14px, #d99ca3",fl:"dalgali"},
+ adacayi:{n:"Adaçayı",c:"#c9d6c1",ln:`${svgU(LEAVES("#5f7a58"))} 0 0/40px 40px, #e6eddf`,fl:"oval"},
+ lavanta:{n:"Lavanta",c:"#dcd2ea",ln:`${GING("rgba(140,110,185,.32)")}, #f4f0fa`,fl:"dalgali"},
+ seftali:{n:"Şeftali",c:"#f4d6c3",ln:"radial-gradient(#fff6ee 2.6px, transparent 3px) 0 0/15px 15px, #e9a98d",fl:"yumusak"},
+ nane:{n:"Nane",c:"#cfe8dc",ex:"repeating-linear-gradient(90deg, rgba(255,255,255,.4) 0 1px, transparent 1px 9px)",ln:`${GING("rgba(80,150,115,.28)")}, #f2faf6`,fl:"duz"},
+ cicekli:{n:"Çiçek desenli",c:"#fbf5ec",ex:`${svgU(FLORAL)} 0 0/62px 62px`,ln:"repeating-linear-gradient(90deg,#e7bcbc 0 6px,#f3d8d8 6px 12px)",fl:"duz"},
+ ebru:{n:"Ebru astarlı",c:"#efe7d8",ex:FIBERS,ln:`${svgU(EBRU)} 0 0/200px 200px`,fl:"sivri"},
+ viktorya:{n:"Viktorya",c:"#efe3c9",ln:`${svgU(DAMASK)} 0 0/48px 48px, #6e2f3a`,fl:"oval",b:"gold"},
+ eski:{n:"Eskimiş",c:"#e2d0a8",ex:`radial-gradient(circle at 78% 30%, transparent 0 18%, rgba(130,80,30,.18) 18.6% 20%, transparent 20.6%), radial-gradient(ellipse at 20% 80%, rgba(140,90,40,.16), transparent 40%), radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(110,70,20,.25) 100%), ${FIBERS}`,ln:`${svgU(MAPT)} 0 0/160px 160px, #efe3c6`,fl:"duz"},
+ gece:{n:"Gece mavisi",c:"#2f3d55",ln:`${svgU(STARS)} 0 0/40px 40px, #1d2739`,fl:"sivri",b:"gold",dark:true}
+};
+const envOf=k=>ENVS[k]||ENVS.kraft;
+// Flap outlines as % of the flap box; the liner face is the same outline mirrored (it is seen after the flap flips up).
+function flapPts(t){
+  if(t==="yumusak")return [[0,0],[100,0],[63,78],[57,91],[50,96],[43,91],[37,78]];
+  if(t==="oval"){const p=[];for(let i=0;i<=24;i++){const a=i/24*Math.PI;p.push([50+50*Math.cos(a),94*Math.sin(a)])}return p}
+  if(t==="duz")return [[0,0],[100,0],[93,70],[7,70]];
+  if(t==="dalgali"){const p=[[0,0],[100,0],[93,66]];const n=8;for(let i=0;i<=n*4;i++){const x=93-86*i/(n*4);p.push([x,66+Math.abs(Math.sin(i/4*Math.PI))*7])}p.push([7,66]);return p}
+  return [[0,0],[100,0],[50,100]]}
+const FLAPY={sivri:60,yumusak:57,oval:56,duz:42,dalgali:44};
+const poly=(pts,flip)=>`polygon(${pts.map(([x,y])=>`${x.toFixed(1)}% ${(flip?100-y:y).toFixed(1)}%`).join(",")})`;
+(function(){let css="";for(const [k,e] of Object.entries(ENVS)){css+=`.ex-${k}{background:${e.ex?e.ex+", ":""}${e.c}}.ln-${k}{background:${e.ln}}`}
+  const st=document.createElement("style");st.textContent=css;document.head.appendChild(st)})();
 const SEALS={bordo:"#7a1d28",lacivert:"#22385f",yesil:"#2d573c",altin:"#a98434",siyah:"#262626"};
 const SEALN={bordo:"Bordo",lacivert:"Lacivert",yesil:"Yeşil",altin:"Altın",siyah:"Siyah"};
 const IDEAS=["Bir yıl sonraki kendine: Şu an neyi merak ediyorsun?","On yaşındaki haline: Ona neyi söylemek isterdin?","Bu mevsime mektup: Pencereden ne görüyorsun, nasıl kokuyor?","Hiç tanışmadığın birine: Bugün seni gülümseten küçük bir şey.","Bir eşyaya mektup: En sevdiğin kupana, kitabına, sokağına.","Bu haftanın özeti: Üç güzel an, bir zor an, bir umut."];
@@ -433,17 +491,19 @@ function sealSVG(color,initial){return `<svg viewBox="-50 -50 100 100" aria-hidd
 <text y="10" text-anchor="middle" font-family="Young Serif,Georgia,serif" font-size="30" fill="rgba(0,0,0,.32)" transform="translate(1,1.5)">${esc(initial)}</text>
 <text y="10" text-anchor="middle" font-family="Young Serif,Georgia,serif" font-size="30" fill="rgba(255,255,255,.28)">${esc(initial)}</text>
 <ellipse cx="-14" cy="-24" rx="10" ry="4" fill="rgba(255,255,255,.18)" transform="rotate(-30 -14 -24)"/></svg>`}
-function envFront(l){const c=(ENVS[l.env]||ENVS.kraft)[1];const dark=l.env==="gece";
-  return `<div class="env envfront ${l.env==="ucak"?"airmail":""}" style="background:${c};${dark?"color:#e9e4d8":""}">
-  ${l.env==="ucak"?'<span class="air">UÇAK İLE · PAR AVION</span>':""}
+function envFront(l){const k=ENVS[l.env]?l.env:"kraft",e=envOf(k),dark=!!e.dark;
+  return `<div class="env envfront ex-${k} ${e.b==="air"?"airmail":""} ${e.b==="gold"?"gold":""}" style="${dark?"color:#e9e4d8":""}">
+  ${e.b==="air"?'<span class="air">UÇAK İLE · PAR AVION</span>':""}
+  ${l.sign?`<span class="from h-${l.hand}" style="color:${dark?"#d9cfb8":INKS[l.ink]}">${esc(l.sign)}</span>`:""}
   ${stampSVG(l.stamp)}${postmarkSVG(l.created)}
   <div class="addr h-${l.hand}" style="color:${dark?"#efe9da":INKS[l.ink]}"><span class="k">${esc(l.to||"Kendime")}</span><span class="l"></span></div></div>`}
-function envBack(l,opts={}){const c=(ENVS[l.env]||ENVS.kraft)[1];
-  return `<div class="envback ${opts.open?"open":""}" id="${opts.id||""}">
-   <div class="inside" style="background:${c}"></div>
+function envBack(l,opts={}){const k=ENVS[l.env]?l.env:"kraft",e=envOf(k),pts=flapPts(e.fl),sy=FLAPY[e.fl]||60;
+  return `<div class="envback ${opts.open?"open":""}" id="${opts.id||""}" style="--sy:${sy}%">
+   <div class="inside ln-${k}"></div>
    <div class="sheet ${opts.sheetOut?"out":""}"></div>
-   <svg class="pocket" viewBox="0 0 160 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 0 L80 58 L0 100Z M160 0 L80 58 L160 100Z" fill="${c}"/><path d="M0 100 L80 50 L160 100Z" fill="${c}" style="filter:brightness(.97)"/><path d="M0 100 L80 50 L160 100 M0 0 L80 58 L160 0" fill="none" stroke="rgba(0,0,0,.12)" stroke-width=".6"/></svg>
-   <div class="flap" style="background:${c}"></div>
+   <div class="pocket ex-${k}"></div><div class="pocket bot ex-${k}"></div>
+   <svg class="folds" viewBox="0 0 160 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 100 L80 50 L160 100 M0 0 L80 58 L160 0" fill="none" stroke="rgba(0,0,0,.14)" stroke-width=".6"/></svg>
+   <div class="flap"><i class="fo ex-${k}" style="clip-path:${poly(pts)}"></i><i class="fl ln-${k}" style="clip-path:${poly(pts,true)}"></i></div>
    <div class="seal ${opts.noSeal?"":""}" ${opts.noSeal?'style="opacity:0"':""}>${sealSVG(SEALS[l.seal]||SEALS.bordo,l.initial||"B")}</div>
   </div>`}
 function readInner(l,hideBody){const tw=l.hand==="daktilo";return `<div class="date">${esc(fmtDate(l.created))}</div><div class="to-r">${l.to?("Sevgili "+esc(l.to)+","):"Sevgili ben,"}</div>
@@ -746,7 +806,7 @@ function renderZarf(){
     <div><div id="pv-back">${envBack(l,{id:"eb",open:true,sheetOut:true,noSeal:true})}</div><div class="cap">Arka yüz</div></div>
   </div>
   <div class="card">
-    <div class="tool"><span class="label">Zarf</span><div class="chips">${chipRow("env",ENVS,draft.env,true)}</div><span class="hint">${ENVS[draft.env][0]}</span></div>
+    <div class="tool"><span class="label">Zarf</span><div class="ptiles">${Object.entries(ENVS).map(([k,e])=>`<div class="ptw"><button class="ptile etile" data-g="env" data-k="${k}" aria-pressed="${k===draft.env}"><span class="esw ex-${k}${e.b==="air"?" airmail":""}"><i class="ex-${k}" style="clip-path:${poly(flapPts(e.fl))}"></i><b style="top:${FLAPY[e.fl]}%;background:${SEALS[draft.seal]||SEALS.bordo}"></b></span><span>${esc(e.n)}</span></button></div>`).join("")}</div></div>
     <div class="tool"><span class="label">Pul</span><div class="stamps">${Object.keys(STAMPS).map(k=>`<button data-g="stamp" data-k="${k}" aria-pressed="${k===draft.stamp}" aria-label="${STAMPS[k].n} pulu">${stampSVG(k)}</button>`).join("")}</div></div>
     <div class="tools">
       <div class="tool"><span class="label">Mum mühür</span><div class="chips">${chipRow("seal",Object.fromEntries(Object.entries(SEALS).map(([k,c])=>[k,[SEALN[k],c]])),draft.seal,true)}</div></div>
@@ -794,7 +854,7 @@ function renderKutu(){
   app.innerHTML=`<div class="wrap" style="gap:16px">
    <div class="filter"><button class="chip" data-f="hepsi" aria-pressed="${filter==="hepsi"}">Hepsi · ${letters.length}</button><button class="chip" data-f="acik" aria-pressed="${filter==="acik"}">Açılabilir · ${letters.length-nL}</button><button class="chip" data-f="kilitli" aria-pressed="${filter==="kilitli"}">Bekleyen · ${nL}</button></div>
    <div class="box">${list.map(l=>{const lk=isLocked(l);
-     return `<button class="slot" data-id="${l.id}">${envFront(l)}<span class="meta"><span>${esc(fmtDate(l.created))}</span>${lk?`<span class="pill lock">${daysUntil(l.openAfter)} gün kaldı</span>`:(l.opened?`<span class="pill">Okundu</span>`:`<span class="pill new">Mühürlü</span>`)}</span></button>`}).join("")}</div>
+     return `<button class="slot" data-id="${l.id}" style="--t:${((hashStr(l.id)%5)-2)*.6}deg">${envFront(l)}<span class="meta"><span>${esc(fmtDate(l.created))}</span>${lk?`<span class="pill lock">${daysUntil(l.openAfter)} gün kaldı</span>`:(l.opened?`<span class="pill">Okundu</span>`:`<span class="pill new">Mühürlü</span>`)}</span></button>`}).join("")}</div>
    ${list.length?"":`<p class="hint">Bu filtrede mektup yok.</p>`}
   </div>`;
   app.querySelectorAll("[data-f]").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.f;renderKutu()}));
