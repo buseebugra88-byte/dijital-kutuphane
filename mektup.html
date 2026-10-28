@@ -58,21 +58,21 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .paper{position:relative;background:var(--paper);color:#1f3b73;border-radius:3px;box-shadow:var(--shadow);
   padding:28px 22px 26px 46px;aspect-ratio:210/297;width:100%;display:flex;flex-direction:column;gap:6px}
 /* Paper = texture (p-*) + ruling (r-*); swatches (.sw) reuse the texture classes */
-:is(.paper,.sw).p-eski{background:var(--paper-old);background-image:radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(120,80,30,.18) 100%),radial-gradient(circle at 82% 88%, rgba(140,90,40,.14) 0 9%, transparent 10%)}
-:is(.paper,.sw).p-kraft{background:var(--paper-kraft);--rule:#a98762;--grid:#b39271}
-:is(.paper,.sw).p-parsomen{background-color:#ecdab2;background-image:radial-gradient(ellipse at 22% 28%, rgba(255,250,235,.45), transparent 42%),radial-gradient(ellipse at 76% 68%, rgba(150,100,40,.16), transparent 46%),radial-gradient(ellipse at 50% 50%, transparent 58%, rgba(110,70,20,.32) 100%);--rule:#c9b088}
-:is(.paper,.sw).p-kahve{background-color:#f0e2c6;background-image:radial-gradient(circle at 82% 14%, transparent 0 13%, rgba(140,85,35,.24) 13.4% 14.6%, transparent 15%),radial-gradient(circle at 84% 16%, rgba(150,95,40,.07) 0 13%, transparent 13.5%),radial-gradient(ellipse at 12% 88%, rgba(150,95,40,.16) 0 12%, transparent 16%),radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(120,80,30,.2) 100%);--rule:#d2bf98}
-:is(.paper,.sw).p-gul{background:#f3ded7;--rule:#e2b8ae;--grid:#ecc9c0}
-:is(.paper,.sw).p-adacayi{background:#e0e7d6;--rule:#bccbb3;--grid:#cbd8c3}
-:is(.paper,.sw).p-lavanta{background:#e8e2ef;--rule:#cdc2de;--grid:#d9d0e6}
-:is(.paper,.sw).p-ucak{background:#e4ecf4;border:7px solid transparent;border-image:repeating-linear-gradient(-45deg,#b8333a 0 9px,#e4ecf4 9px 15px,#2a4f8a 15px 24px,#e4ecf4 24px 30px) 7;--rule:#c2cedb}
-:is(.paper,.sw).p-muhasebe{background-color:#eef1dc;background-image:linear-gradient(90deg,transparent 26px,#d89a94 26px 27px,transparent 27px 30px,#d89a94 30px 31px,transparent 31px);--rule:#a8c3a4;--grid:#bfd3bc}
-:is(.paper,.sw).p-gazete{background-color:#ebe6da;background-image:repeating-linear-gradient(to bottom, rgba(40,35,30,.045) 0 2px, transparent 2px 6px),linear-gradient(90deg, transparent 49.6%, rgba(40,35,30,.08) 49.6% 50.4%, transparent 50.4%);--rule:#c8c0b0}
-:is(.paper,.sw).p-telgraf{background:#f2e3b9;--rule:#d6c08a}
-:is(.paper,.sw).p-cerceve{background:#fbf6ea;box-shadow:inset 0 0 0 9px #fbf6ea,inset 0 0 0 11px #b89b6a,inset 0 0 0 14px #fbf6ea,inset 0 0 0 15px #b89b6a,var(--shadow)}
+:is(.paper,.sw,.pcard).p-eski{background:var(--paper-old);background-image:radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(120,80,30,.18) 100%),radial-gradient(circle at 82% 88%, rgba(140,90,40,.14) 0 9%, transparent 10%)}
+:is(.paper,.sw,.pcard).p-kraft{background:var(--paper-kraft);--rule:#a98762;--grid:#b39271}
+:is(.paper,.sw,.pcard).p-parsomen{background-color:#ecdab2;background-image:radial-gradient(ellipse at 22% 28%, rgba(255,250,235,.45), transparent 42%),radial-gradient(ellipse at 76% 68%, rgba(150,100,40,.16), transparent 46%),radial-gradient(ellipse at 50% 50%, transparent 58%, rgba(110,70,20,.32) 100%);--rule:#c9b088}
+:is(.paper,.sw,.pcard).p-kahve{background-color:#f0e2c6;background-image:radial-gradient(circle at 82% 14%, transparent 0 13%, rgba(140,85,35,.24) 13.4% 14.6%, transparent 15%),radial-gradient(circle at 84% 16%, rgba(150,95,40,.07) 0 13%, transparent 13.5%),radial-gradient(ellipse at 12% 88%, rgba(150,95,40,.16) 0 12%, transparent 16%),radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(120,80,30,.2) 100%);--rule:#d2bf98}
+:is(.paper,.sw,.pcard).p-gul{background:#f3ded7;--rule:#e2b8ae;--grid:#ecc9c0}
+:is(.paper,.sw,.pcard).p-adacayi{background:#e0e7d6;--rule:#bccbb3;--grid:#cbd8c3}
+:is(.paper,.sw,.pcard).p-lavanta{background:#e8e2ef;--rule:#cdc2de;--grid:#d9d0e6}
+:is(.paper,.sw,.pcard).p-ucak{background:#e4ecf4;border:7px solid transparent;border-image:repeating-linear-gradient(-45deg,#b8333a 0 9px,#e4ecf4 9px 15px,#2a4f8a 15px 24px,#e4ecf4 24px 30px) 7;--rule:#c2cedb}
+:is(.paper,.sw,.pcard).p-muhasebe{background-color:#eef1dc;background-image:linear-gradient(90deg,transparent 26px,#d89a94 26px 27px,transparent 27px 30px,#d89a94 30px 31px,transparent 31px);--rule:#a8c3a4;--grid:#bfd3bc}
+:is(.paper,.sw,.pcard).p-gazete{background-color:#ebe6da;background-image:repeating-linear-gradient(to bottom, rgba(40,35,30,.045) 0 2px, transparent 2px 6px),linear-gradient(90deg, transparent 49.6%, rgba(40,35,30,.08) 49.6% 50.4%, transparent 50.4%);--rule:#c8c0b0}
+:is(.paper,.sw,.pcard).p-telgraf{background:#f2e3b9;--rule:#d6c08a}
+:is(.paper,.sw,.pcard).p-cerceve{background:#fbf6ea;box-shadow:inset 0 0 0 9px #fbf6ea,inset 0 0 0 11px #b89b6a,inset 0 0 0 14px #fbf6ea,inset 0 0 0 15px #b89b6a,var(--shadow)}
 .sw.p-cerceve{box-shadow:inset 0 0 0 4px #fbf6ea,inset 0 0 0 5px #b89b6a,0 1px 3px rgba(0,0,0,.18)}
-:is(.paper,.sw).p-harita{background-color:#efe3c6;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cg fill='none' stroke='%23b99a68' stroke-width='1' opacity='.45'%3E%3Cpath d='M20 60c40-30 80 10 120-10s70 20 90 0'/%3E%3Cpath d='M10 90c50-25 90 15 130-5s60 25 100 5'/%3E%3Cpath d='M30 170c30 20 70-25 110 0s60-10 90 10'/%3E%3Cpath d='M0 200c40 15 80-20 120 5s80 0 120 15'/%3E%3Ccircle cx='170' cy='130' r='18'/%3E%3Ccircle cx='170' cy='130' r='30'/%3E%3Cpath d='M60 120l6 6m0-6l-6 6' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E");--rule:#d3bf98}
-:is(.paper,.sw).p-cicekli{background-color:#fbf5ea;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23c98a8a' opacity='.75'%3E%3Ccircle cx='22' cy='22' r='6'/%3E%3Ccircle cx='31' cy='17' r='4'/%3E%3Ccircle cx='17' cy='31' r='4'/%3E%3C/g%3E%3Cg fill='none' stroke='%238a9a74' stroke-width='1.6'%3E%3Cpath d='M28 28c18 6 34 4 52-6'/%3E%3Cpath d='M28 28c6 18 4 34-6 52'/%3E%3C/g%3E%3Cg fill='%2399a982' opacity='.8'%3E%3Cellipse cx='52' cy='24' rx='7' ry='3' transform='rotate(-20 52 24)'/%3E%3Cellipse cx='24' cy='52' rx='3' ry='7' transform='rotate(-20 24 52)'/%3E%3Cellipse cx='70' cy='26' rx='6' ry='2.6' transform='rotate(15 70 26)'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg transform='rotate(180 60 60)'%3E%3Cg fill='%23c98a8a' opacity='.75'%3E%3Ccircle cx='22' cy='22' r='6'/%3E%3Ccircle cx='31' cy='17' r='4'/%3E%3Ccircle cx='17' cy='31' r='4'/%3E%3C/g%3E%3Cg fill='none' stroke='%238a9a74' stroke-width='1.6'%3E%3Cpath d='M28 28c18 6 34 4 52-6'/%3E%3Cpath d='M28 28c6 18 4 34-6 52'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");background-repeat:no-repeat;background-position:top left,bottom right;--rule:#e3d3c6}
+:is(.paper,.sw,.pcard).p-harita{background-color:#efe3c6;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cg fill='none' stroke='%23b99a68' stroke-width='1' opacity='.45'%3E%3Cpath d='M20 60c40-30 80 10 120-10s70 20 90 0'/%3E%3Cpath d='M10 90c50-25 90 15 130-5s60 25 100 5'/%3E%3Cpath d='M30 170c30 20 70-25 110 0s60-10 90 10'/%3E%3Cpath d='M0 200c40 15 80-20 120 5s80 0 120 15'/%3E%3Ccircle cx='170' cy='130' r='18'/%3E%3Ccircle cx='170' cy='130' r='30'/%3E%3Cpath d='M60 120l6 6m0-6l-6 6' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E");--rule:#d3bf98}
+:is(.paper,.sw,.pcard).p-cicekli{background-color:#fbf5ea;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23c98a8a' opacity='.75'%3E%3Ccircle cx='22' cy='22' r='6'/%3E%3Ccircle cx='31' cy='17' r='4'/%3E%3Ccircle cx='17' cy='31' r='4'/%3E%3C/g%3E%3Cg fill='none' stroke='%238a9a74' stroke-width='1.6'%3E%3Cpath d='M28 28c18 6 34 4 52-6'/%3E%3Cpath d='M28 28c6 18 4 34-6 52'/%3E%3C/g%3E%3Cg fill='%2399a982' opacity='.8'%3E%3Cellipse cx='52' cy='24' rx='7' ry='3' transform='rotate(-20 52 24)'/%3E%3Cellipse cx='24' cy='52' rx='3' ry='7' transform='rotate(-20 24 52)'/%3E%3Cellipse cx='70' cy='26' rx='6' ry='2.6' transform='rotate(15 70 26)'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg transform='rotate(180 60 60)'%3E%3Cg fill='%23c98a8a' opacity='.75'%3E%3Ccircle cx='22' cy='22' r='6'/%3E%3Ccircle cx='31' cy='17' r='4'/%3E%3Ccircle cx='17' cy='31' r='4'/%3E%3C/g%3E%3Cg fill='none' stroke='%238a9a74' stroke-width='1.6'%3E%3Cpath d='M28 28c18 6 34 4 52-6'/%3E%3Cpath d='M28 28c6 18 4 34-6 52'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");background-repeat:no-repeat;background-position:top left,bottom right;--rule:#e3d3c6}
 .sw.p-cicekli{background-size:60% auto,60% auto}
 .paper.p-ozel,.sw.p-ozel{background-size:cover;background-position:center}
 .ph-tel{position:absolute;left:0;right:0;top:0;height:44px;border-bottom:2px solid #9a7a3a;display:flex;justify-content:space-between;align-items:center;padding:0 16px 0 46px;font:700 .82rem "Courier Prime",monospace;letter-spacing:.24em;color:#6e5320;background:rgba(160,120,40,.12)}
@@ -154,6 +154,9 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .tw textarea::placeholder{color:var(--ph,#555)}
 .tw-ink{position:absolute;inset:0;white-space:pre-wrap;overflow-wrap:anywhere;font-size:1rem;line-height:34px;pointer-events:none;z-index:1}
 .tw-ink span,.body.typed span{position:relative}
+.ov{position:relative}.ov::after{content:"x";position:absolute;left:0;top:0;opacity:.9}
+.tw-ink .mk{opacity:0}
+.scr{position:relative;white-space:nowrap}.scr::after{content:"";position:absolute;left:-3px;right:-3px;top:28%;height:52%;background:currentColor;opacity:.85;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2740%27 height=%2716%27%3E%3Cpath d=%27M0 9 C5 3 9 13 14 7 S23 3 27 10 S36 4 40 8 M0 6 C6 12 10 3 16 9 S26 12 30 5 S37 9 40 6%27 fill=%27none%27 stroke=%27black%27 stroke-width=%271.6%27/%3E%3C/svg%3E") repeat-x center/34px 100%;mask:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2740%27 height=%2716%27%3E%3Cpath d=%27M0 9 C5 3 9 13 14 7 S23 3 27 10 S36 4 40 8 M0 6 C6 12 10 3 16 9 S26 12 30 5 S37 9 40 6%27 fill=%27none%27 stroke=%27black%27 stroke-width=%271.6%27/%3E%3C/svg%3E") repeat-x center/34px 100%}
 .body.typed{text-shadow:0 0 .5px currentColor}
 .twopts{display:flex;flex-wrap:wrap;gap:8px 18px;padding:10px 14px;background:var(--surface);border-radius:10px}
 .skip{align-self:center}
@@ -266,7 +269,9 @@ button.sealbtn{position:absolute;left:50%;top:var(--sy,60%);width:26%;aspect-rat
 .filter{display:flex;gap:6px;flex-wrap:wrap}
 
 .read{display:flex;flex-direction:column;gap:18px;align-items:stretch}
-.read .envback{width:min(420px,100%);margin:0 auto}
+.read .envback{width:min(420px,100%);margin:0 auto;transition:margin .7s}
+.read .envback.open{margin-top:min(36%,150px)}
+.envback .flap,.envback .flap i{pointer-events:none}
 .acts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center}
 .thread{gap:6px}.thread .th{display:flex;gap:10px;align-items:center;border:0;background:var(--desk);border-radius:10px;padding:9px 12px;font:inherit;color:var(--fg);cursor:pointer;text-align:left}
 .thread .th .dt{font:600 .78rem "Courier Prime",monospace;color:var(--muted)}.thread .th.cur{background:var(--desk-2);font-weight:600;cursor:default}
@@ -287,6 +292,38 @@ button.sealbtn{position:absolute;left:50%;top:var(--sy,60%);width:26%;aspect-rat
 .spec-l .hint{font-family:var(--f-ui);font-size:.72rem}
 .spec-f{display:flex;flex-direction:column;gap:6px;background:var(--surface);padding:10px;border-radius:12px;transform:rotate(calc(var(--rt) * -1))}
 .spec-f input,.spec-f textarea{border:1px solid var(--line);background:var(--desk);color:var(--fg);border-radius:8px;padding:7px 9px;font:inherit;min-width:0}
+.addst{border:1.5px dashed var(--line);background:transparent;border-radius:6px;color:var(--muted);font-size:1.3rem;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;aspect-ratio:60/72;padding:0}.addst small{font-size:.62rem}
+.sealds .sd{width:40px;height:40px;border:0;background:none;padding:0;border-radius:50%;cursor:pointer}.sealds .sd svg{width:100%;height:100%;overflow:visible}.sealds .sd[aria-pressed="true"]{box-shadow:0 0 0 2px var(--accent)}
+.dpad{display:flex;flex-direction:column;align-items:center;gap:10px;padding-top:8px}.dpad canvas{width:min(240px,70vw);aspect-ratio:1;border-radius:50%;touch-action:none;box-shadow:inset 0 0 0 8px rgba(255,255,255,.12),0 4px 12px rgba(0,0,0,.2)}
+.album{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;background:#fbf6ec;border-radius:14px;padding:16px;box-shadow:inset 0 0 0 1px #eadfca}
+.mount{display:flex;gap:10px;align-items:center}.mount .ms{position:relative;width:56px;flex:0 0 auto;padding:4px;background:linear-gradient(rgba(255,255,255,.5),rgba(255,255,255,.2));border:1px solid rgba(0,0,0,.08);box-shadow:inset 0 6px 0 rgba(255,255,255,.4)}
+.mount .ms .stamp{width:100%}.mount .mc{display:flex;flex-direction:column;font-size:.78rem;color:#6b5d50;font-family:"Courier Prime",monospace}.mount .mc b{font-family:var(--f-ui);color:#3b322c;font-size:.85rem}
+.mount.unused .ms{opacity:.4;filter:grayscale(.7)}
+.seals{display:flex;flex-wrap:wrap;gap:16px}.sealc{position:relative;width:76px;display:flex;flex-direction:column;align-items:center;gap:4px}.sealc svg{width:70px;height:70px;overflow:visible}
+.pcard{position:relative;aspect-ratio:3/2;width:100%;background:var(--paper);border-radius:4px;box-shadow:var(--shadow);display:grid;grid-template-columns:1.3fr 1fr;gap:0 12px;padding:28px 14px 12px;overflow:hidden}
+.pcard::after{content:"";position:absolute;inset:0;background-image:var(--noise);opacity:.5;mix-blend-mode:multiply;pointer-events:none}
+.pc-head{position:absolute;top:9px;left:0;right:0;text-align:center;font:600 .52rem var(--f-ui);letter-spacing:.32em;opacity:.55;color:#5a4a3a}
+.pc-l{display:flex;flex-direction:column;gap:4px;min-width:0;min-height:0}.pc-date{font:.7rem "Courier Prime",monospace;opacity:.7}
+.pc-l textarea,.pc-l .body{flex:1;min-height:0;border:0;background:transparent;color:inherit;font:inherit;font-size:clamp(.85rem,3.2vw,1.1rem);line-height:1.45;resize:none;padding:0;white-space:pre-wrap;overflow-wrap:anywhere;overflow:hidden}
+.pc-l input.sign,.pc-l .sign-r{align-self:flex-end;border:0;background:transparent;color:inherit;font:inherit;font-size:clamp(.9rem,3.4vw,1.2rem);text-align:right;width:70%;padding:0}
+.pc-l textarea:focus-visible,.pc-r input:focus-visible,.pc-l input:focus-visible{outline:none}
+.h-caveat .pc-l textarea,.h-caveat .pc-l .body{font-size:clamp(1rem,3.8vw,1.3rem)}
+.pc-r{border-left:1px solid rgba(60,40,30,.25);padding-left:10px;display:flex;flex-direction:column;align-items:flex-end;position:relative;min-width:0}
+.pc-stamp{width:min(34%,64px)}.pc-r .pm{position:absolute;top:2%;right:28%;width:44%;opacity:.5}
+.pc-addr{margin-top:auto;width:100%;display:flex;flex-direction:column;gap:clamp(8px,3vw,14px);padding-bottom:4px}.pc-addr i{border-bottom:1px solid rgba(60,40,30,.3)}
+.pc-addr .k,.pc-addr input{font:inherit;font-size:clamp(.9rem,3.4vw,1.2rem);border:0;border-bottom:1px solid rgba(60,40,30,.3);background:transparent;color:inherit;padding:0 0 2px;width:100%;min-width:0}
+.kfront{aspect-ratio:3/2;width:100%;background:#fdfbf6;border-radius:4px;box-shadow:var(--shadow);padding:3.5%}.kfront .ph{width:100%;height:100%;background-size:cover;background-position:center;border-radius:1px}
+.kfront .ph0{display:grid;place-items:center;background:linear-gradient(135deg,#f6d9d9,#e5dcf3 50%,#d8eee3)}.kfront .ph0 span{font:400 clamp(1.4rem,7vw,2.6rem) var(--f-display);color:#a65d78;transform:rotate(-6deg)}
+.kthumb{width:96px}.kthumb .kfront{box-shadow:0 1px 4px rgba(0,0,0,.18)}.kthumb .ph0 span{font-size:.9rem}
+.kflip{width:min(560px,100%);margin:0 auto;transition:transform .24s ease-in;transform-origin:center}.kflip.turn{transform:perspective(900px) rotateY(90deg)}.kflip.turn2{animation:unturn .26s ease-out}
+@keyframes unturn{from{transform:perspective(900px) rotateY(-90deg)}to{transform:none}}
+.gelen-hd{text-align:center}.gelen-hd h2{font:400 1.35rem var(--f-display);margin:4px 0 0;text-wrap:balance}
+.linkbox{flex-basis:100%;border:1px solid var(--line);border-radius:8px;padding:8px;font:.8rem var(--f-ui);background:var(--desk);color:var(--fg)}
+#bookzone{position:fixed;left:-10000px;top:0;width:720px}
+.bk-cover,.bk-page{width:720px;aspect-ratio:210/297;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:linear-gradient(160deg,#fbe6da,#f7eef0 40%,#ebe4f6 75%,#dcefe6);font-family:var(--f-display);color:#4a3c48;box-sizing:border-box;padding:60px}
+.bk-cover h1{font:400 96px var(--f-display);margin:0;color:#a65d78}.bk-cover h2{font:italic 500 40px "Cormorant Garamond",serif;margin:0}.bk-cover p{font:16px var(--f-ui);letter-spacing:.2em;text-transform:uppercase;color:#8a7a89}
+.bk-seal{width:120px}.bk-seal svg{width:100%;overflow:visible}.bk-fl{display:flex;gap:24px}.bk-fl img{height:120px}
+.bk-page{background:#fbf7ee}.bk-env{width:80%}.bk-cap{font:22px "Courier Prime",monospace;text-align:center;color:#5a4a3a}.bk-cap b{font:italic 600 28px "Cormorant Garamond",serif}
 .lockmsg{text-align:center;color:var(--muted)}
 .lockmsg strong{font-family:var(--f-display);font-weight:400;color:var(--fg);font-size:1.2rem;display:block}
 .confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.9rem}
@@ -301,7 +338,7 @@ button.sealbtn{position:absolute;left:50%;top:var(--sy,60%);width:26%;aspect-rat
     <nav aria-label="Bölümler">
       <button id="tab-masa" data-v="masa">Masa</button>
       <button id="tab-kutu" data-v="kutu">Kutu<span class="count" id="count"></span></button>
-      <button id="tab-herb" data-v="herb">Herbaryum</button>
+      <button id="tab-herb" data-v="herb">Koleksiyon</button>
     </nav>
   </header>
   <main id="app"></main>
@@ -321,6 +358,9 @@ const OZK="muhurlu-ozel-v1";
 let OZ=(()=>{try{const v=JSON.parse(localStorage.getItem(OZK)||"null");return v&&Array.isArray(v.papers)?v:{papers:[],stickers:[]}}catch(e){return {papers:[],stickers:[]}}})();
 function mkTomb(id){try{const t=JSON.parse(localStorage.getItem("muhurlu-silinen-v1")||"[]");if(!t.includes(id)){t.push(id);localStorage.setItem("muhurlu-silinen-v1",JSON.stringify(t.slice(-2000)))}}catch(e){}}
 function saveOZ(){try{localStorage.setItem(OZK,JSON.stringify(OZ));return true}catch(e){toast("Cihazda yer kalmadı. Birkaç kendi kâğıdını ya da çıkartmanı silip tekrar dene.");return false}}
+OZ.stamps=OZ.stamps||[];OZ.seals=OZ.seals||[];
+const ozStamp=k=>k&&k.startsWith("u:")?OZ.stamps.find(x=>x.id===k.slice(2)):null;
+const sealImgSrc=id=>{const x=id&&OZ.seals.find(s=>s.id===id);return x?x.src:""};
 function ozPaper(tex){return tex&&tex.startsWith("u:")?OZ.papers.find(p=>p.id===tex.slice(2)):null}
 const INKS={lacivert:"#1f3b73",siyah:"#222222",bordo:"#6e1b26",yesil:"#23523a",sepya:"#6b4a2b"};
 const INKN={lacivert:"Lacivert",siyah:"Siyah",bordo:"Bordo",yesil:"Yeşil",sepya:"Sepya"};
@@ -394,7 +434,10 @@ let kurguOff=0;
 const K_KSIT=["Aranızda hiç söylenmemiş bir şey var; bu mektupta söyle.","Son karşılaşmanızın gecesi, uyuyamadan yazıyorsun.","Yıllar sonra, her şey bittikten sonra yazıyorsun.","Bu mektup asla gönderilmeyecek; o yüzden tamamen dürüstsün.","Ondan bir özür bekliyorsun ama önce sen yazıyorsun.","İlk karşılaşmanızı kendi gözünden anlatıyorsun.","Bir veda mektubu; ama son satırda bir kapı aralık kalıyor.","Ona hiç bilmediği bir anını anlatıyorsun.","Hikâyedeki en zor gününün sabahı yazıyorsun.","Başka bir hayatta tanışsaydınız ne olurdu, onu yazıyorsun.","Ondan sakladığın bir şeyi itiraf ediyorsun.","Onu ilk kez gerçekten anladığın anı yazıyorsun."];
 const MYCHK="muhurlu-karakterler-v1";
 let MYCH=(()=>{try{const v=JSON.parse(localStorage.getItem(MYCHK)||"[]");return Array.isArray(v)?v:[]}catch(e){return []}})();
-let LIBCH=[];
+let LIBCH=[],LIBNOV=[];
+function libAddIdea(doc){return new Promise((res,rej)=>{const r=indexedDB.open("dijital-kutuphane");let fresh=false;r.onupgradeneeded=()=>{fresh=true;try{r.transaction.abort()}catch(e){}};r.onerror=()=>rej();
+  r.onsuccess=()=>{const db=r.result;if(fresh||!db.objectStoreNames.contains("docs")){db.close();return rej()}const id=[...crypto.getRandomValues(new Uint8Array(10))].map(b=>b.toString(16).padStart(2,"0")).join("");
+    const t=db.transaction("docs","readwrite");t.objectStore("docs").put(doc,"ideas/"+id);t.oncomplete=()=>{db.close();res()};t.onerror=()=>{db.close();rej()}}})}
 function saveMyCh(){try{localStorage.setItem(MYCHK,JSON.stringify(MYCH))}catch(e){}}
 function allChars(){const seen=new Set(),out=[];for(const c of [...MYCH,...LIBCH]){const k=(c.name+"|"+c.novel).toLocaleLowerCase("tr-TR");if(c.name&&!seen.has(k)){seen.add(k);out.push(c)}}return out}
 // Read the library's characters on the same site, without ever creating its database.
@@ -404,7 +447,7 @@ function readLibChars(){return new Promise(res=>{try{if(!window.indexedDB)return
     const out={books:{},chars:[]};const t=db.transaction("docs","readonly"),c=t.objectStore("docs").openCursor();
     c.onsuccess=()=>{const cur=c.result;if(!cur)return;const k=String(cur.key),v=cur.value||{};
       if(k.startsWith("books/")&&v.kind==="roman")out.books[k.slice(6)]=v.title||"Romanım";else if(k.startsWith("chars/")&&v.name)out.chars.push(v);cur.continue()};
-    t.oncomplete=()=>{db.close();res(out.chars.filter(x=>out.books[x.novel]).map(x=>({name:x.name,novel:out.books[x.novel],lib:true})))};t.onerror=()=>{db.close();res([])}}}catch(e){res([])}})}
+    t.oncomplete=()=>{db.close();LIBNOV=Object.entries(out.books).map(([id,title])=>({id,title}));res(out.chars.filter(x=>out.books[x.novel]).map(x=>({name:x.name,novel:out.books[x.novel],lib:true})))};t.onerror=()=>{db.close();res([])}}}catch(e){res([])}})}
 let kurguMode=(()=>{try{return localStorage.getItem("muhurlu-kurgu-mod")||"gun"}catch(e){return "gun"}})(),chEdit=false;
 function charScenario(off){const C=allChars();if(!C.length)return null;const r=rng("kar-"+todayStr()+"-"+off);const p=a=>a[Math.floor(r()*a.length)];
   const novels=[...new Set(C.map(c=>c.novel))],nv=p(novels),inN=C.filter(c=>c.novel===nv),A=p(inN),others=inN.filter(c=>c!==A),B=others.length?p(others):null;
@@ -467,6 +510,13 @@ function labelSVG(t){t=t||"bugün";const w=Math.max(40,14+t.length*7.4);
 function noteSVG(t,seed){t=t||"küçük bir not";const r=rng(seed||t);let top="M0 4";for(let x=10;x<=160;x+=10)top+=` L${x} ${(r()*6).toFixed(1)}`;let bot="";for(let x=160;x>=0;x-=10)bot+=` L${x} ${(94+r()*6).toFixed(1)}`;
   const words=t.split(/\s+/);const lines=[];let cur="";for(const w of words){if((cur+" "+w).trim().length>18){if(cur)lines.push(cur);cur=w}else cur=(cur+" "+w).trim()}if(cur)lines.push(cur);
   return `<svg viewBox="0 0 160 100"><path d="${top}${bot}Z" fill="#dcc29a"/><path d="${top}${bot}Z" fill="none" stroke="rgba(90,60,30,.25)" stroke-width=".8"/>${lines.slice(0,4).map((l,i)=>`<text x="14" y="${32+i*19}" font-family="Caveat,cursive" font-size="19" fill="#3b2a1c">${esc(l)}</text>`).join("")}</svg>`}
+function blotSVG(seed,c){const r=rng(seed);let d="";const n=16;const P=[];for(let i=0;i<n;i++){const a=i/n*Math.PI*2,R=22+r()*14;P.push([50+Math.cos(a)*R,50+Math.sin(a)*R])}
+  d="M"+P.map(p=>p.map(v=>v.toFixed(1)).join(" ")).join(" L")+"Z";let sp="";for(let i=0;i<9;i++){const a=r()*Math.PI*2,R=40+r()*12;sp+=`<circle cx="${(50+Math.cos(a)*R).toFixed(1)}" cy="${(50+Math.sin(a)*R).toFixed(1)}" r="${(1+r()*3.2).toFixed(1)}"/>`}
+  return `<svg viewBox="0 0 100 100"><g fill="${c}" opacity=".82"><path d="${d}" stroke="${c}" stroke-width="6" stroke-linejoin="round"/>${sp}</g><path d="${d}" fill="#fff" opacity=".08" transform="translate(-3 -3) scale(.96)"/></svg>`}
+function blotterSVG(){let p="";const r=rng("kurutma");for(let i=0;i<5;i++){let x=6,y=14+i*14,d=`M${x} ${y}`;while(x<150){x+=6+r()*10;d+=` q${(r()*6-3).toFixed(1)} ${(r()*8-4).toFixed(1)} ${(r()*10).toFixed(1)} ${(r()*4-2).toFixed(1)}`}p+=`<path d="${d}" />`}
+  return `<svg viewBox="0 0 160 80"><g fill="none" stroke="#1f3b73" stroke-width="1.3" opacity=".22" transform="scale(-1 1) translate(-160 0)">${p}</g></svg>`}
+function fingerSVG(){let p="";for(let i=0;i<9;i++)p+=`<ellipse cx="30" cy="${38+i*.6}" rx="${4+i*2.6}" ry="${6+i*3.4}" stroke-dasharray="${8+i} ${2+i%3}"/>`;
+  return `<svg viewBox="0 0 60 80"><g fill="none" stroke="#1f3b73" stroke-width="1.5" opacity=".45">${p}</g></svg>`}
 function stainSVG(){return `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="38" fill="rgba(150,95,40,.08)"/><circle cx="50" cy="50" r="38" fill="none" stroke="rgba(140,85,35,.32)" stroke-width="5" stroke-dasharray="70 6 40 3 120 4"/><circle cx="52" cy="48" r="34" fill="none" stroke="rgba(140,85,35,.14)" stroke-width="2"/></svg>`}
 function roseSVG(){return `<svg viewBox="0 0 60 150"><path d="M30 148 C31 120 28 90 30 52" stroke="#5e5a3a" stroke-width="2" fill="none"/><path d="M30 110 L26 106 M30 92 L34 88" stroke="#5e5a3a" stroke-width="1.2"/>
   <path d="M30 100 C20 98 14 90 14 82 C22 84 28 90 30 98Z" fill="#6f7350"/><path d="M30 80 C40 78 46 70 46 62 C38 64 32 70 30 78Z" fill="#6f7350"/>
@@ -532,6 +582,10 @@ const DECO={
  posta:{c:"damga",n:"Posta",w:24,svg:()=>rectStamp("POSTA","KARTPOSTAL","#2c4a72")},
  ozel:{c:"damga",n:"Özel",w:24,svg:()=>rectStamp("ÖZEL","ELDEN TESLİM","#5b4a2e")},
  leke:{c:"damga",n:"Çay lekesi",w:26,svg:stainSVG},
+ murekkep:{c:"damga",n:"Mürekkep lekesi",w:18,svg:d=>blotSVG(d.id||"m","#1f3b73")},
+ murekkep2:{c:"damga",n:"Sepya leke",w:14,svg:d=>blotSVG((d.id||"s")+"x","#6b4a2b")},
+ kurutma:{c:"damga",n:"Kurutma kâğıdı izi",w:34,svg:blotterSVG},
+ parmak:{c:"damga",n:"Mürekkepli parmak izi",w:10,svg:fingerSVG},
  etiket:{c:"etiket",n:"Daktilo etiketi",w:0,txt:"bugün",svg:d=>labelSVG(d.txt)},
  not:{c:"etiket",n:"Yırtık not",w:34,txt:"küçük bir not",svg:d=>noteSVG(d.txt,d.id)},
  bilet:{c:"etiket",n:"Bilet",w:32,svg:ticketSVG}
@@ -560,19 +614,22 @@ function todayStr(){const d=new Date();return d.getFullYear()+"-"+String(d.getMo
 function daysUntil(ds){const a=new Date(todayStr()+"T00:00:00"),b=new Date(ds+"T00:00:00");return Math.round((b-a)/864e5)}
 function isLocked(l){return l.openAfter && daysUntil(l.openAfter)>0}
 
-function stampSVG(k){const s=STAMPS[k]||STAMPS.lale;return `<span class="stamp"><svg viewBox="0 0 60 72" aria-hidden="true"><rect width="60" height="72" fill="${s.bg}"/>${s.art}<text x="30" y="68" text-anchor="middle" font-family="Figtree,sans-serif" font-size="5.5" font-weight="600" fill="rgba(0,0,0,.55)" letter-spacing=".6">MEKTUP · 2026</text></svg></span>`}
+function stampSVG(k){const u=ozStamp(k);if(u)return `<span class="stamp"><svg viewBox="0 0 60 72" aria-hidden="true"><rect width="60" height="72" fill="#fbfaf4"/><image href="${u.src}" x="0" y="0" width="60" height="62" preserveAspectRatio="xMidYMid slice"/><text x="30" y="69" text-anchor="middle" font-family="Figtree,sans-serif" font-size="5.5" font-weight="600" fill="rgba(0,0,0,.55)" letter-spacing=".6">MEKTUP · 2026</text></svg></span>`;const s=STAMPS[k]||STAMPS.lale;return `<span class="stamp"><svg viewBox="0 0 60 72" aria-hidden="true"><rect width="60" height="72" fill="${s.bg}"/>${s.art}<text x="30" y="68" text-anchor="middle" font-family="Figtree,sans-serif" font-size="5.5" font-weight="600" fill="rgba(0,0,0,.55)" letter-spacing=".6">MEKTUP · 2026</text></svg></span>`}
 function postmarkSVG(iso){const d=shortDate(iso);return `<svg class="pm" viewBox="0 0 120 70" aria-hidden="true"><g fill="none" stroke="#1c2a44" stroke-width="2"><circle cx="35" cy="35" r="28"/><circle cx="35" cy="35" r="20"/><path d="M68 22 q10 -6 20 0 t20 0 M68 35 q10 -6 20 0 t20 0 M68 48 q10 -6 20 0 t20 0"/></g><text x="35" y="38" text-anchor="middle" font-family="Courier Prime,monospace" font-size="8.5" font-weight="700" fill="#1c2a44">${d}</text><path id="arc" d="M13 35 a22 22 0 0 1 44 0" fill="none"/><text font-family="Figtree,sans-serif" font-size="6" font-weight="700" fill="#1c2a44" letter-spacing="1"><textPath href="#arc" startOffset="50%" text-anchor="middle">POSTA</textPath></text></svg>`}
 const SWIRL='<path d="M-34 -20 C-14 -36 6 -4 34 -24 M-40 6 C-16 -10 8 24 40 4 M-26 30 C-8 18 10 40 30 28" fill="none" stroke-width="4.5" stroke-linecap="round" opacity=".75"/><circle cx="-18" cy="-6" r="4" opacity=".7"/><circle cx="20" cy="16" r="3" opacity=".7"/>';
-function sealSVG(color,initial,color2){const P1="M-2 -44 C-20 -46 -30 -40 -38 -28 C-47 -16 -46 0 -44 10 C-42 24 -34 36 -20 42 C-12 45 -6 45 -2 44 L4 18 L-6 2 L4 -14Z",P2="M-2 -44 C14 -47 30 -42 40 -30 C48 -18 47 -2 45 10 C42 26 32 38 18 43 C10 46 3 45 -2 44 L4 18 L-6 2 L4 -14Z";
+function sealOf(l){return sealSVG(SEALS[l.seal]||SEALS.bordo,l.initial||"B",SEALS[l.seal2],sealImgSrc(l.sealImg)||l.sealSrc||"")}
+function sealSVG(color,initial,color2,img){const P1="M-2 -44 C-20 -46 -30 -40 -38 -28 C-47 -16 -46 0 -44 10 C-42 24 -34 36 -20 42 C-12 45 -6 45 -2 44 L4 18 L-6 2 L4 -14Z",P2="M-2 -44 C14 -47 30 -42 40 -30 C48 -18 47 -2 45 10 C42 26 32 38 18 43 C10 46 3 45 -2 44 L4 18 L-6 2 L4 -14Z";
   const a=uid(),b=uid(),sw=id=>color2?`<g clip-path="url(#${id})" stroke="${color2}" fill="${color2}">${SWIRL}</g>`:"";
   return `<svg viewBox="-50 -50 100 100" aria-hidden="true">${color2?`<defs><clipPath id="${a}"><path d="${P1}"/></clipPath><clipPath id="${b}"><path d="${P2}"/></clipPath></defs>`:""}
 <g class="h1"><path d="${P1}" fill="${color}"/>${sw(a)}</g>
 <g class="h2"><path d="${P2}" fill="${color}"/>${sw(b)}</g>
 <circle r="27" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="2.5"/><circle r="27" fill="none" stroke="rgba(0,0,0,.25)" stroke-width="1" transform="translate(1,1.5)"/>
-<text y="10" text-anchor="middle" font-family="Young Serif,Georgia,serif" font-size="30" fill="rgba(0,0,0,.32)" transform="translate(1,1.5)">${esc(initial)}</text>
-<text y="10" text-anchor="middle" font-family="Young Serif,Georgia,serif" font-size="30" fill="rgba(255,255,255,.28)">${esc(initial)}</text>
+${img?`<image href="${img}" x="-23" y="-23" width="46" height="46" opacity=".4" style="filter:brightness(0)" transform="translate(1,1.5)"/><image href="${img}" x="-23" y="-23" width="46" height="46" opacity=".5"/>`:`<text y="10" text-anchor="middle" font-family="Young Serif,Georgia,serif" font-size="30" fill="rgba(0,0,0,.32)" transform="translate(1,1.5)">${esc(initial)}</text>
+<text y="10" text-anchor="middle" font-family="Young Serif,Georgia,serif" font-size="30" fill="rgba(255,255,255,.28)">${esc(initial)}</text>`}
 <ellipse cx="-14" cy="-24" rx="10" ry="4" fill="rgba(255,255,255,.18)" transform="rotate(-30 -14 -24)"/></svg>`}
-function envFront(l){const k=ENVS[l.env]?l.env:"kraft",e=envOf(k),dark=!!e.dark;
+function envFront(l){if(l.kind==="kart")return kartFrontHTML(l);
+  return envFrontM(l)}
+function envFrontM(l){const k=ENVS[l.env]?l.env:"kraft",e=envOf(k),dark=!!e.dark;
   return `<div class="env envfront ex-${k} ${e.b==="air"?"airmail":""} ${e.b==="gold"?"gold":""}" style="${dark?"color:#e9e4d8":""}">
   ${e.b==="air"?'<span class="air">UÇAK İLE · PAR AVION</span>':""}
   ${l.sign?`<span class="from h-${l.hand}" style="color:${dark?"#d9cfb8":INKS[l.ink]}">${esc(l.sign)}</span>`:""}
@@ -585,20 +642,25 @@ function envBack(l,opts={}){const k=ENVS[l.env]?l.env:"kraft",e=envOf(k),pts=fla
    <div class="pocket ex-${k}"></div><div class="pocket bot ex-${k}"></div>
    <svg class="folds" viewBox="0 0 160 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 100 L80 50 L160 100 M0 0 L80 58 L160 0" fill="none" stroke="rgba(0,0,0,.14)" stroke-width=".6"/></svg>
    <div class="flap"><i class="fo ex-${k}" style="clip-path:${poly(pts)}"></i><i class="fl ln-${k}" style="clip-path:${poly(pts,true)}"></i></div>
-   <div class="seal ${opts.noSeal?"":""}" ${opts.noSeal?'style="opacity:0"':""}>${sealSVG(SEALS[l.seal]||SEALS.bordo,l.initial||"B",SEALS[l.seal2])}</div>
+   <div class="seal ${opts.noSeal?"":""}" ${opts.noSeal?'style="opacity:0"':""}>${sealOf(l)}</div>
   </div>`}
 function readInner(l,hideBody){const tw=l.hand==="daktilo";return `<div class="date">${esc(fmtDate(l.created))}</div><div class="to-r">${l.to?("Sevgili "+esc(l.to)+","):"Sevgili ben,"}</div>
-  <div class="body${tw?" typed":""}">${hideBody?"":(tw?typeHTML(l.body,l.seed||l.id):esc(l.body))}</div><div class="sign-r">${esc(l.sign)}</div>`}
+  <div class="body${tw?" typed":""}">${hideBody?"":(tw?typeHTML(l.body,l.seed||l.id):inkHTML(l.body))}</div><div class="sign-r">${esc(l.sign)}</div>`}
 
 /* ---------- typewriter ---------- */
 // Each struck letter gets its own ink weight and a hair of baseline drift, like a worn ribbon.
-function typeChar(ch,seed,i){
-  if(ch==="\n"||ch===" "||ch==="\t")return ch;
+function typeChar(ch,seed,i,ov){
+  if(ch==="\n")return ch;if(ch===" "||ch==="\t")return ov?`<span class="ov"> </span>`:ch;
   const h=hashStr(seed+":"+i+ch);const a=(h&255)/255,b=((h>>8)&255)/255,c=((h>>16)&255)/255;
   let op=.68+a*.32; if(c>.93)op=.45; // faint strike now and then
   const dy=((b-.5)*1.3).toFixed(2), dx=c<.06?.6:0;
-  return `<span style="opacity:${op.toFixed(2)};top:${dy}px${dx?";left:"+dx+"px":""}">${esc(ch)}</span>`}
-function typeHTML(text,seed){let o="";const s=String(text||"");for(let i=0;i<s.length;i++)o+=typeChar(s[i],seed,i);return o}
+  return `<span${ov?' class="ov"':""} style="opacity:${op.toFixed(2)};top:${dy}px${dx?";left:"+dx+"px":""}">${esc(ch)}</span>`}
+// ~~words~~ are struck over with x's. In the live mirror the markers keep their width (invisible) so the caret stays aligned.
+function typePieces(text,seed,mirror){const s=String(text||""),out=[];let ov=false;
+  for(let i=0;i<s.length;i++){if(s[i]==="~"&&s[i+1]==="~"){out.push(mirror?'<span class="mk">~~</span>':"");ov=!ov;i++;continue}
+    if(s[i]==="\n")ov=false;out.push(typeChar(s[i],seed,i,ov))}return out}
+function typeHTML(text,seed,mirror){return typePieces(text,seed,mirror).join("")}
+function inkHTML(body){return esc(body).replace(/~~([^~\n]+?)~~/g,'<span class="scr">$1</span>')}
 let twSound=lsGet("muhurlu-ses",true);
 let AC=null;
 function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){return null}}if(AC.state==="suspended")AC.resume();return AC}
@@ -616,7 +678,17 @@ function sndReturn(){if(!twSound)return;const ctx=ac();if(!ctx)return;const t=ct
 function sndDing(){if(!twSound)return;const ctx=ac();if(!ctx)return;const t=ctx.currentTime;
   [[2093,.16],[4186,.05],[6280,.02]].forEach(([fr,v])=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.value=fr;
     g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0005,t+1.4);o.connect(g).connect(ctx.destination);o.start(t);o.stop(t+1.5)})}
-function paperRead(l,opts){return sheetHTML(l,readInner(l),opts)}
+function paperRead(l,opts){return l.kind==="kart"?kartBackHTML(l,opts||{}):sheetHTML(l,readInner(l),opts)}
+function kartFrontHTML(l){return `<div class="kfront">${l.photo?`<div class="ph" style="background-image:url(${l.photo})"></div>`:`<div class="ph ph0"><span>Selamlar!</span></div>`}</div>`}
+function kartBackHTML(l,opts={},edit){const {tex}=paperOf(l),own=ozPaper(tex),texCls=own?"ozel":(tex.startsWith("u:")?"beyaz":tex);
+  const msg=edit?`<textarea id="f-body" aria-label="Kartpostal notu" placeholder="Kısa bir not…" maxlength="300">${esc(l.body)}</textarea><input class="sign" id="f-sign" placeholder="imza" value="${esc(l.sign)}" maxlength="40" aria-label="İmza">`
+    :`<div class="body">${l.hand==="daktilo"?typeHTML(l.body,l.seed||l.id):inkHTML(l.body)}</div><div class="sign-r">${esc(l.sign)}</div>`;
+  return `<div class="sheetwrap" id="${opts.id||""}"><div class="pcard p-${texCls} h-${l.hand}${l.twMix!==false?" mix":""}" style="color:${INKS[l.ink]};${own?`background-image:linear-gradient(rgba(255,252,245,.35),rgba(255,252,245,.35)),url(${own.src});`:""}">
+   <div class="pc-head">KARTPOSTAL · CARTE POSTALE</div>
+   <div class="pc-l"><div class="pc-date">${esc(shortDate(l.created||new Date().toISOString()))}</div>${msg}</div>
+   <div class="pc-r"><div class="pc-stamp">${stampSVG(l.stamp)}</div>${postmarkSVG(l.created||new Date().toISOString())}
+     <div class="pc-addr">${edit?`<input class="to" id="f-to" placeholder="Kime" value="${esc(l.to)}" maxlength="40" aria-label="Kime">`:`<span class="k">${esc(l.to||"Kendime")}</span>`}<i></i><i></i></div></div></div>
+   <div class="deco${opts.edit?" edit":""}" id="${opts.decoId||""}">${(l.deco||[]).map((d,i)=>decoHTML(d,i,opts.sel===i)).join("")}</div></div>`}
 
 /* ---------- storage ---------- */
 let letters=[]; let mode="local"; let dbCol=null;
@@ -690,7 +762,8 @@ function cutBackground(src,tol){const c=document.createElement("canvas");c.width
   x.putImageData(img,0,0);if(x1<0)return c;
   const o=document.createElement("canvas");o.width=x1-x0+1;o.height=y1-y0+1;o.getContext("2d").drawImage(c,x0,y0,o.width,o.height,0,0,o.width,o.height);return o}
 function syncOZDeco(){Object.keys(DECO).forEach(k=>{if(k.startsWith("oz_"))delete DECO[k]});
-  OZ.stickers.forEach(st=>DECO["oz_"+st.id]={c:"benim",n:st.n,w:st.w||22,svg:()=>`<img src="${st.src}" alt="" draggable="false">`})}
+  OZ.stickers.forEach(st=>DECO["oz_"+st.id]={c:"benim",n:st.n,w:st.w||22,svg:()=>`<img src="${st.src}" alt="" draggable="false">`});
+  (OZ.stamps||[]).forEach(st=>DECO["oz_pul_"+st.id]={c:"pul",n:st.n,w:15,svg:()=>stampSVG("u:"+st.id)})}
 function kbOn(){return draft.twKb??(matchMedia("(pointer:coarse)").matches||navigator.maxTouchPoints>0)}
 const KB_ROWS=[["1","2","3","4","5","6","7","8","9","0","BS"],["q","w","e","r","t","y","u","ı","o","p","ğ","ü"],["a","s","d","f","g","h","j","k","l","ş","i"],["SH","z","x","c","v","b","n","m","ö","ç",".",","],["?","!","'","SP","-","RET"]];
 let kbShift=false;
@@ -710,30 +783,79 @@ function bindKb(ta){const kb=document.getElementById("kb");if(!kb)return;
     ta.setRangeText(ch,a,z,"end");fire("insertText");
     const r=ta.getBoundingClientRect(),kr=kb.getBoundingClientRect();if(r.bottom>kr.top){/* keep the line being typed above the keyboard */}
   })}
+/* ---------- desk ambience, synthesised (no audio files) ---------- */
+const AMBN={yok:"Sessiz",yagmur:"Yağmur",somine:"Şömine",plak:"Plak",kafe:"Kafe"};
+const AMB={k:"yok",nodes:[],timers:[],out:null};
+function ambLoop(ctx,kind,sec){const b=ctx.createBuffer(1,ctx.sampleRate*sec,ctx.sampleRate),d=b.getChannelData(0);let last=0;
+  for(let i=0;i<d.length;i++){const w=Math.random()*2-1;if(kind==="brown"){last=(last+.02*w)/1.02;d[i]=last*3.5}else d[i]=w}
+  const s=ctx.createBufferSource();s.buffer=b;s.loop=true;return s}
+function ambStop(){AMB.timers.forEach(clearTimeout);AMB.timers=[];AMB.nodes.forEach(n=>{try{n.stop&&n.stop()}catch(e){}try{n.disconnect()}catch(e){}});AMB.nodes=[];}
+function ambPlay(k){ambStop();AMB.k=k;try{localStorage.setItem("muhurlu-ortam",k)}catch(e){}if(k==="yok")return;const ctx=ac();if(!ctx)return;
+  const out=ctx.createGain();out.gain.value=.55;out.connect(ctx.destination);AMB.nodes.push(out);
+  const chain=(src,...fx)=>{let n=src;for(const f of fx){n.connect(f);n=f;AMB.nodes.push(f)}n.connect(out);AMB.nodes.push(src);src.start();return n};
+  const flt=(type,f,q)=>{const x=ctx.createBiquadFilter();x.type=type;x.frequency.value=f;if(q)x.Q.value=q;return x};
+  const gain=v=>{const g=ctx.createGain();g.gain.value=v;return g};
+  const burst=(dur,v,type,f)=>{const t=ctx.currentTime,n=ambLoop(ctx,"white",.05),g=ctx.createGain(),fl=flt(type,f);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0005,t+dur);n.connect(fl).connect(g).connect(out);n.start(t);n.stop(t+dur+.02)};
+  const every=(min,max,fn)=>{const go=()=>{if(AMB.k!==k)return;fn();AMB.timers.push(setTimeout(go,min+Math.random()*(max-min)))};AMB.timers.push(setTimeout(go,min))};
+  if(k==="yagmur"){chain(ambLoop(ctx,"white",3),flt("lowpass",2600),flt("highpass",380),gain(.22));chain(ambLoop(ctx,"brown",3),flt("lowpass",420),gain(.35));
+    every(25,110,()=>burst(.03+Math.random()*.04,.05+Math.random()*.08,"bandpass",1800+Math.random()*3000))}
+  if(k==="somine"){chain(ambLoop(ctx,"brown",4),flt("lowpass",520),gain(.75));
+    every(60,420,()=>{const n=Math.random()<.3?3:1;for(let i=0;i<n;i++)setTimeout(()=>burst(.012+Math.random()*.03,.12+Math.random()*.3,"highpass",1200+Math.random()*2500),i*30)})}
+  if(k==="plak"){chain(ambLoop(ctx,"white",2),flt("highpass",3200),gain(.035));chain(ambLoop(ctx,"brown",3),flt("lowpass",160),gain(.25));
+    every(90,700,()=>burst(.004+Math.random()*.008,.15+Math.random()*.35,"highpass",900));every(1800,1800,()=>burst(.02,.05,"lowpass",300))}
+  if(k==="kafe"){const src=ambLoop(ctx,"white",4),bp=flt("bandpass",520,.7),g=gain(.22),lfo=ctx.createOscillator(),lg=ctx.createGain();lfo.frequency.value=.23;lg.gain.value=.08;lfo.connect(lg).connect(g.gain);lfo.start();AMB.nodes.push(lfo,lg);chain(src,bp,flt("lowpass",1400),g);
+    every(2500,7000,()=>{const t=ctx.currentTime,o=ctx.createOscillator(),og=ctx.createGain();o.frequency.value=2600+Math.random()*1800;og.gain.setValueAtTime(.05,t);og.gain.exponentialRampToValueAtTime(.0005,t+.5);o.connect(og).connect(out);o.start(t);o.stop(t+.55)})}
+}
+(function(){let saved="yok";try{saved=localStorage.getItem("muhurlu-ortam")||"yok"}catch(e){}if(saved==="yok")return;AMB.k=saved;
+  const once=()=>{removeEventListener("pointerdown",once,true);if(AMB.k===saved)ambPlay(saved)};addEventListener("pointerdown",once,true)})();
+/* ---------- your own stamps and seal designs ---------- */
+async function makeStamp(file){try{const im=await readImage(file);const W=240,H=248,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+  const k=Math.max(W/im.naturalWidth,H/im.naturalHeight),w=im.naturalWidth*k,h=im.naturalHeight*k;x.drawImage(im,(W-w)/2,(H-h)/2,w,h);
+  const st={id:"t"+Date.now().toString(36),n:"Pulum "+(OZ.stamps.length+1),src:c.toDataURL("image/jpeg",.82),at:todayStr()};OZ.stamps.push(st);if(!saveOZ()){OZ.stamps.pop();return null}syncOZDeco();return st}
+  catch(e){toast("Bu fotoğraf açılamadı, başka bir tane dene.");return null}}
+function openDrawPad(host,onSave){const col=SEALS[draft.seal]||SEALS.bordo;
+  host.innerHTML=`<div class="dpad"><p class="hint" style="margin:0">Dairenin içine parmağınla çiz: bir çiçek, bir yıldız, baş harflerin…</p><canvas width="260" height="260" style="background:${col}"></canvas>
+   <div class="row" style="justify-content:center;gap:8px"><button class="btn ghost" data-dp="clr">Temizle</button><button class="btn ghost" data-dp="no">Vazgeç</button><button class="btn" data-dp="ok">Kaydet</button></div></div>`;
+  const cv=host.querySelector("canvas"),x=cv.getContext("2d");x.lineCap=x.lineJoin="round";x.strokeStyle="#fff";x.lineWidth=11;let on=false,drawn=false;
+  const pt=e=>{const r=cv.getBoundingClientRect();return [(e.clientX-r.left)*cv.width/r.width,(e.clientY-r.top)*cv.height/r.height]};
+  cv.addEventListener("pointerdown",e=>{e.preventDefault();on=true;drawn=true;try{cv.setPointerCapture(e.pointerId)}catch(_){}const [a,b]=pt(e);x.beginPath();x.moveTo(a,b);x.lineTo(a+.1,b+.1);x.stroke()});
+  cv.addEventListener("pointermove",e=>{if(!on)return;const [a,b]=pt(e);x.lineTo(a,b);x.stroke()});
+  const up=()=>{on=false};cv.addEventListener("pointerup",up);cv.addEventListener("pointercancel",up);
+  host.querySelector('[data-dp="clr"]').addEventListener("click",()=>{x.clearRect(0,0,cv.width,cv.height);drawn=false});
+  host.querySelector('[data-dp="no"]').addEventListener("click",()=>{host.innerHTML=""});
+  host.querySelector('[data-dp="ok"]').addEventListener("click",()=>{if(!drawn){toast("Önce bir şey çiz.");return}
+    const o=document.createElement("canvas");o.width=o.height=180;o.getContext("2d").drawImage(cv,0,0,180,180);
+    const sd={id:"d"+Date.now().toString(36),src:o.toDataURL("image/png"),at:todayStr()};OZ.seals.push(sd);if(!saveOZ()){OZ.seals.pop();return}host.innerHTML="";onSave(sd)});
+  host.scrollIntoView({block:"center",behavior:"smooth"})}
 function renderMasa(){
-  const tw=draft.hand==="daktilo";
+  const kart=draft.kind==="kart",tw=draft.hand==="daktilo"&&!kart;
   app.innerHTML=`<div class="wrap" style="gap:16px">
-  ${stepsHTML(0)}
+  <div class="row" style="justify-content:space-between">${stepsHTML(0)}<div class="chips"><button class="chip" data-kind="mektup" aria-pressed="${!kart}">✉️ Mektup</button><button class="chip" data-kind="kart" aria-pressed="${kart}">🖼 Kartpostal</button></div></div>
+  ${(()=>{const n=letters.filter(l=>l.openAfter&&!isLocked(l)&&!l.opened).length;return n?`<button class="replyban" id="b-ready" style="border:0;cursor:pointer;font:inherit;color:inherit;text-align:left">🔓 Bugün açılabilen ${n} mektubun var →</button>`:""})()}
   ${draft.replyTo&&letters.find(x=>x.id===draft.replyTo)?`<div class="replyban"><span>↩ ${esc(shortDate(letters.find(x=>x.id===draft.replyTo).created))} tarihli mektuba cevap yazıyorsun.</span><button class="link" id="b-noreply">Vazgeç</button></div>`:`<div id="kurgu">${kurguHTML()}</div>`}
   <div class="tools">
     <div class="tool" style="flex-basis:100%"><span class="label">Kâğıt</span><div class="ptiles">${paperTiles()}</div>
       <input type="file" id="up-paper" accept="image/*" hidden></div>
-    <div class="tool"><span class="label">Çizgi</span><div class="chips">${chipRow("rule",RULES,draft.rule)}</div></div>
+    ${kart?`<div class="tool"><span class="label">Ön yüz</span><div class="row" style="gap:10px;justify-content:flex-start"><div class="kthumb">${kartFrontHTML(draft)}</div><button class="btn ghost" id="kp-photo">${draft.photo?"Fotoğrafı değiştir":"Fotoğraf seç"}</button>${draft.photo?`<button class="link" id="kp-rm">Kaldır</button>`:""}<input type="file" id="kp-file" accept="image/*" hidden></div></div>
+    <div class="tool" style="flex-basis:100%"><span class="label">Pul</span><div class="stamps">${[...Object.keys(STAMPS),...OZ.stamps.map(x=>"u:"+x.id)].map(k=>`<button data-g="stamp" data-k="${k}" aria-pressed="${k===draft.stamp}" aria-label="pul">${stampSVG(k)}</button>`).join("")}</div></div>`
+     :`<div class="tool"><span class="label">Çizgi</span><div class="chips">${chipRow("rule",RULES,draft.rule)}</div></div>`}
     <div class="tool"><span class="label">Mürekkep</span><div class="chips">${chipRow("ink",Object.fromEntries(Object.entries(INKS).map(([k,c])=>[k,[INKN[k],c]])),draft.ink,true)}</div></div>
+    <div class="tool"><span class="label">Ortam sesi</span><div class="chips">${Object.entries(AMBN).map(([k,n])=>`<button class="chip" data-amb="${k}" aria-pressed="${k===AMB.k}">${n}</button>`).join("")}</div></div>
     <div class="tool"><span class="label">Yazı</span><div class="chips">${chipRow("hand",HANDS,draft.hand)}</div></div>
   </div>
   ${tw?`<div class="twopts">
     <label class="check"><input type="checkbox" id="f-mix" ${draft.twMix!==false?"checked":""}> Hitap ve imza el yazısıyla</label>
     <label class="check"><input type="checkbox" id="f-snd" ${twSound?"checked":""}> Daktilo sesi</label>
     <label class="check"><input type="checkbox" id="f-kb" ${kbOn()?"checked":""}> Ekranda daktilo klavyesi</label></div>`:""}
-  <label class="check"><input type="checkbox" id="f-torn" ${draft.torn?"checked":""}> Yırtık kenarlı kâğıt</label>
-  ${sheetHTML(draft,`
+  ${kart?"":`<label class="check"><input type="checkbox" id="f-torn" ${draft.torn?"checked":""}> Yırtık kenarlı kâğıt</label>`}
+  ${kart?kartBackHTML({...draft,created:new Date().toISOString()},{},true):sheetHTML(draft,`
     <div class="date">${esc(fmtDate(new Date().toISOString()))}</div>
     <div class="to-line" style="display:flex;align-items:baseline;gap:6px;font-size:${tw?"":"1.35rem"}"><span>Sevgili</span><input class="to" id="f-to" placeholder="kime?" value="${esc(draft.to)}" maxlength="40" aria-label="Kime" style="flex:1"><span>,</span></div>
-    ${tw?`<div class="tw"><div class="tw-ink" id="tw-ink" aria-hidden="true">${typeHTML(draft.body,draft.seed)}</div><textarea id="f-body" aria-label="Mektup" placeholder="Yazmaya buradan başla..." style="caret-color:${INKS[draft.ink]};--ph:${INKS[draft.ink]}" spellcheck="false">${esc(draft.body)}</textarea></div>`
+    ${tw?`<div class="tw"><div class="tw-ink" id="tw-ink" aria-hidden="true">${typeHTML(draft.body,draft.seed,true)}</div><textarea id="f-body" aria-label="Mektup" placeholder="Yazmaya buradan başla..." style="caret-color:${INKS[draft.ink]};--ph:${INKS[draft.ink]}" spellcheck="false">${esc(draft.body)}</textarea></div>`
        :`<textarea id="f-body" aria-label="Mektup" placeholder="Yazmaya buradan başla...">${esc(draft.body)}</textarea>`}
     <input class="sign" id="f-sign" placeholder="imza" value="${esc(draft.sign)}" maxlength="40" aria-label="İmza">`)}
   ${tw&&kbOn()?kbHTML():""}
+  <div class="row" style="justify-content:flex-start;gap:12px"><button class="btn ghost" id="b-strike" type="button"><s>abc</s> Üstünü çiz</button><span class="hint" style="flex:1;min-width:180px">Bir kelimeyi seçip dokun; mektupta karalanmış${tw?" (daktiloda x'lenmiş)":""} görünür.</span></div>
   <div class="prompt" id="idea">Ne yazacağını bilmiyor musun? <button class="link" id="b-idea">Bir fikir ver</button></div>
   <div class="row"><span class="hint">Taslağın bu cihazda kendiliğinden saklanır.</span><button class="btn" id="b-next">Süslemeye geç</button></div>
   </div>`;
@@ -748,8 +870,13 @@ function renderMasa(){
   app.querySelectorAll("[data-delp]").forEach(b=>b.addEventListener("click",()=>{
     if(b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="?";toast("Silmek için tekrar dokun.");return}
     OZ.papers=OZ.papers.filter(p=>p.id!==b.dataset.delp);mkTomb(b.dataset.delp);saveOZ();if(draft.paper==="u:"+b.dataset.delp)draft.paper="beyaz";saveDraft();renderMasa()}));
-  if(!tw){const ta=document.getElementById("f-body");const g=()=>{ta.style.height="auto";ta.style.height=Math.max(200,ta.scrollHeight)+"px"};ta.addEventListener("input",g);requestAnimationFrame(g)}
-  document.getElementById("f-torn").addEventListener("change",e=>{draft.torn=e.target.checked;saveDraft();renderMasa()});
+  if(!tw&&!kart){const ta=document.getElementById("f-body");const g=()=>{ta.style.height="auto";ta.style.height=Math.max(200,ta.scrollHeight)+"px"};ta.addEventListener("input",g);requestAnimationFrame(g)}
+  const rdy=document.getElementById("b-ready");if(rdy)rdy.addEventListener("click",()=>{filter="acik";go("kutu")});
+  app.querySelectorAll("[data-kind]").forEach(b=>b.addEventListener("click",()=>{draft.kind=b.dataset.kind;saveDraft();renderMasa()}));
+  if(kart){const kf=document.getElementById("kp-file");document.getElementById("kp-photo").addEventListener("click",()=>kf.click());
+    kf.addEventListener("change",async()=>{const f=kf.files&&kf.files[0];if(!f)return;try{const c=fitCanvas(await readImage(f),900);draft.photo=c.toDataURL("image/jpeg",.78);saveDraft();renderMasa()}catch(e){toast("Bu fotoğraf açılamadı, başka bir tane dene.")}});
+    const rm=document.getElementById("kp-rm");if(rm)rm.addEventListener("click",()=>{draft.photo="";saveDraft();renderMasa()})}
+  if(!kart)document.getElementById("f-torn").addEventListener("change",e=>{draft.torn=e.target.checked;saveDraft();renderMasa()});
   const bind=(id,key)=>{const el=document.getElementById(id);el.addEventListener("input",()=>{draft[key]=el.value;clearTimeout(bind.t);bind.t=setTimeout(saveDraft,400)})};
   bind("f-to","to");bind("f-body","body");bind("f-sign","sign");
   if(tw){
@@ -759,7 +886,7 @@ function renderMasa(){
     const probe=document.createElement("span");probe.textContent="M".repeat(20);probe.style.visibility="hidden";ink.appendChild(probe);
     const cw=probe.getBoundingClientRect().width/20;probe.remove();
     const cpl=()=>Math.max(10,Math.floor(ta.clientWidth/(cw||9)));
-    ta.addEventListener("input",e=>{ink.innerHTML=typeHTML(ta.value,draft.seed)+(ta.value.endsWith("\n")?" ":"");grow();
+    ta.addEventListener("input",e=>{ink.innerHTML=typeHTML(ta.value,draft.seed,true)+(ta.value.endsWith("\n")?" ":"");grow();
       const it=e.inputType||"";
       if(it==="insertLineBreak"||it==="insertParagraph")sndReturn();
       else if(it.startsWith("insert")){const pos=ta.selectionStart,ls=ta.value.lastIndexOf("\n",pos-1)+1,col=(pos-ls)%cpl();
@@ -774,6 +901,12 @@ function renderMasa(){
   document.getElementById("b-idea").addEventListener("click",renderIdea);
   const nr=document.getElementById("b-noreply");if(nr)nr.addEventListener("click",()=>{draft.replyTo="";draft.thread="";saveDraft();renderMasa()});
   bindKurgu();
+  app.querySelectorAll("[data-amb]").forEach(b=>b.addEventListener("click",()=>{ambPlay(b.dataset.amb);app.querySelectorAll("[data-amb]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)))}));
+  document.getElementById("b-strike").addEventListener("click",()=>{const ta=document.getElementById("f-body");let a=ta.selectionStart,z=ta.selectionEnd;const v=ta.value;
+    if(a===z){while(a>0&&/\S/.test(v[a-1]))a--;while(z<v.length&&/\S/.test(v[z]))z++}
+    if(a===z){toast("Önce üstünü çizmek istediğin kelimeyi seç.");return}
+    const seg=v.slice(a,z);const wrapped=/^~~.*~~$/.test(seg)?seg.slice(2,-2):"~~"+seg+"~~";
+    ta.setRangeText(wrapped,a,z,"end");ta.dispatchEvent(new InputEvent("input",{inputType:"insertReplacementText",bubbles:true}));ta.focus()});
   function renderIdea(){document.getElementById("idea").innerHTML=`<strong style="color:var(--fg)">${esc(IDEAS[ideaI%IDEAS.length])}</strong> <button class="link" id="b-idea2">Başka</button>`;ideaI++;document.getElementById("b-idea2").addEventListener("click",renderIdea)}
   document.getElementById("b-next").addEventListener("click",()=>{
     if(!draft.body.trim()){toast("Önce birkaç satır yaz, sonra zarfa koyarız.");document.getElementById("f-body").focus();return}
@@ -781,7 +914,7 @@ function renderMasa(){
     go("susle")});
 }
 
-function stepsHTML(n){return `<div class="steps" aria-label="Adımlar">${["Yaz","Süsle","Zarfla"].map((s,i)=>`${i?"<i></i>":""}<span class="${i===n?"on":""}"><b>${i+1}</b>${s}</span>`).join("")}</div>`}
+function stepsHTML(n){return `<div class="steps" aria-label="Adımlar">${["Yaz","Süsle",draft.kind==="kart"?"Postala":"Zarfla"].map((s,i)=>`${i?"<i></i>":""}<span class="${i===n?"on":""}"><b>${i+1}</b>${s}</span>`).join("")}</div>`}
 
 let sel=-1, trayCat="bitki";
 function renderSusle(){
@@ -795,13 +928,13 @@ function renderSusle(){
   <div class="card tray">
     <div class="chips">${Object.entries(DECOCATS).map(([k,v])=>`<button class="chip" data-cat="${k}" aria-pressed="${k===trayCat}">${v}</button>`).join("")}</div>
     ${trayCat==="benim"?`<p class="hint" style="margin:0">Kuruttuğun bir çiçeği, bir pulu ya da bileti sade bir zeminde fotoğrafla; arka planı temizleyip çıkartma yaparım.</p>`:""}
-    <div class="items">${trayCat==="benim"?`<button id="b-upst" aria-label="Kendi çıkartmanı ekle"><span style="font-size:1.6rem;color:var(--muted)">+</span></button><input type="file" id="up-st" accept="image/*" hidden>`:""}${Object.entries(DECO).filter(([,d])=>d.c===trayCat).map(([k,d])=>`<div class="iw"><button data-add="${k}" aria-label="${esc(d.n)} ekle" title="${esc(d.n)}">${d.svg({txt:d.txt,id:k,date:new Date().toISOString()})}</button>${k.startsWith("oz_")?`<button class="xdel" data-delst="${k.slice(3)}" aria-label="${esc(d.n)} sil">×</button>`:""}</div>`).join("")}</div>
+    <div class="items">${trayCat==="benim"?`<button id="b-upst" aria-label="Kendi çıkartmanı ekle"><span style="font-size:1.6rem;color:var(--muted)">+</span></button><input type="file" id="up-st" accept="image/*" hidden>`:""}${Object.entries(DECO).filter(([,d])=>d.c===trayCat).map(([k,d])=>`<div class="iw"><button data-add="${k}" aria-label="${esc(d.n)} ekle" title="${esc(d.n)}">${d.svg({txt:d.txt,id:k,date:new Date().toISOString()})}</button>${k.startsWith("oz_")&&!k.startsWith("oz_pul_")?`<button class="xdel" data-delst="${k.slice(3)}" aria-label="${esc(d.n)} sil">×</button>`:""}</div>`).join("")}</div>
     <div id="sted"></div>
   </div>
-  <div class="row"><button class="link" id="b-clear" ${draft.deco.length?"":"hidden"}>Tüm süsleri kaldır</button><button class="btn" id="b-next">Zarfa koy</button></div>
+  <div class="row"><button class="link" id="b-clear" ${draft.deco.length?"":"hidden"}>Tüm süsleri kaldır</button><button class="btn" id="b-next">${draft.kind==="kart"?"📮 Postala":"Zarfa koy"}</button></div>
   </div>`;
   document.getElementById("b-back").addEventListener("click",()=>{sel=-1;go("masa")});
-  document.getElementById("b-next").addEventListener("click",()=>{sel=-1;go("zarf")});
+  document.getElementById("b-next").addEventListener("click",()=>{sel=-1;if(draft.kind==="kart")postKart();else go("zarf")});
   document.getElementById("b-clear").addEventListener("click",()=>{draft.deco=[];sel=-1;saveDraft();renderSusle()});
   app.querySelectorAll("[data-cat]").forEach(b=>b.addEventListener("click",()=>{trayCat=b.dataset.cat;renderSusle()}));
   app.querySelectorAll("[data-add]").forEach(b=>b.addEventListener("click",()=>{
@@ -885,12 +1018,13 @@ function renderZarf(){
   </div>
   <div class="card">
     <div class="tool"><span class="label">Zarf</span><div class="ptiles">${Object.entries(ENVS).map(([k,e])=>`<div class="ptw"><button class="ptile etile" data-g="env" data-k="${k}" aria-pressed="${k===draft.env}"><span class="esw ex-${k}${e.b==="air"?" airmail":""}"><i class="ex-${k}" style="clip-path:${poly(flapPts(e.fl))}"></i><b style="top:${FLAPY[e.fl]}%;background:${SEALS[draft.seal]||SEALS.bordo}"></b></span><span>${esc(e.n)}</span></button></div>`).join("")}</div></div>
-    <div class="tool"><span class="label">Pul</span><div class="stamps">${Object.keys(STAMPS).map(k=>`<button data-g="stamp" data-k="${k}" aria-pressed="${k===draft.stamp}" aria-label="${STAMPS[k].n} pulu">${stampSVG(k)}</button>`).join("")}</div></div>
+    <div class="tool"><span class="label">Pul</span><div class="stamps">${[...Object.keys(STAMPS),...OZ.stamps.map(x=>"u:"+x.id)].map(k=>`<button data-g="stamp" data-k="${k}" aria-pressed="${k===draft.stamp}" aria-label="${esc((STAMPS[k]||ozStamp(k)||{}).n||"")} pulu">${stampSVG(k)}</button>`).join("")}<button class="addst" id="b-pulyap" aria-label="Kendi pulunu yap">＋<small>Pul yap</small></button></div><input type="file" id="pul-file" accept="image/*" hidden></div>
     <div class="tools">
       <div class="tool"><span class="label">Mum mühür</span><div class="chips">${chipRow("seal",Object.fromEntries(Object.entries(SEALS).map(([k,c])=>[k,[SEALN[k],c]])),draft.seal,true)}</div></div>
       <div class="tool"><span class="label">Karıştır</span><div class="chips"><button class="chip" data-g="seal2" data-k="" aria-pressed="${!draft.seal2}">Tek renk</button>${chipRow("seal2",Object.fromEntries(Object.entries(SEALS).filter(([k])=>k!==draft.seal).map(([k,c])=>[k,[SEALN[k],c]])),draft.seal2,true)}</div></div>
-      <div class="field" style="width:90px"><label class="label" for="f-ini">Harf</label><input id="f-ini" maxlength="1" value="${esc(draft.initial)}"></div>
+      <div class="field" style="width:90px"><label class="label" for="f-ini">Harf</label><input id="f-ini" maxlength="1" value="${esc(draft.initial)}" ${draft.sealImg?"disabled":""}></div>
     </div>
+    <div class="tool"><span class="label">Mühür deseni</span><div class="chips sealds"><button class="chip" data-g="sealImg" data-k="" aria-pressed="${!draft.sealImg}">Harf</button>${OZ.seals.map(x=>`<button class="sd" data-g="sealImg" data-k="${x.id}" aria-pressed="${x.id===draft.sealImg}" aria-label="Çizdiğin desen">${sealSVG(SEALS[draft.seal]||SEALS.bordo,"",SEALS[draft.seal2],x.src)}</button>`).join("")}<button class="chip" id="b-ciz">＋ Kendin çiz</button></div><div id="drawhost"></div></div>
     <label class="check"><input type="checkbox" id="f-lock" ${draft.lock?"checked":""}> Bir tarihe kadar açılmasın</label>
     <div class="field" id="lockrow" ${draft.lock?"":"hidden"}><label class="label" for="f-date">Açılış tarihi</label><input type="date" id="f-date" min="${todayStr()}" value="${esc(draft.openAfter)}">
       <div class="chips"><button class="chip" data-add="30">1 ay sonra</button><button class="chip" data-add="182">6 ay sonra</button><button class="chip" data-add="365">1 yıl sonra</button></div></div>
@@ -899,7 +1033,10 @@ function renderZarf(){
   </div>`;
   document.getElementById("b-back").addEventListener("click",()=>go("susle"));
   app.querySelectorAll("[data-g]").forEach(b=>b.addEventListener("click",()=>{draft[b.dataset.g]=b.dataset.k;if(draft.seal2===draft.seal)draft.seal2="";saveDraft();renderZarf()}));
-  const ini=document.getElementById("f-ini");ini.addEventListener("input",()=>{draft.initial=ini.value.toLocaleUpperCase("tr-TR");saveDraft();document.querySelector("#eb .seal").innerHTML=sealSVG(SEALS[draft.seal],draft.initial||" ",SEALS[draft.seal2])});
+  const ini=document.getElementById("f-ini");ini.addEventListener("input",()=>{draft.initial=ini.value.toLocaleUpperCase("tr-TR");saveDraft();document.querySelector("#eb .seal").innerHTML=sealOf({...draft,initial:draft.initial||" "})});
+  const pf=document.getElementById("pul-file");document.getElementById("b-pulyap").addEventListener("click",()=>pf.click());
+  pf.addEventListener("change",async()=>{const f=pf.files&&pf.files[0];if(!f)return;const st=await makeStamp(f);if(st){draft.stamp="u:"+st.id;saveDraft();renderZarf();toast("Pulun hazır.")}});
+  document.getElementById("b-ciz").addEventListener("click",()=>openDrawPad(document.getElementById("drawhost"),x=>{draft.sealImg=x.id;saveDraft();renderZarf();toast("Mühür desenin kaydedildi.")}));
   const lk=document.getElementById("f-lock");lk.addEventListener("change",()=>{draft.lock=lk.checked;saveDraft();document.getElementById("lockrow").hidden=!lk.checked});
   const dt=document.getElementById("f-date");dt.addEventListener("change",()=>{draft.openAfter=dt.value;saveDraft()});
   app.querySelectorAll("[data-add]").forEach(b=>b.addEventListener("click",()=>{const d=new Date();d.setDate(d.getDate()+ +b.dataset.add);draft.openAfter=d.toISOString().slice(0,10);dt.value=draft.openAfter;saveDraft()}));
@@ -947,30 +1084,39 @@ async function sealIt(){
   eb.scrollIntoView({block:"center",behavior:reduce?"auto":"smooth"});
   await w(250);sheet.classList.remove("out");await w(950);eb.classList.remove("open");await w(700);
   if(reduce||!(await waxCeremony(eb,seal))){seal.style.opacity="";seal.classList.add("drop");await w(700)}
-  const l={id:"m"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),to:draft.to.trim(),body:draft.body,sign:draft.sign.trim(),
-    paper:draft.paper,rule:draft.rule,ink:draft.ink,hand:draft.hand,twMix:draft.twMix!==false,env:draft.env,stamp:draft.stamp,seal:draft.seal,seal2:draft.seal2||"",initial:draft.initial||"B",replyTo:draft.replyTo||"",thread:draft.thread||"",
-    openAfter:draft.lock?draft.openAfter:"",opened:false,torn:!!draft.torn,seed:draft.seed,deco:JSON.parse(JSON.stringify(draft.deco||[])),created:new Date().toISOString()};
+  const l=letterFromDraft();
   try{await saveLetter(l)}catch(e){btn.disabled=false;return}
-  if(mode==="db"&&!letters.find(x=>x.id===l.id)){letters.push(l);sortL()}
-  if(l.thread){const root=letters.find(x=>x.id===l.thread);if(root&&!root.thread)patchLetter(root.id,{thread:root.id})}
-  draft.replyTo="";draft.thread="";draft.to="";draft.body="";draft.lock=false;draft.openAfter="";draft.deco=[];draft.seed="s"+Date.now().toString(36);saveDraft();updateCount();
+  afterSave(l);
   toast(l.openAfter?`Mühürlendi. ${fmtDate(l.openAfter)} tarihinde açılabilir.`:"Mühürlendi, kutuna kondu.");
   filter="hepsi";go("kutu");
 }
+function letterFromDraft(){const kart=draft.kind==="kart";
+  return {id:"m"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),kind:kart?"kart":"mektup",photo:kart?(draft.photo||""):"",to:draft.to.trim(),body:draft.body,sign:draft.sign.trim(),
+    paper:draft.paper,rule:draft.rule,ink:draft.ink,hand:draft.hand,twMix:draft.twMix!==false,env:draft.env,stamp:draft.stamp,seal:draft.seal,seal2:draft.seal2||"",sealImg:draft.sealImg||"",initial:draft.initial||"B",replyTo:draft.replyTo||"",thread:draft.thread||"",
+    openAfter:!kart&&draft.lock?draft.openAfter:"",opened:kart,torn:!kart&&!!draft.torn,seed:draft.seed,deco:JSON.parse(JSON.stringify(draft.deco||[])),kurgu:draft.kurgu||null,created:new Date().toISOString()}}
+function afterSave(l){if(mode==="db"&&!letters.find(x=>x.id===l.id)){letters.push(l);sortL()}
+  if(l.thread){const root=letters.find(x=>x.id===l.thread);if(root&&!root.thread)patchLetter(root.id,{thread:root.id})}
+  draft.replyTo="";draft.thread="";draft.to="";draft.body="";draft.lock=false;draft.openAfter="";draft.deco=[];draft.photo="";draft.kurgu=null;draft.seed="s"+Date.now().toString(36);saveDraft();updateCount()}
+async function postKart(){const l=letterFromDraft();try{await saveLetter(l)}catch(e){return}afterSave(l);toast("Kartpostalın kutuna kondu.");filter="hepsi";go("kutu")}
 
 function renderKutu(){
   const list=letters.filter(l=>filter==="hepsi"||(filter==="kilitli"?isLocked(l):!isLocked(l)));
   if(!letters.length){app.innerHTML=`<div class="empty">${envFront({env:"kraft",stamp:"kus",hand:"caveat",ink:"lacivert",to:"İlk mektubun",created:new Date().toISOString()})}
     <p style="margin:0;max-width:34ch">Kutun şimdilik boş. Mühürlediğin her mektup burada zarfıyla birlikte durur.</p><button class="btn" id="b-write">Masaya geç</button></div>`;
     document.getElementById("b-write").addEventListener("click",()=>go("masa"));return}
-  const nL=letters.filter(isLocked).length;
+  const nL=letters.filter(isLocked).length,ready=letters.filter(l=>l.openAfter&&!isLocked(l)&&!l.opened).length;
   app.innerHTML=`<div class="wrap" style="gap:16px">
+   ${ready?`<div class="replyban">🔓 Açılış günü gelen ${ready} mektubun var. Mührünü kırabilirsin!</div>`:""}
+   ${IS_ART()?"":`<div class="row" style="justify-content:flex-end"><button class="btn ghost" id="b-book">📕 Yılın kitabı</button></div><div id="bookpick"></div>`}
    <div class="filter"><button class="chip" data-f="hepsi" aria-pressed="${filter==="hepsi"}">Hepsi · ${letters.length}</button><button class="chip" data-f="acik" aria-pressed="${filter==="acik"}">Açılabilir · ${letters.length-nL}</button><button class="chip" data-f="kilitli" aria-pressed="${filter==="kilitli"}">Bekleyen · ${nL}</button></div>
    <div class="box">${list.map(l=>{const lk=isLocked(l);
-     return `<button class="slot" data-id="${l.id}" style="--t:${((hashStr(l.id)%5)-2)*.6}deg">${envFront(l)}<span class="meta"><span>${esc(fmtDate(l.created))}</span>${lk?`<span class="pill lock">${daysUntil(l.openAfter)} gün kaldı</span>`:(l.opened?`<span class="pill">Okundu</span>`:`<span class="pill new">Mühürlü</span>`)}${threadLetters(l).length>1?`<span class="pill">↩ ${threadLetters(l).length}</span>`:""}</span></button>`}).join("")}</div>
+     return `<button class="slot" data-id="${l.id}" style="--t:${((hashStr(l.id)%5)-2)*.6}deg">${envFront(l)}<span class="meta"><span>${esc(fmtDate(l.created))}</span>${lk?`<span class="pill lock">${daysUntil(l.openAfter)} gün kaldı</span>`:(l.opened?`<span class="pill">Okundu</span>`:`<span class="pill new">Mühürlü</span>`)}${threadLetters(l).length>1?`<span class="pill">↩ ${threadLetters(l).length}</span>`:""}${l.received?`<span class="pill">Gelen</span>`:""}${l.kind==="kart"?`<span class="pill">Kartpostal</span>`:""}</span></button>`}).join("")}</div>
    ${list.length?"":`<p class="hint">Bu filtrede mektup yok.</p>`}
   </div>`;
   app.querySelectorAll("[data-f]").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.f;renderKutu()}));
+  const bk=document.getElementById("b-book");if(bk)bk.addEventListener("click",()=>{const ys=[...new Set(letters.map(l=>String(l.created).slice(0,4)))].sort().reverse();
+    if(ys.length===1)return makeBook(ys[0]);document.getElementById("bookpick").innerHTML=`<div class="chips" style="justify-content:flex-end">${ys.map(y=>`<button class="chip" data-year="${y}">${y}</button>`).join("")}</div>`;
+    app.querySelectorAll("[data-year]").forEach(b=>b.addEventListener("click",()=>makeBook(b.dataset.year)))});
   app.querySelectorAll(".slot").forEach(b=>b.addEventListener("click",()=>{reading=b.dataset.id;go("oku")}));
 }
 
@@ -980,12 +1126,18 @@ function threadLetters(l){const t=threadOf(l);return letters.filter(x=>threadOf(
 function threadHTML(l){const T=threadLetters(l);if(T.length<2)return "";
   return `<div class="card thread"><span class="label">Bu yazışma · ${T.length} mektup</span>${T.map(x=>`<button class="th${x.id===l.id?" cur":""}" data-th="${x.id}" ${x.id===l.id?"disabled":""}><span class="dt">${esc(shortDate(x.created))}</span><span>${esc(x.sign||"Ben")} → ${esc(x.to||"kendime")}</span>${isLocked(x)?'<span class="pill lock">bekliyor</span>':x.opened?"":'<span class="pill new">mühürlü</span>'}</button>`).join("")}</div>`}
 const IS_ART=()=>!!(window.claude&&window.claude.use);
-function actsHTML(l){return `<div class="acts"><button class="btn" id="a-reply">↩ Cevap yaz</button>
-  ${IS_ART()?`<span class="hint">Yazdırma ve PDF/resim olarak kaydetme kütüphanendeki sürümde çalışır.</span>`:`<button class="btn ghost" id="a-print">🖨 Yazdır</button><button class="btn ghost" id="a-png">🖼 Resim</button><button class="btn ghost" id="a-pdf">📄 PDF</button>`}</div>`}
+function actsHTML(l){return `<div class="acts"><button class="btn" id="a-reply">↩ Cevap yaz</button>${IS_ART()?"":`<button class="btn ghost" id="a-send">📤 Arkadaşına gönder</button>`}${!IS_ART()&&LIBNOV.length?`<button class="btn ghost" id="a-novel">📖 Romanıma ekle</button>`:""}
+  ${IS_ART()?`<span class="hint">Yazdırma ve PDF/resim olarak kaydetme kütüphanendeki sürümde çalışır.</span>`:`<button class="btn ghost" id="a-print">🖨 Yazdır</button><button class="btn ghost" id="a-png">🖼 Resim</button><button class="btn ghost" id="a-pdf">📄 PDF</button>`}</div><div id="novelpick"></div>`}
 function bindActs(l){const g=id=>document.getElementById(id);
   if(g("a-reply"))g("a-reply").addEventListener("click",()=>{
     draft.replyTo=l.id;draft.thread=threadOf(l);draft.to=l.sign||"";if(l.to&&l.to!=="")draft.sign=l.to;
     draft.paper=l.paper;draft.rule=l.rule||paperOf(l).rule;draft.env=l.env;saveDraft();go("masa");toast("Cevabını yaz; hitap ve imza ayarlandı.")});
+  if(g("a-novel"))g("a-novel").addEventListener("click",()=>{const box=g("novelpick");const pre=l.kurgu&&l.kurgu.novel;
+    box.innerHTML=`<div class="chips" style="justify-content:center"><span class="hint">Hangi romana?</span>${LIBNOV.map(n=>`<button class="chip" data-nov="${n.id}" aria-pressed="${n.title===pre}">${esc(n.title)}</button>`).join("")}</div>`;
+    box.querySelectorAll("[data-nov]").forEach(b=>b.addEventListener("click",async()=>{const body=String(l.body||"").replace(/~~/g,"");
+      try{await libAddIdea({title:`✉️ ${l.sign||"?"} → ${l.to||"?"}`,text:body,raw:body,tags:["mektup"],novel:b.dataset.nov,at:new Date().toISOString()});box.innerHTML="";toast("Yazar köşesindeki Fikir defterine eklendi. Kütüphaneyi yeniden açınca görünür.")}
+      catch(e){toast("Kütüphaneye ulaşılamadı.")}}))});
+  if(g("a-send"))g("a-send").addEventListener("click",()=>sendLetter(l));
   if(g("a-print"))g("a-print").addEventListener("click",()=>printLetter());
   if(g("a-png"))g("a-png").addEventListener("click",()=>exportLetter(l,"png"));
   if(g("a-pdf"))g("a-pdf").addEventListener("click",()=>exportLetter(l,"pdf"))}
@@ -1010,17 +1162,75 @@ async function exportLetter(l,kind){const sw=document.querySelector(".read .shee
     if(navigator.canShare&&navigator.canShare({files:[file]})&&matchMedia("(pointer:coarse)").matches){try{await navigator.share({files:[file],title:"Mektup"});return}catch(e){if(e&&e.name==="AbortError")return}}
     const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=file.name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toast("Kaydedildi.")}
   catch(e){toast("Kaydedilemedi. İnternet bağlantını kontrol edip tekrar dene.")}}
+/* ---------- send as a link: the whole letter rides in the URL, nothing is uploaded ---------- */
+const b64u={enc:u8=>{let s="";for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")},
+  dec:t=>{t=t.replace(/-/g,"+").replace(/_/g,"/");const s=atob(t),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u}};
+async function zip(u8,dir){const S=dir?window.CompressionStream:window.DecompressionStream;const st=new Blob([u8]).stream().pipeThrough(new S("deflate-raw"));return new Uint8Array(await new Response(st).arrayBuffer())}
+async function packLetter(l){const o={};["kind","to","body","sign","paper","rule","ink","hand","twMix","env","stamp","seal","seal2","initial","torn","seed","created"].forEach(k=>{if(l[k]!==undefined&&l[k]!=="")o[k]=l[k]});
+  if(String(o.paper||"").startsWith("u:"))o.paper="beyaz";if(String(o.stamp||"").startsWith("u:"))o.stamp="lale";
+  const ss=sealImgSrc(l.sealImg)||l.sealSrc;if(ss)o.sealSrc=ss;
+  o.deco=(l.deco||[]).filter(d=>DECO[d.k]&&!d.k.startsWith("oz_")).map(({k,x,y,r,s,txt,id})=>({k,x:+x.toFixed(1),y:+y.toFixed(1),r,s,txt,id}));
+  if(l.kind==="kart"&&l.photo){try{const im=new Image();im.src=l.photo;await im.decode();o.photo=fitCanvas(im,480).toDataURL("image/jpeg",.6)}catch(e){}}
+  const u8=new TextEncoder().encode(JSON.stringify(o));
+  if(window.CompressionStream){try{return "z"+b64u.enc(await zip(u8,true))}catch(e){}}return "p"+b64u.enc(u8)}
+async function unpackLetter(t){const u8=b64u.dec(t.slice(1));const raw=t[0]==="z"?await zip(u8,false):u8;return JSON.parse(new TextDecoder().decode(raw))}
+async function sendLetter(l){toast("Bağlantı hazırlanıyor…");
+  try{const url=location.href.split("#")[0]+"#m="+await packLetter(l);const dropped=(l.deco||[]).some(d=>d.k.startsWith("oz_"));
+    if(navigator.share){try{await navigator.share({title:"Mühürlü bir mektup ✉️",text:`${l.sign?l.sign+" sana":"Sana"} mühürlü bir mektup gönderdi. Açmak için dokun:`,url});return}catch(e){if(e&&e.name==="AbortError")return}}
+    try{await navigator.clipboard.writeText(url);toast("Bağlantı kopyalandı. Mesajla gönderebilirsin."+(dropped?" (Kendi çıkartmaların bağlantıya sığmadığı için gitmez.)":""))}
+    catch(e){const box=document.getElementById("acts");box.insertAdjacentHTML("beforeend",`<input class="linkbox" readonly value="${esc(url)}" aria-label="Mektup bağlantısı">`);box.querySelector(".linkbox").select();toast("Bağlantıyı kopyalayıp gönder.")}}
+  catch(e){toast("Bağlantı oluşturulamadı.")}}
+let GELEN=null;
+function renderGelen(){const l=GELEN;if(!l){go("masa");return}
+  app.innerHTML=`<div class="wrap read"><div class="gelen-hd"><span class="label">Yeni mektup</span><h2>${esc(l.sign||"Biri")} sana ${l.kind==="kart"?"bir kartpostal":"mühürlü bir mektup"} gönderdi</h2></div>
+   ${l.kind==="kart"?`<div class="kflip" id="kf">${kartFrontHTML(l)}</div><div class="row" style="justify-content:center"><button class="btn ghost" id="g-flip">↻ Arkasını çevir</button></div>`
+     :`<div style="position:relative">${envBack(l,{id:"rb"})}<button class="sealbtn" id="b-break" aria-label="Mührü kır"></button></div><p class="hint" style="text-align:center;margin:0">Açmak için mührüne dokun.</p><div id="letterout"></div>`}
+   <div class="acts" id="g-acts" ${l.kind==="kart"?"":"hidden"}><button class="btn" id="g-keep">📥 Kutuma koy</button><button class="btn ghost" id="g-reply">↩ Cevap yaz</button></div></div>`;
+  const keep=async()=>{const x={...l,id:"m"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),received:true,opened:true};try{await saveLetter(x)}catch(e){return null}if(mode==="db"&&!letters.find(y=>y.id===x.id)){letters.push(x);sortL()}updateCount();return x};
+  document.getElementById("g-keep").addEventListener("click",async()=>{const x=await keep();if(!x)return;GELEN=null;toast("Kutuna kondu.");reading=x.id;go("oku")});
+  document.getElementById("g-reply").addEventListener("click",async()=>{const x=await keep();if(!x)return;GELEN=null;draft.replyTo=x.id;draft.thread=x.id;draft.to=x.sign||"";draft.sign=x.to||draft.sign;draft.kind=x.kind==="kart"?"kart":"mektup";saveDraft();patchLetter(x.id,{thread:x.id});go("masa");toast("Cevabını yaz; bitince “Arkadaşına gönder” ile yolla.")});
+  const fl=document.getElementById("g-flip");if(fl)fl.addEventListener("click",()=>{const kf=document.getElementById("kf"),back=!kf.dataset.back;kf.classList.add("turn");setTimeout(()=>{kf.innerHTML=back?paperRead(l):kartFrontHTML(l);kf.dataset.back=back?"1":"";fl.textContent=back?"↻ Ön yüzü göster":"↻ Arkasını çevir";kf.classList.remove("turn");kf.classList.add("turn2");setTimeout(()=>kf.classList.remove("turn2"),260)},240)});
+  const br=document.getElementById("b-break");if(br)br.addEventListener("click",async()=>{br.remove();const rb=document.getElementById("rb"),seal=rb.querySelector(".seal");
+    const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;const w=ms=>new Promise(r=>setTimeout(r,reduce?0:ms));
+    seal.classList.add("crack");await w(450);rb.classList.add("open");await w(700);rb.querySelector(".sheet").classList.add("out");await w(800);
+    const tw=l.hand==="daktilo"&&!reduce&&l.body;document.getElementById("letterout").outerHTML=tw?sheetHTML(l,readInner(l,true)):paperRead(l);document.querySelector(".read .hint")?.remove();
+    document.getElementById("g-acts").hidden=false;if(tw)typeOut(l)})}
+function shareOrDownload(blob,name){const file=new File([blob],name,{type:blob.type});
+  if(navigator.canShare&&navigator.canShare({files:[file]})&&matchMedia("(pointer:coarse)").matches)return navigator.share({files:[file],title:name}).catch(()=>{});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000)}
+function addToCalendar(l){const d=l.openAfter.replace(/-/g,""),n=new Date(l.openAfter+"T12:00:00");n.setDate(n.getDate()+1);const d2=n.toISOString().slice(0,10).replace(/-/g,"");
+  const url=location.href.split("#")[0];
+  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Muhurlu Mektuplar//TR","BEGIN:VEVENT",`UID:${l.id}@muhurlu-mektuplar`,`DTSTAMP:${new Date().toISOString().replace(/[-:]/g,"").slice(0,15)}Z`,
+    `DTSTART;VALUE=DATE:${d}`,`DTEND;VALUE=DATE:${d2}`,"SUMMARY:✉️ Mühürlü mektubunu açma günü",`DESCRIPTION:${shortDate(l.created)} tarihinde mühürlediğin mektup bugün açılabilir.`,`URL:${url}`,
+    "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:Mühürlü mektubun bugün açılabilir","TRIGGER:PT9H","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n");
+  shareOrDownload(new Blob([ics],{type:"text/calendar"}),"mektup-acilis.ics")}
+async function makeBook(year){const L=letters.filter(l=>String(l.created).startsWith(year)&&!isLocked(l)).sort((a,b)=>String(a.created).localeCompare(String(b.created)));
+  if(!L.length){toast("Bu yıl açılmış mektup yok.");return}
+  try{toast("Kitap hazırlanıyor…");await loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js");await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+    const zone=document.createElement("div");zone.id="bookzone";document.body.appendChild(zone);
+    const {jsPDF}=window.jspdf;const pdf=new jsPDF({unit:"mm",format:"a4"});let first=true;
+    const put=c=>{const W=190,H=277,k=Math.min(W/c.width,H/c.height),w=c.width*k,h=c.height*k;if(!first)pdf.addPage();first=false;pdf.addImage(c.toDataURL("image/jpeg",.9),"JPEG",10+(W-w)/2,10+(H-h)/2,w,h)};
+    const shot=async html=>{zone.innerHTML=html;await new Promise(r=>setTimeout(r,60));return html2canvas(zone.firstElementChild,{scale:1.6,backgroundColor:null,logging:false})};
+    const flowers=OZ.stickers.slice(0,3).map(x=>`<img src="${x.src}" alt="">`).join("");
+    put(await shot(`<div class="bk-cover"><div class="bk-seal">${sealSVG(SEALS.bordo,"✦",SEALS.altin)}</div><h1>${year}</h1><h2>Mektuplarım</h2><p>${L.length} mektup · Mühürlü Mektuplar</p><div class="bk-fl">${flowers}</div></div>`));
+    for(let i=0;i<L.length;i++){const l=L[i];toast(`Kitap hazırlanıyor… ${i+1}/${L.length}`);
+      put(await shot(`<div class="bk-page"><div class="bk-env">${l.kind==="kart"?kartFrontHTML(l):envFrontM(l)}</div><p class="bk-cap">${esc(fmtDate(l.created))}<br><b>${esc(l.sign||"Ben")} → ${esc(l.to||"kendime")}</b></p></div>`));
+      const c=await shot(`<div style="width:720px">${paperRead(l)}</div>`);const W=190,ppm=c.width/W,slice=Math.floor(277*ppm);
+      for(let y=0;y<c.height;y+=slice){const h=Math.min(slice,c.height-y),pc=document.createElement("canvas");pc.width=c.width;pc.height=h;pc.getContext("2d").drawImage(c,0,y,c.width,h,0,0,c.width,h);put(pc)}}
+    zone.remove();shareOrDownload(pdf.output("blob"),`mektuplarim-${year}.pdf`);toast("Kitabın hazır.")}
+  catch(e){document.getElementById("bookzone")?.remove();toast("Kitap hazırlanamadı. İnternet bağlantını kontrol edip tekrar dene.")}}
 function renderOku(){
   const l=letters.find(x=>x.id===reading);if(!l){go("kutu");return}
   const lk=isLocked(l);
   let inner;
-  if(lk){inner=`${envBack(l,{id:"rb"})}<div class="lockmsg"><strong>${daysUntil(l.openAfter)} gün sonra</strong>${esc(fmtDate(l.openAfter))} tarihinde mührü kırabilirsin.</div>`}
+  if(l.kind==="kart"){inner=`<div class="kflip" id="kf">${kartFrontHTML(l)}</div><div class="row" style="justify-content:center"><button class="btn ghost" id="b-flip">↻ Arkasını çevir</button></div>`}
+  else if(lk){inner=`${envBack(l,{id:"rb"})}<div class="lockmsg"><strong>${daysUntil(l.openAfter)} gün sonra</strong>${esc(fmtDate(l.openAfter))} tarihinde mührü kırabilirsin.${IS_ART()?"":`<br><button class="btn ghost" id="b-ics" style="margin-top:10px">📅 Takvime ekle</button>`}</div>`}
   else if(l.opened){inner=`${envBack(l,{id:"rb",open:true,sheetOut:false})}${paperRead(l)}`}
   else{inner=`<div style="position:relative">${envBack(l,{id:"rb"})}<button class="sealbtn" id="b-break" aria-label="Mührü kır"></button></div><p class="hint" style="text-align:center;margin:0">Açmak için mührüne dokun.</p><div id="letterout"></div>`}
   app.innerHTML=`<div class="wrap read">
    <button class="link" id="b-back" style="align-self:flex-start">← Kutuya dön</button>
    ${inner}
-   <div id="acts">${!lk&&l.opened?actsHTML(l):""}</div>
+   <div id="acts">${!lk&&l.opened&&l.kind!=="kart"?actsHTML(l):""}</div>
    ${threadHTML(l)}
    <div class="row" style="justify-content:flex-end" id="delrow"><button class="btn danger" id="b-del">Mektubu sil</button></div>
   </div>`;
@@ -1030,6 +1240,10 @@ function renderOku(){
     document.getElementById("c-no").addEventListener("click",renderOku);
     document.getElementById("c-yes").addEventListener("click",async()=>{await removeLetter(l.id);updateCount();toast("Mektup silindi.");reading=null;go("kutu")})});
   bindActs(l);
+  const ics=document.getElementById("b-ics");if(ics)ics.addEventListener("click",()=>addToCalendar(l));
+  const fl=document.getElementById("b-flip");if(fl)fl.addEventListener("click",()=>{const kf=document.getElementById("kf");const back=!kf.dataset.back;
+    kf.classList.add("turn");setTimeout(()=>{kf.innerHTML=back?paperRead(l):kartFrontHTML(l);kf.dataset.back=back?"1":"";fl.textContent=back?"↻ Ön yüzü göster":"↻ Arkasını çevir";kf.classList.remove("turn");kf.classList.add("turn2");setTimeout(()=>kf.classList.remove("turn2"),260);
+      document.getElementById("acts").innerHTML=back?actsHTML(l):"";if(back)bindActs(l)},240)});
   app.querySelectorAll("[data-th]").forEach(b=>b.addEventListener("click",()=>{reading=b.dataset.th;go("oku")}));
   const br=document.getElementById("b-break");
   if(br)br.addEventListener("click",async()=>{
@@ -1050,22 +1264,47 @@ function typeOut(l){
   const s=l.body,seed=l.seed||l.id;const total=Math.min(7000,s.length*38),step=Math.max(1,Math.ceil(s.length/(total/40)));
   const skip=document.createElement("button");skip.className="link skip";skip.textContent="Hepsini göster";
   el.closest(".sheetwrap").after(skip);
-  let i=0,html="",done=false,last=0;
-  const finish=()=>{if(done)return;done=true;clearInterval(t);el.innerHTML=typeHTML(s,seed);skip.remove()};
+  const P=typePieces(s,seed,false);let i=0,html="",done=false,last=0;
+  const finish=()=>{if(done)return;done=true;clearInterval(t);el.innerHTML=P.join("");skip.remove()};
   skip.addEventListener("click",finish);
   const t=setInterval(()=>{if(!document.body.contains(el)){clearInterval(t);return}
-    const end=Math.min(s.length,i+step);let nl=false;
-    for(;i<end;i++){html+=typeChar(s[i],seed,i);if(s[i]==="\n")nl=true}
+    const end=Math.min(P.length,i+step);let nl=false;
+    for(;i<end;i++){html+=P[i];if(P[i]==="\n")nl=true}
     el.innerHTML=html;const now=Date.now();
     if(nl)sndReturn();else if(now-last>70){sndKey(true);last=now}
-    if(i>=s.length)finish()},40);
+    if(i>=P.length)finish()},40);
 }
 
 /* ---------- herbarium: her own pressed flowers and keepsakes ---------- */
 let herbOpen=null;
-function renderHerb(){const S=OZ.stickers.slice().sort((a,b)=>String(b.at||"").localeCompare(String(a.at||"")));
+let colTab="herb";
+const colTabs=()=>`<div class="chips">${[["herb","🌿 Herbaryum"],["pul","📮 Pul albümü"],["muhur","🕯️ Mühürler"]].map(([k,n])=>`<button class="chip" data-col="${k}" aria-pressed="${k===colTab}">${n}</button>`).join("")}</div>`;
+function bindColTabs(){app.querySelectorAll("[data-col]").forEach(b=>b.addEventListener("click",()=>{colTab=b.dataset.col;herbOpen=null;renderHerb()}))}
+function renderCol2(){
+  if(colTab==="pul"){const keys=[...OZ.stamps.map(x=>"u:"+x.id),...Object.keys(STAMPS)];
+    const info=k=>{const L=letters.filter(l=>l.stamp===k).sort((a,b)=>String(a.created).localeCompare(String(b.created)));return {n:L.length,first:L[0]&&L[0].created}};
+    app.innerHTML=`<div class="wrap" style="gap:16px">${colTabs()}
+     <div class="herb-hd"><div><h2>Pul albümü</h2><p class="hint" style="margin:0">Zarflarına yapıştırdığın pullar. Kendi fotoğraflarından da pul yapabilirsin.</p></div><button class="btn" id="p-add">＋ Pul yap</button><input type="file" id="p-file" accept="image/*" hidden></div>
+     <div class="album">${keys.map(k=>{const i=info(k),u=ozStamp(k),nm=u?u.n:STAMPS[k].n;return `<div class="mount${i.n?"":" unused"}"><div class="ms">${stampSVG(k)}${u?`<button class="xdel" data-delpul="${u.id}" aria-label="${esc(nm)} sil">×</button>`:""}</div>
+       <div class="mc"><b>${esc(nm)}</b><span>${i.n?`${i.n} mektupta · ilk ${esc(shortDate(i.first))}`:"Henüz yapıştırılmadı"}</span></div></div>`}).join("")}</div></div>`;
+    bindColTabs();const f=document.getElementById("p-file");document.getElementById("p-add").addEventListener("click",()=>f.click());
+    f.addEventListener("change",async()=>{const x=f.files&&f.files[0];if(!x)return;if(await makeStamp(x)){renderHerb();toast("Pulun albüme eklendi.")}});
+    app.querySelectorAll("[data-delpul]").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="?";toast("Silmek için tekrar dokun.");return}
+      OZ.stamps=OZ.stamps.filter(x=>x.id!==b.dataset.delpul);mkTomb(b.dataset.delpul);saveOZ();syncOZDeco();renderHerb()}));return}
+  const used=new Map();letters.forEach(l=>{const key=[l.seal,l.seal2||"",l.sealImg||l.initial||""].join("|");const o=used.get(key)||{l,n:0};o.n++;used.set(key,o)});
+  app.innerHTML=`<div class="wrap" style="gap:16px">${colTabs()}
+   <div class="herb-hd"><div><h2>Mühürler</h2><p class="hint" style="margin:0">Çizdiğin desenler ve bugüne kadar bastığın mühürler.</p></div><button class="btn" id="m-add">＋ Desen çiz</button></div>
+   <div id="m-draw"></div>
+   <span class="label">Desenlerin</span>
+   ${OZ.seals.length?`<div class="seals">${OZ.seals.map(x=>`<div class="sealc">${sealSVG(SEALS.bordo,"",null,x.src)}<button class="xdel" data-delsd="${x.id}" aria-label="Deseni sil">×</button></div>`).join("")}</div>`:`<p class="hint" style="margin:0">Henüz desen çizmedin.</p>`}
+   <span class="label">Bastığın mühürler</span>
+   ${used.size?`<div class="seals">${[...used.values()].sort((a,b)=>b.n-a.n).map(({l,n})=>`<div class="sealc">${sealOf(l)}<span class="hint">${n} kez</span></div>`).join("")}</div>`:`<p class="hint" style="margin:0">İlk mektubunu mühürleyince burada görünecek.</p>`}</div>`;
+  bindColTabs();document.getElementById("m-add").addEventListener("click",()=>openDrawPad(document.getElementById("m-draw"),()=>{renderHerb();toast("Desenin kaydedildi; zarf adımında seçebilirsin.")}));
+  app.querySelectorAll("[data-delsd]").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="?";toast("Silmek için tekrar dokun.");return}
+    OZ.seals=OZ.seals.filter(x=>x.id!==b.dataset.delsd);mkTomb(b.dataset.delsd);if(draft.sealImg===b.dataset.delsd){draft.sealImg="";saveDraft()}saveOZ();renderHerb()}))}
+function renderHerb(){if(colTab!=="herb")return renderCol2();const S=OZ.stickers.slice().sort((a,b)=>String(b.at||"").localeCompare(String(a.at||"")));
   const uses=id=>letters.filter(l=>(l.deco||[]).some(d=>d.k==="oz_"+id)).length;
-  app.innerHTML=`<div class="wrap" style="gap:16px">
+  app.innerHTML=`<div class="wrap" style="gap:16px">${colTabs()}
    <div class="herb-hd"><div><h2>Herbaryum</h2><p class="hint" style="margin:0">Kuruttuğun çiçekler, yapraklar ve sakladığın küçük şeyler. Her biri mektuplarında çıkartma olarak da duruyor.</p></div>
    <button class="btn" id="h-add">＋ Yeni ekle</button><input type="file" id="h-file" accept="image/*" hidden></div>
    <div id="h-ed"></div>
@@ -1076,7 +1315,7 @@ function renderHerb(){const S=OZ.stickers.slice().sort((a,b)=>String(b.at||"").l
        <div class="row"><button class="btn danger" type="button" data-hdel="${st.id}">Sil</button><button class="btn" type="submit">Kaydet</button></div></form>`:""}</div>`}).join("")}</div>`
    :`<div class="empty"><p style="margin:0;max-width:36ch">Herbaryumun boş. Kuruttuğun bir çiçeği sade bir zeminde fotoğrafla; arka planını temizleyip buraya ve mektuplarına eklerim.</p></div>`}
   </div>`;
-  const f=document.getElementById("h-file");document.getElementById("h-add").addEventListener("click",()=>f.click());
+  bindColTabs();const f=document.getElementById("h-file");document.getElementById("h-add").addEventListener("click",()=>f.click());
   f.addEventListener("change",async()=>{const x=f.files&&f.files[0];if(!x)return;try{stickerEditor(await readImage(x),{host:"h-ed",title:"Yeni bitki",onSave:st=>{herbOpen=st.id;renderHerb();toast("Herbaryuma eklendi. İstersen not düş.")}})}catch(e){toast("Bu fotoğraf açılamadı, başka bir tane dene.")}});
   app.querySelectorAll("[data-hopen]").forEach(b=>b.addEventListener("click",()=>{herbOpen=herbOpen===b.dataset.hopen?null:b.dataset.hopen;renderHerb()}));
   app.querySelectorAll("[data-hform]").forEach(fm=>fm.addEventListener("submit",e=>{e.preventDefault();const st=OZ.stickers.find(x=>x.id===fm.dataset.hform);if(!st)return;
@@ -1089,14 +1328,14 @@ function render(){
   document.getElementById("tab-kutu").setAttribute("aria-current",String(view==="kutu"||view==="oku"));
   document.getElementById("tab-herb").setAttribute("aria-current",String(view==="herb"));
   updateCount();
-  ({herb:renderHerb,masa:renderMasa,susle:renderSusle,zarf:renderZarf,kutu:renderKutu,oku:renderOku})[view]();
+  ({gelen:renderGelen,herb:renderHerb,masa:renderMasa,susle:renderSusle,zarf:renderZarf,kutu:renderKutu,oku:renderOku})[view]();
 }
 (function(){try{const c=document.createElement("canvas");c.width=c.height=180;const x=c.getContext("2d");const im=x.createImageData(180,180);
   for(let i=0;i<im.data.length;i+=4){const v=200+Math.random()*55;im.data[i]=v;im.data[i+1]=v*.97;im.data[i+2]=v*.9;im.data[i+3]=Math.random()<.5?28:0}
   x.putImageData(im,0,0);x.strokeStyle="rgba(120,90,60,.10)";for(let i=0;i<40;i++){x.beginPath();const a=Math.random()*180,b=Math.random()*180;x.moveTo(a,b);x.quadraticCurveTo(a+Math.random()*20-10,b+Math.random()*20-10,a+Math.random()*30-15,b+Math.random()*30-15);x.stroke()}
   document.documentElement.style.setProperty("--noise",`url(${c.toDataURL()})`)}catch(e){}})();
 syncOZDeco();
-render();
+(async()=>{const h=location.hash;if(h.startsWith("#m=")){try{GELEN=await unpackLetter(h.slice(3));GELEN.created=GELEN.created||new Date().toISOString();GELEN.id="gelen";view="gelen";try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}}catch(e){toast("Bu mektup bağlantısı açılamadı; eksik kopyalanmış olabilir.")}}render()})();
 addEventListener("storage",e=>{if(mode!=="local")return;if(e.key===LS){letters=lsGet(LS,[]);sortL();updateCount();if(view==="kutu"||view==="herb")render()}else if(e.key===OZK){try{OZ=JSON.parse(e.newValue||"null")||OZ}catch(_){}syncOZDeco()}});
 readLibChars().then(c=>{LIBCH=c;if(c.length&&view==="masa"&&document.getElementById("kurgu")){document.getElementById("kurgu").innerHTML=kurguHTML();bindKurgu()}});
 setTimeout(initDb,0);
