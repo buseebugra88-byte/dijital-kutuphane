@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="tr"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Mühürlü Mektuplar</title>
-<meta name="theme-color" content="#e7dfd1">
+<meta name="theme-color" content="#f7eef0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Mektuplar">
@@ -13,8 +13,8 @@
 <style>
 /* Layout: a writing desk — one paper sheet at the centre, an envelope bench, and a letter box shelf. */
 :root{
-  --desk:#e7dfd1; --desk-2:#dbd0bd; --surface:#f4eee3; --fg:#2c241d; --muted:#76675a; --line:#cdbfa8;
-  --accent:#6e3b24; --accent-fg:#f7efe4; --danger:#8a2a2a;
+  --desk:#f7eef0; --desk-2:#efe0e7; --surface:#fffafa; --fg:#4a3c48; --muted:#8a7a89; --line:#ead8e0;
+  --accent:#a65d78; --accent-fg:#fff8fa; --danger:#a33a4a; --mint:#dcefe6; --lilac:#ebe4f6; --peach:#fbe6da;
   --paper:#fbf8f0; --paper-old:#ecdcbc; --paper-kraft:#c9a67c; --rule:#cbd2d6; --grid:#dde2e2; --margin:#e0a49a;
   --f-display:"Young Serif", Georgia, "Times New Roman", serif;
   --f-ui:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -33,7 +33,7 @@
   --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.4); color-scheme:dark }
 
 *{box-sizing:border-box}
-body{background:var(--desk);color:var(--fg);font-family:var(--f-ui);font-size:15px;line-height:1.5;
+body{background:var(--desk);background-image:radial-gradient(circle at 8% 0%, var(--peach,transparent) 0 220px, transparent 420px),radial-gradient(circle at 100% 30%, var(--lilac,transparent) 0 200px, transparent 420px),radial-gradient(circle at 0% 90%, var(--mint,transparent) 0 200px, transparent 420px);background-attachment:fixed;color:var(--fg);font-family:var(--f-ui);font-size:15px;line-height:1.5;
   padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:12px 48px}
 .wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -56,11 +56,50 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 
 /* Paper */
 .paper{position:relative;background:var(--paper);color:#1f3b73;border-radius:3px;box-shadow:var(--shadow);
-  padding:28px 22px 26px 46px;min-height:440px;display:flex;flex-direction:column;gap:6px}
-.paper.p-eski{background:var(--paper-old);background-image:radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(120,80,30,.18) 100%),radial-gradient(circle at 82% 88%, rgba(140,90,40,.14) 0 9%, transparent 10%)}
-.paper.p-kraft{background:var(--paper-kraft)}
+  padding:28px 22px 26px 46px;aspect-ratio:210/297;width:100%;display:flex;flex-direction:column;gap:6px}
+/* Paper = texture (p-*) + ruling (r-*); swatches (.sw) reuse the texture classes */
+:is(.paper,.sw).p-eski{background:var(--paper-old);background-image:radial-gradient(ellipse at 50% 40%, transparent 55%, rgba(120,80,30,.18) 100%),radial-gradient(circle at 82% 88%, rgba(140,90,40,.14) 0 9%, transparent 10%)}
+:is(.paper,.sw).p-kraft{background:var(--paper-kraft);--rule:#a98762;--grid:#b39271}
+:is(.paper,.sw).p-parsomen{background-color:#ecdab2;background-image:radial-gradient(ellipse at 22% 28%, rgba(255,250,235,.45), transparent 42%),radial-gradient(ellipse at 76% 68%, rgba(150,100,40,.16), transparent 46%),radial-gradient(ellipse at 50% 50%, transparent 58%, rgba(110,70,20,.32) 100%);--rule:#c9b088}
+:is(.paper,.sw).p-kahve{background-color:#f0e2c6;background-image:radial-gradient(circle at 82% 14%, transparent 0 13%, rgba(140,85,35,.24) 13.4% 14.6%, transparent 15%),radial-gradient(circle at 84% 16%, rgba(150,95,40,.07) 0 13%, transparent 13.5%),radial-gradient(ellipse at 12% 88%, rgba(150,95,40,.16) 0 12%, transparent 16%),radial-gradient(ellipse at 50% 50%, transparent 60%, rgba(120,80,30,.2) 100%);--rule:#d2bf98}
+:is(.paper,.sw).p-gul{background:#f3ded7;--rule:#e2b8ae;--grid:#ecc9c0}
+:is(.paper,.sw).p-adacayi{background:#e0e7d6;--rule:#bccbb3;--grid:#cbd8c3}
+:is(.paper,.sw).p-lavanta{background:#e8e2ef;--rule:#cdc2de;--grid:#d9d0e6}
+:is(.paper,.sw).p-ucak{background:#e4ecf4;border:7px solid transparent;border-image:repeating-linear-gradient(-45deg,#b8333a 0 9px,#e4ecf4 9px 15px,#2a4f8a 15px 24px,#e4ecf4 24px 30px) 7;--rule:#c2cedb}
+:is(.paper,.sw).p-muhasebe{background-color:#eef1dc;background-image:linear-gradient(90deg,transparent 26px,#d89a94 26px 27px,transparent 27px 30px,#d89a94 30px 31px,transparent 31px);--rule:#a8c3a4;--grid:#bfd3bc}
+:is(.paper,.sw).p-gazete{background-color:#ebe6da;background-image:repeating-linear-gradient(to bottom, rgba(40,35,30,.045) 0 2px, transparent 2px 6px),linear-gradient(90deg, transparent 49.6%, rgba(40,35,30,.08) 49.6% 50.4%, transparent 50.4%);--rule:#c8c0b0}
+:is(.paper,.sw).p-telgraf{background:#f2e3b9;--rule:#d6c08a}
+:is(.paper,.sw).p-cerceve{background:#fbf6ea;box-shadow:inset 0 0 0 9px #fbf6ea,inset 0 0 0 11px #b89b6a,inset 0 0 0 14px #fbf6ea,inset 0 0 0 15px #b89b6a,var(--shadow)}
+.sw.p-cerceve{box-shadow:inset 0 0 0 4px #fbf6ea,inset 0 0 0 5px #b89b6a,0 1px 3px rgba(0,0,0,.18)}
+:is(.paper,.sw).p-harita{background-color:#efe3c6;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cg fill='none' stroke='%23b99a68' stroke-width='1' opacity='.45'%3E%3Cpath d='M20 60c40-30 80 10 120-10s70 20 90 0'/%3E%3Cpath d='M10 90c50-25 90 15 130-5s60 25 100 5'/%3E%3Cpath d='M30 170c30 20 70-25 110 0s60-10 90 10'/%3E%3Cpath d='M0 200c40 15 80-20 120 5s80 0 120 15'/%3E%3Ccircle cx='170' cy='130' r='18'/%3E%3Ccircle cx='170' cy='130' r='30'/%3E%3Cpath d='M60 120l6 6m0-6l-6 6' stroke-width='1.5'/%3E%3C/g%3E%3C/svg%3E");--rule:#d3bf98}
+:is(.paper,.sw).p-cicekli{background-color:#fbf5ea;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%23c98a8a' opacity='.75'%3E%3Ccircle cx='22' cy='22' r='6'/%3E%3Ccircle cx='31' cy='17' r='4'/%3E%3Ccircle cx='17' cy='31' r='4'/%3E%3C/g%3E%3Cg fill='none' stroke='%238a9a74' stroke-width='1.6'%3E%3Cpath d='M28 28c18 6 34 4 52-6'/%3E%3Cpath d='M28 28c6 18 4 34-6 52'/%3E%3C/g%3E%3Cg fill='%2399a982' opacity='.8'%3E%3Cellipse cx='52' cy='24' rx='7' ry='3' transform='rotate(-20 52 24)'/%3E%3Cellipse cx='24' cy='52' rx='3' ry='7' transform='rotate(-20 24 52)'/%3E%3Cellipse cx='70' cy='26' rx='6' ry='2.6' transform='rotate(15 70 26)'/%3E%3C/g%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg transform='rotate(180 60 60)'%3E%3Cg fill='%23c98a8a' opacity='.75'%3E%3Ccircle cx='22' cy='22' r='6'/%3E%3Ccircle cx='31' cy='17' r='4'/%3E%3Ccircle cx='17' cy='31' r='4'/%3E%3C/g%3E%3Cg fill='none' stroke='%238a9a74' stroke-width='1.6'%3E%3Cpath d='M28 28c18 6 34 4 52-6'/%3E%3Cpath d='M28 28c6 18 4 34-6 52'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");background-repeat:no-repeat;background-position:top left,bottom right;--rule:#e3d3c6}
+.sw.p-cicekli{background-size:60% auto,60% auto}
+.paper.p-ozel,.sw.p-ozel{background-size:cover;background-position:center}
+.ph-tel{position:absolute;left:0;right:0;top:0;height:44px;border-bottom:2px solid #9a7a3a;display:flex;justify-content:space-between;align-items:center;padding:0 16px 0 46px;font:700 .82rem "Courier Prime",monospace;letter-spacing:.24em;color:#6e5320;background:rgba(160,120,40,.12)}
+.ph-tel small{font-weight:400;letter-spacing:.06em;font-size:.72rem}
+.paper.p-telgraf{padding-top:60px}
+.ptiles{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:thin}
+.ptw{position:relative;flex:0 0 auto}
+.ptile{width:62px;border:0;background:none;display:flex;flex-direction:column;gap:5px;align-items:center;font:500 .7rem/1.15 var(--f-ui);color:var(--muted);cursor:pointer;padding:0;text-align:center}
+.sw{width:54px;height:68px;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.18);display:block;background:var(--paper);position:relative;overflow:hidden}
+.ptile[aria-pressed="true"]{color:var(--fg);font-weight:600}.ptile[aria-pressed="true"] .sw{outline:2px solid var(--accent);outline-offset:2px}
+.sw.add{background:transparent;border:1.5px dashed var(--line);box-shadow:none;display:grid;place-items:center;font-size:1.4rem;color:var(--muted)}
+.xdel{position:absolute;top:-6px;right:-2px;width:22px;height:22px;border-radius:50%;border:0;background:var(--fg);color:var(--desk);font-size:13px;line-height:1;cursor:pointer;display:grid;place-items:center;z-index:2}
+.sw.r-cizgili{background-image:repeating-linear-gradient(to bottom, transparent 0 7px, var(--rule) 7px 8px)}
+.sw.r-kareli{background-image:linear-gradient(var(--grid) 1px, transparent 1px),linear-gradient(90deg, var(--grid) 1px, transparent 1px);background-size:6px 6px}
+.sw.r-noktali{background-image:radial-gradient(circle, #a9a294 .7px, transparent 1px);background-size:6px 6px}
+.sw.r-duz{background-image:none}
+.dk img{width:100%;height:auto;display:block;pointer-events:none;filter:drop-shadow(0 1px 1.5px rgba(0,0,0,.28))}
+.tray .items img{max-width:100%;max-height:52px;object-fit:contain}
+.tray .iw{position:relative;display:grid}
+.tray .iw>button[data-add]{width:100%}
+.tray .items button.xdel{position:absolute;top:-6px;right:-6px;width:22px;height:22px;aspect-ratio:auto;padding:0;border:0;border-radius:50%;background:var(--fg);color:var(--desk);font-size:13px;display:grid;place-items:center}
+.paper textarea:focus-visible,.paper input:focus-visible{outline:none}
+.sted{display:flex;flex-direction:column;gap:12px}
+.sted .pv{align-self:center;max-width:220px;padding:10px;border-radius:10px;background:repeating-conic-gradient(#e9e3d8 0 25%, #f7f3ec 0 50%) 0 0/16px 16px}
+.sted .pv img{display:block;max-width:100%;max-height:220px}
 .paper::after{content:"";position:absolute;inset:0;background-image:var(--noise);opacity:.55;mix-blend-mode:multiply;pointer-events:none;border-radius:inherit}
-.p-noktali textarea,.p-noktali .body{background-image:radial-gradient(circle, #b9b2a4 1px, transparent 1.4px);background-size:17px 17px}
+.r-noktali textarea,.r-noktali .body{background-image:radial-gradient(circle, #b9b2a4 1px, transparent 1.4px);background-size:17px 17px}
 .sheetwrap{position:relative}
 .sheetwrap.torn{filter:drop-shadow(0 6px 10px rgba(60,40,20,.22))}
 .sheetwrap.torn .paper{box-shadow:none;border-radius:0}
@@ -84,15 +123,15 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .ctrl label{display:flex;gap:8px;align-items:center;font-size:.85rem;color:var(--muted)}
 .ctrl input[type=range]{width:120px;accent-color:var(--accent)}
 .ctrl input[type=text]{border:1px solid var(--line);background:var(--desk);color:var(--fg);border-radius:8px;padding:7px 10px;font:inherit;min-width:0;flex:1 1 180px}
-.paper.p-cizgili::before{content:"";position:absolute;top:0;bottom:0;left:34px;width:1px;background:var(--margin);opacity:.7}
+.paper.r-cizgili::before{content:"";position:absolute;top:0;bottom:0;left:34px;width:1px;background:var(--margin);opacity:.7}
 .paper .date{align-self:flex-end;font-size:1.05rem;opacity:.85}
 .paper input.to,.paper input.sign{border:0;background:transparent;color:inherit;font:inherit;font-size:1.35rem;padding:2px 0;min-width:0}
 .paper input.sign{align-self:flex-end;text-align:right;width:60%}
 .paper input::placeholder,.paper textarea::placeholder{color:currentColor;opacity:.35}
-.paper textarea{flex:1;border:0;resize:none;background-color:transparent;color:inherit;font:inherit;font-size:1.3rem;line-height:34px;min-height:300px;padding:0;background-attachment:local}
-.p-cizgili textarea,.p-cizgili .body{background-image:repeating-linear-gradient(to bottom, transparent 0 33px, var(--rule) 33px 34px)}
-.p-kareli textarea,.p-kareli .body{background-image:linear-gradient(var(--grid) 1px, transparent 1px),linear-gradient(90deg, var(--grid) 1px, transparent 1px);background-size:17px 17px}
-.paper .body{white-space:pre-wrap;font-size:1.3rem;line-height:34px;min-height:200px;overflow-wrap:anywhere}
+.paper textarea{flex:1;border:0;resize:none;background-color:transparent;color:inherit;font:inherit;font-size:1.3rem;line-height:34px;min-height:200px;padding:0;background-attachment:local}
+.r-cizgili textarea,.r-cizgili .body{background-image:repeating-linear-gradient(to bottom, transparent 0 33px, var(--rule) 33px 34px)}
+.r-kareli textarea,.r-kareli .body{background-image:linear-gradient(var(--grid) 1px, transparent 1px),linear-gradient(90deg, var(--grid) 1px, transparent 1px);background-size:17px 17px}
+.paper .body{flex:1;white-space:pre-wrap;font-size:1.3rem;line-height:34px;min-height:200px;overflow-wrap:anywhere}
 .paper .to-r{font-size:1.35rem}
 .paper .sign-r{align-self:flex-end;font-size:1.35rem;padding-top:6px}
 .h-caveat{font-family:"Caveat", "Segoe Print", cursive}
@@ -113,12 +152,23 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .body.typed{text-shadow:0 0 .5px currentColor}
 .twopts{display:flex;flex-wrap:wrap;gap:8px 18px;padding:10px 14px;background:var(--surface);border-radius:10px}
 .skip{align-self:center}
+/* On-screen typewriter: mint body, cream round keys with a metal rim */
+.kb{position:sticky;bottom:calc(6px + env(safe-area-inset-bottom,0px));z-index:8;background:linear-gradient(#cfe8dc,#b9dccb);border-radius:22px 22px 26px 26px;padding:10px 8px 12px;box-shadow:0 2px 0 #9cc7b3,0 10px 26px rgba(70,110,90,.25);display:flex;flex-direction:column;gap:7px;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.kb .brand{display:flex;justify-content:space-between;align-items:center;padding:0 8px;font:700 .62rem "Courier Prime",monospace;letter-spacing:.3em;color:#5f8f79}
+.kb .kr{display:flex;justify-content:center;gap:clamp(3px,1vw,7px)}
+.kb button{flex:0 1 38px;aspect-ratio:1;min-width:0;border-radius:50%;border:0;padding:0;cursor:pointer;font:700 clamp(.78rem,3.4vw,1.02rem) "Courier Prime",monospace;color:#3a3236;
+  background:radial-gradient(circle at 50% 40%,#fffaf0 0 54%,#efe6d4 62%,#c9c3b8 66%,#f4f2ee 70%,#a9a59c 76%,#7d7a74 100%);box-shadow:0 3px 0 #8fb9a5,0 4px 5px rgba(40,70,55,.25);transition:transform .05s,box-shadow .05s}
+.kb button.dn,.kb button:active{transform:translateY(3px);box-shadow:0 0 0 #8fb9a5,0 1px 2px rgba(40,70,55,.25)}
+.kb button.w{aspect-ratio:auto;border-radius:999px;height:clamp(28px,8.6vw,38px);flex-basis:auto;padding:0 12px;font-size:.8rem}
+.kb button.sp{flex:1 1 auto;max-width:300px;border-radius:999px;aspect-ratio:auto;height:clamp(26px,8vw,34px);background:linear-gradient(#fffaf0,#e9dfcc);font-size:.7rem;letter-spacing:.2em;color:#8b7f74}
+.kb button.on{color:#a65d78;background:radial-gradient(circle at 50% 40%,#fff1f4 0 54%,#f3d9e0 62%,#c9c3b8 66%,#f4f2ee 70%,#a9a59c 76%,#7d7a74 100%)}
+.kb button.ret{background:linear-gradient(#e6e3dc,#a8a59d);color:#3a3236}
 .kurgu{background:var(--surface);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;border-left:3px solid var(--accent)}
 .kurgu p{margin:0;font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:1.12rem;line-height:1.45}
 .kurgu p.hint{font-family:var(--f-ui);font-style:normal;font-size:.88rem}
 
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
-.btn{border:0;border-radius:10px;padding:11px 18px;font:600 .95rem var(--f-ui);cursor:pointer;background:var(--accent);color:var(--accent-fg)}
+.btn{border:0;border-radius:999px;padding:11px 18px;font:600 .95rem var(--f-ui);cursor:pointer;background:var(--accent);color:var(--accent-fg)}
 .btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
 .btn.danger{background:transparent;color:var(--danger);border:1px solid currentColor}
 .btn:disabled{opacity:.5;cursor:default}
@@ -164,7 +214,7 @@ button.sealbtn{position:absolute;left:50%;top:60%;width:26%;aspect-ratio:1;trans
 .bench > *{min-width:0}
 .cap{font-size:.75rem;color:var(--muted);margin-top:6px;text-align:center}
 @media (max-width:560px){.bench{grid-template-columns:1fr}}
-.card{background:var(--surface);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:14px}
+.card{background:var(--surface);border-radius:18px;box-shadow:0 1px 2px rgba(120,80,100,.06);padding:16px;display:flex;flex-direction:column;gap:14px}
 .stamps{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
 .stamps button{border:0;background:transparent;padding:2px;border-radius:6px;cursor:pointer}
 .stamps button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--accent)}
@@ -208,7 +258,17 @@ button.sealbtn{position:absolute;left:50%;top:60%;width:26%;aspect-ratio:1;trans
 <div class="toast" id="toast" hidden></div>
 
 <script>
-const PAPERS={cizgili:"Çizgili",kareli:"Kareli",noktali:"Noktalı",duz:"Düz",eski:"Eskitilmiş",kraft:"Kraft"};
+const PAPERS={beyaz:"Fildişi",eski:"Eskitilmiş",parsomen:"Parşömen",kahve:"Kahve lekeli",kraft:"Kraft",gul:"Gül kurusu",adacayi:"Adaçayı",lavanta:"Lavanta",ucak:"Uçak postası",cicekli:"Çiçekli",cerceve:"Çerçeveli",telgraf:"Telgraf",muhasebe:"Defter",gazete:"Gazete",harita:"Harita"};
+const RULES={cizgili:"Çizgili",kareli:"Kareli",noktali:"Noktalı",duz:"Düz"};
+// Older letters stored one "paper" key that mixed texture and ruling; split it here.
+function paperOf(l){let tex=l.paper||"beyaz",rule=l.rule;
+  if(!rule){if(["cizgili","kareli","noktali"].includes(tex)){rule=tex;tex="beyaz"}else{rule="duz";if(tex==="duz")tex="beyaz"}}
+  return {tex,rule}}
+/* ---------- the user's own papers and stickers (kept in this browser) ---------- */
+const OZK="muhurlu-ozel-v1";
+let OZ=(()=>{try{const v=JSON.parse(localStorage.getItem(OZK)||"null");return v&&Array.isArray(v.papers)?v:{papers:[],stickers:[]}}catch(e){return {papers:[],stickers:[]}}})();
+function saveOZ(){try{localStorage.setItem(OZK,JSON.stringify(OZ));return true}catch(e){toast("Cihazda yer kalmadı. Birkaç kendi kâğıdını ya da çıkartmanı silip tekrar dene.");return false}}
+function ozPaper(tex){return tex&&tex.startsWith("u:")?OZ.papers.find(p=>p.id===tex.slice(2)):null}
 const INKS={lacivert:"#1f3b73",siyah:"#222222",bordo:"#6e1b26",yesil:"#23523a",sepya:"#6b4a2b"};
 const INKN={lacivert:"Lacivert",siyah:"Siyah",bordo:"Bordo",yesil:"Yeşil",sepya:"Sepya"};
 const HANDS={caveat:"El yazısı",kalam:"Yuvarlak",zarif:"Zarif",daktilo:"Daktilo"};
@@ -345,13 +405,16 @@ Object.keys(SEALS).forEach(k=>DECO["muhur_"+k]={c:"muhur",n:SEALN[k]+" harfli m�
 [["cicek","bordo"],["kalp","bordo"],["yaprak","yesil"],["ay","lacivert"],["yildiz","altin"],["anahtar","siyah"],["ari","altin"]].forEach(([m,c])=>
   DECO["mm_"+m]={c:"muhur",n:MOTIFN[m]+" mühür",w:12,svg:()=>motifSealSVG(SEALS[c],m)});
 DECO.mm_lavanta={c:"muhur",n:"Lavantalı mühür",w:15,svg:()=>motifSealSVG("#5d4a73","cicek",true)};
-const DECOCATS={bant:"Bantlar",bitki:"Kurutulmuş",muhur:"Mühürler",damga:"Damgalar",etiket:"Etiketler",pul:"Pullar"};
+const DECOCATS={benim:"Benim",bant:"Bantlar",bitki:"Kurutulmuş",muhur:"Mühürler",damga:"Damgalar",etiket:"Etiketler",pul:"Pullar"};
 function decoWidth(d){const def=DECO[d.k];if(!def)return 20;if(d.k==="etiket")return Math.min(60,Math.max(14,(d.txt||"").length*2.3+7));return def.w}
 function decoHTML(d,i,sel){const def=DECO[d.k];if(!def)return"";
   return `<div class="dk${sel?" sel":""}" data-i="${i}" style="left:${d.x}%;top:${d.y}%;width:${decoWidth(d)}%;transform:translate(-50%,-50%) rotate(${d.r||0}deg) scale(${(d.s||100)/100})">${def.svg(d)}</div>`}
 function sheetHTML(l,inner,opts={}){
   const torn=l.torn?` style="clip-path:${tornClip(l.seed||l.id||"taslak")}"`:"";
-  return `<div class="sheetwrap${l.torn?" torn":""}" id="${opts.id||""}"><div class="paper p-${l.paper} h-${l.hand}${l.twMix!==false?" mix":""}"style="color:${INKS[l.ink]};${l.torn?"clip-path:"+tornClip(l.seed||l.id||"taslak"):""}">${inner}</div>
+  const {tex,rule}=paperOf(l),own=ozPaper(tex);
+  const texCls=own?"ozel":(tex.startsWith("u:")?"beyaz":tex);
+  const head=texCls==="telgraf"?`<div class="ph-tel" aria-hidden="true"><span>TELGRAF</span><small>No ${String(hashStr(l.id||l.seed||"t")%9000+1000)}</small></div>`:"";
+  return `<div class="sheetwrap${l.torn?" torn":""}" id="${opts.id||""}"><div class="paper p-${texCls} r-${rule} h-${l.hand}${l.twMix!==false?" mix":""}" style="color:${INKS[l.ink]};${own?`background-image:linear-gradient(rgba(255,252,245,.3),rgba(255,252,245,.3)),url(${own.src});`:""}${l.torn?"clip-path:"+tornClip(l.seed||l.id||"taslak"):""}">${head}${inner}</div>
    <div class="deco${opts.edit?" edit":""}" id="${opts.decoId||""}">${(l.deco||[]).map((d,i)=>decoHTML(d,i,opts.sel===i)).join("")}</div></div>`}
 
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
@@ -447,8 +510,9 @@ async function initDb(){
 
 /* ---------- state & views ---------- */
 let view="masa"; let reading=null; let filter="hepsi";
-let draft=Object.assign({to:"",body:"",sign:"",paper:"cizgili",ink:"lacivert",hand:"caveat",env:"kraft",stamp:"lale",seal:"bordo",initial:"B",openAfter:"",lock:false,torn:false,deco:[],seed:"s"+Date.now().toString(36)},lsGet(DRAFT,{}));
+let draft=Object.assign({to:"",body:"",sign:"",paper:"beyaz",rule:"cizgili",ink:"lacivert",hand:"caveat",env:"kraft",stamp:"lale",seal:"bordo",initial:"B",openAfter:"",lock:false,torn:false,deco:[],seed:"s"+Date.now().toString(36)},lsGet(DRAFT,{}));
 if(!Array.isArray(draft.deco))draft.deco=[];
+{const pn=paperOf(draft);draft.paper=pn.tex;draft.rule=pn.rule;if(draft.paper.startsWith("u:")&&!ozPaper(draft.paper))draft.paper="beyaz"}
 let ideaI=0;
 const app=document.getElementById("app");
 function saveDraft(){lsSet(DRAFT,draft)}
@@ -461,19 +525,66 @@ function chipRow(group,obj,cur,isDot){return Object.entries(obj).map(([k,v])=>is
   ?`<button class="dot" data-g="${group}" data-k="${k}" aria-pressed="${k===cur}" aria-label="${v[0]}" title="${v[0]}" style="background:${v[1]}"></button>`
   :`<button class="chip" data-g="${group}" data-k="${k}" aria-pressed="${k===cur}">${v}</button>`).join("")}
 
+function paperTiles(){
+  const t=(k,name,extra="")=>`<div class="ptw"><button class="ptile" data-g="paper" data-k="${esc(k)}" aria-pressed="${k===draft.paper}"><span class="sw ${extra} r-${draft.rule}"></span><span>${esc(name)}</span></button>`;
+  return Object.entries(PAPERS).map(([k,n])=>t(k,n,"p-"+k)+"</div>").join("")
+   +OZ.papers.map(p=>`<div class="ptw"><button class="ptile" data-g="paper" data-k="u:${p.id}" aria-pressed="${"u:"+p.id===draft.paper}"><span class="sw p-ozel" style="background-image:url(${p.src})"></span><span>${esc(p.n)}</span></button><button class="xdel" data-delp="${p.id}" aria-label="${esc(p.n)} kâğıdını sil">×</button></div>`).join("")
+   +`<div class="ptw"><button class="ptile" id="b-uppaper"><span class="sw add">+</span><span>Kendi kâğıdın</span></button></div>`}
+function readImage(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{res(im)};im.onerror=()=>{URL.revokeObjectURL(u);rej()};im.src=u})}
+function fitCanvas(im,max){const k=Math.min(1,max/Math.max(im.naturalWidth,im.naturalHeight));const c=document.createElement("canvas");c.width=Math.round(im.naturalWidth*k);c.height=Math.round(im.naturalHeight*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);return c}
+// Flood from the photo's edges and clear everything close to the edge colour, so a dried flower shot on plain paper becomes a sticker.
+function cutBackground(src,tol){const c=document.createElement("canvas");c.width=src.width;c.height=src.height;const x=c.getContext("2d");x.drawImage(src,0,0);
+  const W=c.width,H=c.height,img=x.getImageData(0,0,W,H),d=img.data;let r=0,g=0,b=0,n=0;
+  const edge=[];for(let i=0;i<W;i++){edge.push(i,(H-1)*W+i)}for(let j=0;j<H;j++){edge.push(j*W,j*W+W-1)}
+  for(const p of edge){r+=d[p*4];g+=d[p*4+1];b+=d[p*4+2];n++}r/=n;g/=n;b/=n;
+  const T=tol*tol,bg=new Uint8Array(W*H),q=new Int32Array(W*H);let h=0,t=0;
+  const near=p=>{const dr=d[p*4]-r,dg=d[p*4+1]-g,db=d[p*4+2]-b;return dr*dr+dg*dg+db*db<T};
+  for(const p of edge)if(!bg[p]&&near(p)){bg[p]=1;q[t++]=p}
+  while(h<t){const p=q[h++],px=p%W,py=(p-px)/W;
+    for(const np of [px>0?p-1:-1,px<W-1?p+1:-1,py>0?p-W:-1,py<H-1?p+W:-1])if(np>=0&&!bg[np]&&near(np)){bg[np]=1;q[t++]=np}}
+  let x0=W,y0=H,x1=-1,y1=-1;
+  for(let p=0;p<W*H;p++){if(bg[p]){d[p*4+3]=0;continue}const px=p%W,py=(p-px)/W;
+    if((px>0&&bg[p-1])||(px<W-1&&bg[p+1])||(py>0&&bg[p-W])||(py<H-1&&bg[p+W]))d[p*4+3]=150;
+    if(px<x0)x0=px;if(px>x1)x1=px;if(py<y0)y0=py;if(py>y1)y1=py}
+  x.putImageData(img,0,0);if(x1<0)return c;
+  const o=document.createElement("canvas");o.width=x1-x0+1;o.height=y1-y0+1;o.getContext("2d").drawImage(c,x0,y0,o.width,o.height,0,0,o.width,o.height);return o}
+function syncOZDeco(){Object.keys(DECO).forEach(k=>{if(k.startsWith("oz_"))delete DECO[k]});
+  OZ.stickers.forEach(st=>DECO["oz_"+st.id]={c:"benim",n:st.n,w:st.w||22,svg:()=>`<img src="${st.src}" alt="" draggable="false">`})}
+function kbOn(){return draft.twKb??(matchMedia("(pointer:coarse)").matches||navigator.maxTouchPoints>0)}
+const KB_ROWS=[["1","2","3","4","5","6","7","8","9","0","BS"],["q","w","e","r","t","y","u","ı","o","p","ğ","ü"],["a","s","d","f","g","h","j","k","l","ş","i"],["SH","z","x","c","v","b","n","m","ö","ç",".",","],["?","!","'","SP","-","RET"]];
+let kbShift=false;
+function kbHTML(){const lab={BS:"⌫",SH:"⇧",SP:"",RET:"↵ satır"};
+  return `<div class="kb" id="kb" role="group" aria-label="Daktilo klavyesi"><div class="brand"><span>MEKTUP · 26</span><span>●</span></div>
+  ${KB_ROWS.map(r=>`<div class="kr">${r.map(k=>`<button type="button" data-kk="${k}" class="${k==="SP"?"sp":k==="RET"?"w ret":k==="BS"||k==="SH"?"w":""}${k==="SH"&&kbShift?" on":""}" aria-label="${k==="SP"?"boşluk":k==="BS"?"sil":k==="SH"?"büyük harf":k==="RET"?"satır başı":k}">${k==="SP"?"":(lab[k]||(kbShift?k.toLocaleUpperCase("tr-TR"):k))}</button>`).join("")}</div>`).join("")}</div>`}
+function bindKb(ta){const kb=document.getElementById("kb");if(!kb)return;
+  const fire=t=>ta.dispatchEvent(new InputEvent("input",{inputType:t,bubbles:true}));
+  kb.addEventListener("pointerdown",e=>{const b=e.target.closest("[data-kk]");if(!b)return;e.preventDefault();
+    if(document.activeElement!==ta){ta.focus({preventScroll:true});if(ta.selectionStart===0&&ta.value)ta.setSelectionRange(ta.value.length,ta.value.length)}
+    b.classList.add("dn");setTimeout(()=>b.classList.remove("dn"),90);
+    const k=b.dataset.kk,a=ta.selectionStart,z=ta.selectionEnd;
+    if(k==="SH"){kbShift=!kbShift;kb.querySelectorAll("[data-kk]").forEach(x=>{const v=x.dataset.kk;if(v.length===1)x.textContent=kbShift?v.toLocaleUpperCase("tr-TR"):v});b.classList.toggle("on",kbShift);sndKey(true);return}
+    if(k==="BS"){if(a===z&&a>0)ta.setRangeText("",a-1,a,"end");else ta.setRangeText("",a,z,"end");fire("deleteContentBackward");return}
+    if(k==="RET"){ta.setRangeText("\n",a,z,"end");fire("insertLineBreak");return}
+    let ch=k==="SP"?" ":k;if(kbShift&&ch.length===1){ch=ch.toLocaleUpperCase("tr-TR");kbShift=false;kb.querySelectorAll("[data-kk]").forEach(x=>{const v=x.dataset.kk;if(v.length===1)x.textContent=v});kb.querySelector('[data-kk="SH"]').classList.remove("on")}
+    ta.setRangeText(ch,a,z,"end");fire("insertText");
+    const r=ta.getBoundingClientRect(),kr=kb.getBoundingClientRect();if(r.bottom>kr.top){/* keep the line being typed above the keyboard */}
+  })}
 function renderMasa(){
   const tw=draft.hand==="daktilo";
   app.innerHTML=`<div class="wrap" style="gap:16px">
   ${stepsHTML(0)}
   <div id="kurgu">${kurguHTML()}</div>
   <div class="tools">
-    <div class="tool"><span class="label">Kâğıt</span><div class="chips">${chipRow("paper",PAPERS,draft.paper)}</div></div>
+    <div class="tool" style="flex-basis:100%"><span class="label">Kâğıt</span><div class="ptiles">${paperTiles()}</div>
+      <input type="file" id="up-paper" accept="image/*" hidden></div>
+    <div class="tool"><span class="label">Çizgi</span><div class="chips">${chipRow("rule",RULES,draft.rule)}</div></div>
     <div class="tool"><span class="label">Mürekkep</span><div class="chips">${chipRow("ink",Object.fromEntries(Object.entries(INKS).map(([k,c])=>[k,[INKN[k],c]])),draft.ink,true)}</div></div>
     <div class="tool"><span class="label">Yazı</span><div class="chips">${chipRow("hand",HANDS,draft.hand)}</div></div>
   </div>
   ${tw?`<div class="twopts">
     <label class="check"><input type="checkbox" id="f-mix" ${draft.twMix!==false?"checked":""}> Hitap ve imza el yazısıyla</label>
-    <label class="check"><input type="checkbox" id="f-snd" ${twSound?"checked":""}> Daktilo sesi</label></div>`:""}
+    <label class="check"><input type="checkbox" id="f-snd" ${twSound?"checked":""}> Daktilo sesi</label>
+    <label class="check"><input type="checkbox" id="f-kb" ${kbOn()?"checked":""}> Ekranda daktilo klavyesi</label></div>`:""}
   <label class="check"><input type="checkbox" id="f-torn" ${draft.torn?"checked":""}> Yırtık kenarlı kâğıt</label>
   ${sheetHTML(draft,`
     <div class="date">${esc(fmtDate(new Date().toISOString()))}</div>
@@ -481,16 +592,28 @@ function renderMasa(){
     ${tw?`<div class="tw"><div class="tw-ink" id="tw-ink" aria-hidden="true">${typeHTML(draft.body,draft.seed)}</div><textarea id="f-body" aria-label="Mektup" placeholder="Yazmaya buradan başla..." style="caret-color:${INKS[draft.ink]};--ph:${INKS[draft.ink]}" spellcheck="false">${esc(draft.body)}</textarea></div>`
        :`<textarea id="f-body" aria-label="Mektup" placeholder="Yazmaya buradan başla...">${esc(draft.body)}</textarea>`}
     <input class="sign" id="f-sign" placeholder="imza" value="${esc(draft.sign)}" maxlength="40" aria-label="İmza">`)}
+  ${tw&&kbOn()?kbHTML():""}
   <div class="prompt" id="idea">Ne yazacağını bilmiyor musun? <button class="link" id="b-idea">Bir fikir ver</button></div>
   <div class="row"><span class="hint">Taslağın bu cihazda kendiliğinden saklanır.</span><button class="btn" id="b-next">Süslemeye geç</button></div>
   </div>`;
   app.querySelectorAll("[data-g]").forEach(b=>b.addEventListener("click",()=>{draft[b.dataset.g]=b.dataset.k;saveDraft();renderMasa()}));
+  const up=document.getElementById("up-paper");
+  document.getElementById("b-uppaper").addEventListener("click",()=>up.click());
+  up.addEventListener("change",async()=>{const f=up.files&&up.files[0];if(!f)return;
+    try{const im=await readImage(f);const c=fitCanvas(im,1100);const id="p"+Date.now().toString(36);
+      OZ.papers.push({id,n:"Kâğıdım "+(OZ.papers.length+1),src:c.toDataURL("image/jpeg",.8)});
+      if(!saveOZ()){OZ.papers.pop();return}draft.paper="u:"+id;saveDraft();renderMasa();toast("Kâğıdın eklendi.")}
+    catch(e){toast("Bu fotoğraf açılamadı, başka bir tane dene.")}});
+  app.querySelectorAll("[data-delp]").forEach(b=>b.addEventListener("click",()=>{
+    if(b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="?";toast("Silmek için tekrar dokun.");return}
+    OZ.papers=OZ.papers.filter(p=>p.id!==b.dataset.delp);saveOZ();if(draft.paper==="u:"+b.dataset.delp)draft.paper="beyaz";saveDraft();renderMasa()}));
+  if(!tw){const ta=document.getElementById("f-body");const g=()=>{ta.style.height="auto";ta.style.height=Math.max(200,ta.scrollHeight)+"px"};ta.addEventListener("input",g);requestAnimationFrame(g)}
   document.getElementById("f-torn").addEventListener("change",e=>{draft.torn=e.target.checked;saveDraft();renderMasa()});
   const bind=(id,key)=>{const el=document.getElementById(id);el.addEventListener("input",()=>{draft[key]=el.value;clearTimeout(bind.t);bind.t=setTimeout(saveDraft,400)})};
   bind("f-to","to");bind("f-body","body");bind("f-sign","sign");
   if(tw){
     const ta=document.getElementById("f-body"),ink=document.getElementById("tw-ink");
-    const grow=()=>{ta.style.height="auto";ta.style.height=Math.max(300,ta.scrollHeight)+"px"};
+    const grow=()=>{ta.style.height="auto";ta.style.height=Math.max(200,ta.scrollHeight)+"px"};
     // Characters per line, measured once, so the bell rings a few strokes before the margin.
     const probe=document.createElement("span");probe.textContent="M".repeat(20);probe.style.visibility="hidden";ink.appendChild(probe);
     const cw=probe.getBoundingClientRect().width/20;probe.remove();
@@ -503,6 +626,8 @@ function renderMasa(){
       else if(it.startsWith("delete"))sndKey(true)});
     requestAnimationFrame(grow);
     document.getElementById("f-mix").addEventListener("change",e=>{draft.twMix=e.target.checked;saveDraft();renderMasa()});
+    document.getElementById("f-kb").addEventListener("change",e=>{draft.twKb=e.target.checked;saveDraft();renderMasa()});
+    if(kbOn()){ta.setAttribute("inputmode","none");bindKb(ta)}
     document.getElementById("f-snd").addEventListener("change",e=>{twSound=e.target.checked;lsSet("muhurlu-ses",twSound);if(twSound){ac();sndKey()}});
   }
   document.getElementById("b-idea").addEventListener("click",renderIdea);
@@ -521,7 +646,7 @@ function renderMasa(){
 
 function stepsHTML(n){return `<div class="steps" aria-label="Adımlar">${["Yaz","Süsle","Zarfla"].map((s,i)=>`${i?"<i></i>":""}<span class="${i===n?"on":""}"><b>${i+1}</b>${s}</span>`).join("")}</div>`}
 
-let sel=-1, trayCat="bant";
+let sel=-1, trayCat="bitki";
 function renderSusle(){
   if(!Array.isArray(draft.deco))draft.deco=[];
   const lp={...draft,created:new Date().toISOString(),id:"taslak"};
@@ -532,7 +657,9 @@ function renderSusle(){
   <div class="card" id="ctrl"></div>
   <div class="card tray">
     <div class="chips">${Object.entries(DECOCATS).map(([k,v])=>`<button class="chip" data-cat="${k}" aria-pressed="${k===trayCat}">${v}</button>`).join("")}</div>
-    <div class="items">${Object.entries(DECO).filter(([,d])=>d.c===trayCat).map(([k,d])=>`<button data-add="${k}" aria-label="${esc(d.n)} ekle" title="${esc(d.n)}">${d.svg({txt:d.txt,id:k,date:new Date().toISOString()})}</button>`).join("")}</div>
+    ${trayCat==="benim"?`<p class="hint" style="margin:0">Kuruttuğun bir çiçeği, bir pulu ya da bileti sade bir zeminde fotoğrafla; arka planı temizleyip çıkartma yaparım.</p>`:""}
+    <div class="items">${trayCat==="benim"?`<button id="b-upst" aria-label="Kendi çıkartmanı ekle"><span style="font-size:1.6rem;color:var(--muted)">+</span></button><input type="file" id="up-st" accept="image/*" hidden>`:""}${Object.entries(DECO).filter(([,d])=>d.c===trayCat).map(([k,d])=>`<div class="iw"><button data-add="${k}" aria-label="${esc(d.n)} ekle" title="${esc(d.n)}">${d.svg({txt:d.txt,id:k,date:new Date().toISOString()})}</button>${k.startsWith("oz_")?`<button class="xdel" data-delst="${k.slice(3)}" aria-label="${esc(d.n)} sil">×</button>`:""}</div>`).join("")}</div>
+    <div id="sted"></div>
   </div>
   <div class="row"><button class="link" id="b-clear" ${draft.deco.length?"":"hidden"}>Tüm süsleri kaldır</button><button class="btn" id="b-next">Zarfa koy</button></div>
   </div>`;
@@ -546,7 +673,33 @@ function renderSusle(){
     if(def.txt)d.txt=def.txt; if(k.startsWith("muhur_"))d.txt=(draft.initial||"B");
     draft.deco.push(d);sel=draft.deco.length-1;saveDraft();renderSusle();
     document.getElementById("sw").scrollIntoView({block:"center",behavior:"smooth"})}));
+  const ust=document.getElementById("up-st");
+  if(ust){document.getElementById("b-upst").addEventListener("click",()=>ust.click());
+    ust.addEventListener("change",async()=>{const f=ust.files&&ust.files[0];if(!f)return;try{stickerEditor(await readImage(f))}catch(e){toast("Bu fotoğraf açılamadı, başka bir tane dene.")}})}
+  app.querySelectorAll("[data-delst]").forEach(b=>b.addEventListener("click",()=>{
+    if(b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="?";toast("Silmek için tekrar dokun.");return}
+    OZ.stickers=OZ.stickers.filter(x=>x.id!==b.dataset.delst);saveOZ();syncOZDeco();renderSusle()}));
   renderCtrl();bindDrag();
+}
+function stickerEditor(im){
+  const host=document.getElementById("sted");const base=fitCanvas(im,520);let tol=48,clean=true,out=null;
+  host.innerHTML=`<div class="sted"><span class="label">Yeni çıkartma</span><div class="pv"><img id="st-pv" alt="Çıkartma önizlemesi"></div>
+   <label class="check"><input type="checkbox" id="st-clean" checked> Arka planı temizle</label>
+   <div class="ctrl" id="st-tolrow"><label for="st-tol">Hassasiyet <input type="range" id="st-tol" min="10" max="120" value="${tol}"></label></div>
+   <div class="ctrl"><input type="text" id="st-name" value="Çıkartmam ${OZ.stickers.length+1}" maxlength="30" aria-label="Çıkartmanın adı"></div>
+   <div class="row" style="justify-content:flex-end"><button class="btn ghost" id="st-no">Vazgeç</button><button class="btn" id="st-ok">Kaydet</button></div></div>`;
+  const pv=document.getElementById("st-pv");
+  const draw=()=>{out=clean?cutBackground(base,tol):base;pv.src=out.toDataURL("image/png")};
+  draw();host.scrollIntoView({block:"center",behavior:"smooth"});
+  document.getElementById("st-clean").addEventListener("change",e=>{clean=e.target.checked;document.getElementById("st-tolrow").hidden=!clean;draw()});
+  let tm;document.getElementById("st-tol").addEventListener("input",e=>{tol=+e.target.value;clearTimeout(tm);tm=setTimeout(draw,120)});
+  document.getElementById("st-no").addEventListener("click",()=>{host.innerHTML=""});
+  document.getElementById("st-ok").addEventListener("click",()=>{
+    const k=Math.min(1,420/Math.max(out.width,out.height)),c=document.createElement("canvas");c.width=Math.round(out.width*k);c.height=Math.round(out.height*k);c.getContext("2d").drawImage(out,0,0,c.width,c.height);
+    const st={id:"s"+Date.now().toString(36),n:(document.getElementById("st-name").value||"Çıkartmam").trim(),src:c.toDataURL(clean?"image/png":"image/jpeg",.85),w:22};
+    OZ.stickers.push(st);if(!saveOZ()){OZ.stickers.pop();return}syncOZDeco();
+    const d={id:uid(),k:"oz_"+st.id,x:50,y:35,r:Math.round(Math.random()*12-6),s:100};draft.deco.push(d);sel=draft.deco.length-1;saveDraft();
+    trayCat="benim";renderSusle();toast("Çıkartman kâğıda yapıştırıldı.")});
 }
 function redrawDeco(){const dl=document.getElementById("dl");if(!dl)return;dl.innerHTML=draft.deco.map((d,i)=>decoHTML(d,i,i===sel)).join("")}
 function renderCtrl(){
@@ -623,7 +776,7 @@ async function sealIt(){
   await w(250);sheet.classList.remove("out");await w(950);eb.classList.remove("open");await w(700);
   seal.style.opacity="";seal.classList.add("drop");await w(700);
   const l={id:"m"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),to:draft.to.trim(),body:draft.body,sign:draft.sign.trim(),
-    paper:draft.paper,ink:draft.ink,hand:draft.hand,twMix:draft.twMix!==false,env:draft.env,stamp:draft.stamp,seal:draft.seal,initial:draft.initial||"B",
+    paper:draft.paper,rule:draft.rule,ink:draft.ink,hand:draft.hand,twMix:draft.twMix!==false,env:draft.env,stamp:draft.stamp,seal:draft.seal,initial:draft.initial||"B",
     openAfter:draft.lock?draft.openAfter:"",opened:false,torn:!!draft.torn,seed:draft.seed,deco:JSON.parse(JSON.stringify(draft.deco||[])),created:new Date().toISOString()};
   try{await saveLetter(l)}catch(e){btn.disabled=false;return}
   if(mode==="db"&&!letters.find(x=>x.id===l.id)){letters.push(l);sortL()}
@@ -704,6 +857,7 @@ function render(){
   for(let i=0;i<im.data.length;i+=4){const v=200+Math.random()*55;im.data[i]=v;im.data[i+1]=v*.97;im.data[i+2]=v*.9;im.data[i+3]=Math.random()<.5?28:0}
   x.putImageData(im,0,0);x.strokeStyle="rgba(120,90,60,.10)";for(let i=0;i<40;i++){x.beginPath();const a=Math.random()*180,b=Math.random()*180;x.moveTo(a,b);x.quadraticCurveTo(a+Math.random()*20-10,b+Math.random()*20-10,a+Math.random()*30-15,b+Math.random()*30-15);x.stroke()}
   document.documentElement.style.setProperty("--noise",`url(${c.toDataURL()})`)}catch(e){}})();
+syncOZDeco();
 render();
 setTimeout(initDb,0);
 </script>
