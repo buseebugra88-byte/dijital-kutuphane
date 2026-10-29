@@ -5304,7 +5304,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v115';
+const DK_VER='v124';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -5380,7 +5380,7 @@ setInterval(()=>{if(!ssOn()||document.hidden)return;ssChip();if(SS.busy||DBK.bus
 setTimeout(()=>{try{ssChip()}catch(e){}},4000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(()=>{try{ssChip()}catch(e){}},1500)});
 
 /* sürüm kontrolü */
-async function dkVerCheck(){if(typeof LOCAL==='undefined'||DK_VER.startsWith('__'))return;try{const t=await (await fetch('sw.js?'+Date.now(),{cache:'no-store'})).text();const m=/kutuphane-(v\d+)/.exec(t);if(m&&m[1]!==DK_VER&&!$('dkVer')){const d=document.createElement('button');d.id='dkVer';d.type='button';d.className='dk-ver';d.textContent='✨ Yeni sürüm hazır — dokun, yenilensin';
+async function dkVerCheck(){if(typeof LOCAL==='undefined'||DK_VER.startsWith('__'))return;try{const r_=await fetch('version.json?'+Date.now(),{cache:'no-store'});if(!r_.ok)return;const j_=await r_.json();const m=[0,j_&&j_.v];if(m&&m[1]!==DK_VER&&!$('dkVer')){const d=document.createElement('button');d.id='dkVer';d.type='button';d.className='dk-ver';d.textContent='✨ Yeni sürüm hazır — dokun, yenilensin';
   d.onclick=async()=>{d.textContent='Yenileniyor…';try{const r=await navigator.serviceWorker.getRegistration();if(r)await r.update()}catch(x){}try{const ks=await caches.keys();await Promise.all(ks.filter(k=>k.startsWith('kutuphane-')).map(k=>caches.delete(k)))}catch(x){}location.reload()};document.body.appendChild(d)}}catch(e){}}
 setTimeout(dkVerCheck,3000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)dkVerCheck()});setInterval(dkVerCheck,10*60000);
 
