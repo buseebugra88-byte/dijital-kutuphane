@@ -1275,6 +1275,7 @@ body.tm-on #listArea [data-bk]{position:relative;cursor:copy}
 body.lite *,body.lite *::before,body.lite *::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;mix-blend-mode:normal!important;transition:none!important;animation-duration:.001s!important;animation-delay:0s!important}
 body.lite .card,body.lite .bk,body.lite .dcard,body.lite .lfc,body.lite .panel,body.lite .btn,body.lite .chip,body.lite .shelf,body.lite .pgwrap,body.lite .hs-c{box-shadow:none!important}
 body.lite .sidenav,body.lite #secTabs{background:var(--paper)!important}
+body.ai-off [data-aihub],body.ai-off [data-snai],body.ai-off .sn-ai,body.ai-off #gmKeyBtn,body.ai-off #blAi,body.ai-off [data-simai],body.ai-off [data-qexp],body.ai-off [data-epa="exp"],body.ai-off [data-rxa="exp"],body.ai-off [data-tzout],body.ai-off #litGapBtn,body.ai-off #litAllSum,body.ai-off [data-kychk],body.ai-off #rAsk{display:none!important}
 </style>
 
 </head><body>
@@ -1540,7 +1541,7 @@ body.lite .sidenav,body.lite #secTabs{background:var(--paper)!important}
     </div>
     <div class="row">
       <div class="f"><label for="tDeco">Başlık süsü</label><select id="tDeco"><option value="emblem">Amblem</option><option value="drawing">Kitap ve kedi çizimi</option></select></div>
-      <div class="f"><label>Ana sayfa widget'ları</label><div class="chips" id="tWidgets"></div></div><div class="f"><label for="tLite">⚡ Hafif mod <span class="hint">(eski ya da yavaş cihazlar için)</span></label><select id="tLite"><option value="off">Kapalı</option><option value="on">Açık — gölge, bulanıklık, doku ve animasyonlar kapanır</option></select></div><div class="f"><label for="tShelfDeco">Raf süsleri</label><select id="tShelfDeco"><option value="on">Göster</option><option value="off">Gizle</option></select></div><div class="f"><label for="tStyle">Tasarım</label><select id="tStyle"><option value="classic">Klasik</option><option value="journal">Defter (scrapbook)</option></select></div><div class="f"><label for="tTex">Doku</label><select id="tTex"><option value="">Düz renk</option><option value="pencil">Kuru kalem</option><option value="pastel">Pastel boya</option></select></div><div class="f"><label for="tEmoji">Emojiler</label><select id="tEmoji"><option value="">Tasarıma göre</option><option value="on">Göster</option><option value="off">Gizle</option></select></div><div class="f"><label for="tArt">Çizim tarzı</label><select id="tArt"><option value="cat">Kediler</option><option value="fairy">Peri bahçesi</option><option value="custom">Kendi çıkartmalarım</option></select></div><div class="f"><label for="tStamps">Çıkartmalar</label><select id="tStamps"><option value="on">Göster</option><option value="off">Gizle</option></select></div><div class="f"><label for="tSoft">Yazı rengi</label><select id="tSoft"><option value="on">Yumuşak</option><option value="off">Koyu</option></select></div><div class="f"><label for="tKindle">Renkler</label><select id="tKindle"><option value="on">Kindle gibi pastel</option><option value="off">Canlı</option></select></div>
+      <div class="f"><label>Ana sayfa widget'ları</label><div class="chips" id="tWidgets"></div></div><div class="f"><label for="tAi">✨ Yapay zekâ özellikleri</label><select id="tAi"><option value="off">Kapalı (gizli)</option><option value="on">Açık</option></select></div><div class="f"><label for="tLite">⚡ Hafif mod <span class="hint">(eski ya da yavaş cihazlar için)</span></label><select id="tLite"><option value="off">Kapalı</option><option value="on">Açık — gölge, bulanıklık, doku ve animasyonlar kapanır</option></select></div><div class="f"><label for="tShelfDeco">Raf süsleri</label><select id="tShelfDeco"><option value="on">Göster</option><option value="off">Gizle</option></select></div><div class="f"><label for="tStyle">Tasarım</label><select id="tStyle"><option value="classic">Klasik</option><option value="journal">Defter (scrapbook)</option></select></div><div class="f"><label for="tTex">Doku</label><select id="tTex"><option value="">Düz renk</option><option value="pencil">Kuru kalem</option><option value="pastel">Pastel boya</option></select></div><div class="f"><label for="tEmoji">Emojiler</label><select id="tEmoji"><option value="">Tasarıma göre</option><option value="on">Göster</option><option value="off">Gizle</option></select></div><div class="f"><label for="tArt">Çizim tarzı</label><select id="tArt"><option value="cat">Kediler</option><option value="fairy">Peri bahçesi</option><option value="custom">Kendi çıkartmalarım</option></select></div><div class="f"><label for="tStamps">Çıkartmalar</label><select id="tStamps"><option value="on">Göster</option><option value="off">Gizle</option></select></div><div class="f"><label for="tSoft">Yazı rengi</label><select id="tSoft"><option value="on">Yumuşak</option><option value="off">Koyu</option></select></div><div class="f"><label for="tKindle">Renkler</label><select id="tKindle"><option value="on">Kindle gibi pastel</option><option value="off">Canlı</option></select></div>
     </div>
     <div class="row">
       <div class="f"><label for="tRFlow">Okuma şekli (PDF)</label><select id="tRFlow"><option value="scroll">Aşağı kaydırarak</option><option value="page">Sayfa çevirerek (efektli)</option></select></div>
@@ -2173,7 +2174,7 @@ function isDark(){const t=document.documentElement.getAttribute('data-theme');if
 const TOK=['bg','paper','ink','muted','line','check','accent','accent-soft','brass','brass-soft','k','p','r'];
 function mixHex(a,b,t){const ok=x=>/^#[0-9a-f]{6}$/i.test(x);if(!ok(a)||!ok(b)||!t)return a;const p=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16));const A=p(a),B=p(b);return '#'+A.map((v,i)=>Math.round(v*(1-t)+B[i]*t).toString(16).padStart(2,'0')).join('')}
 function applyUI(){
-  const root=document.documentElement,body=document.body;body.classList.toggle('lite',UI.lite==='on');
+  const root=document.documentElement,body=document.body;body.classList.toggle('lite',UI.lite==='on');body.classList.toggle('ai-off',UI.ai!=='on');
   if(UI.mode==='auto'){if(root.dataset.ktSet){root.removeAttribute('data-theme');delete root.dataset.ktSet}}else{root.setAttribute('data-theme',UI.mode);root.dataset.ktSet='1'}
   const pr=PRESETS[UI.preset]||PRESETS.sage,set=isDark()?pr.dark:pr.light;
   TOK.forEach(t=>root.style.removeProperty('--'+t));root.style.removeProperty('--on-brass');try{document.documentElement.dataset.preset=UI.preset||'sage'}catch(e){}
@@ -2203,7 +2204,7 @@ function fillThemeForm(){try{fillReadOpts()}catch(e){}
   $('tPresets').innerHTML=Object.entries(PRESETS).map(([k,p])=>`<button type="button" class="sw" data-preset="${k}" aria-pressed="${UI.preset===k}"><i>${p.sw.map(c=>`<b style="background:${c}"></b>`).join('')}</i>${esc(p.name)}</button>`).join('');
   $('tBgc').value=UI.bgc||(getComputedStyle(document.documentElement).getPropertyValue('--bg').trim().slice(0,7)||'#efe7e2');
   $('tMode').value=UI.mode;$('tAccent').value=UI.accent||(getComputedStyle(document.documentElement).getPropertyValue('--accent').trim().slice(0,7)||'#7f9a68');
-  $('tPattern').value=UI.pattern;try{$('tLite').value=UI.lite||'off'}catch(e){}$('tFont').value=UI.font;$('tCover').value=UI.cover;$('tIllus').value=UI.illus;$('tTitle').value=UI.title;$('tSoft').value=UI.soft||'on';$('tKindle').value=UI.kindle||'on';$('tArt').value=UI.art||'cat';$('tStyle').value=UI.style||'classic';$('tTex').value=UI.tex||'';$('tEmoji').value=UI.emoji||'';{const S=wgData().show;$('tWidgets').innerHTML=[['clock','🕰 Saat'],['goal','🎯 Hedef'],['todo','✅ Yapılacaklar'],['read','🔋 Okuma'],['note','💌 Not']].map(([k,l])=>`<button type="button" class="chip" data-wshow="${k}" aria-pressed="${!!S[k]}">${l}</button>`).join('')}$('tShelfDeco').value=UI.shelfDeco||'on';$('tName').value=UI.name||'';$('tBody').value=UI.body||'nunito';$('tDeco').value=UI.deco||'emblem';$('tStamps').value=UI.stamps||'on';$('tSub').value=UI.sub;
+  $('tPattern').value=UI.pattern;try{$('tLite').value=UI.lite||'off';$('tAi').value=UI.ai==='on'?'on':'off'}catch(e){}$('tFont').value=UI.font;$('tCover').value=UI.cover;$('tIllus').value=UI.illus;$('tTitle').value=UI.title;$('tSoft').value=UI.soft||'on';$('tKindle').value=UI.kindle||'on';$('tArt').value=UI.art||'cat';$('tStyle').value=UI.style||'classic';$('tTex').value=UI.tex||'';$('tEmoji').value=UI.emoji||'';{const S=wgData().show;$('tWidgets').innerHTML=[['clock','🕰 Saat'],['goal','🎯 Hedef'],['todo','✅ Yapılacaklar'],['read','🔋 Okuma'],['note','💌 Not']].map(([k,l])=>`<button type="button" class="chip" data-wshow="${k}" aria-pressed="${!!S[k]}">${l}</button>`).join('')}$('tShelfDeco').value=UI.shelfDeco||'on';$('tName').value=UI.name||'';$('tBody').value=UI.body||'nunito';$('tDeco').value=UI.deco||'emblem';$('tStamps').value=UI.stamps||'on';$('tSub').value=UI.sub;
 }
 let uiT;function setUI(patch){UI={...UI,...patch};applyUI();if('art' in patch||'shelfDeco' in patch)refreshArt();try{localStorage.setItem('dk-ui',JSON.stringify(UI))}catch(e){}
   $('tSaved').textContent='';clearTimeout(uiT);uiT=setTimeout(async()=>{if(!st.db)return;try{await st.db.doc('settings/ui').set({...UI,updatedAt:new Date().toISOString()});$('tSaved').textContent='Kaydedildi ✓'}catch(e){$('tSaved').textContent='Bu cihazda kaydedildi'}},700)}
@@ -2231,7 +2232,7 @@ $('tMode').addEventListener('change',e=>{setUI({mode:e.target.value});fillThemeF
 $('tAccent').addEventListener('input',e=>setUI({accent:e.target.value}));
 $('tBgc').addEventListener('input',e=>setUI({bgc:e.target.value}));$('tBgcReset').addEventListener('click',()=>{setUI({bgc:''});fillThemeForm()});
 $('tAccentReset').addEventListener('click',()=>{setUI({accent:''});fillThemeForm()});
-[['tPattern','pattern'],['tFont','font'],['tBody','body'],['tDeco','deco'],['tStamps','stamps'],['tSoft','soft'],['tKindle','kindle'],['tArt','art'],['tStyle','style'],['tTex','tex'],['tEmoji','emoji'],['tShelfDeco','shelfDeco'],['tLite','lite'],['tCover','cover'],['tIllus','illus']].forEach(([id,k])=>$(id).addEventListener('change',e=>setUI({[k]:e.target.value})));
+[['tPattern','pattern'],['tFont','font'],['tBody','body'],['tDeco','deco'],['tStamps','stamps'],['tSoft','soft'],['tKindle','kindle'],['tArt','art'],['tStyle','style'],['tTex','tex'],['tEmoji','emoji'],['tShelfDeco','shelfDeco'],['tLite','lite'],['tAi','ai'],['tCover','cover'],['tIllus','illus']].forEach(([id,k])=>$(id).addEventListener('change',e=>setUI({[k]:e.target.value})));
 $('tTitle').addEventListener('input',e=>setUI({title:e.target.value}));$('tName').addEventListener('input',e=>{setUI({name:e.target.value});if(st.view==='panel')renderList()});$('tSub').addEventListener('input',e=>setUI({sub:e.target.value}));
 $('tReset').addEventListener('click',()=>{setUI({...UIDEF});fillThemeForm()});
 applyUI();
@@ -5304,7 +5305,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v127';
+const DK_VER='v128';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -7036,7 +7037,8 @@ document.addEventListener('click',e=>{if(e.target.closest('[data-tzlocal]')){e.p
 /* ---------- ✨ Kitaplar için yapay zekâ: Gemini (cihazdaki anahtarla) ya da Claude ---------- */
 const GM={model:''};const GMB='https://generativelanguage.googleapis.com/v1beta/';
 function gmKey(){try{return localStorage.getItem('dk-gmkey')||''}catch(e){return ''}}
-function aiOn(){return !!(st.sample||gmKey())}
+function aiOff(){return !UI||UI.ai!=='on'}
+function aiOn(){return !aiOff()&&!!(st.sample||gmKey())}
 function aiName(){return st.sample?'Claude':'Gemini'}
 async function gmModel(){if(GM.model)return GM.model;try{const c=JSON.parse(localStorage.getItem('dk-gmmodel')||'null');if(c&&Date.now()-c.at<7*864e5&&c.list){GM.model=c.m;GM.list=c.list;return c.m}}catch(e){}
   let m='models/gemini-2.5-flash',list=['models/gemini-2.5-flash','models/gemini-2.5-flash-lite','models/gemini-2.0-flash'];try{const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),15000);let r;try{r=await fetch(GMB+'models?pageSize=200',{signal:ac.signal,headers:{'x-goog-api-key':gmKey()}})}finally{clearTimeout(tm)}if(r.status===400||r.status===401||r.status===403){const j=await r.json().catch(()=>({}));throw {ui:'Gemini anahtarı kabul edilmedi'+(j.error&&j.error.message?' ('+j.error.message.slice(0,90)+')':'')+'.'}}
@@ -7064,7 +7066,7 @@ async function gmAsk(prompt,o){const k=gmKey();if(!k)throw {ui:'Önce Gemini ana
   throw last||{ui:'Gemini cevap vermedi.'}}
 function gmJson(t){t=String(t||'').replace(/^```(?:json)?\s*|\s*```$/g,'').trim();try{return JSON.parse(t)}catch(e){}const m=/[\[{][\s\S]*[\]}]/.exec(t);if(m)return JSON.parse(m[0]);throw {ui:'Gemini\'nin cevabı okunamadı, tekrar dene.'}}
 const GSAMPLE=Object.assign(async(p,o)=>{if(o&&o.signal&&o.signal.aborted)throw {code:'cancelled'};const r=await gmAsk(p);try{o&&o.onText&&o.onText({text:r.text,delta:r.text})}catch(e){}return r},{json:async(p,o)=>gmJson((await gmAsk(p+'\n\nYalnızca geçerli JSON döndür; açıklama ekleme.',{json:true})).text)});
-function BS(){return st.sample||(gmKey()?GSAMPLE:null)}
+function BS(){if(aiOff())return null;return st.sample||(gmKey()?GSAMPLE:null)}
 async function bookAI(prompt,opts){if(st.sample)return st.sample(prompt,opts);return gmAsk(prompt)}
 function aiErr(e){return (e&&e.ui)||sampleErr(e)}
 function gmKeyAsk(){const v=(prompt('Gemini API anahtarını yapıştır (AQ. ya da AIza ile başlar). Boş bırakırsan silinir.\nBu anahtar yalnızca kitap tanıtımları için kullanılır; romanların, günlüğün ve notların gönderilmez.',gmKey())||'').trim();
