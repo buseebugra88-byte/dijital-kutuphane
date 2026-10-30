@@ -5304,7 +5304,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v125';
+const DK_VER='v126';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -7038,19 +7038,30 @@ const GM={model:''};const GMB='https://generativelanguage.googleapis.com/v1beta/
 function gmKey(){try{return localStorage.getItem('dk-gmkey')||''}catch(e){return ''}}
 function aiOn(){return !!(st.sample||gmKey())}
 function aiName(){return st.sample?'Claude':'Gemini'}
-async function gmModel(){if(GM.model)return GM.model;try{const c=JSON.parse(localStorage.getItem('dk-gmmodel')||'null');if(c&&Date.now()-c.at<7*864e5){GM.model=c.m;return c.m}}catch(e){}
-  let m='models/gemini-2.5-flash';try{const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),15000);let r;try{r=await fetch(GMB+'models?pageSize=200',{signal:ac.signal,headers:{'x-goog-api-key':gmKey()}})}finally{clearTimeout(tm)}if(r.status===400||r.status===401||r.status===403){const j=await r.json().catch(()=>({}));throw {ui:'Gemini anahtarı kabul edilmedi'+(j.error&&j.error.message?' ('+j.error.message.slice(0,90)+')':'')+'.'}}
-    const j=await r.json();const L=(j.models||[]).filter(x=>(x.supportedGenerationMethods||[]).includes('generateContent')&&/flash/.test(x.name)&&!/lite|image|tts|live|audio|embed|exp|preview|thinking|8b/.test(x.name));
-    const ver=n=>{const v=/gemini-(\d+(?:\.\d+)?)/.exec(n);return v?parseFloat(v[1]):0};L.sort((a,b)=>ver(b.name)-ver(a.name)||a.name.length-b.name.length);if(L[0])m=L[0].name}catch(e){if(e&&e.ui)throw e}
-  GM.model=m;try{localStorage.setItem('dk-gmmodel',JSON.stringify({m,at:Date.now()}))}catch(e){}return m}
-async function gmAsk(prompt,o){const k=gmKey();if(!k)throw {ui:'Önce Gemini anahtarını ekle.'};const m=await gmModel();
-  const think=GM.noThink?{}:/gemini-2\.5/.test(m)?{thinkingConfig:{thinkingBudget:0}}:/gemini-3/.test(m)?{thinkingConfig:{thinkingLevel:'low'}}:{};
-  const go=async(extra)=>{const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),70000);try{return await fetch(GMB+m+':generateContent',{method:'POST',signal:ac.signal,headers:{'Content-Type':'application/json','x-goog-api-key':k},body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:.5,maxOutputTokens:8192,...(o&&o.json?{responseMimeType:'application/json'}:{}),...extra}})})}catch(e){throw {ui:navigator.onLine?'Gemini 70 saniyede cevap vermedi (zaman aşımı). Biraz sonra tekrar dene.':'İnternet bağlantısı yok.'}}finally{clearTimeout(tm)}};
+async function gmModel(){if(GM.model)return GM.model;try{const c=JSON.parse(localStorage.getItem('dk-gmmodel')||'null');if(c&&Date.now()-c.at<7*864e5&&c.list){GM.model=c.m;GM.list=c.list;return c.m}}catch(e){}
+  let m='models/gemini-2.5-flash',list=['models/gemini-2.5-flash','models/gemini-2.5-flash-lite','models/gemini-2.0-flash'];try{const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),15000);let r;try{r=await fetch(GMB+'models?pageSize=200',{signal:ac.signal,headers:{'x-goog-api-key':gmKey()}})}finally{clearTimeout(tm)}if(r.status===400||r.status===401||r.status===403){const j=await r.json().catch(()=>({}));throw {ui:'Gemini anahtarı kabul edilmedi'+(j.error&&j.error.message?' ('+j.error.message.slice(0,90)+')':'')+'.'}}
+    const j=await r.json();const A=(j.models||[]).filter(x=>(x.supportedGenerationMethods||[]).includes('generateContent')&&/gemini-[\d.]+-flash/.test(x.name)&&!/image|tts|live|audio|embed|exp|thinking|8b|computer|native/.test(x.name));
+    const ver=n=>{const v=/gemini-(\d+(?:\.\d+)?)/.exec(n);return v?parseFloat(v[1]):0},rank=n=>(/preview/.test(n)?2:0)+(/lite/.test(n)?1:0);
+    A.sort((a,b)=>rank(a.name)-rank(b.name)||ver(b.name)-ver(a.name)||a.name.length-b.name.length);const L=[...new Set(A.map(x=>x.name))];if(L.length){m=L[0];list=L.slice(0,6)}}catch(e){if(e&&e.ui)throw e}
+  GM.model=m;GM.list=list;try{localStorage.setItem('dk-gmmodel',JSON.stringify({m,list,at:Date.now()}))}catch(e){}return m}
+async function gmCall(m,k,prompt,o){const think=GM.noThink?{}:/gemini-2\.5/.test(m)?{thinkingConfig:{thinkingBudget:0}}:/gemini-3/.test(m)?{thinkingConfig:{thinkingLevel:'low'}}:{};
+  const go=async(extra)=>{const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),70000);try{return await fetch(GMB+m+':generateContent',{method:'POST',signal:ac.signal,headers:{'Content-Type':'application/json','x-goog-api-key':k},body:JSON.stringify({contents:[{role:'user',parts:[{text:prompt}]}],generationConfig:{temperature:.5,maxOutputTokens:8192,...(o&&o.json?{responseMimeType:'application/json'}:{}),...extra}})})}catch(e){return {status:0,ok:false,json:async()=>({error:{message:navigator.onLine?'zaman aşımı':'internet yok'}})}}finally{clearTimeout(tm)}};
   let r=await go(think),j=await r.json().catch(()=>({}));
   if(r.status===400&&Object.keys(think).length&&/think/i.test(JSON.stringify(j))){GM.noThink=true;r=await go({});j=await r.json().catch(()=>({}))}
-  if(!r.ok){const msg=(j.error&&j.error.message)||'';if(r.status===429)throw {ui:'Gemini\'nin ücretsiz kullanım sınırı doldu; biraz (ya da yarın) sonra tekrar dene.',code:'rate_limited'};if(r.status===404){GM.model='';try{localStorage.removeItem('dk-gmmodel')}catch(e){}}
-    throw {ui:'Gemini cevap vermedi ('+r.status+(msg?': '+msg.slice(0,90):'')+').'}}
-  const c=(j.candidates||[])[0];const t=((c&&c.content&&c.content.parts)||[]).map(p=>p.text||'').join('').trim();if(!t)throw {ui:'Gemini boş cevap verdi'+(c&&c.finishReason?' ('+c.finishReason+')':'')+'.'};return {text:t}}
+  return {r,j}}
+async function gmAsk(prompt,o){const k=gmKey();if(!k)throw {ui:'Önce Gemini anahtarını ekle.'};const first=await gmModel();
+  const models=[first,...(GM.list||[]).filter(x=>x!==first)].slice(0,4);let last=null,busy=0,quota=0;
+  for(const m of models){for(let t=0;t<2;t++){const {r,j}=await gmCall(m,k,prompt,o);
+      if(r.ok){const c=(j.candidates||[])[0];const txt=((c&&c.content&&c.content.parts)||[]).map(p=>p.text||'').join('').trim();if(!txt){last={ui:'Gemini boş cevap verdi'+(c&&c.finishReason?' ('+c.finishReason+')':'')+'.'};break}if(m!==GM.model)GM.model=m;return {text:txt}}
+      const msg=(j.error&&j.error.message)||'';last={ui:'Gemini cevap vermedi ('+(r.status||'')+(msg?': '+msg.slice(0,90):'')+').'};
+      if(r.status===404){try{localStorage.removeItem('dk-gmmodel')}catch(e){}break}
+      if(r.status===429){quota++;break}
+      if([500,502,503,504,0].includes(r.status)){busy++;if(t===0){await new Promise(z=>setTimeout(z,1500));continue}break}
+      if(r.status===400&&/API key|API_KEY|permission|PERMISSION/i.test(msg))throw {ui:'Gemini anahtarı kabul edilmedi ('+msg.slice(0,90)+').'};
+      break}}
+  if(quota&&quota>=busy)throw {ui:'Gemini\'nin ücretsiz kullanım sınırı doldu (bütün modellerde); yarın sabah tekrar dene.',code:'rate_limited'};
+  if(busy)throw {ui:'Google\'ın Gemini sunucuları şu an çok yoğun (birkaç model denendi). Biraz sonra tekrar dene.'};
+  throw last||{ui:'Gemini cevap vermedi.'}}
 function gmJson(t){t=String(t||'').replace(/^```(?:json)?\s*|\s*```$/g,'').trim();try{return JSON.parse(t)}catch(e){}const m=/[\[{][\s\S]*[\]}]/.exec(t);if(m)return JSON.parse(m[0]);throw {ui:'Gemini\'nin cevabı okunamadı, tekrar dene.'}}
 const GSAMPLE=Object.assign(async(p,o)=>{if(o&&o.signal&&o.signal.aborted)throw {code:'cancelled'};const r=await gmAsk(p);try{o&&o.onText&&o.onText({text:r.text,delta:r.text})}catch(e){}return r},{json:async(p,o)=>gmJson((await gmAsk(p+'\n\nYalnızca geçerli JSON döndür; açıklama ekleme.',{json:true})).text)});
 function BS(){return st.sample||(gmKey()?GSAMPLE:null)}
@@ -7134,7 +7145,7 @@ function aiHubRefresh(){const w=$('hubWrap');if(w){const s=$('hubSim')&&$('hubSi
 function aiHubMsg(t){const m=$('hubMsg');if(m)m.textContent=t}
 document.addEventListener('click',async e=>{if(e.target.closest('[data-aihub]')){e.preventDefault();aiHub();return}
   if(e.target.closest('#gmKeyBtn2')){gmKeyAsk();setTimeout(aiHubRefresh,300);return}
-  if(e.target.closest('#gmTest')){const o=$('gmTestOut');o.textContent='Deneniyor…';try{GM.model='';localStorage.removeItem('dk-gmmodel');const m=await gmModel();const r=await gmAsk('Sadece TAMAM yaz.');o.textContent='✓ Çalışıyor · model: '+m.replace('models/','')+' · cevap: '+String(r.text).slice(0,30)}catch(err){o.textContent='⚠️ '+aiErr(err)}return}
+  if(e.target.closest('#gmTest')){const o=$('gmTestOut');o.textContent='Deneniyor…';try{GM.model='';localStorage.removeItem('dk-gmmodel');const m=await gmModel();const r=await gmAsk('Sadece TAMAM yaz.');o.textContent='✓ Çalışıyor · model: '+String(GM.model||m).replace('models/','')+' · cevap: '+String(r.text).slice(0,30)}catch(err){o.textContent='⚠️ '+aiErr(err)}return}
   const h=e.target.closest('[data-hub]');if(!h)return;const k=h.dataset.hub;
   if(['shelf','tag','blurb'].includes(k)){if(AIB.busy){AIB.stop=true;return}h.disabled=true;const iv=setInterval(()=>aiHubMsg(AIB.busy?'✨ '+AIB.msg+' (durdurmak için yeniden bas)':''),700);
     AIB.err='';try{await (k==='shelf'?aiShelf():k==='tag'?aiTag():aiBulk())}finally{clearInterval(iv);aiHubRefresh();if(AIB.err)aiHubMsg('⚠️ '+AIB.err)}return}
