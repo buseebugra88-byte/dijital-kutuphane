@@ -1293,6 +1293,7 @@ body.home-kindle #listArea{max-width:760px;margin-inline:auto}
 .hk-foot{display:flex;justify-content:center;gap:8px;color:var(--muted);font-size:13px}.hk-lnk{border:0;background:none;color:var(--muted);font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 @media(min-width:700px){.hk-hero .bk{--cw:140px;--ch:210px}.hk-t{width:108px}.hk-t .bk{--cw:108px;--ch:162px}}
 .shelves .shelf{content-visibility:auto;contain-intrinsic-size:auto 260px}.list .card{content-visibility:auto;contain-intrinsic-size:auto 220px}
+.hk-btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px}.hk-btns .hk-go{margin-top:0}.hk-oe{font-size:13px;padding:8px 12px}
 </style>
 
 </head><body>
@@ -5326,7 +5327,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v132';
+const DK_VER='v133';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -7044,7 +7045,7 @@ function homeKindle(){document.body.classList.add('home-simple','home-kindle');
   const tile=b=>{const G=bkProg(b);return `<div class="hk-t">${bookHtml(b)}${G.t&&b.status!=='okundu'&&(b.currentPage>0||G.p>0)?`<div class="hk-tb"><i style="width:${G.p}%"></i></div>`:''}<span class="hk-tt">${esc(b.title)}</span></div>`};
   const row=(title,L,go)=>L.length?`<section class="hk-sec"><div class="hk-h"><h3>${title}</h3>${go?`<button class="hk-all" type="button" data-hk="${go}">Tümü</button>`:''}</div><div class="hk-row">${L.map(tile).join('')}</div></section>`:'';
   let hero='';if(cur){const G=bkProg(cur);hero=`<section class="hk-hero">${bookHtml(cur)}<div class="hk-hi"><span class="hk-k">Okuyorsun<button type="button" class="hs-pin${cur.pinned?' on':''}" data-pin="${cur.id}" title="${cur.pinned?'Sabitlemeyi kaldır':'Bu kitabı sabitle'}">📌 ${cur.pinned?'Sabit':'Sabitle'}</button></span><h2>${esc(cur.title)}</h2>${cur.author?`<span class="hk-a">${esc(cur.author)}</span>`:''}
-    ${G.t?`<div class="hk-p"><div class="hk-bar"><i style="width:${G.p}%"></i></div><span>%${Math.round(G.p)} · ${esc(G.txt)}</span></div>`:''}${hasFile(cur)?`<button class="btn primary hk-go" type="button" data-read="${cur.id}">Devam et</button>`:''}</div></section>`}
+    ${G.t?`<div class="hk-p"><div class="hk-bar"><i style="width:${G.p}%"></i></div><span>%${Math.round(G.p)} · ${esc(G.txt)}</span></div>`:''}${hasFile(cur)?`<div class="hk-btns"><button class="btn primary hk-go" type="button" data-read="${cur.id}">Devam et</button><button class="btn hk-oe" type="button" data-oe="${cur.id}" title="Kitaplar, Dosyalar ya da başka bir uygulamada aç">📤 Başka uygulamada</button></div>`:''}</div></section>`}
   else hero=`<section class="hk-hero hk-empty"><div class="hk-hi"><h2>Ne okuyalım?</h2><span class="hk-a">Okunacaklarından birine dokun ya da yeni bir kitap ekle.</span><button class="btn primary hk-go" type="button" data-hs="add">＋ Kitap ekle</button></div></section>`;
   return `<div class="hk">
    <header class="hk-top"><div><small>${esc(trDate(t))}</small><h1>${greet}${name?', '+esc(name):''}</h1></div></header>
@@ -7861,11 +7862,26 @@ document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[da
 
 /* ---------- Okuyucu ekleri 2: daha fazla menüsü, okuma sesleri, tahmin kutusu, kitap karakterleri, sesli not, duvar kâğıdı, ruh haline göre ---------- */
 function rxMore(){const b=$('rMoreBtn').getBoundingClientRect();rxPopClose();const m=document.createElement('div');m.className='rxpop rxmore';m.id='rxPop';m.dataset.id='';const nP=(LF.preds||[]).filter(x=>x.book===R.book.id).length,nC=(LF.bchars||[]).filter(x=>x.book===R.book.id).length;
-  m.innerHTML=`<button type="button" data-rxm="snd"><span>🎧</span>Okuma sesleri${AMB.on?` <small>· ${ambLabel()}</small>`:''}</button><button type="button" data-rxm="pred"><span>🔮</span>Tahmin kutusu${nP?` <small>· ${nP}</small>`:''}</button><button type="button" data-rxm="chars"><span>👤</span>Karakterler${nC?` <small>· ${nC}</small>`:''}</button><button type="button" data-rxm="voice"><span>🎙</span>${VN.rec?'Kaydı bitir':'Sesli not'}</button><button type="button" data-rxm="list"><span>📒</span>Vurgularım ve notlarım</button>`;
+  m.innerHTML=`<button type="button" data-rxm="snd"><span>🎧</span>Okuma sesleri${AMB.on?` <small>· ${ambLabel()}</small>`:''}</button><button type="button" data-rxm="pred"><span>🔮</span>Tahmin kutusu${nP?` <small>· ${nP}</small>`:''}</button><button type="button" data-rxm="chars"><span>👤</span>Karakterler${nC?` <small>· ${nC}</small>`:''}</button><button type="button" data-rxm="voice"><span>🎙</span>${VN.rec?'Kaydı bitir':'Sesli not'}</button><button type="button" data-rxm="list"><span>📒</span>Vurgularım ve notlarım</button><button type="button" data-oe="${R.book.id}"><span>📤</span>Başka uygulamada aç</button>`;
   document.body.appendChild(m);m.style.left=Math.max(8,Math.min(innerWidth-m.offsetWidth-8,b.right-m.offsetWidth))+'px';m.style.top=(b.bottom+8)+'px'}
 document.addEventListener('click',e=>{const x=e.target.closest&&e.target.closest('[data-rxm]');if(!x)return;e.stopPropagation();const k=x.dataset.rxm;rxPopClose();
   if(k==='snd')ambDlg();else if(k==='pred')prDlg();else if(k==='chars')bcDlg();else if(k==='voice')(VN.rec?vnStop():vnStart());else if(k==='list')rxListDlg()},true);
-(function(){const bar=document.querySelector('#reader .rbar');if(!bar)return;const m=document.createElement('button');m.className='iconbtn';m.id='rMoreBtn';m.type='button';m.title='Daha fazla';m.setAttribute('aria-label','Daha fazla');m.textContent='⋯';bar.insertBefore(m,$('rModeBtn'));m.addEventListener('click',e=>{e.stopPropagation();if(!R.book)return;rxMore()})})();
+(function(){const bar=document.querySelector('#reader .rbar');if(!bar)return;const m=document.createElement('button');m.className='iconbtn';m.id='rMoreBtn';m.type='button';m.title='Daha fazla';m.setAttribute('aria-label','Daha fazla');m.textContent='⋯';bar.insertBefore(m,$('rModeBtn'));m.addEventListener('click',e=>{e.stopPropagation();if(!R.book)return;rxMore()});const o=document.createElement('button');o.className='iconbtn';o.id='rOeBtn';o.type='button';o.title='Başka uygulamada aç';o.setAttribute('aria-label','Başka uygulamada aç');o.innerHTML='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>';bar.insertBefore(o,m);o.addEventListener('click',e=>{e.stopPropagation();if(R.book)oeOpen(R.book.id)})})();
+
+/* ---------- 📤 Kitabı başka uygulamada aç (Kitaplar, Dosyalar, Kobo vb.) ---------- */
+const OE={};
+async function oeFile(b){if(OE[b.id])return OE[b.id];const ep=isEpubB(b);let bytes=await bookBytes(b);
+  let name=(b.fileName||((b.title||'kitap')+(ep?'.epub':'.pdf'))).replace(/[\\/:*?"<>|]/g,'-');if(ep&&!/\.epub$/i.test(name))name+='.epub';if(!ep&&!/\.pdf$/i.test(name))name+='.pdf';
+  const f=new File([bytes],name,{type:ep?'application/epub+zip':'application/pdf'});OE[b.id]=f;return f}
+async function oeOpen(id){const b=st.books.find(x=>x.id===id);if(!b)return;if(!hasFile(b)){toast('Bu kitabın dosyası yok');return}
+  msModal(`<div class="eyebrow">📤 Başka uygulamada aç</div><b>${esc(b.title)}</b><p class="hint" id="oeMsg" style="margin:0">Dosya hazırlanıyor…</p><div class="msm-acts" id="oeActs"></div>`);
+  try{const f=await oeFile(b);const can=!!(navigator.canShare&&navigator.canShare({files:[f]}));const m=$('oeMsg'),a=$('oeActs');if(!m)return;
+    m.textContent=(b.parts&&b.parts.length>1?'Bu kitap parçalara bölünmüş; ilk parçası açılır. ':'')+(can?'Aşağıdaki düğmeye dokun, açılan menüden “Kitaplar”, “Dosyalar’a Kaydet” ya da başka bir okuma uygulamasını seç.':'Bu cihazda paylaşma menüsü yok; dosyayı indirip başka uygulamada açabilirsin.');
+    a.innerHTML=(can?'<button class="btn primary" type="button" id="oeShare">📤 Başka uygulamada aç</button>':'')+'<button class="btn" type="button" id="oeDl">⬇️ İndir</button>';
+    if(can)$('oeShare').onclick=async()=>{try{await navigator.share({files:[f],title:b.title})}catch(e){if(e&&e.name!=='AbortError')toast('Açılamadı, İndir’i dene')}};
+    $('oeDl').onclick=()=>{const u=URL.createObjectURL(f),x=document.createElement('a');x.href=u;x.download=f.name;document.body.appendChild(x);x.click();setTimeout(()=>{URL.revokeObjectURL(u);x.remove()},3000)}}
+  catch(e){const m=$('oeMsg');if(m)m.textContent='Dosya alınamadı'+(e&&e.ui?': '+e.ui:'. İnternet bağlantını ya da Drive girişini kontrol et.')}}
+document.addEventListener('click',e=>{const x=e.target.closest&&e.target.closest('[data-oe]');if(!x)return;e.preventDefault();e.stopPropagation();oeOpen(x.dataset.oe)},true);
 
 /* --- okuma sesleri (WebAudio ile üretilir, internet gerekmez) --- */
 const AMB={ctx:null,out:null,vol:.5,layers:{},buf:{},mix:{}};
