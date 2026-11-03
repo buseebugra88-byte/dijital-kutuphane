@@ -5327,7 +5327,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v133';
+const DK_VER='v134';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -7045,7 +7045,7 @@ function homeKindle(){document.body.classList.add('home-simple','home-kindle');
   const tile=b=>{const G=bkProg(b);return `<div class="hk-t">${bookHtml(b)}${G.t&&b.status!=='okundu'&&(b.currentPage>0||G.p>0)?`<div class="hk-tb"><i style="width:${G.p}%"></i></div>`:''}<span class="hk-tt">${esc(b.title)}</span></div>`};
   const row=(title,L,go)=>L.length?`<section class="hk-sec"><div class="hk-h"><h3>${title}</h3>${go?`<button class="hk-all" type="button" data-hk="${go}">Tümü</button>`:''}</div><div class="hk-row">${L.map(tile).join('')}</div></section>`:'';
   let hero='';if(cur){const G=bkProg(cur);hero=`<section class="hk-hero">${bookHtml(cur)}<div class="hk-hi"><span class="hk-k">Okuyorsun<button type="button" class="hs-pin${cur.pinned?' on':''}" data-pin="${cur.id}" title="${cur.pinned?'Sabitlemeyi kaldır':'Bu kitabı sabitle'}">📌 ${cur.pinned?'Sabit':'Sabitle'}</button></span><h2>${esc(cur.title)}</h2>${cur.author?`<span class="hk-a">${esc(cur.author)}</span>`:''}
-    ${G.t?`<div class="hk-p"><div class="hk-bar"><i style="width:${G.p}%"></i></div><span>%${Math.round(G.p)} · ${esc(G.txt)}</span></div>`:''}${hasFile(cur)?`<div class="hk-btns"><button class="btn primary hk-go" type="button" data-read="${cur.id}">Devam et</button><button class="btn hk-oe" type="button" data-oe="${cur.id}" title="Kitaplar, Dosyalar ya da başka bir uygulamada aç">📤 Başka uygulamada</button></div>`:''}</div></section>`}
+    ${G.t?`<div class="hk-p"><div class="hk-bar"><i style="width:${G.p}%"></i></div><span>%${Math.round(G.p)} · ${esc(G.txt)}</span></div>`:''}${hasFile(cur)?`<div class="hk-btns"><button class="btn primary hk-go" type="button" data-read="${cur.id}">Devam et</button><button class="btn hk-oe" type="button" data-oe="${cur.id}" title="Kitaplar, Dosyalar ya da başka bir uygulamada aç">📤 Başka uygulamada</button>${dkHere(cur)?`<button class="btn hk-oe" type="button" data-sendall="${cur.id}" title="Drive’a gönder; iPad’de ve diğer cihazlarda da açılsın">☁️ iPad’de de aç</button>`:''}</div>`:''}</div></section>`}
   else hero=`<section class="hk-hero hk-empty"><div class="hk-hi"><h2>Ne okuyalım?</h2><span class="hk-a">Okunacaklarından birine dokun ya da yeni bir kitap ekle.</span><button class="btn primary hk-go" type="button" data-hs="add">＋ Kitap ekle</button></div></section>`;
   return `<div class="hk">
    <header class="hk-top"><div><small>${esc(trDate(t))}</small><h1>${greet}${name?', '+esc(name):''}</h1></div></header>
@@ -7862,7 +7862,7 @@ document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[da
 
 /* ---------- Okuyucu ekleri 2: daha fazla menüsü, okuma sesleri, tahmin kutusu, kitap karakterleri, sesli not, duvar kâğıdı, ruh haline göre ---------- */
 function rxMore(){const b=$('rMoreBtn').getBoundingClientRect();rxPopClose();const m=document.createElement('div');m.className='rxpop rxmore';m.id='rxPop';m.dataset.id='';const nP=(LF.preds||[]).filter(x=>x.book===R.book.id).length,nC=(LF.bchars||[]).filter(x=>x.book===R.book.id).length;
-  m.innerHTML=`<button type="button" data-rxm="snd"><span>🎧</span>Okuma sesleri${AMB.on?` <small>· ${ambLabel()}</small>`:''}</button><button type="button" data-rxm="pred"><span>🔮</span>Tahmin kutusu${nP?` <small>· ${nP}</small>`:''}</button><button type="button" data-rxm="chars"><span>👤</span>Karakterler${nC?` <small>· ${nC}</small>`:''}</button><button type="button" data-rxm="voice"><span>🎙</span>${VN.rec?'Kaydı bitir':'Sesli not'}</button><button type="button" data-rxm="list"><span>📒</span>Vurgularım ve notlarım</button><button type="button" data-oe="${R.book.id}"><span>📤</span>Başka uygulamada aç</button>`;
+  m.innerHTML=`<button type="button" data-rxm="snd"><span>🎧</span>Okuma sesleri${AMB.on?` <small>· ${ambLabel()}</small>`:''}</button><button type="button" data-rxm="pred"><span>🔮</span>Tahmin kutusu${nP?` <small>· ${nP}</small>`:''}</button><button type="button" data-rxm="chars"><span>👤</span>Karakterler${nC?` <small>· ${nC}</small>`:''}</button><button type="button" data-rxm="voice"><span>🎙</span>${VN.rec?'Kaydı bitir':'Sesli not'}</button><button type="button" data-rxm="list"><span>📒</span>Vurgularım ve notlarım</button><button type="button" data-oe="${R.book.id}"><span>📤</span>Başka uygulamada aç</button>${dkHere(R.book)?`<button type="button" data-sendall="${R.book.id}"><span>☁️</span>iPad’de ve diğer cihazlarda da aç</button>`:''}`;
   document.body.appendChild(m);m.style.left=Math.max(8,Math.min(innerWidth-m.offsetWidth-8,b.right-m.offsetWidth))+'px';m.style.top=(b.bottom+8)+'px'}
 document.addEventListener('click',e=>{const x=e.target.closest&&e.target.closest('[data-rxm]');if(!x)return;e.stopPropagation();const k=x.dataset.rxm;rxPopClose();
   if(k==='snd')ambDlg();else if(k==='pred')prDlg();else if(k==='chars')bcDlg();else if(k==='voice')(VN.rec?vnStop():vnStart());else if(k==='list')rxListDlg()},true);
@@ -7877,10 +7877,21 @@ async function oeOpen(id){const b=st.books.find(x=>x.id===id);if(!b)return;if(!h
   msModal(`<div class="eyebrow">📤 Başka uygulamada aç</div><b>${esc(b.title)}</b><p class="hint" id="oeMsg" style="margin:0">Dosya hazırlanıyor…</p><div class="msm-acts" id="oeActs"></div>`);
   try{const f=await oeFile(b);const can=!!(navigator.canShare&&navigator.canShare({files:[f]}));const m=$('oeMsg'),a=$('oeActs');if(!m)return;
     m.textContent=(b.parts&&b.parts.length>1?'Bu kitap parçalara bölünmüş; ilk parçası açılır. ':'')+(can?'Aşağıdaki düğmeye dokun, açılan menüden “Kitaplar”, “Dosyalar’a Kaydet” ya da başka bir okuma uygulamasını seç.':'Bu cihazda paylaşma menüsü yok; dosyayı indirip başka uygulamada açabilirsin.');
-    a.innerHTML=(can?'<button class="btn primary" type="button" id="oeShare">📤 Başka uygulamada aç</button>':'')+'<button class="btn" type="button" id="oeDl">⬇️ İndir</button>';
+    a.innerHTML=(can?'<button class="btn primary" type="button" id="oeShare">📤 Başka uygulamada aç</button>':'')+'<button class="btn" type="button" id="oeDl">⬇️ İndir</button>'+(dkHere(b)?`<button class="btn" type="button" data-sendall="${b.id}">☁️ iPad’de de aç</button>`:'');
     if(can)$('oeShare').onclick=async()=>{try{await navigator.share({files:[f],title:b.title})}catch(e){if(e&&e.name!=='AbortError')toast('Açılamadı, İndir’i dene')}};
     $('oeDl').onclick=()=>{const u=URL.createObjectURL(f),x=document.createElement('a');x.href=u;x.download=f.name;document.body.appendChild(x);x.click();setTimeout(()=>{URL.revokeObjectURL(u);x.remove()},3000)}}
   catch(e){const m=$('oeMsg');if(m)m.textContent='Dosya alınamadı'+(e&&e.ui?': '+e.ui:'. İnternet bağlantını ya da Drive girişini kontrol et.')}}
+
+/* ☁️ kitabı iPad'de / diğer cihazlarda da aç — her zaman erişilebilir */
+async function dkSendAll(id,btn){const b=st.books.find(x=>x.id===id);if(!b)return;
+  if(!dkHere(b)){toast(b.driveId?'Bu kitap zaten bütün cihazlarında açılıyor ✓':'Bu kitabın dosyası bu cihazda değil; kitabı eklediğin cihazdan gönder');return}
+  if(typeof GAUTH==='undefined'||!GAUTH.configured()){toast('Önce Ayarlar → Google Drive’a bağlan');return}
+  if(!GAUTH.signedIn()){toast('Önce sağ üstteki “Drive ile eşitle”ye dokunup Google’a giriş yap');return}
+  const set=t=>{if(btn)btn.textContent=t};if(btn)btn.disabled=true;
+  try{await dkShareBook(b,m=>set(m));set('✓ Gönderildi — iPad’de birkaç dakika içinde açılır');toast('☁️ “'+b.title+'” artık bütün cihazlarında açılır');try{if(typeof driveSync==='function')setTimeout(()=>Promise.resolve(driveSync(true)).catch(()=>{}),800)}catch(e){}}
+  catch(e){set('Tekrar dene');if(btn)btn.disabled=false;toast((e&&e.ui)||'Gönderilemedi')}}
+document.addEventListener('click',e=>{const x=e.target.closest&&e.target.closest('[data-sendall]');if(!x)return;e.preventDefault();e.stopPropagation();dkSendAll(x.dataset.sendall,x.tagName==='BUTTON'&&x.closest('#msModal')?x:null)},true);
+
 document.addEventListener('click',e=>{const x=e.target.closest&&e.target.closest('[data-oe]');if(!x)return;e.preventDefault();e.stopPropagation();oeOpen(x.dataset.oe)},true);
 
 /* --- okuma sesleri (WebAudio ile üretilir, internet gerekmez) --- */
