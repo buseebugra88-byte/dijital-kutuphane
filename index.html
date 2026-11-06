@@ -838,6 +838,46 @@ body.sec-notes{background-image:none!important}
 .nbc-doc{padding:16px 14px 14px 18px!important;display:grid;gap:7px;align-content:start;font-size:12.5px;background:none!important}
 .nbc-doc>div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
 .nbc-k{display:none}
+/* === Defterlerim: Goodnotes gibi === */
+.gn{gap:16px}
+.gn-tabs{display:flex;gap:6px}.gn-tabs button{border:0;background:none;font:inherit;font-size:14px;color:var(--muted);padding:7px 12px;border-radius:10px;cursor:pointer}
+.gn-tabs button[aria-pressed="true"]{background:var(--paper);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.06),0 0 0 1px var(--line)}
+.gn-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.gn-crumb{flex:1 1 auto;display:flex;align-items:baseline;gap:10px;min-width:0}.gn-crumb h2{margin:0;font-size:30px;font-weight:700;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gn-back{border:0;background:none;color:var(--accent);font:inherit;font-size:15px;cursor:pointer;padding:4px 0;white-space:nowrap}
+.gn-acts{display:flex;gap:8px;align-items:center;flex:0 1 360px}.gn-acts input{flex:1 1 140px;min-width:0;border-radius:999px}
+.gn-new{border:0;border-radius:999px;background:#2f6fd6;color:#fff;font:inherit;font-weight:600;font-size:14.5px;padding:9px 16px;cursor:pointer;white-space:nowrap;box-shadow:0 4px 12px -6px rgba(47,111,214,.8)}
+.gn-new:hover{filter:brightness(1.07)}
+.gn-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:30px 26px;align-items:end}
+.gnt{display:grid;gap:6px;cursor:pointer;outline:none;justify-items:center;text-align:center;min-width:0}
+.gnt-ic{position:relative;width:100%;display:flex;align-items:flex-end;justify-content:center;aspect-ratio:1/1.12;transition:transform .15s}
+.gnt:hover .gnt-ic,.gnt:focus-visible .gnt-ic{transform:translateY(-3px)}
+.gnf .gnt-ic svg{width:100%;height:auto;filter:drop-shadow(0 8px 12px rgba(0,0,0,.12))}
+.gnc-nb,.gnc-doc,.gnc-pg,.gnc-wb{position:relative;width:78%;aspect-ratio:3/4;border-radius:4px 12px 12px 4px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.08),0 10px 20px -12px rgba(0,0,0,.45)}
+.gnc-nb{background:linear-gradient(90deg,rgba(0,0,0,.18) 0 6px,rgba(255,255,255,.18) 6px 8px,transparent 8px),linear-gradient(160deg,rgba(255,255,255,.18),rgba(0,0,0,.04)),var(--c)}
+.gnc-nb::after{content:"";position:absolute;top:0;bottom:0;right:16%;width:8px;background:rgba(0,0,0,.16);box-shadow:inset 1px 0 0 rgba(255,255,255,.18)}
+.gnc-r{position:absolute;left:14px;bottom:10px;font-size:14px}
+.gnc-doc{background:#fff;border:1px solid var(--line);border-radius:6px;padding:16px 12px 10px;display:grid;gap:6px;align-content:start;text-align:left;font-size:11.5px;color:#333}
+.gnc-doc i{position:absolute;top:0;left:0;right:0;height:5px}.gnc-doc div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gnc-pg{background:#fff;border:1px solid var(--line);border-radius:6px}.gnc-pg canvas{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.gnc-wb{background:#fff radial-gradient(circle,rgba(60,70,90,.28) 1px,transparent 1.4px) 0 0/12px 12px;border:1px solid var(--line);border-radius:8px;aspect-ratio:4/3;width:92%;display:grid;place-items:center;font-size:26px}
+.gn-star{position:absolute;top:6px;right:9%;border:0;background:none;font-size:17px;line-height:1;color:rgba(255,255,255,.85);cursor:pointer;padding:4px;text-shadow:0 1px 2px rgba(0,0,0,.35);opacity:.0;transition:opacity .15s}
+.gnf .gn-star{top:30%;right:8%}
+.gnc-doc~.gn-star,.gnc-pg~.gn-star,.gnc-wb~.gn-star{color:#b8b8b8;text-shadow:none}
+.gnt:hover .gn-star,.gn-star.on,.gn-star:focus-visible{opacity:1}.gn-star.on{color:#f5b301!important;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+@media (hover:none){.gn-star{opacity:.75}}
+.gnt-m{display:flex;align-items:center;gap:2px;max-width:100%;min-width:0}.gnt-m b{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gn-chev{border:0;background:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 4px;line-height:1;flex:none}
+.gnt-d{font-size:12px;color:var(--muted);margin-top:-4px}
+.gnm-w{min-width:310px;max-width:340px;padding:10px;border-radius:18px;max-height:80vh}
+.gnm{display:grid;gap:8px}
+.gnm-3,.gnm-2{display:grid;gap:8px}.gnm-3{grid-template-columns:repeat(3,1fr)}.gnm-2{grid-template-columns:repeat(2,1fr)}
+.gnm-3 button,.gnm-2 button{position:relative;flex-direction:column;justify-content:center;gap:4px!important;padding:12px 6px!important;border:1px solid var(--line)!important;border-radius:12px!important;font-size:13px!important;text-align:center!important}
+.gnm-3 em{position:absolute;top:-7px;right:-4px;font-style:normal;font-size:9.5px;font-weight:700;background:#d8f5a2;color:#3a5a12;padding:2px 6px;border-radius:999px}
+.gnm-i{font-size:19px;line-height:1}
+.gnm-l{display:grid;border:1px solid var(--line);border-radius:12px;padding:3px}.gnm-l button{padding:9px 10px!important}.gnm-l .gnm-i{font-size:16px;width:24px;text-align:center}
+@media (max-width:600px){.gn-g{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:22px 16px}.gn-crumb h2{font-size:26px}.gn-acts{flex:1 1 100%}}
+
 .nbc:hover .nbc-th{transform:translateY(-2px)}
 .nbc:focus-visible .nbc-th{outline:2px solid var(--accent);outline-offset:3px}
 .nbh-tip{font-size:12.5px;max-width:720px;opacity:.8}
@@ -3881,27 +3921,73 @@ function nbListen(db){
 }
 function nbHomeRe(){if(!(st.sec==='notes'||curSub()==='nb')||NB.bid&&!NB.side)return;const ae=document.activeElement;if(ae&&ae.id==='nbQ')return nbGrid();if($('nbHome'))nbRender($('secHost'))}
 
-/* ===================== Ana ekran: klasörler + defterler ===================== */
+/* ===================== Ana ekran: Goodnotes gibi — klasörler + kapaklar ===================== */
+const NB_FCOL=['#6cb4ee','#f6c445','#f19cbf','#7fcf9f','#ad94e6','#f5a463','#9aa5b8'];
+function nbInFolder(){return NB.fsel!=='all'&&NB.fsel!=='star'&&NB.fsel!=='none'&&NB.folders.some(f=>f.id===NB.fsel)?NB.fsel:''}
+function nbDate(s){if(!s)return'';const d=new Date(s);if(isNaN(d))return'';const n=new Date(),a=new Date(n.getFullYear(),n.getMonth(),n.getDate()),b=new Date(d.getFullYear(),d.getMonth(),d.getDate()),df=Math.round((a-b)/864e5);
+  if(df===0)return'Bugün';if(df===1)return'Dün';return d.toLocaleDateString('tr-TR',d.getFullYear()===n.getFullYear()?{day:'numeric',month:'long'}:{day:'numeric',month:'long',year:'numeric'})}
+function nbFolderSvg(c){return `<svg viewBox="0 0 120 92" aria-hidden="true"><path d="M4 14a9 9 0 0 1 9-9h28c3 0 5 1 7 3l7 7h52a9 9 0 0 1 9 9v6H4z" fill="${c}"/><path d="M4 14a9 9 0 0 1 9-9h28c3 0 5 1 7 3l7 7h52a9 9 0 0 1 9 9v6H4z" fill="rgba(0,0,0,.16)"/><rect x="13" y="20" width="94" height="40" rx="3" fill="#fff" opacity=".92"/><rect x="4" y="26" width="112" height="62" rx="9" fill="${c}"/><rect x="4" y="26" width="112" height="62" rx="9" fill="url(#gnfg)"/><defs><linearGradient id="gnfg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#000" stop-opacity=".05"/></linearGradient></defs></svg>`}
 function nbRender(host){host=host||$('secHost');if(!host)return;
-  const F=NB.folders,cnt=f=>NB.books.filter(b=>f==='all'?true:f==='star'?b.star:f==='none'?!b.folder||!F.some(x=>x.id===b.folder):b.folder===f).length;
-  host.innerHTML=`<div class="nbh" id="nbHome">
-   <div class="nbh-top"><input type="search" id="nbQ" placeholder="🔎 Defterlerde ve notlarda ara…" value="${esc(NB.q)}">
-    <button class="btn" type="button" data-nb="newfolder">📁 Yeni klasör</button><button class="btn primary" type="button" data-nb="new">＋ Yeni defter</button></div>
-   <div class="nbh-f">${[['all','📚 Tümü'],...(NB.books.some(b=>b.star)?[['star','⭐ Favoriler']]:[]),...F.map(f=>[f.id,'📁 '+f.name]),['none','🗂 Klasörsüz']].filter(([k])=>k!=='none'||cnt('none')).map(([k,l])=>`<span class="nbh-fc"><button type="button" class="chip" data-nb="folder" data-id="${k}" aria-pressed="${NB.fsel===k}">${esc(l)} <span class="hint">${cnt(k)}</span></button>${k!=='all'&&k!=='none'&&k!=='star'?`<button type="button" class="nbh-fm" data-nb="fmenu" data-id="${k}" aria-label="Klasör seçenekleri">⋯</button>`:''}</span>`).join('')}</div>
-   <div class="nbh-g" id="nbGrid"></div>${(NB.trash||[]).length?`<button type="button" class="nbh-trash" data-nbx="trashdlg" data-id="${NB.trash[0].id}">🗑 Son silinenler (${NB.trash.length})</button>`:''}
-   <p class="hint nbh-tip">✏️ <b>Apple Pencil</b> ile yaz — parmağın sayfayı kaydırır, iki parmakla yakınlaştırırsın. Şekil çizip kalemi bir an <b>bekletirsen</b> düzgün şekle döner. 🎙 Kayıt alırken yazdıkların sesle eşleşir; dinlerken bir yazıya dokunursan o ana gider.</p></div>`;
+  const fid=nbInFolder(),f=fid&&NB.folders.find(x=>x.id===fid);if(!fid&&NB.fsel!=='star')NB.fsel='all';
+  host.innerHTML=`<div class="nbh gn" id="nbHome">
+   <div class="gn-tabs" role="tablist"><button type="button" data-nb="folder" data-id="all" aria-pressed="${NB.fsel!=='star'}">📄 Belgeler</button><button type="button" data-nb="folder" data-id="star" aria-pressed="${NB.fsel==='star'}">☆ Favoriler</button></div>
+   <div class="gn-top"><div class="gn-crumb">${f?`<button type="button" class="gn-back" data-nb="folder" data-id="all">‹ Belgeler</button><h2>${esc(f.name)}</h2>`:`<h2>${NB.fsel==='star'?'Favoriler':'Belgeler'}</h2>`}</div>
+    <div class="gn-acts"><input type="search" id="nbQ" placeholder="🔎 Ara" value="${esc(NB.q)}"><button class="gn-new" type="button" data-nb="newmenu">＋ Yeni</button></div></div>
+   <div class="gn-g" id="nbGrid"></div>${(NB.trash||[]).length?`<button type="button" class="nbh-trash" data-nbx="trashdlg" data-id="${NB.trash[0].id}">🗑 Son silinenler (${NB.trash.length})</button>`:''}
+   <p class="hint nbh-tip">✏️ <b>Apple Pencil</b> ile yaz — parmağın sayfayı kaydırır, iki parmakla yakınlaştırırsın. Şekil çizip kalemi bir an <b>bekletirsen</b> düzgün şekle döner. 🎙 Kayıt alırken yazdıkların sesle eşleşir.</p></div>`;
   nbGrid()}
 function nbText(r){let t=(r.title||'')+' ';(r.blocks||[]).forEach(b=>t+=' '+(b.x||'').replace(/<[^>]+>/g,' '));(r.items||[]).forEach(i=>{if(i.txt)t+=' '+i.txt});if(r.ocr)t+=' '+r.ocr;return t}
-function nbGrid(){const g=$('nbGrid');if(!g)return;const F=NB.folders,q=NB.q.trim().toLocaleLowerCase('tr-TR');
-  let L=NB.books.filter(b=>NB.fsel==='all'?true:NB.fsel==='star'?b.star:NB.fsel==='none'?!b.folder||!F.some(x=>x.id===b.folder):b.folder===NB.fsel);
-  if(q)L=L.filter(b=>(b.title||'').toLocaleLowerCase('tr-TR').includes(q)||nbPagesOf(b.id).some(p=>nbText(p).toLocaleLowerCase('tr-TR').includes(q)));
-  L.sort((a,b)=>(b.star?1:0)-(a.star?1:0)||(b.opened||b.updatedAt||'').localeCompare(a.opened||a.updatedAt||''));
-  g.innerHTML=(L.length?L.map(b=>{const P=nbPagesOf(b.id),f=F.find(x=>x.id===b.folder);
-    const prev=b.kind==='doc'?`<div class="nbc-doc">${P.slice(0,4).map(p=>`<div>${esc(p.icon||'📄')} ${esc(p.title||'Başlıksız')}</div>`).join('')||'<div class="hint">Boş</div>'}</div>`:`<canvas data-th="${b.id}" width="300" height="424"></canvas>`;
-    return `<div class="nbc" data-nb="open" data-id="${b.id}" role="button" tabindex="0"><div class="nbc-th" style="--c:${b.color||NB_COV[0]}">${prev}${b.star?'<span class="nbc-star">⭐</span>':''}<span class="nbc-k">${b.kind==='doc'?'📝':b.pdf?'📄':'✍️'}</span>${(b.recs||[]).length?'<span class="nbc-r">🎙</span>':''}</div>
-      <div class="nbc-m"><b>${esc(b.title||'Adsız defter')}</b><span class="hint">${P.length} sayfa${f&&NB.fsel==='all'?' · '+esc(f.name):''}</span></div>
-      <button class="iconbtn nbc-x" type="button" data-nb="bmenu" data-id="${b.id}" aria-label="Defter seçenekleri">⋯</button></div>`}).join(''):`<div class="nbh-empty"><div style="font-size:42px;line-height:0">${UI.shelfDeco!=='off'?stampSvg('bunny',84):'📓'}</div><b>${q?'Bulunamadı':'Henüz defter yok'}</b><span class="hint">${q?'Başka bir kelime dene':'＋ Yeni defter ile başla'}</span></div>`);
+function nbFolderTile(f){const n=NB.books.filter(b=>b.folder===f.id);const last=n.reduce((m,b)=>(b.updatedAt||b.opened||'')>m?(b.updatedAt||b.opened||''):m,f.createdAt||'');
+  return `<div class="gnt gnf" data-nb="folder" data-id="${f.id}" role="button" tabindex="0"><div class="gnt-ic">${nbFolderSvg(f.color||NB_FCOL[0])}<button type="button" class="gn-star${f.star?' on':''}" data-nb="fstar" data-id="${f.id}" aria-label="Favori">${f.star?'★':'☆'}</button></div>
+   <div class="gnt-m"><b>${esc(f.name)}</b><button type="button" class="gn-chev" data-nb="fmenu" data-id="${f.id}" aria-label="Klasör seçenekleri">⌄</button></div><span class="gnt-d">${n.length} öğe${last?' · '+nbDate(last):''}</span></div>`}
+function nbBookTile(b){const P=nbPagesOf(b.id),c=b.color||NB_COV[0];let cov;
+  if(b.pdf)cov=`<div class="gnc-pg"><canvas data-th="${b.id}" width="300" height="424"></canvas></div>`;
+  else if(b.wb)cov=`<div class="gnc-wb"><span>🧩</span></div>`;
+  else if(b.kind==='doc')cov=`<div class="gnc-doc"><i style="background:${c}"></i>${P.slice(0,5).map(p=>`<div>${esc(p.icon||'📄')} ${esc(p.title||'Başlıksız')}</div>`).join('')||'<div class="hint">Boş</div>'}</div>`;
+  else cov=`<div class="gnc-nb" style="--c:${c}">${(b.recs||[]).length?'<span class="gnc-r">🎙</span>':''}</div>`;
+  return `<div class="gnt gnc" data-nb="open" data-id="${b.id}" role="button" tabindex="0"><div class="gnt-ic">${cov}<button type="button" class="gn-star${b.star?' on':''}" data-nb="bstar" data-id="${b.id}" aria-label="Favori">${b.star?'★':'☆'}</button></div>
+   <div class="gnt-m"><b>${esc(b.title||'Adsız defter')}</b><button type="button" class="gn-chev nbc-x" data-nb="bmenu" data-id="${b.id}" aria-label="Seçenekler">⌄</button></div><span class="gnt-d">${nbDate(b.updatedAt||b.opened||b.createdAt)}${P.length>1?' · '+P.length+' sayfa':''}</span></div>`}
+function nbGrid(){const g=$('nbGrid');if(!g)return;const F=NB.folders,q=NB.q.trim().toLocaleLowerCase('tr-TR'),fid=nbInFolder();
+  let FL=[],L;const lo=s=>(s||'').toLocaleLowerCase('tr-TR');
+  if(q){FL=F.filter(f=>lo(f.name).includes(q));L=NB.books.filter(b=>lo(b.title).includes(q)||nbPagesOf(b.id).some(p=>lo(nbText(p)).includes(q)))}
+  else if(NB.fsel==='star'){FL=F.filter(f=>f.star);L=NB.books.filter(b=>b.star)}
+  else if(fid)L=NB.books.filter(b=>b.folder===fid);
+  else{FL=F.slice();L=NB.books.filter(b=>!b.folder||!F.some(x=>x.id===b.folder))}
+  L.sort((a,b)=>(b.opened||b.updatedAt||'').localeCompare(a.opened||a.updatedAt||''));
+  g.innerHTML=(FL.length||L.length)?FL.map(nbFolderTile).join('')+L.map(nbBookTile).join(''):`<div class="nbh-empty"><div style="font-size:42px;line-height:0">${UI.shelfDeco!=='off'?stampSvg('bunny',84):'📓'}</div><b>${q?'Bulunamadı':NB.fsel==='star'?'Henüz favori yok':fid?'Bu klasör boş':'Henüz defter yok'}</b><span class="hint">${q?'Başka bir kelime dene':NB.fsel==='star'?'Kapakların köşesindeki ☆ ile ekle':'＋ Yeni ile başla'}</span></div>`;
   g.querySelectorAll('canvas[data-th]').forEach(cv=>nbThumb(cv,cv.dataset.th))}
+function nbNewMenu(anchor){const it=(v,i,l,x)=>`<button type="button" data-nb="nm" data-v="${v}"><span class="gnm-i">${i}</span><span>${l}</span>${x||''}</button>`;
+  const m=nbMenu(anchor,`<div class="gnm"><div class="gnm-3">${it('ink','📒','Defter')}${it('doc','📝','Yazı belgesi')}${it('wb','🧩','Beyaz tahta','<em>YENİ</em>')}</div>
+   <div class="gnm-2">${it('import','⬇️','İçe aktar')}${it('rec','🎙','Hızlı kayıt')}</div>
+   <div class="gnm-l">${it('qnote','✏️','Hızlı not')}${it('study','🃏','Çalışma seti')}${it('img','🖼','Görsel')}${it('photo','📷','Fotoğraf çek')}</div>
+   <div class="gnm-l">${it('folder','📁','Klasör')}</div><div class="gnm-l">${it('lib','📚','Kütüphanemden PDF')}</div></div>`);m.classList.add('gnm-w');
+  const r=anchor.getBoundingClientRect();m.style.left=Math.max(8,Math.min(innerWidth-m.offsetWidth-8,r.right-m.offsetWidth))+'px'}
+async function nbQuick(o){const id=nbId(),now=new Date().toISOString();
+  const bk=nbClean({id,title:o.title,kind:o.kind||'ink',wb:o.wb,pdf:o.pdf,folder:nbInFolder(),color:o.color||NB_COV[Math.floor(Math.random()*NB_COV.length)],paper:o.paper||'lined',pc:'#ffffff',recs:[],createdAt:now,opened:now});
+  await nbSaveBook(bk,{});if(!nbBook(id))NB.books.push(bk);return bk}
+function nbStamp(){return new Date().toLocaleString('tr-TR',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'})}
+function nbPickFile(accept,cb,o){const inp=document.createElement('input');inp.type='file';inp.accept=accept;if(o&&o.multi)inp.multiple=true;if(o&&o.cam)inp.setAttribute('capture','environment');
+  inp.style.display='none';document.body.appendChild(inp);inp.addEventListener('change',()=>{const fs=[...inp.files];inp.remove();if(fs.length)cb(fs)});inp.click()}
+async function nbImgPage(file,bid){const url=URL.createObjectURL(file);try{const im=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=url});
+  const sc=Math.min(1,1600/im.naturalWidth),w=Math.round(im.naturalWidth*sc),h=Math.round(im.naturalHeight*sc);const cv=document.createElement('canvas');cv.width=w;cv.height=h;const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(im,0,0,w,h);
+  const blob=await new Promise(r=>cv.toBlob(r,'image/jpeg',.85));cv.width=cv.height=0;const a=await upl(blob,{type:'image/jpeg'});
+  await nbNewPage(bid,{type:'ink',bg:a.id,paper:'plain',h:Math.round(1000*h/w)})}finally{URL.revokeObjectURL(url)}}
+async function nbImportFiles(fs){const pdf=fs.find(f=>/pdf$/i.test(f.type)||/\.pdf$/i.test(f.name)),imgs=fs.filter(f=>/^image\//.test(f.type)||/\.(jpe?g|png|heic|webp|gif)$/i.test(f.name));
+  try{if(pdf){toast('PDF hazırlanıyor…');const bk=await nbQuick({title:pdf.name.replace(/\.pdf$/i,''),pdf:true,paper:'plain'});await nbImportPdf(new Uint8Array(await pdf.arrayBuffer()),bk.id,(i,n)=>toast('PDF sayfaları: '+i+'/'+n));nbOpen(bk.id);return}
+    if(imgs.length){toast('Görsel ekleniyor…');const bk=await nbQuick({title:imgs.length===1?imgs[0].name.replace(/\.[^.]+$/,'').slice(0,60)||'Görsel':'Görseller — '+nbStamp(),paper:'plain'});for(const f of imgs)await nbImgPage(f,bk.id);nbOpen(bk.id);return}
+    toast('PDF ya da görsel seç')}catch(e){toast('Olmadı: '+((e&&e.message)||'hata'))}}
+async function nbNm(v){document.querySelectorAll('.nbmenu').forEach(m=>m.remove());
+  if(v==='ink')return nbNewDlg({kind:'ink',folder:nbInFolder()});
+  if(v==='lib')return nbNewDlg({kind:'pdf',folder:nbInFolder()});
+  if(v==='folder')return nbFolderDlg();
+  if(v==='study')return goSec('academic','cards');
+  if(v==='import')return nbPickFile('application/pdf,.pdf,image/*',nbImportFiles,{multi:true});
+  if(v==='img')return nbPickFile('image/*',nbImportFiles,{multi:true});
+  if(v==='photo')return nbPickFile('image/*',nbImportFiles,{cam:true});
+  try{if(v==='doc'||v==='qnote'){const bk=await nbQuick({kind:'doc',title:v==='qnote'?'Hızlı not — '+nbStamp():'Adsız belge'});await nbNewPage(bk.id,{type:'text',title:v==='qnote'?'Not':'İlk sayfa',icon:'📄'});nbOpen(bk.id);return}
+    if(v==='wb'){const bk=await nbQuick({title:'Beyaz tahta — '+nbStamp(),wb:true,paper:'dot',color:'#ffffff'});await nbNewPage(bk.id,{type:'ink',paper:'dot',h:3000});nbOpen(bk.id);return}
+    if(v==='rec'){const bk=await nbQuick({title:'🎙 Kayıt — '+nbStamp()});await nbNewPage(bk.id,{type:'ink'});await nbOpen(bk.id);setTimeout(()=>{if(!NB.rec)nbRecStart()},350);return}}
+  catch(e){toast('Olmadı: '+((e&&e.message)||'hata'))}}
 function nbThumb(cv,bid){const P=nbPagesOf(bid);const r=P.find(p=>p.type!=='text');const ctx=cv.getContext('2d');
   if(!r){ctx.fillStyle='#fff';ctx.fillRect(0,0,cv.width,cv.height);const t=P[0];if(t){ctx.fillStyle='#333';ctx.font='bold 22px sans-serif';ctx.fillText((t.title||'').slice(0,18),20,46)}return}
   const pg=nbPg(r.id);const s=cv.width/1000;cv.height=Math.round((pg.h||NB_H)*s);nbDraw(ctx,pg,s,{thumb:cv})}
@@ -3910,12 +3996,16 @@ function nbThumb(cv,bid){const P=nbPagesOf(bid);const r=P.find(p=>p.type!=='text
 document.addEventListener('input',e=>{if(e.target.id==='nbQ'){NB.q=e.target.value;nbGrid()}});
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-nb]');if(!b)return;const k=b.dataset.nb,id=b.dataset.id;
   if(k==='open'){if(e.target.closest('.nbc-x'))return;nbOpen(id);return}
-  if(k==='folder'){NB.fsel=id;nbRender();return}
+  if(k==='folder'){if(NB.fsel!==id&&id!=='all'&&id!=='star')NB.q='';NB.fsel=id;nbRender();return}
   if(k==='newfolder'){nbFolderDlg();return}
   if(k==='fmenu'){nbFolderDlg(id);return}
   if(k==='new'){nbNewDlg();return}
+  if(k==='newmenu'){nbNewMenu(b);return}
+  if(k==='nm'){nbNm(b.dataset.v);return}
+  if(k==='fstar'){e.stopPropagation();const f=NB.folders.find(x=>x.id===id);if(f){f.star=!f.star;nbGrid();try{await st.db.collection('nfolders').doc(id).update({star:f.star})}catch(x){toast('Kaydedilemedi')}}return}
+  if(k==='bstar'){e.stopPropagation();const bk=nbBook(id);if(bk){await nbSaveBook(bk,{star:!bk.star});nbGrid()}return}
   if(k==='bmenu'){e.stopPropagation();nbBookDlg(id);return}
-  if(k==='fsave'){const n=$('nbFName').value.trim();if(!n)return;const fid=id||nbId();await st.db.collection('nfolders').doc(fid).set({name:n,order:(NB.folders.find(f=>f.id===fid)||{}).order??NB.folders.length,createdAt:new Date().toISOString()});msClose();return}
+  if(k==='fsave'){const n=$('nbFName').value.trim();if(!n)return;const fid=id||nbId(),of=NB.folders.find(f=>f.id===fid)||{};const col=(document.querySelector('#nbFC [aria-pressed="true"]')||{dataset:{}}).dataset.v||of.color||NB_FCOL[0];await st.db.collection('nfolders').doc(fid).set({name:n,color:col,star:!!of.star,order:of.order??NB.folders.length,createdAt:of.createdAt||new Date().toISOString()});msClose();return}
   if(k==='fdel'){if(!b.dataset.sure){b.dataset.sure=1;b.textContent='Emin misin? Defterler silinmez, klasörsüz kalır';return}for(const bk of NB.books.filter(x=>x.folder===id))await st.db.collection('nbooks').doc(bk.id).update({folder:''});await st.db.collection('nfolders').doc(id).delete();if(NB.fsel===id)NB.fsel='all';msClose();return}
   if(k==='create'){nbCreate();return}
   if(k==='kind'){document.querySelectorAll('[data-nb="kind"]').forEach(x=>x.setAttribute('aria-pressed',x===b));$('nbNewF').dataset.kind=b.dataset.v;$('nbPdfRow').hidden=b.dataset.v!=='pdf';$('nbPaperRow').hidden=b.dataset.v==='doc';return}
@@ -3925,9 +4015,10 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-nb]'
     if(NB.bid===id)nbClose();for(const p of nbPagesOf(id)){try{await st.db.collection('npages').doc(p.id).delete()}catch(x){}}await st.db.collection('nbooks').doc(id).delete();msClose();toast('Defter silindi');return}
   if(k==='bside'){msClose();nbOpen(id,{side:true});return}
 });
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('nbc')){e.target.click()}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.classList&&(e.target.classList.contains('nbc')||e.target.classList.contains('gnt'))){e.target.click()}});
 function nbFolderDlg(id){const f=NB.folders.find(x=>x.id===id);
   msModal(`<div class="eyebrow">📁 ${f?'Klasör':'Yeni klasör'}</div><input id="nbFName" placeholder="Klasör adı (ör. Ders notları)" value="${esc(f?f.name:'')}">
+  <div><label class="hint">Renk</label><div class="nb-sws" id="nbFC">${NB_FCOL.map((c,i)=>`<button type="button" class="nb-sw" data-nb="pick" data-v="${c}" style="background:${c}" aria-pressed="${f?(f.color||NB_FCOL[0])===c:i===((NB.folders.length)%NB_FCOL.length)}" aria-label="Renk"></button>`).join('')}</div></div>
   <div class="msm-acts"><button class="btn primary" type="button" data-nb="fsave" ${f?`data-id="${f.id}"`:''}>Kaydet</button>${f?`<button class="btn" type="button" data-nb="fdel" data-id="${f.id}">🗑 Klasörü sil</button>`:''}</div>`);setTimeout(()=>$('nbFName').focus(),50)}
 function nbFolderOpts(sel){return `<option value="">— Klasörsüz —</option>`+NB.folders.map(f=>`<option value="${f.id}" ${f.id===sel?'selected':''}>${esc(f.name)}</option>`).join('')}
 function nbCovPick(sel){return NB_COV.map(c=>`<button type="button" class="nb-sw" data-nb="pick" data-v="${c}" style="background:${c}" aria-pressed="${c===sel}" aria-label="Renk"></button>`).join('')}
@@ -5327,7 +5418,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v134';
+const DK_VER='v135';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
