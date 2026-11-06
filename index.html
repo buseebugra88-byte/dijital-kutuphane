@@ -876,6 +876,9 @@ body.sec-notes{background-image:none!important}
 .gnm-3 em{position:absolute;top:-7px;right:-4px;font-style:normal;font-size:9.5px;font-weight:700;background:#d8f5a2;color:#3a5a12;padding:2px 6px;border-radius:999px}
 .gnm-i{font-size:19px;line-height:1}
 .gnm-l{display:grid;border:1px solid var(--line);border-radius:12px;padding:3px}.gnm-l button{padding:9px 10px!important}.gnm-l .gnm-i{font-size:16px;width:24px;text-align:center}
+.nsp-l{display:grid;gap:4px;max-height:50vh;overflow:auto;margin:10px 0}.nsp-r{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-radius:10px;cursor:pointer}
+.nsp-r{display:grid!important;grid-template-columns:auto 1fr;align-items:start}.nsp-r input{width:auto!important;margin:3px 0 0}.nsp-r span{display:block;line-height:1.5}.nsp-r small{display:block}.nsp-t{display:grid!important;grid-template-columns:auto 1fr}.nsp-t input{width:auto!important;margin-top:3px}.nsp-t small{display:block}.nsp-r s{color:#c92a2a}.nsp-r b{color:#2b8a3e}.nsp-ok{padding:14px;border-radius:12px;background:var(--accent-soft);margin:10px 0}.nsp-t{display:flex;gap:8px;align-items:flex-start;margin-top:10px;font-size:14px}
+
 @media (max-width:600px){.gn-g{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:22px 16px}.gn-crumb h2{font-size:26px}.gn-acts{flex:1 1 100%}}
 
 .nbc:hover .nbc-th{transform:translateY(-2px)}
@@ -4097,10 +4100,10 @@ async function nbOpen(bid,o){o=o||{};const bk=nbBook(bid);if(!bk)return;await nb
   NB.bid=bid;NB.undo=[];NB.redo=[];NB.sel=null;NB.side=!!o.side;NB.docPid=null;
   nbSaveBook(bk,{opened:new Date().toISOString()});
   let ed=$('nbEd');if(!ed){ed=document.createElement('div');ed.id='nbEd';document.body.appendChild(ed)}
-  ed.className='nbed'+(bk.kind==='doc'?' doc':'')+(NB.side?' side':'');document.body.classList.toggle('nb-side',NB.side);document.body.classList.add('nb-open');
+  ed.className='nbed'+(bk.kind==='doc'?' doc':'')+(NB.side?' side':'');ed.lang='tr';ed.spellcheck=nbSpellOn();ed.setAttribute('autocorrect','on');document.body.classList.toggle('nb-side',NB.side);document.body.classList.add('nb-open');
   ed.innerHTML=`<div class="nbe-top"><button class="iconbtn" type="button" data-ne="close" aria-label="Defteri kapat">←</button>${bk.kind==='doc'?'<button class="iconbtn nbe-tt" type="button" data-ne="tree" aria-label="Sayfalar">☰</button>':''}
     <input class="nbe-title" id="nbTitle" aria-label="Defter adı"><span class="hint nbe-saved" id="nbSaved"></span>
-    <div class="nbe-acts"><button class="btn nbe-rec" type="button" data-ne="rec" id="nbRecB">🎙 <span>Kayıt</span></button><button class="iconbtn" type="button" data-ne="recs" title="Ses kayıtları" aria-label="Ses kayıtları">🎧</button>
+    <div class="nbe-acts"><button class="btn nbe-rec" type="button" data-ne="rec" id="nbRecB">🎙 <span>Kayıt</span></button><button class="iconbtn" type="button" data-ne="recs" title="Ses kayıtları" aria-label="Ses kayıtları">🎧</button><button class="iconbtn" type="button" data-nsp="spell" title="Yazım denetimi" aria-label="Yazım denetimi" style="font-size:12px;font-weight:700">Aa✓</button>
     ${bk.kind==='doc'?'':'<button class="iconbtn" type="button" data-ne="pages" title="Sayfalar" aria-label="Sayfalar">▦</button>'}<button class="iconbtn" type="button" data-ne="side" title="Yan yana / tam ekran" aria-label="Yan yana">◧</button><button class="iconbtn" type="button" data-ne="export" title="PDF olarak kaydet" aria-label="PDF olarak kaydet">⬇</button></div></div>
    <div class="nbe-tools" id="nbTools"></div><div class="nbe-player" id="nbPlayer" hidden></div>
    <div class="nbe-body">${bk.kind==='doc'?'<div class="nbe-tree" id="nbTree"></div>':''}<div class="nbe-scroll" id="nbScroll"><div class="nbe-pages" id="nbPages"></div></div></div>
@@ -4188,7 +4191,7 @@ function nbSelDraw(){const s=NB.sel;if(!s)return;const el=document.querySelector
   nbSelBar(r)}
 function nbSelBar(r){let bar=$('nbSelBar');const s=NB.sel;if(!s){if(bar)bar.remove();return}const el=document.querySelector(`.nbp[data-pid="${s.pid}"]`);if(!el)return;
   if(!bar||bar.parentNode!==el){if(bar)bar.remove();bar=document.createElement('div');bar.id='nbSelBar';bar.className='nbselbar';
-    bar.innerHTML=`<button type="button" data-ne="sdel">🗑 Sil</button><button type="button" data-ne="sdup">⧉ Çoğalt</button><button type="button" data-ne="scol">🎨 Renk</button><button type="button" data-ne="scopy">📋 Kopyala</button><button type="button" data-ne="soff" aria-label="Seçimi kaldır">✕</button>`;el.appendChild(bar)}
+    bar.innerHTML=`<button type="button" data-ne="sdel">🗑 Sil</button><button type="button" data-ne="sdup">⧉ Çoğalt</button><button type="button" data-ne="scol">🎨 Renk</button><button type="button" data-ne="scopy">📋 Kopyala</button><button type="button" data-nsp="sel-fix">✨ Güzelleştir</button><button type="button" data-nsp="sel-ocr">🔤 Metne çevir</button><button type="button" data-ne="soff" aria-label="Seçimi kaldır">✕</button>`;el.appendChild(bar)}
   const pg=nbPg(s.pid);r=r||s.bb;bar.style.left=Math.max(0,r.x/10)+'%';bar.style.top=Math.max(0,(r.y-8)/(pg.h||NB_H)*100)+'%'}
 function nbSelClear(){if(!NB.sel)return;const pid=NB.sel.pid;NB.sel=null;nbSelBar();const el=document.querySelector(`.nbp[data-pid="${pid}"]`);if(el&&NB.live&&NB.live.parentNode===el){const c=NB.live.getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,NB.live.width,NB.live.height)}}
 function nbSelApply(T){const s=NB.sel,pg=nbPg(s.pid);nbPush(pg);const ns=new Set();pg.strokes=pg.strokes.map(S=>{if(!s.strokes.has(S))return S;const n=nbXf(S,T);ns.add(n);return n});s.strokes=ns;
@@ -4342,7 +4345,7 @@ function nbPageMenu(pid,anchor){const pg=nbPg(pid);if(!pg)return;const ink=pg.ty
    ${ink&&!pg.bg?`<div class="nbmenu-l">Kağıt</div><div class="nbmenu-r">${Object.entries(NB_PAPER).map(([k,l])=>`<button data-ne="pm" data-pid="${pid}" data-v="paper" data-x="${k}" aria-pressed="${(pg.paper||nbBook().paper)===k}">${l}</button>`).join('')}</div>
    <div class="nbmenu-r">${NB_PC.map(c=>`<button class="nb-sw" data-ne="pm" data-pid="${pid}" data-v="pc" data-x="${c}" style="background:${c}" aria-label="Kağıt rengi"></button>`).join('')}</div>`:''}
    ${ink&&!pg.bg?`<div class="nbmenu-l">Şablon</div><div class="nbmenu-r">${Object.entries(NB_TPL).map(([k,l])=>`<button data-ne="pm" data-pid="${pid}" data-v="paper" data-x="${k}" aria-pressed="${pg.paper===k}">${l}</button>`).join('')}</div>`:''}
-   ${ink?`<button data-ne="pm" data-pid="${pid}" data-v="ocr">🔤 El yazısını metne çevir${pg.ocr?' (yeniden)':''}</button>`:''}${ink&&pg.ocr?`<button data-ne="pm" data-pid="${pid}" data-v="ocrshow">📄 Çevrilmiş metni gör</button>`:''}
+   ${ink?`<button data-nsp="pg-fix" data-pid="${pid}">✨ El yazısını güzelleştir</button>`:''}${ink?`<button data-ne="pm" data-pid="${pid}" data-v="ocr">🔤 El yazısını metne çevir${pg.ocr?' (yeniden)':''}</button>`:''}${ink&&pg.ocr?`<button data-ne="pm" data-pid="${pid}" data-v="ocrshow">📄 Çevrilmiş metni gör</button>`:''}
    ${ink&&NB.clip?`<button data-ne="pm" data-pid="${pid}" data-v="paste">📋 Kopyalananı yapıştır</button>`:''}
    <button data-ne="pm" data-pid="${pid}" data-v="up">↑ Yukarı taşı</button><button data-ne="pm" data-pid="${pid}" data-v="down">↓ Aşağı taşı</button><button data-ne="pm" data-pid="${pid}" data-v="dup">⧉ Sayfayı çoğalt</button>
    <button data-ne="pm" data-pid="${pid}" data-v="del" class="nbmenu-d">🗑 Sayfayı sil</button>`)}
@@ -4400,7 +4403,7 @@ function nbSan(h){const t=document.createElement('template');t.innerHTML=h||'';c
   const walk=n=>{[...n.childNodes].forEach(c=>{if(c.nodeType===1){walk(c);if(!ok.test(c.tagName)){c.replaceWith(...c.childNodes)}else{[...c.attributes].forEach(a=>{if(!(c.tagName==='A'&&a.name==='href'&&/^https?:/i.test(a.value)))c.removeAttribute(a.name)});if(c.tagName==='A'){c.setAttribute('target','_blank');c.setAttribute('rel','noopener')}}}else if(c.nodeType!==3)c.remove()})};walk(t.content);
   let s=t.innerHTML;if(s==='<br>')s='';return s}
 function nbBlocksHtml(pg){let n=0;return (pg.blocks||[]).map(b=>{if(b.t==='ol')n++;else n=0;const ph=b.t==='p'?'Yazmaya başla, komutlar için / yaz':(NBB.find(x=>x[0]===b.t)||[0,''])[1];
-  const inner=b.t==='hr'?'<hr>':b.t==='img'?`<img src="${esc(assetSrcOf(b.src))}" alt="">`:`<div class="nbb-x" contenteditable="true" data-ph="${ph}" spellcheck="true">${nbSan(b.x)}</div>`;
+  const inner=b.t==='hr'?'<hr>':b.t==='img'?`<img src="${esc(assetSrcOf(b.src))}" alt="">`:`<div class="nbb-x" contenteditable="true" data-ph="${ph}">${nbSan(b.x)}</div>`;
   return `<div class="nbb nbb-${b.t}${b.ck?' ck':''}" data-bid="${b.id}" data-t="${b.t}" ${b.ind?`style="--ind:${b.ind}"`:''}><div class="nbb-g"><button type="button" tabindex="-1" data-nt="add" aria-label="Altına blok ekle">＋</button><button type="button" tabindex="-1" data-nt="menu" aria-label="Blok seçenekleri">⋮⋮</button></div>${b.t==='todo'?`<input type="checkbox" data-nt="ck" ${b.ck?'checked':''} aria-label="Tamamlandı">`:''}${b.t==='ul'?'<span class="nbb-dot">•</span>':''}${b.t==='ol'?`<span class="nbb-num">${n}.</span>`:''}${b.t==='callout'?'<span class="nbb-ci">💡</span>':''}${inner}${b.ref?`<button type="button" class="nbb-ref" data-ref="${esc(b.ref.b)}|${b.ref.p}" contenteditable="false">📖 ${esc(b.ref.t)} · s.${b.ref.p}</button>`:''}</div>`}).join('')}
 function nbTextPageHtml(pg,doc,num){return `<div class="nbpw nbtp${doc?' nbdoc':''}" data-pid="${pg.id}">${doc?'':`<div class="nbp-h"><span>Sayfa ${num} · yazı</span><button type="button" class="nbp-m" data-ne="pmenu" data-pid="${pg.id}" aria-label="Sayfa seçenekleri">⋯</button></div>`}
    <div class="nbt-card"><div class="nbdoc-h">${doc?`<button class="nbdoc-ic" type="button" data-ne="icon" data-pid="${pg.id}">${esc(pg.icon||'📄')}</button>`:''}<div class="nbdoc-t" contenteditable="true" data-pt="${pg.id}" data-ph="Başlıksız">${esc(pg.title||'')}</div>${doc?`<button class="nbp-m" type="button" data-ne="pmenu" data-pid="${pg.id}" aria-label="Sayfa seçenekleri">⋯</button>`:''}</div>
@@ -5418,7 +5421,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v135';
+const DK_VER='v136';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -5742,7 +5745,7 @@ function nbPageMenu(pid,anchor){const pg=nbPg(pid);if(!pg)return;const ink=pg.ty
    ${ink&&!pg.bg?`<div class="nbmenu-l">Kağıt</div><div class="nbmenu-r">${Object.entries(NB_PAPER).map(([k,l])=>`<button data-ne="pm" data-pid="${pid}" data-v="paper" data-x="${k}" aria-pressed="${(pg.paper||nbBook().paper)===k}">${l}</button>`).join('')}</div>
    <div class="nbmenu-r">${NB_PC.map(c=>`<button class="nb-sw" data-ne="pm" data-pid="${pid}" data-v="pc" data-x="${c}" style="background:${c}" aria-label="Kağıt rengi"></button>`).join('')}</div>`:''}
    ${ink&&!pg.bg?`<div class="nbmenu-l">Şablon</div><div class="nbmenu-r">${Object.entries(NB_TPL).map(([k,l])=>`<button data-ne="pm" data-pid="${pid}" data-v="paper" data-x="${k}" aria-pressed="${pg.paper===k}">${l}</button>`).join('')}</div>`:''}
-   ${ink?`<button data-ne="pm" data-pid="${pid}" data-v="ocr">🔤 El yazısını metne çevir${pg.ocr?' (yeniden)':''}</button>`:''}${ink&&pg.ocr?`<button data-ne="pm" data-pid="${pid}" data-v="ocrshow">📄 Çevrilmiş metni gör</button>`:''}
+   ${ink?`<button data-nsp="pg-fix" data-pid="${pid}">✨ El yazısını güzelleştir</button>`:''}${ink?`<button data-ne="pm" data-pid="${pid}" data-v="ocr">🔤 El yazısını metne çevir${pg.ocr?' (yeniden)':''}</button>`:''}${ink&&pg.ocr?`<button data-ne="pm" data-pid="${pid}" data-v="ocrshow">📄 Çevrilmiş metni gör</button>`:''}
    ${ink&&NB.clip?`<button data-ne="pm" data-pid="${pid}" data-v="paste">📋 Kopyalananı yapıştır</button>`:''}
    <button data-ne="pm" data-pid="${pid}" data-v="up">↑ Yukarı taşı</button><button data-ne="pm" data-pid="${pid}" data-v="down">↓ Aşağı taşı</button>
    <button data-pm="move" data-pid="${pid}">↪ Başka deftere taşı / kopyala</button>${ink?`<button data-pm="clear" data-pid="${pid}">🧹 Sayfayı temizle</button>`:''}
@@ -5831,6 +5834,97 @@ function nbStabEnd(S,c){const lv=nbStab();if(!lv)return;const p=S.pts;
   S.bb=null}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-nstab]');if(!b)return;e.preventDefault();e.stopPropagation();try{localStorage.setItem('dk-stab',b.dataset.nstab)}catch(x){}
   b.parentNode.querySelectorAll('[data-nstab]').forEach(x=>x.setAttribute('aria-pressed',x===b));toast(['Sabitleme kapalı','Sabitleme: az','Sabitleme: orta','Sabitleme: çok'][+b.dataset.nstab])},true);
+/* ===================== ✨ Yazım iyileştirme: el yazısını güzelleştir, seçimi metne çevir, yazım denetimi ===================== */
+function nbMedian(a){if(!a.length)return 0;const b=a.slice().sort((x,y)=>x-y);return b[b.length>>1]}
+function nbPtsBB(p){let a=1e9,b=1e9,c=-1e9,d=-1e9;for(let i=0;i<p.length;i+=3){if(p[i]<a)a=p[i];if(p[i]>c)c=p[i];if(p[i+1]<b)b=p[i+1];if(p[i+1]>d)d=p[i+1]}return {x:a,y:b,w:c-a,h:d-b,cx:(a+c)/2,cy:(b+d)/2,bot:d}}
+function nbSmoothPts(p){const n=p.length/3;if(n<5)return p.slice();let o=p.slice(),r=p.slice();
+  for(let pass=0;pass<2;pass++){for(let i=1;i<n-1;i++){let sx=0,sy=0,sq=0,k=0;for(let j=Math.max(0,i-2);j<=Math.min(n-1,i+2);j++){sx+=o[j*3];sy+=o[j*3+1];sq+=o[j*3+2];k++}r[i*3]=sx/k;r[i*3+1]=sy/k;r[i*3+2]=sq/k}o=r.slice()}return r}
+function nbFitLine(P){const n=P.length;if(n<2)return {m:0,b:n?P[0][1]:0};let sx=0,sy=0,sxx=0,sxy=0;for(const [x,y] of P){sx+=x;sy+=y;sxx+=x*x;sxy+=x*y}const d=n*sxx-sx*sx;if(Math.abs(d)<1e-6)return {m:0,b:sy/n};const m=(n*sxy-sx*sy)/d;return {m,b:(sy-m*sx)/n}}
+/* strokes: kalem çizgileri → Map(eski → yeni) */
+function nbBeautify(strokes,pg){const out=new Map();const L=strokes.filter(S=>S.k!=='hl'&&S.k!=='tape'&&S.pts&&S.pts.length>=6);if(!L.length)return out;
+  const it=L.map(S=>{const p=nbSmoothPts(S.pts);return {S,p,bb:nbPtsBB(p),dy:0}});
+  const H=Math.max(6,nbMedian(it.filter(o=>o.bb.h>3).map(o=>o.bb.h))||12);
+  /* satırlara ayır: gövde çizgileri soldan sağa izlenir (eğik satırlar karışmasın), noktalar/şapkalar en yakın gövdeye bağlanır */
+  const lines=[];const bodyAll=it.filter(o=>o.bb.h>=H*.4).sort((a,b)=>a.bb.x-b.bb.x);
+  for(const o of bodyAll){let best=null,bd=1e9;for(const ln of lines){const I=ln.items,last=I[I.length-1];let py;if(I.length>=3){const f=nbFitLine(I.map(x=>[x.bb.cx,x.bb.cy]));const m=Math.max(-.3,Math.min(.3,f.m));py=I.reduce((a,x)=>a+x.bb.cy-m*x.bb.cx,0)/I.length+m*o.bb.cx}else if(I.length===2){const m=Math.max(-.15,Math.min(.15,(I[1].bb.cy-I[0].bb.cy)/Math.max(1,I[1].bb.cx-I[0].bb.cx)));py=I[1].bb.cy+m*(o.bb.cx-I[1].bb.cx)}else py=I[0].bb.cy;const d=Math.abs(o.bb.cy-py),gap=o.bb.x-(last.bb.x+last.bb.w);if(d<H*1.2&&gap<H*8&&d+Math.max(0,gap)*.05<bd){best=ln;bd=d+Math.max(0,gap)*.05}}
+    if(!best){best={items:[]};lines.push(best)}best.items.push(o)}
+  for(const o of it){if(o.bb.h>=H*.4)continue;let nb=null,nd=1e9;for(const b of bodyAll){const dx=Math.max(0,Math.abs(b.bb.cx-o.bb.cx)-b.bb.w/2),dy=Math.max(0,b.bb.y-o.bb.bot,o.bb.y-b.bb.bot),d=Math.hypot(dx,dy);if(d<nd){nd=d;nb=b}}
+    const ln=nb&&nd<H*2?lines.find(l=>l.items.includes(nb)):null;if(ln)ln.items.push(o);else lines.push({items:[o]})}
+  const ruled=!pg||pg.bg?null:({lined:[120,36],margin:[120,36],wide:[130,50]})[pg.paper||(nbBook(pg.book)||{}).paper||'lined'];
+  for(const ln of lines){const body=ln.items.filter(o=>o.bb.h>=H*.4);if(!body.length)continue;
+    /* 1) eğimi düzelt */
+    const span=Math.max(...ln.items.map(o=>o.bb.x+o.bb.w))-Math.min(...ln.items.map(o=>o.bb.x));
+    if(body.length>=2&&span>H*2){let P=body.map(o=>[o.bb.cx,o.bb.bot]);let f=nbFitLine(P);const P2=P.filter(([x,y])=>y-(f.m*x+f.b)<H*.35);if(P2.length>=2)f=nbFitLine(P2);
+      const ang=Math.atan(f.m);if(Math.abs(ang)>.004&&Math.abs(ang)<.35){const cx=(Math.min(...ln.items.map(o=>o.bb.x))+Math.max(...ln.items.map(o=>o.bb.x+o.bb.w)))/2,cy=f.m*cx+f.b,c=Math.cos(-ang),s=Math.sin(-ang);
+        for(const o of ln.items){const p=o.p;for(let i=0;i<p.length;i+=3){const x=p[i]-cx,y=p[i+1]-cy;p[i]=cx+x*c-y*s;p[i+1]=cy+x*s+y*c}o.bb=nbPtsBB(p)}}}
+    /* 2) taban çizgisine hizala */
+    const bots=body.map(o=>o.bb.bot);let base=nbMedian(bots);const core=body.filter(o=>o.bb.bot-base<H*.45);if(core.length)base=nbMedian(core.map(o=>o.bb.bot));
+    if(ruled){const [y0,g]=ruled;const k=Math.round((base-y0)/g),rule=y0+k*g;if(k>=0&&Math.abs(rule-2-base)<g*.4)base=rule-2}
+    for(const o of body){const d=o.bb.bot-base;if(Math.abs(d)<H*.45)o.dy=-d*.85;else if(d>=H*.45){const top=o.bb.y,tops=core.map(x=>x.bb.y),mt=nbMedian(tops);o.dy=core.length?Math.max(-H*.3,Math.min(H*.3,(mt-top)*.5)):0}}
+    if(ruled){const sh=nbMedian(body.map(o=>o.bb.bot+o.dy))-base;if(Math.abs(sh)>.5)for(const o of body)o.dy-=sh}
+    for(const o of ln.items){if(o.bb.h>=H*.4)continue;let nb=null,nd=1e9;for(const b of body){const d=Math.abs(b.bb.cx-o.bb.cx)-b.bb.w/2;if(d<nd){nd=d;nb=b}}o.dy=nb&&nd<H*1.5?nb.dy:0}}
+  for(const o of it){const p=o.p;if(o.dy)for(let i=1;i<p.length;i+=3)p[i]+=o.dy;const n={...o.S,pts:p,bb:null};out.set(o.S,n)}return out}
+function nbBeautifyApply(pg,sel){const src=sel?pg.strokes.filter(S=>sel.has(S)):pg.strokes;const m=nbBeautify(src,pg);if(!m.size){toast('Güzelleştirilecek el yazısı yok');return null}
+  nbPush(pg);const ns=new Set();pg.strokes=pg.strokes.map(S=>{const n=m.get(S);if(n){ns.add(n);return n}return S});nbAfter(pg);toast('✨ Güzelleştirildi — beğenmezsen Geri al');return ns}
+/* seçili el yazısını metne çevir */
+async function nbSelToText(){const s=NB.sel;if(!s)return;const pg=nbPg(s.pid);const L=pg.strokes.filter(S=>s.strokes.has(S)&&S.k!=='hl'&&S.k!=='tape');if(!L.length){toast('Önce el yazısını kementle seç');return}
+  const bb=nbPtsBB([].concat(...L.map(S=>S.pts)));const pad=20,sc=Math.min(3,900/Math.max(40,bb.w));
+  const fake={h:Math.round(bb.h*sc+pad*2),strokes:L.map(S=>{const p=S.pts.slice();for(let i=0;i<p.length;i+=3){p[i]=(p[i]-bb.x)*sc+pad;p[i+1]=(p[i+1]-bb.y)*sc+pad}return {...S,pts:p,w:(S.w||2)*Math.min(sc,1.8),bb:null}})};
+  toast('El yazısı okunuyor…');let t='';try{t=await nbOcr(fake)}catch(e){toast((e&&e.ui)||'Yazıya çevrilemedi — Drive ile eşitle açık mı?');return}
+  t=(t||'').trim();if(!t){toast('Okunamadı — biraz daha büyük ya da düzgün yaz');return}
+  const lh=nbMedian(L.map(S=>nbPtsBB(S.pts).h))||24,nl=Math.max(1,t.split('\n').length),fs=[18,24,32,44].reduce((a,b)=>Math.abs(b-bb.h/nl*.8)<Math.abs(a-bb.h/nl*.8)?b:a,24);
+  const cc={};L.forEach(S=>{if(!/^#f{3,6}$/i.test(S.c))cc[S.c]=(cc[S.c]||0)+1});const col=Object.keys(cc).sort((a,b)=>cc[b]-cc[a])[0]||NB.color;
+  nbPush(pg);const set=new Set(L);pg.strokes=pg.strokes.filter(S=>!set.has(S));const x=Math.max(0,Math.min(bb.x,900));
+  pg.items.push({t:'text',id:nbId(),x,y:Math.max(0,bb.y),w:Math.max(240,Math.min(1000-x,bb.w+40)),fs,c:col,txt:t});nbSelClear();nbAfter(pg);toast('🔤 Metne çevrildi — beğenmezsen Geri al')}
+
+/* ---- yazım denetimi (Türkçe, sadece yazım ve noktalama — cümleye dokunmaz) ---- */
+const NB_SP_W={herkez:'herkes',yanlız:'yalnız',yanlızca:'yalnızca',yalnış:'yanlış',yalnışlıkla:'yanlışlıkla',birşey:'bir şey',birşeyler:'bir şeyler',birşeyi:'bir şeyi',hiçbirşey:'hiçbir şey',herşey:'her şey',herşeyi:'her şeyi',herşeye:'her şeye',herşeyin:'her şeyin',bişey:'bir şey',bişeyler:'bir şeyler',
+ orjinal:'orijinal',şöför:'şoför',makina:'makine',egzos:'egzoz',antreman:'antrenman',traş:'tıraş',meyva:'meyve',ünvan:'unvan',yada:'ya da',pekçok:'pek çok',birsürü:'bir sürü',malesef:'maalesef',maalesefki:'maalesef ki',tabiki:'tabii ki',hergün:'her gün',herzaman:'her zaman',birdaha:'bir daha',hiçkimse:'hiç kimse',
+ deyil:'değil',şarz:'şarj',fasülye:'fasulye',süpriz:'sürpriz',labaratuvar:'laboratuvar',laboratuar:'laboratuvar',kıravat:'kravat',döküman:'doküman',entellektüel:'entelektüel',eşortman:'eşofman',profösör:'profesör',sandoviç:'sandviç',kirbit:'kibrit',poaça:'poğaça',klavuz:'kılavuz',kılasör:'klasör',
+ birşekilde:'bir şekilde',şuan:'şu an',şuanda:'şu anda',hiçbiri:'hiçbiri',ünüversite:'üniversite',yalnızlıkla:'yalnızlıkla',acaip:'acayip',aksesuar:'aksesuar',eşek:'eşek',kirpik:'kirpik',yanlızlık:'yalnızlık',orjinali:'orijinali',sarmısak:'sarımsak',kaşkol:'kaşkol',
+ pantalon:'pantolon',kolleksiyon:'koleksiyon',televizyon:'televizyon',mikrop:'mikrop',spiker:'spiker',stüdyo:'stüdyo',sürç:'sürç',vatandaş:'vatandaş',zerafet:'zarafet',yüzyıl:'yüzyıl',kontür:'kontür',küsür:'küsur',mahsur:'mahsur',ilk:'ilk',puset:'puset',
+ eylül:'eylül',ingilizce:'İngilizce',türkçe:'Türkçe',almanca:'Almanca',fransızca:'Fransızca',ispanyolca:'İspanyolca',korece:'Korece',insiyatif:'inisiyatif',inisiyatif:'inisiyatif',psikolok:'psikolog',fizyoterapisit:'fizyoterapist',rehabilitesyon:'rehabilitasyon',hipotez:'hipotez',
+ 'hiç bir':'hiçbir','her hangi':'herhangi','bir çok':'birçok','bir kaç':'birkaç','tabi ki':'tabii ki','yanlız başına':'yalnız başına','hiç bir şey':'hiçbir şey'};
+Object.keys(NB_SP_W).forEach(k=>{if(NB_SP_W[k]===k)delete NB_SP_W[k]});
+const NB_TRU=s=>s.replace(/^i/,'İ').replace(/^ı/,'I').replace(/^./,c=>c.toLocaleUpperCase('tr-TR'));
+const NB_SP_R=[
+ ...Object.entries(NB_SP_W).map(([w,r])=>({k:'w:'+w,from:w,to:r,why:'Yazımı',re:new RegExp('(^|[^\\p{L}])('+w.replace(/ /g,'\\s+')+')(?![\\p{L}])','giu'),fn:(m,a,b)=>a+(b[0]!==b[0].toLocaleLowerCase('tr-TR')&&r[0]===r[0].toLocaleLowerCase('tr-TR')?NB_TRU(r):r)})),
+ {k:'mi',why:'Soru eki "mi" ayrı yazılır',re:/(^|[^\p{L}])(\p{L}{2,}(?:yor|mış|miş|muş|müş|acak|ecek))(mı|mi|mu|mü)(sın|sin|sun|sün|yım|yim|yum|yüm|yız|yiz|yuz|yüz|sınız|siniz|sunuz|sünüz|dır|dir|dur|dür)?(?![\p{L}])/giu,fn:(m,a,b,c,d)=>a+b+' '+c+(d||'')},
+ {k:'sp,',why:'Virgülden önce boşluk olmaz',re:/(\p{L}) +([,;:])(?=\s|$)/gu,fn:(m,a,b)=>a+b},
+ {k:'sp,2',why:'Virgül kelimeye bitişik, ardından boşluk olur',re:/(\p{L})( +,|, *(?! )|( +), +)(?=\p{L})/gu,fn:(m,a,b)=>b===', '?m:a+', '},
+ {k:'sp.',why:'Noktadan önce boşluk olmaz',re:/(\p{L}) +([.!?])(?=\s|$)/gu,fn:(m,a,b)=>a+b},
+
+ {k:'.sp',why:'Noktadan sonra boşluk olur',re:/(\p{Ll}{2,})([.!?])(\p{L}{2,})/gu,fn:(m,a,b,c)=>/^(com|net|org|tr|edu|gov|io|html|pdf|docx?)$/i.test(c)?m:a+b+' '+NB_TRU(c)},
+ {k:'2sp',why:'Fazla boşluk',re:/(\S)  +(?=\S)/g,fn:(m,a)=>a+' '},
+ {k:'cap',why:'Cümle büyük harfle başlar',re:/([.!?] +)(\p{Ll})/gu,fn:(m,a,b)=>a+NB_TRU(b)}];
+function nbSpellOn(){try{return localStorage.getItem('dk-spell')!=='off'}catch(e){return true}}
+/* yalnızca etiket dışındaki metne uygula */
+function nbSpTx(html,f,isHtml){if(!isHtml)return f(html);return html.split(/(<[^>]+>|&[a-z#0-9]+;)/i).map(x=>/^<|^&/.test(x)?x:f(x)).join('')}
+function nbSpFields(bid){const F=[];for(const r of nbPagesOf(bid)){const pg=nbPg(r.id);if(!pg)continue;if(pg.title)F.push({pg,get:()=>pg.title,set:v=>pg.title=v,h:false});
+  (pg.blocks||[]).forEach(b=>{if(b.x&&b.t!=='code')F.push({pg,get:()=>b.x,set:v=>b.x=v,h:true})});(pg.items||[]).forEach(i=>{if(i.t==='text'&&i.txt)F.push({pg,get:()=>i.txt,set:v=>i.txt=v,h:false})})}return F}
+function nbSpScan(bid){const G=new Map();for(const f of nbSpFields(bid)){const v=f.get();for(const R of NB_SP_R){R.re.lastIndex=0;nbSpTx(v,t=>{t.replace(R.re,(...m)=>{const whole=m[0],fixed=R.fn(...m);if(whole===fixed)return whole;
+      const key=R.k+':'+whole.trim().toLocaleLowerCase('tr-TR');let g=G.get(key);if(!g){const off=m[m.length-2],str=m[m.length-1],pre=str.slice(Math.max(0,off-14),off).replace(/^\S*\s/,'…'),post=str.slice(off+whole.length,off+whole.length+14).replace(/\s\S*$/,'…');g={key,R,from:pre+whole+post,to:pre+fixed+post,n:0,F:new Set()};G.set(key,g)}g.n++;g.F.add(f);return whole});return t},f.h)}}
+  return [...G.values()]}
+function nbSpellDlg(){const bk=nbBook();if(!bk)return;document.querySelectorAll('.nbmenu').forEach(m=>m.remove());const G=nbSpScan(bk.id);NB.spG=G;const on=nbSpellOn();
+  msModal(`<div class="eyebrow">Aa✓ Yazım denetimi</div>
+   <p class="hint" style="margin:0">Yalnızca yazım ve noktalamaya bakar, cümlelerine dokunmaz. Düzeltmek istediklerini işaretle.</p>
+   ${G.length?`<div class="nsp-l">${G.map((g,i)=>`<label class="nsp-r"><input type="checkbox" data-nspi="${i}" checked><span><s>${esc(g.from.trim().slice(0,60))}</s><br>→ <b>${esc(g.to.trim().slice(0,60))}</b><small class="hint">${esc(g.R.why)}${g.n>1?' · '+g.n+' yerde':''}</small></span></label>`).join('')}</div>
+   <div class="msm-acts"><button class="btn primary" type="button" data-nsp="fix">Seçilenleri düzelt</button><span class="hint" id="nspMsg"></span></div>`:`<div class="nsp-ok">✓ Bu defterde bulduğum bir yazım hatası yok.</div>`}
+   <label class="nsp-t"><input type="checkbox" data-nsp="live" ${on?'checked':''}> <span>Yazarken yanlış kelimelerin altını çiz <small class="hint">(iPad/Mac'in kendi Türkçe denetimi — klavyede Türkçe seçili olmalı)</small></span></label>`)}
+async function nbSpFix(){const G=NB.spG||[];const sel=[...document.querySelectorAll('[data-nspi]')].filter(x=>x.checked).map(x=>G[+x.dataset.nspi]);if(!sel.length){msClose();return}
+  const touched=new Set();let n=0;
+  for(const g of sel){for(const f of g.F){const v=f.get();const nv=nbSpTx(v,t=>t.replace(g.R.re,(...m)=>{const whole=m[0];const key=g.R.k+':'+whole.trim().toLocaleLowerCase('tr-TR');if(key!==g.key)return whole;const r=g.R.fn(...m);if(r!==whole)n++;return r}),f.h);if(nv!==v){f.set(nv);touched.add(f.pg)}}}
+  for(const pg of touched){await nbFlushPatch(pg)}msClose();try{nbBodyRender(true)}catch(e){}toast(n?'✓ '+n+' düzeltme yapıldı':'Değişiklik yok')}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-nsp]');if(!b)return;const k=b.dataset.nsp;
+  if(k==='live'){const on=b.checked;try{localStorage.setItem('dk-spell',on?'on':'off')}catch(x){}const ed=$('nbEd');if(ed)ed.spellcheck=on;toast(on?'Alt çizgi açık':'Alt çizgi kapalı');return}
+  e.preventDefault();e.stopPropagation();document.querySelectorAll('.nbmenu').forEach(m=>m.remove());
+  if(k==='spell'){nbSpellDlg();return}
+  if(k==='fix'){nbSpFix();return}
+  if(k==='sel-ocr'){nbSelToText();return}
+  if(k==='sel-fix'){const s=NB.sel;if(!s)return;const pg=nbPg(s.pid);const ns=nbBeautifyApply(pg,s.strokes);if(ns){NB.sel={pid:pg.id,strokes:ns,items:s.items};nbSelBB();nbSelDraw()}return}
+  if(k==='pg-fix'){const pg=nbPg(b.dataset.pid);if(pg){nbSelClear();nbBeautifyApply(pg)}return}},true);
+try{window.__yz={nbPg,nbPagesOf,nbAfter,nbBeautifyApply,nbSpScan}}catch(e){}
+
 
 /* ===================== 🎬 Film köşesi ===================== */
 const FILM_CAT=[['psy','🧩 Psikolojik gerilim & hafıza'],['rom','💞 Yavaş yanan romantizm'],['mus','🎻 Müzik & dans'],['neu','🧠 Beyin & zihin'],['dys','🌒 Distopya & bilim kurgu'],['aca','📚 Karanlık akademi'],['tr','🇹🇷 Türk sineması'],['old','🏛 Ücretsiz klasikler']];
