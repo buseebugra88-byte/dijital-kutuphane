@@ -5421,20 +5421,28 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v138';
+const DK_VER='v139';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
-async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
-  const j=await (await gfetch(GD+'?q='+q+'&pageSize=1&fields='+encodeURIComponent('files(id)'))).json();id=j.files&&j.files[0]&&j.files[0].id;
-  if(!id)id=(await (await gfetch(GD+'?fields=id',1,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'Dijital Kütüphanem — kitaplar',mimeType:'application/vnd.google-apps.folder'})})).json()).id;dbkSet('bookfolder',id);return id}
+const DK_BF='📱 Uygulamadan eklenenler';
+async function dkBookFolder(){let id=dbkGet('bookfolder2');if(id)return id;const one=async q=>{const j=await (await gfetch(GD+'?q='+encodeURIComponent(q)+'&pageSize=1&fields='+encodeURIComponent('files(id)'))).json();return j.files&&j.files[0]&&j.files[0].id};
+  id=await one("name = '"+DK_BF+"' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
+  if(!id){const par=await one("name = 'Kitaplarım' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
+    id=(await (await gfetch(GD+'?fields=id',1,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:DK_BF,mimeType:'application/vnd.google-apps.folder',...(par?{parents:[par]}:{})})})).json()).id}
+  dbkSet('bookfolder2',id);return id}
+/* aynı kitap Drive'a ikinci kez yüklenmesin: önce bu cihazın kaydına, sonra Drive'da aynı ad + boyuttaki dosyaya bakılır */
+function dkSentMap(){try{return JSON.parse(localStorage.getItem('dk-sent')||'{}')}catch(e){return {}}}
+async function dkExisting(b,name,size){const m=dkSentMap();if(m[b.assetId])return m[b.assetId];
+  try{const q="name = '"+name.replace(/\\/g,'\\\\').replace(/'/g,"\\'")+"' and trashed = false";const j=await (await gfetch(GD+'?q='+encodeURIComponent(q)+'&pageSize=20&fields='+encodeURIComponent('files(id,size)'))).json();
+    const f=(j.files||[]).find(x=>+x.size===size);return f?f.id:''}catch(e){return ''}}
 async function dkShareBook(b,onP){if(typeof GAUTH==='undefined'||!GAUTH.configured())throw{ui:'Google Drive bağlantısı yok.'};if(!dkHere(b))throw{ui:'Bu kitabın dosyası bu cihazda değil.'};
   await GAUTH.token();const blob=await (await LOCAL.fetchAsset(b.assetId)).blob();const folder=await dkBookFolder();const ep_=isEpubB(b);let name=(b.fileName||((b.title||'kitap')+(ep_?'.epub':'.pdf'))).replace(/[\\/]/g,'-');if(ep_&&!/\.epub$/i.test(name))name+='.epub';const type=ep_?'application/epub+zip':'application/pdf';
-  if(onP)onP('Drive\'a yükleniyor ('+(blob.size/1048576).toFixed(1)+' MB)…');let id='';
+  let id=await dkExisting(b,name,blob.size);if(id){if(onP)onP('Zaten Drive\'da ✓')}else{if(onP)onP('Drive\'a yükleniyor ('+(blob.size/1048576).toFixed(1)+' MB)…');
   try{const init=await gfetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable&fields=id',1,{method:'POST',headers:{'Content-Type':'application/json; charset=UTF-8','X-Upload-Content-Type':type,'X-Upload-Content-Length':String(blob.size)},body:JSON.stringify({name,parents:[folder]})});
     const loc=init.headers.get('Location');if(loc){const r=await fetch(loc,{method:'PUT',headers:{'Content-Type':type},body:blob});if(r.ok)id=(await r.json()).id}}catch(e){}
   if(!id){const bd='dkp'+Date.now();const body=new Blob(['--'+bd+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify({name,parents:[folder]})+'\r\n--'+bd+'\r\nContent-Type: '+type+'\r\n\r\n',blob,'\r\n--'+bd+'--']);
     id=(await (await gfetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',1,{method:'POST',headers:{'Content-Type':'multipart/related; boundary='+bd},body})).json()).id}
-  if(!id)throw{ui:'Drive\'a yüklenemedi.'};
+  }if(!id)throw{ui:'Drive\'a yüklenemedi.'};try{const m=dkSentMap();m[b.assetId]=id;localStorage.setItem('dk-sent',JSON.stringify(m))}catch(e){}
   try{const C=await caches.open('dk-books');await C.put('https://dk-offline/drive/'+encodeURIComponent(id),new Response(blob,{headers:{'Content-Type':'application/octet-stream'}}))}catch(e){}
   await st.db.collection('books').doc(b.id).update({source:'drive',driveId:id,fileType:isEpubB(b)?'epub':'pdf',wantDrive:false});Object.assign(b,{source:'drive',driveId:id,wantDrive:false});return id}
 function dkMissingDlg(b){const drive=typeof GAUTH!=='undefined'&&GAUTH.configured&&GAUTH.configured();
