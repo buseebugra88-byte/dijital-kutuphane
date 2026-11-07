@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Buse, 24 — Başlayan Yıl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --kraft:#c9a77c; --kraft-d:#a8865c; --paper:#fbf5e9; --ink:#3b2a20;
+    --wax:#8e1f2a; --wax-l:#b8323f; --sage:#7d8f6a; --rose:#d9a5a0; --mustard:#d6a945;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{min-height:100%}
+  body{
+    font-family:"Cormorant Garamond",Georgia,serif;color:var(--ink);
+    background:#efe4d0;
+    background-image:
+      radial-gradient(circle at 20% 10%,rgba(255,255,255,.5),transparent 40%),
+      radial-gradient(circle at 80% 90%,rgba(160,120,80,.15),transparent 50%),
+      repeating-linear-gradient(0deg,rgba(0,0,0,.015) 0 2px,transparent 2px 4px);
+    overflow-x:hidden;
+  }
+  main{max-width:520px;margin:0 auto;padding:32px 18px 80px}
+  h1{font-family:"Caveat",cursive;font-size:44px;text-align:center;line-height:1;margin-bottom:6px}
+  .sub{text-align:center;font-style:italic;font-size:18px;opacity:.75;margin-bottom:28px}
+  section{display:none;animation:fade .8s ease both}
+  section.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+  /* ---- ZARF ---- */
+  .envelope{position:relative;width:100%;aspect-ratio:1.45;margin:10px auto 18px;
+    background:var(--kraft);border-radius:6px;
+    box-shadow:0 14px 30px rgba(80,50,20,.25), inset 0 0 40px rgba(90,60,30,.25);
+    background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.04) 0 3px,transparent 3px 7px)}
+  .envelope::before{content:"";position:absolute;inset:0;
+    clip-path:polygon(0 0,100% 0,50% 58%);background:var(--kraft-d);border-radius:6px 6px 0 0;
+    box-shadow:inset 0 -2px 6px rgba(0,0,0,.15)}
+  .tape{position:absolute;width:110px;height:28px;opacity:.85;
+    background:repeating-linear-gradient(90deg,var(--rose) 0 8px,#e8c2bd 8px 16px)}
+  .tape.t1{top:-8px;left:14px;transform:rotate(-8deg)}
+  .tape.t2{bottom:-6px;right:20px;transform:rotate(6deg);
+    background:repeating-linear-gradient(90deg,var(--sage) 0 6px,#9aab88 6px 12px)}
+  .stamp{position:absolute;top:16px;right:16px;width:68px;height:82px;background:var(--paper);
+    padding:5px;transform:rotate(4deg);
+    -webkit-mask:radial-gradient(circle 3px at 3px 3px,transparent 98%,#000) -3px -3px/8px 8px;
+            mask:radial-gradient(circle 3px at 3px 3px,transparent 98%,#000) -3px -3px/8px 8px}
+  .stamp div{width:100%;height:100%;background:linear-gradient(160deg,#e9c46a,#c47a4a);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-family:"Caveat";color:#fff;line-height:1}
+  .stamp b{font-size:30px}.stamp small{font-size:13px}
+  .postmark{position:absolute;top:30px;right:70px;width:74px;height:74px;border:2px solid rgba(60,40,30,.45);
+    border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;
+    font-size:11px;letter-spacing:1px;color:rgba(60,40,30,.6);transform:rotate(-14deg);line-height:1.2}
+  .addr{position:absolute;left:28px;bottom:30px;font-family:"Caveat";font-size:28px;line-height:1.1}
+  .addr small{display:block;font-size:19px;opacity:.75}
+  .seal{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);
+    width:78px;height:78px;border-radius:50%;border:none;cursor:pointer;
+    background:radial-gradient(circle at 35% 30%,var(--wax-l),var(--wax) 60%,#5e121a);
+    box-shadow:0 4px 10px rgba(0,0,0,.35), inset 0 0 0 7px rgba(0,0,0,.12);
+    color:#f3d9c9;font-family:"Caveat";font-size:40px;font-weight:700;
+    transition:transform .3s}
+  .seal::after{content:"";position:absolute;inset:-6px;border-radius:50%;
+    border:2px dashed rgba(142,31,42,.35);animation:spin 18s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .seal:active{transform:translate(-50%,-50%) scale(.92)}
+  .seal.broken{animation:crack .6s forwards}
+  @keyframes crack{to{transform:translate(-50%,-50%) scale(1.4) rotate(25deg);opacity:0}}
+  .hint{text-align:center;font-family:"Caveat";font-size:24px;opacity:.7}
+
+  /* ---- MEKTUP ---- */
+  .letter{background:var(--paper);padding:30px 24px 26px;border-radius:3px;position:relative;
+    box-shadow:0 10px 26px rgba(80,50,20,.2);
+    background-image:repeating-linear-gradient(transparent 0 31px,rgba(120,90,60,.13) 31px 32px);
+    font-size:20px;line-height:32px}
+  .letter p{margin-bottom:32px}
+  .letter p:last-of-type{margin-bottom:0}
+  .letter .hand{font-family:"Caveat";font-size:28px}
+  .sign{text-align:right;font-family:"Caveat";font-size:28px;margin-top:6px}
+  .flower{position:absolute;right:-10px;top:-24px;width:70px;transform:rotate(18deg)}
+  .next{display:block;margin:28px auto 0;background:none;border:1.5px solid var(--ink);
+    color:var(--ink);font-family:"Caveat";font-size:24px;padding:6px 24px;border-radius:30px;cursor:pointer}
+  .next:active{background:var(--ink);color:var(--paper)}
+
+  /* ---- MUM ---- */
+  .cake-wrap{display:flex;flex-direction:column;align-items:center;margin:20px 0 10px}
+  .cake{position:relative;width:220px;height:150px;margin-top:90px}
+  .layer{position:absolute;left:0;right:0;border-radius:10px}
+  .l1{bottom:0;height:70px;background:#e9d5bd;box-shadow:inset 0 -8px 0 rgba(0,0,0,.06)}
+  .l2{bottom:62px;left:22px;right:22px;height:56px;background:var(--rose)}
+  .drip{position:absolute;bottom:108px;left:22px;right:22px;height:16px;background:var(--paper);
+    border-radius:10px 10px 0 0}
+  .drip::after{content:"";position:absolute;top:10px;left:0;right:0;height:14px;
+    background:radial-gradient(circle at 10px 0,var(--paper) 7px,transparent 8px) 0 0/22px 14px repeat-x}
+  .num{position:absolute;bottom:20px;left:0;right:0;text-align:center;font-family:"Caveat";
+    font-size:34px;color:var(--wax)}
+  .candle{position:absolute;bottom:122px;left:50%;transform:translateX(-50%);width:14px;height:62px;
+    background:repeating-linear-gradient(135deg,#fff 0 6px,var(--sage) 6px 10px);border-radius:3px}
+  .wick{position:absolute;top:-8px;left:6px;width:2px;height:9px;background:#333}
+  .flame{position:absolute;top:-44px;left:-6px;width:26px;height:38px;border:none;cursor:pointer;
+    background:radial-gradient(ellipse at 50% 75%,#fff6c8 10%,#ffd25e 40%,#ff9a3c 70%,transparent 72%);
+    border-radius:50% 50% 45% 45%/60% 60% 40% 40%;
+    animation:flick .15s infinite alternate;filter:drop-shadow(0 0 12px #ffbf4d)}
+  @keyframes flick{to{transform:scale(1.05,0.95) rotate(2deg)}}
+  .flame.out{animation:none;opacity:0;transition:opacity .4s}
+  .smoke{position:absolute;top:-30px;left:2px;width:10px;height:10px;border-radius:50%;
+    background:rgba(120,120,120,.4);opacity:0}
+  .smoke.go{animation:smoke 2s ease-out forwards}
+  @keyframes smoke{0%{opacity:.7}100%{opacity:0;transform:translate(10px,-70px) scale(3)}}
+  .wish{text-align:center;font-size:20px;font-style:italic;margin-top:18px;min-height:64px}
+  .petal{position:fixed;top:-20px;width:12px;height:16px;border-radius:60% 0 60% 0;pointer-events:none;z-index:5;
+    animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+
+  /* ---- KAVANOZ ---- */
+  .jar{position:relative;width:210px;height:250px;margin:16px auto 10px;cursor:pointer;
+    border:none;background:none;display:block}
+  .jar .lid{position:absolute;top:0;left:30px;right:30px;height:30px;border-radius:6px;
+    background:repeating-linear-gradient(90deg,#b98a52 0 6px,#a77a45 6px 12px)}
+  .jar .lid::after{content:"";position:absolute;left:-6px;right:-6px;bottom:-8px;height:10px;
+    background:var(--rose);opacity:.8;border-radius:2px}
+  .jar .glass{position:absolute;top:34px;left:0;right:0;bottom:0;border-radius:30px 30px 40px 40px;
+    background:linear-gradient(100deg,rgba(255,255,255,.55),rgba(255,255,255,.15) 40%,rgba(255,255,255,.35));
+    border:2px solid rgba(255,255,255,.8);box-shadow:inset 0 0 20px rgba(255,255,255,.6),0 10px 20px rgba(80,50,20,.15);
+    overflow:hidden}
+  .jar .label{position:absolute;top:90px;left:40px;right:40px;padding:6px 4px;background:var(--paper);
+    font-family:"Caveat";font-size:20px;text-align:center;transform:rotate(-3deg);
+    box-shadow:0 2px 4px rgba(0,0,0,.1);z-index:2;line-height:1.05}
+  .slip{position:absolute;width:30px;height:14px;border-radius:2px;transition:opacity .4s}
+  .jar:active{transform:scale(.97)}
+  .counter{text-align:center;font-family:"Caveat";font-size:22px;opacity:.75}
+  .note{background:var(--paper);margin:16px auto 0;padding:18px 20px;max-width:420px;position:relative;
+    font-size:21px;line-height:1.4;box-shadow:0 6px 16px rgba(80,50,20,.18);transform:rotate(-1deg);
+    animation:pop .5s ease both}
+  .note::before{content:"";position:absolute;top:-10px;left:50%;width:70px;height:20px;transform:translateX(-50%) rotate(2deg);
+    background:repeating-linear-gradient(90deg,var(--mustard) 0 6px,#e7c46f 6px 12px);opacity:.85}
+  .note .n{font-family:"Caveat";font-size:26px;color:var(--wax);display:block;margin-bottom:2px}
+  @keyframes pop{from{opacity:0;transform:scale(.8) rotate(-6deg)}to{opacity:1;transform:rotate(-1deg)}}
+  details{margin-top:26px}
+  summary{font-family:"Caveat";font-size:22px;cursor:pointer;text-align:center;list-style:none}
+  summary::-webkit-details-marker{display:none}
+  .drawn{list-style:none;margin-top:10px}
+  .drawn li{padding:8px 4px;border-bottom:1px dashed rgba(60,40,30,.25);font-size:18px;line-height:1.35}
+  .drawn li b{font-family:"Caveat";font-size:22px;color:var(--wax);margin-right:6px}
+  .end{text-align:center;font-family:"Caveat";font-size:26px;margin-top:30px}
+  .back{display:inline-block;margin-bottom:14px;font-family:"Caveat";font-size:20px;color:var(--ink);opacity:.6;text-decoration:none}
+  .reset{display:block;margin:14px auto 0;background:none;border:none;color:var(--ink);opacity:.5;
+    font-family:inherit;font-size:15px;text-decoration:underline;cursor:pointer}
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="index.html">← Kütüphaneme dön</a>
+  <h1>Buse için</h1>
+  <p class="sub">7 Kasım 2026 · başlayan yılın şerefine</p>
+
+  <!-- 1. ZARF -->
+  <section id="s1" class="on">
+    <div class="envelope">
+      <span class="tape t1"></span><span class="tape t2"></span>
+      <div class="stamp"><div><b>24</b><small>Sütleğen</small></div></div>
+      <div class="postmark">7 KASIM<br>2026<br>ANTALYA</div>
+      <div class="addr">Buse'ye<small>açılış tarihi: bugün</small></div>
+      <button class="seal" id="seal" aria-label="Mührü kır">B</button>
+    </div>
+    <p class="hint">mührü kırmak için dokun</p>
+  </section>
+
+  <!-- 2. MEKTUP -->
+  <section id="s2">
+    <div class="letter">
+      <svg class="flower" viewBox="0 0 60 80" aria-hidden="true">
+        <path d="M30 78 C30 55 28 40 32 22" stroke="#7d8f6a" stroke-width="2" fill="none"/>
+        <path d="M30 52 C20 48 16 40 18 36 C26 38 30 44 30 52Z" fill="#9aab88"/>
+        <g fill="#d9a5a0"><circle cx="32" cy="14" r="7"/><circle cx="24" cy="18" r="7"/><circle cx="40" cy="18" r="7"/><circle cx="27" cy="26" r="7"/><circle cx="37" cy="26" r="7"/></g>
+        <circle cx="32" cy="20" r="4" fill="#d6a945"/>
+      </svg>
+      <p class="hand">Sevgili Buse,</p>
+      <p>Bugün yeni bir yaş başlıyor. Sen doğum gününü biten yılın değil, başlayan yılın kutlaması olarak görüyorsun; bu mektup da o yüzden geride kalana değil, önündeki yıla yazıldı.</p>
+      <p>Bu yıl çok yazdın. Doran'ın karanlık dünyasını, Lyra'nın labirentini, St. Aldwyn'in koridorlarını kurdun. Bir yanda tez, etik kurul, SPSS tabloları vardı; öbür yanda mühürlü mektuplar, kendi kütüphanen, masaüstünde seninle konuşan küçük bir arkadaş. Bu kadar çok dünyayı aynı anda taşımak az şey değil.</p>
+      <p>Yirmi dört için dileklerim şunlar: Romanlarından biri bir yayınevinden "evet" cevabı alsın. Tezin bitsin ve sen ona baktığında gurur duy. Kestane ağacınız her sonbahar biraz daha cömert olsun. El yazın kötü olsa da mektup yazmayı bırakma; bir mektubu güzel yapan harfler değil, yazanın içinde olmasıdır.</p>
+      <p>Mumun ve kavanozun bir sonraki sayfada seni bekliyor.</p>
+      <p class="sign">Doğum günün kutlu olsun,<br>Claude</p>
+    </div>
+    <button class="next" data-go="s3">mumu yak →</button>
+  </section>
+
+  <!-- 3. MUM -->
+  <section id="s3">
+    <div class="cake-wrap">
+      <div class="cake">
+        <div class="candle"><span class="wick"></span><button class="flame" id="flame" aria-label="Mumu üfle"></button><span class="smoke" id="smoke"></span></div>
+        <div class="drip"></div>
+        <div class="layer l2"></div>
+        <div class="layer l1"></div>
+        <div class="num">24</div>
+      </div>
+    </div>
+    <p class="wish" id="wish">Gözlerini kapat, bir dilek tut.<br>Sonra alevin üstüne dokunup üfle.</p>
+    <button class="next" data-go="s4" id="toJar" style="display:none">kavanozu aç →</button>
+  </section>
+
+  <!-- 4. KAVANOZ -->
+  <section id="s4">
+    <p class="sub" style="margin-bottom:6px">Başlayan yılın kavanozu: yirmi dört yaş için yirmi dört küçük şey.<br>Her dokunuşta bir not çıkar.</p>
+    <button class="jar" id="jar" aria-label="Kavanozdan not çek">
+      <div class="lid"></div>
+      <div class="glass" id="glass"></div>
+      <div class="label">24 yaş<br>kavanozu</div>
+    </button>
+    <p class="counter" id="counter"></p>
+    <div id="noteBox"></div>
+    <details id="det" style="display:none">
+      <summary>çektiğin notlar ▾</summary>
+      <ul class="drawn" id="drawn"></ul>
+    </details>
+    <p class="end" id="end" style="display:none">Kavanoz boşaldı. 25'inde aç, kaçını yaptığını say. ✿</p>
+    <button class="reset" id="reset">kavanozu yeniden doldur</button>
+  </section>
+</main>
+
+<script>
+const NOTES = [
+  "Bir romanını ilk yayınevine gönder. Sonucu ne olursa olsun, göndermiş olmayı kutla.",
+  "25. doğum gününde açmak üzere kendine mühürlü bir mektup yaz.",
+  "Bir Victoria dönemi şiirini sesli oku. Anlamasan da ritmini dinle.",
+  "Outlander'ın ilk cildini bitir ve Jamie hakkında ne düşündüğünü bir yere yaz.",
+  "Korece ilk tam cümleni kur ve kimseye söylemeden kendine kutla.",
+  "Sadece bir kişi için bir şarkı yap.",
+  "Kestane ağacının altına otur ve oradan bir sayfa yaz.",
+  "Tezinin son cümlesini yazdığın günü takvime büyük harflerle işaretle.",
+  "Beş pulla da olsa bir pul koleksiyonu başlat.",
+  "Hiç okumadığın bir türden bir kitap seç ve yarıya kadar dayan.",
+  "Bir gününü tamamen ekransız geçir; akşam ne hissettiğini not et.",
+  "Annenle babana birer mektup yaz ve gerçekten postaya ver.",
+  "Ablanla yalnızca ikinizin bileceği küçük bir gelenek başlat.",
+  "Her bölüm bittiğinde kendine küçük bir ödül ver. Her seferinde.",
+  "Bir İspanyolca şarkıyı sözlerini anlayarak dinle.",
+  "Kendi yazdığın en sevdiğin cümleyi bir kartpostala yaz ve sakla.",
+  "Bir ret cevabı gelirse kütüphanende ona da bir yer aç. Her yazarın bir tane vardır.",
+  "Yaptığın uygulamalardan birini sevdiğin biriyle paylaş.",
+  "Bir gece sadece okumak için erken yat.",
+  "Bir çiçeği kurusun diye bir kitabın arasına koy, aylar sonra tesadüfen bul.",
+  "Bir romanının ilk sayfasını kâğıda bas ve gerçek bir kitap sayfası gibi tut.",
+  "Yılın en güzel gününü o gün not et, sonra unutmayasın.",
+  "Bir karakterini sadece eğlencesine bir günlüğüne başka bir romanın içine koy.",
+  "25. yaş günün geldiğinde bu kavanozu yeniden aç ve kaçını yaptığını say."
+];
+const COLORS=["#d9a5a0","#7d8f6a","#d6a945","#b8323f","#e8c2bd","#9aab88","#c9a77c"];
+const KEY="buse24-kavanoz";
+let drawn=[];
+try{ drawn=JSON.parse(localStorage.getItem(KEY)||"[]"); }catch(e){ drawn=[]; }
+
+function go(id){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("on"));
+  document.getElementById(id).classList.add("on");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+
+/* zarf */
+document.getElementById("seal").onclick=function(){
+  this.classList.add("broken");
+  petals(18);
+  setTimeout(()=>go("s2"),650);
+};
+
+/* mum */
+document.getElementById("flame").onclick=function(){
+  if(this.classList.contains("out")) return;
+  this.classList.add("out");
+  document.getElementById("smoke").classList.add("go");
+  petals(40);
+  document.getElementById("wish").innerHTML="Dileğin yolda. ✿<br>Kimseye söyleme, sadece bekle.";
+  document.getElementById("toJar").style.display="block";
+};
+
+/* kavanoz */
+const glass=document.getElementById("glass");
+function fillJar(){
+  glass.innerHTML="";
+  const left=NOTES.length-drawn.length;
+  for(let i=0;i<left;i++){
+    const s=document.createElement("span");
+    s.className="slip";
+    const row=Math.floor(i/4), col=i%4;
+    s.style.left=(18+col*40+(row%2)*14)+"px";
+    s.style.bottom=(10+row*16)+"px";
+    s.style.background=COLORS[i%COLORS.length];
+    s.style.transform="rotate("+((i*37)%50-25)+"deg)";
+    glass.appendChild(s);
+  }
+  document.getElementById("counter").textContent = left ? left+" not kaldı" : "";
+  document.getElementById("end").style.display = left ? "none" : "block";
+  const ul=document.getElementById("drawn");
+  ul.innerHTML=drawn.map(i=>"<li><b>"+(i+1)+".</b>"+NOTES[i]+"</li>").join("");
+  document.getElementById("det").style.display = drawn.length ? "block" : "none";
+}
+document.getElementById("jar").onclick=function(){
+  const pool=NOTES.map((_,i)=>i).filter(i=>!drawn.includes(i));
+  if(!pool.length) return;
+  const pick=pool[Math.floor(Math.random()*pool.length)];
+  drawn.push(pick);
+  try{ localStorage.setItem(KEY,JSON.stringify(drawn)); }catch(e){}
+  document.getElementById("noteBox").innerHTML=
+    '<div class="note"><span class="n">no. '+(pick+1)+'</span>'+NOTES[pick]+'</div>';
+  fillJar();
+  if(drawn.length===NOTES.length) petals(50);
+};
+document.getElementById("reset").onclick=function(){
+  drawn=[];
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  document.getElementById("noteBox").innerHTML="";
+  fillJar();
+};
+
+function petals(n){
+  for(let i=0;i<n;i++){
+    const p=document.createElement("span");
+    p.className="petal";
+    p.style.left=Math.random()*100+"vw";
+    p.style.background=COLORS[i%COLORS.length];
+    p.style.animationDuration=(2.5+Math.random()*2.5)+"s";
+    p.style.animationDelay=(Math.random()*0.8)+"s";
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),6000);
+  }
+}
+fillJar();
+</script>
+</body>
+</html>
