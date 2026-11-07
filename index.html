@@ -875,7 +875,7 @@ body.sec-notes{background-image:none!important}
 .gnm-3 button,.gnm-2 button{position:relative;flex-direction:column;justify-content:center;gap:4px!important;padding:12px 6px!important;border:1px solid var(--line)!important;border-radius:12px!important;font-size:13px!important;text-align:center!important}
 .gnm-3 em{position:absolute;top:-7px;right:-4px;font-style:normal;font-size:9.5px;font-weight:700;background:#d8f5a2;color:#3a5a12;padding:2px 6px;border-radius:999px}
 .gnm-i{font-size:19px;line-height:1}
-.gnm-l{display:grid;border:1px solid var(--line);border-radius:12px;padding:3px}.gnm-l button{padding:9px 10px!important}.gnm-l .gnm-i{font-size:16px;width:24px;text-align:center}
+.gnm-l{display:grid;border:1px solid var(--line);border-radius:12px;padding:3px}.gnm-l button{padding:9px 10px!important}.gnm-l .gnm-i{font-size:16px;width:24px;text-align:center}.c-src{font-size:.85em;font-weight:600;color:var(--muted);font-style:normal}
 .nsp-l{display:grid;gap:4px;max-height:50vh;overflow:auto;margin:10px 0}.nsp-r{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-radius:10px;cursor:pointer}
 .nsp-r{display:grid!important;grid-template-columns:auto 1fr;align-items:start}.nsp-r input{width:auto!important;margin:3px 0 0}.nsp-r span{display:block;line-height:1.5}.nsp-r small{display:block}.nsp-t{display:grid!important;grid-template-columns:auto 1fr}.nsp-t input{width:auto!important;margin-top:3px}.nsp-t small{display:block}.nsp-r s{color:#c92a2a}.nsp-r b{color:#2b8a3e}.nsp-ok{padding:14px;border-radius:12px;background:var(--accent-soft);margin:10px 0}.nsp-t{display:flex;gap:8px;align-items:flex-start;margin-top:10px;font-size:14px}
 
@@ -1813,7 +1813,7 @@ function renderList(){
         ${b.rating?`<span class="tagt" style="color:var(--brass)">${'★'.repeat(b.rating)}</span>`:''}${b.status==='okundu'&&b.finishedAt?`<span class="tagt">${fmtDate(b.finishedAt)}</span>`:''}
         ${sub?`<span class="tagt">${sub}</span>`:''}
         ${(b.tags||[]).map(t=>`<span class="tagt">#${esc(t)}</span>`).join(' ')}</div>
-      ${b.kind!=='roman'&&b.kind!=='makale'?(b.blurb?`<p class="c-bl" lang="${esc(b.blurbLang||'tr')}">${b.blurbAi?'<span class="c-ai" title="Yapay zekâ '+esc(b.blurbAi)+'">✨</span> ':''}${esc(blCut(b.blurb,260))}</p>`:`<button class="c-bladd" type="button" data-blown="${b.id}">＋ Kısa açıklama yaz</button>`):''}
+      ${b.kind!=='roman'&&b.kind!=='makale'?(b.blurb?`<p class="c-bl" lang="${esc(b.blurbLang||'tr')}">${b.blurbAi?'<span class="c-ai" title="Yapay zekâ '+esc(b.blurbAi)+'">✨</span> ':''}${b.blurbSrc==='ilk satırlar'?'<span class="c-src">İlk satırlar: </span>“':b.blurbSrc==='arka kapak'?'<span class="c-src">Arka kapak: </span>':''}${esc(blCut(b.blurb,260))}${b.blurbSrc==='ilk satırlar'?'”':''}</p>`:`<button class="c-bladd" type="button" data-blown="${b.id}">＋ Kısa açıklama yaz</button>`):''}
       ${progHtml(b)}
       ${b.note?`<div class="note">${esc(b.note)}</div>`:''}
       ${hasFile(b)?`<button class="readbtn" type="button" data-read="${b.id}">${b.currentPage>1?'Kaldığım yerden oku · '+(b.fileType==='epub'?'bölüm ':'s. ')+b.currentPage:'Okumaya başla'}</button>`:''}
@@ -5421,7 +5421,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v136';
+const DK_VER='v137';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 async function dkBookFolder(){let id=dbkGet('bookfolder');if(id)return id;const q=encodeURIComponent("name = 'Dijital Kütüphanem — kitaplar' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
@@ -7771,7 +7771,7 @@ window.__ep2={toc:()=>R.epub&&epToc(R.epub),pg:()=>({...EPG}),turn:d=>epTurn(d),
 const QM={on:false,n:0,date:''};
 function qmToday(){const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
 function qmBar(){if(st.tab==='roman')return '';
-  if(TM.on)return tmBar();if(!QM.on)return `<div class="qm-bar off"><button class="btn" type="button" data-aihub>✨ Yapay zekâ</button>${(()=>{const n=blTodo().length;return BL.busy?`<button class="btn" type="button" id="blLibBtn" data-blstop>📖 ${esc(BL.msg||'')} — durdur</button>`:n?`<button class="btn" type="button" id="blLibBtn" data-blbulk>📖 ${n} kitabın tanıtımını bul</button>`:''})()}<button class="btn" type="button" data-tm="on">🏷 Hızlı tür ver</button><button class="btn" type="button" data-qm="on">✅ Bitenleri hızlı işaretle</button></div>`;
+  if(TM.on)return tmBar();if(!QM.on)return `<div class="qm-bar off"><button class="btn" type="button" data-aihub>✨ Yapay zekâ</button>${(()=>{const n=blCount();return BL.busy?`<button class="btn" type="button" id="blLibBtn" data-blstop>📖 ${esc(BL.msg||'')} — durdur</button>`:n?`<button class="btn" type="button" id="blLibBtn" data-blbulk>📖 ${n} kitabın tanıtımını bul</button>`:''})()}<button class="btn" type="button" data-tm="on">🏷 Hızlı tür ver</button><button class="btn" type="button" data-qm="on">✅ Bitenleri hızlı işaretle</button></div>`;
   return `<div class="qm-bar"><div><b>✅ Hızlı işaretleme</b><span>Bitirdiğin kitapların kapağına dokun; yeniden dokunursan geri alınır.${QM.n?` <b>${QM.n} kitap</b> işaretlendi.`:''}</span></div>
     <label class="qm-date">Bitirme tarihi <input type="date" id="qmDate" value="${esc(QM.date||qmToday())}" max="${qmToday()}"></label><button class="btn primary" type="button" data-qm="off">Bitti</button></div>`}
 function qmSet(on){QM.on=on;if(on&&TM.on){TM.on=false;document.body.classList.remove('tm-on')}if(on){QM.n=0;QM.date=QM.date||qmToday()}document.body.classList.toggle('qm-on',on);renderList()}
@@ -7860,9 +7860,33 @@ function blSheet(id){const b=st.books.find(x=>x.id===id);if(!b)return;let v=$('b
   v.hidden=false;setTimeout(()=>blFix(v),0)}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('blVeil')&&!$('blVeil').hidden)$('blVeil').hidden=true});
 
+/* ===== Dosyanın içinden konu: EPUB tanıtımı, PDF arka kapağı, yoksa kitabın ilk satırları ===== */
+const FB_JUNK=/ISBN|Yayınc[ıi]|Sertifika|©|Copyright|Tüm hakları|hakları saklıdır|Baskı:|Matbaa|Basım ?yeri|İçindekiler|All rights|Printed in|Kapak tasarım|Yayın Yönetmen|Dizgi|Sayfa düzen|Kütüphane Kataloğ|Cataloging/i;
+function fbClean(t){return String(t||'').replace(/­/g,'').replace(/(\p{Ll})- (\p{Ll})/gu,'$1$2').replace(/\s+/g,' ').trim()}
+function fbProse(t,min){t=fbClean(t);if(t.length<(min||160)||FB_JUNK.test(t))return '';const L=(t.match(/\p{L}/gu)||[]).length;if(L/t.length<.72)return '';if((t.match(/[.!?…]["”’»]?\s/g)||[]).length<2)return '';
+  if(t.length>700){const c=t.slice(0,700),i=Math.max(c.lastIndexOf('. '),c.lastIndexOf('! '),c.lastIndexOf('? '),c.lastIndexOf('… '));t=i>300?c.slice(0,i+1):c.replace(/\s\S*$/,'')+'…'}return t}
+function fbLang(t){return /[ğışçöüİĞŞ]/.test(t)||/\b(ve|bir|bu|da|de|ile|için)\b/i.test(t)?'tr':'en'}
+async function fbFromEpub(bytes){const ep=await epubOpen(bytes);const of=zFile(ep.zip,ep.opfPath);
+  if(of){const opf=xmlDoc(await of.async('string'));const d=xTags(opf,'description')[0];if(d){const t=fbClean(blStrip(d.textContent||''));if(t.length>=60&&!FB_JUNK.test(t.slice(0,200)))return {text:t.length>900?blCut(t,900):t,src:'tanıtım'}}}
+  for(let i=0;i<Math.min(ep.spine.length,25);i++){const f=zFile(ep.zip,ep.spine[i]);if(!f)continue;const h=await f.async('string');const body=(/<body[\s\S]*?>([\s\S]*)<\/body>/i.exec(h)||[,h])[1];
+    const paras=blStrip(body.replace(/<(h\d)[\s\S]*?<\/\1>/gi,'')).split(/\n+/).map(fbClean).filter(Boolean);const all=paras.join(' ');if(all.length<400||FB_JUNK.test(all.slice(0,800)))continue;
+    const t=fbProse(paras.filter(p=>p.length>40).join(' '));if(t)return {text:t,src:'ilk satırlar'}}
+  return null}
+async function fbFromPdf(bytes){const lib=await pdfLib();const doc=await lib.getDocument({data:bytes}).promise;const txt=async n=>{try{return fbClean((await (await doc.getPage(n)).getTextContent()).items.map(x=>x.str).join(' '))}catch(e){return ''}};
+  try{const N=doc.numPages;for(const n of [N,N-1]){if(n<3)continue;let t=await txt(n);if(t.length<250||t.length>2600)continue;const hint=/ISBN|www\.|\.com|\d+[,.]\d{2} ?TL|barkod|yayınları/i.test(t)||(t.length<1500&&/roman|kitap|yazar|öykü|hikâye|hikaye/i.test(t));if(!hint)continue; /* hikâyenin son sayfasını (sonu) tanıtım sanmayalım */
+      t=t.replace(/(ISBN|www\.|Fiyat|Satış fiyatı|\d+[,.]\d{2} ?TL)[\s\S]*$/i,'');const p=fbProse(t,200);if(p)return {text:p,src:'arka kapak'}}
+    for(let n=2;n<=Math.min(N,30);n++){const t=await txt(n);if(t.length<500||FB_JUNK.test(t))continue;const p=fbProse(t.replace(/^[\d\s]+/,''));if(p)return {text:p,src:'ilk satırlar'}}
+    return null}finally{try{doc.destroy()}catch(e){}}}
+function fbTodo(){return st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'&&!b.blurb&&b.blurbF!=='1'&&hasFile(b)&&!bigDrive(b)&&(b.fileSize||0)<80e6)}
+function blCount(){return new Set([...blTodo(),...fbTodo()]).size}
+async function fbBulk(){const L=fbTodo();let ok=0;for(let i=0;i<L.length&&!BL.stop;i++){const b=L[i];if(b.blurb)continue;BL.msg=`Dosyanın içinden ${i+1}/${L.length} · ${b.title}`;blBulkPaint();{const lb=$('blLibBtn');if(lb)lb.textContent='📖 '+BL.msg+' — durdur'}
+    let r=null,fail=false;try{const by=await bookBytes(b);r=isEpubB(b)?await fbFromEpub(by):await fbFromPdf(by)}catch(e){fail=true}
+    if(fail)continue;const up=r?{blurb:r.text,blurbLang:fbLang(r.text),blurbSrc:r.src,blurbF:'1'}:{blurbF:'1'};try{await st.db.collection('books').doc(b.id).update(up);Object.assign(b,up)}catch(e){}if(r)ok++;await new Promise(z=>setTimeout(z,150))}
+  return ok}
+window.__fb={fbFromEpub,fbFromPdf,fbProse};
 /* toplu tanıtım bulma (Ne okusam? içinde) */
 function blTodo(){return st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'&&!b.blurb&&b.blurbV!=='2')}
-function blBulkHtml(){const n=blTodo().length;if(BL.busy)return `<span class="hint">📖 ${esc(BL.msg||'')}</span> <button class="btn" type="button" id="blStop">Durdur</button>`;
+function blBulkHtml(){const n=blCount();if(BL.busy)return `<span class="hint">📖 ${esc(BL.msg||'')}</span> <button class="btn" type="button" id="blStop">Durdur</button>`;
   return n?`<button class="btn" type="button" id="blBulkGo">📖 ${n} kitabın tanıtımını bul</button><span class="hint">Seçmek kolaylaşsın diye arka kapak yazıları eklenir.</span>`:''}
 function blBulkPaint(){const el=$('blBulk');if(el){el.innerHTML=blBulkHtml();el.hidden=!el.innerHTML}}
 async function blBulk(){if(BL.busy||!st.db)return;BL.busy=true;BL.stop=false;const L=blTodo();let ok=0,en=0,no=0;
@@ -7871,8 +7895,9 @@ async function blBulk(){if(BL.busy||!st.db)return;BL.busy=true;BL.stop=false;con
     const up=r?{blurb:r.text,blurbLang:r.lang||'tr',blurbV:'2'}:{blurbV:'2'};if(r&&!b.pages&&r.pages)up.pages=r.pages;
     try{await st.db.collection('books').doc(b.id).update(up);Object.assign(b,up)}catch(e){}
     if(r){ok++;if(r.lang&&r.lang!=='tr')en++}else no++;await new Promise(z=>setTimeout(z,350))}
+  let fo=0;if(!BL.stop){try{fo=await fbBulk()}catch(e){}}const left=st.books.filter(b=>b.kind!=='roman'&&b.kind!=='makale'&&!b.blurb).length;
   BL.busy=false;blBulkPaint();if(!$('pickVeil').hidden)pickRender();try{renderList()}catch(e){}
-  toast(`${ok} tanıtım eklendi${en?` (${en} tanesi İngilizce)`:''}${no?` · ${no} kitapta bulunamadı`:''}`)}
+  toast(`📖 ${ok} tanıtım internetten${en?` (${en} İngilizce)`:''}, ${fo} konu kitabın kendi dosyasından bulundu${left?` · ${left} kitapta yok — kartındaki “＋ Kısa açıklama yaz” ile kendin ekleyebilirsin`:''}`)}
 $('listArea').addEventListener('click',async e=>{if(e.target.closest('[data-blbulk]')){e.stopPropagation();blBulk();return}if(e.target.closest('[data-blstop]')){e.stopPropagation();BL.stop=true;return}
   const o=e.target.closest('[data-blown]');if(o){e.stopPropagation();e.preventDefault();const b=st.books.find(x=>x.id===o.dataset.blown);if(!b)return;const v=(prompt('“'+b.title+'” ne anlatıyor? Aklında kalsın diye 1-2 cümle yaz:','')||'').trim();if(!v)return;
     const up={blurb:v,blurbLang:'tr',blurbOwn:true};Object.assign(b,up);renderList();try{await st.db.collection('books').doc(b.id).update(up);toast('Açıklama kaydedildi ✓')}catch(x){toast('Kaydedilemedi')}}},true);
