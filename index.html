@@ -5421,14 +5421,14 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v139';
+const DK_VER='v140';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
 async function dkBookFolder(){let id=dbkGet('bookfolder2');if(id)return id;const one=async q=>{const j=await (await gfetch(GD+'?q='+encodeURIComponent(q)+'&pageSize=1&fields='+encodeURIComponent('files(id)'))).json();return j.files&&j.files[0]&&j.files[0].id};
   id=await one("name = '"+DK_BF+"' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
-  if(!id){const par=await one("name = 'Kitaplarım' and mimeType = 'application/vnd.google-apps.folder' and trashed = false");
-    id=(await (await gfetch(GD+'?fields=id',1,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:DK_BF,mimeType:'application/vnd.google-apps.folder',...(par?{parents:[par]}:{})})})).json()).id}
+  /* uygulama yalnızca kendi açtığı klasöre yükleyebildiği için klasörü kendisi açar; sonra Drive'da Kitaplarım'ın içine taşınabilir */
+  if(!id)id=(await (await gfetch(GD+'?fields=id',1,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:DK_BF,mimeType:'application/vnd.google-apps.folder'})})).json()).id;
   dbkSet('bookfolder2',id);return id}
 /* aynı kitap Drive'a ikinci kez yüklenmesin: önce bu cihazın kaydına, sonra Drive'da aynı ad + boyuttaki dosyaya bakılır */
 function dkSentMap(){try{return JSON.parse(localStorage.getItem('dk-sent')||'{}')}catch(e){return {}}}
