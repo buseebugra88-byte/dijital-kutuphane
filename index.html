@@ -5439,7 +5439,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v144';
+const DK_VER='v145';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -7610,9 +7610,9 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 
 /* 📱 alt menü: 4 ana bölüm + Daha */
 const SN_MORE=window.DK_APP?[]:['journal','settings'];
-(function(){const nav=$('sideNav');if(!nav)return;const IC={lib:'<path d="M4 4.5h3.5v15H4zM8.5 6.5H12v13H8.5z"/><path d="M13.6 6.3l3.4-.9 3.4 13.3-3.4.9z"/>',masa:'<path d="M6.5 3.5h10a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5h-10z"/><path d="M4.5 7h3M4.5 12h3M4.5 17h3"/>',yazar:'<path d="M19.5 4.5c-6.5.8-11 5.4-12.6 12.4L5 19.5l2.6-1.9c7-1.6 11.6-6.1 11.9-13.1z"/><path d="M7.5 16.5l5-5"/>'};
-  const L=[['','./index.html','lib','Kütüphane','Kütüphanem ↗'],['yazar','./yazar/','yazar','Yazar','Yazar Köşem ↗'],['masa','./masa/','masa','Masam','Çalışma Masam ↗']];
-  L.filter(x=>x[0]!==(window.DK_APP||'')).forEach(x=>{const a=document.createElement('a');a.className='sn-item sn-jump';a.href=x[1];a.target='_top';
+(function(){const nav=$('sideNav');if(!nav)return;const IC={lib:'<path d="M4 4.5h3.5v15H4zM8.5 6.5H12v13H8.5z"/><path d="M13.6 6.3l3.4-.9 3.4 13.3-3.4.9z"/>',masa:'<path d="M6.5 3.5h10a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5h-10z"/><path d="M4.5 7h3M4.5 12h3M4.5 17h3"/>',spss:'<path d="M4 19.5h16"/><path d="M6.5 16.5v-5M11 16.5v-9M15.5 16.5v-6.5"/>',yazar:'<path d="M19.5 4.5c-6.5.8-11 5.4-12.6 12.4L5 19.5l2.6-1.9c7-1.6 11.6-6.1 11.9-13.1z"/><path d="M7.5 16.5l5-5"/>'};
+  const L=[['','./index.html','lib','Kütüphane','Kütüphanem ↗'],['yazar','./yazar/','yazar','Yazar','Yazar Köşem ↗'],['masa','./masa/','masa','Masam','Çalışma Masam ↗'],['spss','./spss/','spss','SPSS','SPSS Tez Rehberi ↗']];
+  L.filter(x=>x[0]!==(window.DK_APP||'')&&(x[0]!=='spss'||window.DK_APP==='masa')).forEach(x=>{const a=document.createElement('a');a.className='sn-item sn-jump';a.href=x[1];a.target='_top';
   a.innerHTML='<span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true">'+IC[x[2]]+'</svg></span><span class="sn-l" data-s="'+x[3]+'">'+x[4]+'</span>';nav.appendChild(a)})})();
 function snMoreSync(){const m=$('snMore');if(!m)return;const cur=document.querySelector('.sidenav .sn-item[aria-current="page"]:not(.sn-more)');const inMore=!!(cur&&SN_MORE.includes(cur.dataset.sec));if(inMore&&m.getAttribute('aria-current')!=='page')m.setAttribute('aria-current','page');else if(!inMore&&m.hasAttribute('aria-current'))m.removeAttribute('aria-current');
   const l=m.querySelector('.sn-l');if(l){const t=inMore?(cur.querySelector('.sn-l').dataset.s||'Daha'):'Daha';l.dataset.s=t}}
