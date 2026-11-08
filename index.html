@@ -5,7 +5,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Kütüphanem">
 <title>Dijital Kütüphanem</title><script>/* Çalışma Masam: aynı uygulama, sadece Defterlerim + Akademik (veriler ortak) */
 window.DK_MASA=/[?&]app=masa\b/.test(location.search);if(DK_MASA){document.documentElement.classList.add('masa');document.title='Çalışma Masam';
- document.querySelector('link[rel=manifest]').href='calisma.webmanifest';document.querySelector('link[rel=apple-touch-icon]').href='calisma-180.png';document.querySelector('link[rel=icon]').href='calisma-192.png';document.querySelector('meta[name=apple-mobile-web-app-title]').content='Çalışma Masam'}</script>
+ document.querySelector('link[rel=manifest]').href='calisma.webmanifest';document.querySelector('link[rel=apple-touch-icon]').href='calisma-180.png?v=2';document.querySelector('link[rel=icon]').href='calisma-192.png?v=2';document.querySelector('meta[name=apple-mobile-web-app-title]').content='Çalışma Masam'}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Lora:ital,wght@0,500;0,600;1,500&family=Caveat:wght@500;600&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Quicksand:wght@500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Playpen+Sans:wght@400;500;600&family=Shantell+Sans:wght@400;500;600&family=Patrick+Hand&family=Literata:ital,wght@0,400;0,600;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
@@ -5433,7 +5433,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v142';
+const DK_VER='v143';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
