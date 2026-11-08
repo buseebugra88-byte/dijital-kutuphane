@@ -5,7 +5,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Kütüphanem">
 <title>Dijital Kütüphanem</title><script>/* Çalışma Masam: aynı uygulama, sadece Defterlerim + Akademik (veriler ortak) */
 window.DK_MASA=/[?&]app=masa\b/.test(location.search);if(DK_MASA){document.documentElement.classList.add('masa');document.title='Çalışma Masam';
- document.querySelector('link[rel=manifest]').href='calisma.webmanifest';document.querySelector('link[rel=apple-touch-icon]').href='calisma-180.png?v=2';document.querySelector('link[rel=icon]').href='calisma-192.png?v=2';document.querySelector('meta[name=apple-mobile-web-app-title]').content='Çalışma Masam'}</script>
+ document.querySelector('link[rel=manifest]').href='calisma.webmanifest';document.querySelector('link[rel=apple-touch-icon]').href='calisma-180.png?v=2';document.querySelector('link[rel=icon]').href='calisma-192.png?v=2';document.querySelector('meta[name=apple-mobile-web-app-title]').content='Çalışma Masam'}
+window.DK_YAZAR=/[?&]app=yazar\b/.test(location.search);if(DK_YAZAR){document.documentElement.classList.add('yazar');document.title='Yazar Köşem';
+ document.querySelector('link[rel=apple-touch-icon]').href='yazar-180.png';document.querySelector('link[rel=icon]').href='yazar-192.png';document.querySelector('meta[name=apple-mobile-web-app-title]').content='Yazar Köşem'}
+window.DK_APP=window.DK_MASA?'masa':window.DK_YAZAR?'yazar':'';</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Lora:ital,wght@0,500;0,600;1,500&family=Caveat:wght@500;600&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Quicksand:wght@500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Playpen+Sans:wght@400;500;600&family=Shantell+Sans:wght@400;500;600&family=Patrick+Hand&family=Literata:ital,wght@0,400;0,600;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
@@ -882,10 +885,13 @@ body.sec-notes{background-image:none!important}
 .nsp-r{display:grid!important;grid-template-columns:auto 1fr;align-items:start}.nsp-r input{width:auto!important;margin:3px 0 0}.nsp-r span{display:block;line-height:1.5}.nsp-r small{display:block}.nsp-t{display:grid!important;grid-template-columns:auto 1fr}.nsp-t input{width:auto!important;margin-top:3px}.nsp-t small{display:block}
 /* Kütüphanem: Defterlerim, Akademik, Hayatım ayrı — Çalışma Masam: sadece Defterlerim, Akademik, Ayarlar */
 html:not(.masa) body .sidenav .sn-item:is([data-sec="notes"],[data-sec="academic"],[data-sec="life"]){display:none!important}
+html:not(.yazar) body .sidenav .sn-item[data-sec="writer"]{display:none!important}
+html.yazar body .sidenav .sn-item:not([data-sec="writer"]):not([data-sec="settings"]){display:none!important}
+html.yazar body .sidenav .sn-item:is([data-sec="writer"],[data-sec="settings"]){display:flex!important}
 html.masa body .sidenav .sn-item:not([data-sec="notes"]):not([data-sec="academic"]):not([data-sec="settings"]){display:none!important}
 html.masa body .sidenav .sn-item:is([data-sec="academic"],[data-sec="settings"]){display:flex!important}
 html body .sidenav a.sn-jump{display:flex!important;text-decoration:none;opacity:.75}
-html.masa body .sidenav a.sn-item.sn-jump:not([data-a]):not([data-b]):not([data-c]){display:flex!important}
+html:is(.masa,.yazar) body .sidenav a.sn-item.sn-jump:not([data-a]):not([data-b]):not([data-c]){display:flex!important}
 @media (max-width:760px){html body .sidenav a.sn-item.sn-jump:not([data-a]):not([data-b]):not([data-c]):not([data-d]){display:none!important}}
 
 .nsp-r s{color:#c92a2a}.nsp-r b{color:#2b8a3e}.nsp-ok{padding:14px;border-radius:12px;background:var(--accent-soft);margin:10px 0}.nsp-t{display:flex;gap:8px;align-items:flex-start;margin-top:10px;font-size:14px}
@@ -1758,8 +1764,8 @@ function catHtml(){return `<div class="stamps-row">${'__STAMPS__'}</div><svg cla
 
 const st={books:[],goal:24,tab:'all',shelf:null,tag:null,status:'',q:'',sort:'added',db:null,assets:null,ready:false,editing:null};
 st.view='panel';st.sec='home';st.secSub={};st.libView='raf';
-try{const v=localStorage.getItem('kt-libview');if(v)st.libView=v;const sc=localStorage.getItem(window.DK_MASA?'kt-sec-masa':'kt-sec');if(sc)st.sec=sc;const ss=JSON.parse(localStorage.getItem('kt-secsub')||'{}');st.secSub=ss||{}}catch(e){}
-if(window.DK_MASA){if(!['notes','academic','settings'].includes(st.sec))st.sec='notes';try{document.getElementById('snTitle').textContent='Çalışma Masam'}catch(e){}}else if(['notes','academic','life'].includes(st.sec))st.sec='home';
+try{const v=localStorage.getItem('kt-libview');if(v)st.libView=v;const sc=localStorage.getItem(window.DK_APP?'kt-sec-'+window.DK_APP:'kt-sec');if(sc)st.sec=sc;const ss=JSON.parse(localStorage.getItem('kt-secsub')||'{}');st.secSub=ss||{}}catch(e){}
+if(window.DK_MASA){if(!['notes','academic','settings'].includes(st.sec))st.sec='notes';try{document.getElementById('snTitle').textContent='Çalışma Masam'}catch(e){}}else if(window.DK_YAZAR){if(!['writer','settings'].includes(st.sec))st.sec='writer';try{document.getElementById('snTitle').textContent='Yazar Köşem'}catch(e){}}else if(['notes','academic','life','writer'].includes(st.sec))st.sec='home';
 st.tab='all';st.view=st.sec==='home'?'panel':st.libView;
 
 const low=s=>(s||'').toLocaleLowerCase(TR);
@@ -2273,7 +2279,7 @@ function applyUI(){
     body.classList.add('kindle-soft')}else body.classList.remove('kindle-soft');
   const w=(UI.title||UIDEF.title).trim().split(' '),last=w.pop();
   $('hTitle').innerHTML=(w.length?esc(w.join(' '))+' ':'')+'<em>'+esc(last)+'</em>';$('hSub').textContent=UI.sub;
-  document.title=window.DK_MASA?'Çalışma Masam':(UI.title||UIDEF.title).trim();const snt=document.getElementById('snTitle');if(snt)snt.textContent=document.title;
+  document.title=window.DK_MASA?'Çalışma Masam':window.DK_YAZAR?'Yazar Köşem':(UI.title||UIDEF.title).trim();const snt=document.getElementById('snTitle');if(snt)snt.textContent=document.title;
 }
 mq&&mq.addEventListener&&mq.addEventListener('change',applyUI);
 function fillThemeForm(){try{fillReadOpts()}catch(e){}
@@ -5098,7 +5104,7 @@ async function qcSave(){const raw=$('qcT').value.trim();if(!raw)return;const k=(
       await lfSet('money',null,{type:'out',amt,cat,note:note||undefined,date:lfK()});toast('💸 '+lfTL(amt)+' · '+cat)}
     else if(k==='shop'){await lfListAddItems('Alışveriş','🛒',raw.split(/[\n,]/).map(x=>x.trim()).filter(Boolean));toast('🛒 Alışveriş listesine eklendi')}
     msClose();setTimeout(lfForce,200)}catch(e){toast('Kaydedilemedi')}}
-(function(){if($('qcFab'))return;const f=document.createElement('button');f.id='qcFab';f.type='button';f.className='qc-fab';f.setAttribute('aria-label',window.DK_MASA?'Yeni':'Kitap ekle');f.title=window.DK_MASA?'Yeni':'Kitap ekle';f.textContent='＋';f.addEventListener('click',()=>{try{if(window.DK_MASA){if(st.sec!=='notes')goSec('notes');setTimeout(()=>{const b=document.querySelector('[data-nb=newmenu]');if(b)b.click()},80);return}$('addBtn').click()}catch(e){}});document.body.appendChild(f);
+(function(){if($('qcFab'))return;const f=document.createElement('button');f.id='qcFab';f.type='button';f.className='qc-fab';f.setAttribute('aria-label',window.DK_MASA?'Yeni':window.DK_YAZAR?'Yeni fikir':'Kitap ekle');f.title=window.DK_MASA?'Yeni':window.DK_YAZAR?'Yeni fikir':'Kitap ekle';f.textContent='＋';f.addEventListener('click',()=>{try{if(window.DK_MASA){if(st.sec!=='notes')goSec('notes');setTimeout(()=>{const b=document.querySelector('[data-nb=newmenu]');if(b)b.click()},80);return}if(window.DK_YAZAR){goSec('writer','ideas');setTimeout(()=>{const t=document.getElementById('idRaw');t&&t.focus()},120);return}$('addBtn').click()}catch(e){}});document.body.appendChild(f);
   const s=document.createElement('button');s.id='gsBtn';s.type='button';s.className='iconbtn gs-btn';s.setAttribute('aria-label','Her şeyde ara');s.title='Her şeyde ara (⌘K)';s.textContent='🔎';s.addEventListener('click',gsOpen);document.body.appendChild(s)})();
 
 /* ===================== Haftam + haftanın küçük deneyimi ===================== */
@@ -5433,7 +5439,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v143';
+const DK_VER='v144';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -7603,10 +7609,11 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   if(b.dataset.gb==='more'){const t=GBS.tab||(GBS.otd?'tarih':'bilim');GBS.shift[t]=(GBS.shift[t]||0)+1;gbPaint()}});
 
 /* 📱 alt menü: 4 ana bölüm + Daha */
-const SN_MORE=window.DK_MASA?[]:['journal','settings'];
-(function(){const nav=$('sideNav');if(!nav)return;const a=document.createElement('a');a.className='sn-item sn-jump';a.href=window.DK_MASA?'./index.html':'./masa/';a.target='_top';
-  a.innerHTML='<span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true">'+(window.DK_MASA?'<path d="M4 4.5h3.5v15H4zM8.5 6.5H12v13H8.5z"/><path d="M13.6 6.3l3.4-.9 3.4 13.3-3.4.9z"/>':'<path d="M6.5 3.5h10a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5h-10z"/><path d="M4.5 7h3M4.5 12h3M4.5 17h3"/>')+'</svg></span><span class="sn-l" data-s="'+(window.DK_MASA?'Kütüphane':'Masam')+'">'+(window.DK_MASA?'Kütüphanem ↗':'Çalışma Masam ↗')+'</span>';
-  nav.appendChild(a)})();
+const SN_MORE=window.DK_APP?[]:['journal','settings'];
+(function(){const nav=$('sideNav');if(!nav)return;const IC={lib:'<path d="M4 4.5h3.5v15H4zM8.5 6.5H12v13H8.5z"/><path d="M13.6 6.3l3.4-.9 3.4 13.3-3.4.9z"/>',masa:'<path d="M6.5 3.5h10a1.5 1.5 0 0 1 1.5 1.5v14a1.5 1.5 0 0 1-1.5 1.5h-10z"/><path d="M4.5 7h3M4.5 12h3M4.5 17h3"/>',yazar:'<path d="M19.5 4.5c-6.5.8-11 5.4-12.6 12.4L5 19.5l2.6-1.9c7-1.6 11.6-6.1 11.9-13.1z"/><path d="M7.5 16.5l5-5"/>'};
+  const L=[['','./index.html','lib','Kütüphane','Kütüphanem ↗'],['yazar','./yazar/','yazar','Yazar','Yazar Köşem ↗'],['masa','./masa/','masa','Masam','Çalışma Masam ↗']];
+  L.filter(x=>x[0]!==(window.DK_APP||'')).forEach(x=>{const a=document.createElement('a');a.className='sn-item sn-jump';a.href=x[1];a.target='_top';
+  a.innerHTML='<span class="sn-ic"><svg viewBox="0 0 24 24" aria-hidden="true">'+IC[x[2]]+'</svg></span><span class="sn-l" data-s="'+x[3]+'">'+x[4]+'</span>';nav.appendChild(a)})})();
 function snMoreSync(){const m=$('snMore');if(!m)return;const cur=document.querySelector('.sidenav .sn-item[aria-current="page"]:not(.sn-more)');const inMore=!!(cur&&SN_MORE.includes(cur.dataset.sec));if(inMore&&m.getAttribute('aria-current')!=='page')m.setAttribute('aria-current','page');else if(!inMore&&m.hasAttribute('aria-current'))m.removeAttribute('aria-current');
   const l=m.querySelector('.sn-l');if(l){const t=inMore?(cur.querySelector('.sn-l').dataset.s||'Daha'):'Daha';l.dataset.s=t}}
 function snMoreClose(){const p=$('snMorePop');if(p)p.remove();const m=$('snMore');if(m)m.setAttribute('aria-expanded','false')}
@@ -8309,9 +8316,10 @@ const SECS={
   settings:{t:'Ayarlar',tabs:[['theme','🎨 Görünüm'],['drive','☁️ Google Drive'],['bulk','📁 Klasörden ekle'],['storage','🧹 Depolama'],['backup','💾 Yedekle'],['parts','🧩 Bölümler']]}
 };
 function curSub(){const S=SECS[st.sec];if(!S.tabs.length)return '';const T=secTabs(st.sec);const v=st.secSub[st.sec];return T.some(t=>t[0]===v)?v:(T[0]||S.tabs[0])[0]}
-function goSec(sec,sub){const M=['notes','academic'];if(!window.DK_MASA&&M.includes(sec)){try{const ss=JSON.parse(localStorage.getItem('kt-secsub')||'{}');if(sub)ss[sec]=sub;localStorage.setItem('kt-secsub',JSON.stringify(ss));localStorage.setItem('kt-sec-masa',sec)}catch(e){}(window.top||window).location.href='./masa/';return}
-  if(window.DK_MASA&&!M.includes(sec)&&sec!=='settings'){(window.top||window).location.href=new URL('./index.html',location.href).href;return}
-  if(R.book)closeReader();st.sec=sec;if(sub)st.secSub[sec]=sub;try{localStorage.setItem(window.DK_MASA?'kt-sec-masa':'kt-sec',sec);localStorage.setItem('kt-secsub',JSON.stringify(st.secSub))}catch(e){}
+function goSec(sec,sub){const want=['notes','academic'].includes(sec)?'masa':sec==='writer'?'yazar':sec==='settings'?(window.DK_APP||''):'';
+  if(want!==(window.DK_APP||'')){try{const ss=JSON.parse(localStorage.getItem('kt-secsub')||'{}');if(sub)ss[sec]=sub;localStorage.setItem('kt-secsub',JSON.stringify(ss));localStorage.setItem(want?'kt-sec-'+want:'kt-sec',sec)}catch(e){}
+    (window.top||window).location.href=new URL(want?'./'+want+'/':'./index.html',location.href).href;return}
+  if(R.book)closeReader();st.sec=sec;if(sub)st.secSub[sec]=sub;try{localStorage.setItem(window.DK_APP?'kt-sec-'+window.DK_APP:'kt-sec',sec);localStorage.setItem('kt-secsub',JSON.stringify(st.secSub))}catch(e){}
   ['veil','pickVeil','litVeil','driveVeil','bulkVeil','themeVeil','toolVeil'].forEach(id=>{const v=$(id);if(v&&!v.contains(document.activeElement))v.hidden=true});
   render();renderSection();window.scrollTo({top:0})}
 function applySec(){
