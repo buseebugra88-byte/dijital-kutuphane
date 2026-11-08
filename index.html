@@ -1137,7 +1137,9 @@ html body .rstage{overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow
 
 .rxl{position:absolute;inset:0;z-index:3;pointer-events:none}.rxl.on{pointer-events:auto;touch-action:none;cursor:text}
 .rxh{position:absolute;mix-blend-mode:multiply;opacity:.5;border-radius:2px;pointer-events:auto;cursor:pointer}.reader.mode-night .rxh{mix-blend-mode:screen;opacity:.35}
-.rxg{position:absolute;opacity:.35;border-radius:3px;pointer-events:none}
+.rxgw{position:absolute;inset:0;pointer-events:none}.rxg{position:absolute;opacity:.45;border-radius:4px;pointer-events:none;mix-blend-mode:multiply}
+.rxh{border-radius:4px!important}
+#rFocus,#rNb,#rEmoBtn{display:none!important}
 .rxe{position:absolute;transform:translate(-50%,0);border:0;background:rgba(255,255,255,.85);border-radius:999px;width:34px;height:34px;font-size:19px;line-height:1;display:grid;place-items:center;box-shadow:0 3px 10px -4px rgba(0,0,0,.35);pointer-events:auto;cursor:pointer;padding:0}
 #reader:has(#inkBar:not([hidden])) .rxh,#reader:has(#inkBar:not([hidden])) .rxe{pointer-events:none}
 .pgwrap canvas,.spage canvas{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
@@ -5439,7 +5441,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v145';
+const DK_VER='v146';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -6991,15 +6993,8 @@ function rxPaint(L,n){const H=rxMine(n);L.innerHTML=H.filter(h=>h.type==='hl').m
   +H.filter(h=>h.type==='emo'||h.type==='voice').map((h,i)=>`<button type="button" class="rxe${h.type==='voice'?' rxv':''}" data-rx="${h.id}" style="left:${(h.x??0.93)*100}%;top:${(h.y??(0.04+i*0.07))*100}%" aria-label="${h.type==='voice'?'Sesli not':'İfade '+h.e}">${h.type==='voice'?'🎙':h.e}</button>`).join('')}
 function rxRepaint(){if(!R.book||$('reader').hidden)return;if(R.epub){epPaint();rxCount();return}$('rStage').querySelectorAll('.rxl').forEach(L=>rxPaint(L,+L.dataset.p));rxCount()}
 function rxCount(){const b=$('rHlList');if(b){const n=rxMine().length;b.textContent='📒 Vurgularım'+(n?' ('+n+')':'')}}
-/* sürükleyerek vurgulama */
-document.addEventListener('pointerdown',e=>{const L=e.target.closest&&e.target.closest('.rxl.on');if(!L||e.target.closest('.rxh,.rxe'))return;e.preventDefault();
-  const r=L.getBoundingClientRect(),p=[(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height];RX.drag={L,r,p0:p,p1:p,id:e.pointerId};try{L.setPointerCapture(e.pointerId)}catch(x){}
-  const g=document.createElement('i');g.className='rxg';g.style.background=RX.color;L.appendChild(g);RX.drag.g=g},true);
-document.addEventListener('pointermove',e=>{const D=RX.drag;if(!D||e.pointerId!==D.id)return;e.preventDefault();D.p1=[(e.clientX-D.r.left)/D.r.width,(e.clientY-D.r.top)/D.r.height];
-  const x=Math.min(D.p0[0],D.p1[0]),y=Math.min(D.p0[1],D.p1[1]);Object.assign(D.g.style,{left:x*100+'%',top:y*100+'%',width:Math.abs(D.p1[0]-D.p0[0])*100+'%',height:Math.max(0.012,Math.abs(D.p1[1]-D.p0[1]))*100+'%'})},true);
-document.addEventListener('pointerup',async e=>{const D=RX.drag;if(!D||e.pointerId!==D.id)return;RX.drag=null;D.g.remove();const n=+D.L.dataset.p;
-  const dx=Math.abs(D.p1[0]-D.p0[0]),dy=Math.abs(D.p1[1]-D.p0[1]);if(dx<0.02&&dy<0.01)return;
-  const T=await rxText(n);const s=D.p0[1]<D.p1[1]||(Math.abs(D.p0[1]-D.p1[1])<0.01&&D.p0[0]<D.p1[0])?D.p0:D.p1,t=s===D.p0?D.p1:D.p0;
+/* sürükleyerek vurgulama: parmak satırları takip eder, bırakmadan önce vurgu görünür */
+function rxSel(T,p0,p1){const s=p0[1]<p1[1]||(Math.abs(p0[1]-p1[1])<0.01&&p0[0]<p1[0])?p0:p1,t=s===p0?p1:p0;
   const top=Math.min(s[1],t[1]),bot=Math.max(s[1],t[1]);const sel=[];
   for(const it of T){const cy=(it.y1+it.y2)/2,lh=it.y2-it.y1;if(cy<top-lh*0.75||cy>bot+lh*0.75)continue;
     const first=Math.abs(cy-s[1])<lh*0.8,last=Math.abs(cy-t[1])<lh*0.8;let a=it.x1,b=it.x2;
@@ -7007,11 +7002,26 @@ document.addEventListener('pointerup',async e=>{const D=RX.drag;if(!D||e.pointer
     if(b-a<=0.002)continue;const L_=it.s.length,i0=Math.max(0,Math.round((a-it.x1)/(it.x2-it.x1)*L_)),i1=Math.min(L_,Math.round((b-it.x1)/(it.x2-it.x1)*L_));
     let j0=i0,j1=i1;while(j0>0&&/\S/.test(it.s[j0-1]))j0--;while(j1<L_&&/\S/.test(it.s[j1]))j1++;
     const ax=it.x1+(it.x2-it.x1)*j0/L_,bx=it.x1+(it.x2-it.x1)*j1/L_;sel.push({x1:ax,x2:bx,y1:it.y1,y2:it.y2,s:it.s.slice(j0,j1)})}
-  let rects,text='';
-  if(sel.length){sel.sort((p,q)=>(p.y1-q.y1)||(p.x1-q.x1));const lines=[];for(const it of sel){const ln=lines.find(l=>Math.abs(l.y-(it.y1+it.y2)/2)<(it.y2-it.y1)*0.5);if(ln){ln.x1=Math.min(ln.x1,it.x1);ln.x2=Math.max(ln.x2,it.x2);ln.y1=Math.min(ln.y1,it.y1);ln.y2=Math.max(ln.y2,it.y2);ln.t.push(it.s)}else lines.push({y:(it.y1+it.y2)/2,x1:it.x1,x2:it.x2,y1:it.y1,y2:it.y2,t:[it.s]})}
-    rects=lines.map(l=>[l.x1,l.y1,l.x2-l.x1,l.y2-l.y1].map(v=>Math.round(v*10000)/10000));text=lines.map(l=>l.t.join(' ').trim()).join(' ').replace(/-\s+(?=[a-zçğıöşü])/g,'').replace(/\s+/g,' ').trim()}
-  else rects=[[Math.min(s[0],t[0]),Math.min(s[1],t[1]),Math.max(0.02,dx),Math.max(0.018,dy)]];
-  await lfSet('hls',null,{type:'hl',book:R.book.id,page:n,color:RX.color,rects,text:text.slice(0,1200),at:new Date().toISOString()});toast(text?'🖍 Vurgulandı':'🖍 Vurgulandı (bu sayfada seçilebilir yazı yok)')},true);
+  if(!sel.length)return null;sel.sort((p,q)=>(p.y1-q.y1)||(p.x1-q.x1));const lines=[];
+  for(const it of sel){const ln=lines.find(l=>Math.abs(l.y-(it.y1+it.y2)/2)<(it.y2-it.y1)*0.5);if(ln){ln.x1=Math.min(ln.x1,it.x1);ln.x2=Math.max(ln.x2,it.x2);ln.y1=Math.min(ln.y1,it.y1);ln.y2=Math.max(ln.y2,it.y2);ln.t.push(it.s)}else lines.push({y:(it.y1+it.y2)/2,x1:it.x1,x2:it.x2,y1:it.y1,y2:it.y2,t:[it.s]})}
+  lines.sort((a,b)=>a.y-b.y);
+  return{rects:lines.map(l=>[l.x1-0.003,l.y1,l.x2-l.x1+0.006,l.y2-l.y1].map(v=>Math.round(v*10000)/10000)),text:lines.map(l=>l.t.join(' ').trim()).join(' ').replace(/-\s+(?=[a-zçğıöşü])/g,'').replace(/\s+/g,' ').trim()}}
+/* yazısı seçilemeyen (taranmış) sayfalarda: fosforlu kalem gibi şerit */
+function rxBand(p0,p1){const dy=Math.abs(p1[1]-p0[1]),h=0.024;
+  if(dy<0.03){const y=(p0[1]+p1[1])/2-h/2;return[[Math.min(p0[0],p1[0]),y,Math.max(0.02,Math.abs(p1[0]-p0[0])),h]]}
+  return[[Math.min(p0[0],p1[0]),Math.min(p0[1],p1[1]),Math.max(0.02,Math.abs(p1[0]-p0[0])),Math.max(h,dy)]]}
+function rxPreview(D){const r=(D.T&&D.T.length&&rxSel(D.T,D.p0,D.p1))||null;const R_=r?r.rects:rxBand(D.p0,D.p1);
+  D.G.innerHTML=R_.map(q=>`<i class="rxg" style="left:${q[0]*100}%;top:${q[1]*100}%;width:${q[2]*100}%;height:${q[3]*100}%;background:${RX.color}"></i>`).join('')}
+document.addEventListener('pointerdown',e=>{const L=e.target.closest&&e.target.closest('.rxl.on');if(!L||e.target.closest('.rxh,.rxe'))return;e.preventDefault();
+  const r=L.getBoundingClientRect(),p=[(e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height];RX.drag={L,r,p0:p,p1:p,id:e.pointerId,T:null};try{L.setPointerCapture(e.pointerId)}catch(x){}
+  const G=document.createElement('div');G.className='rxgw';L.appendChild(G);RX.drag.G=G;const D=RX.drag;rxText(+L.dataset.p).then(T=>{D.T=T;if(RX.drag===D)rxPreview(D)})},true);
+document.addEventListener('pointermove',e=>{const D=RX.drag;if(!D||e.pointerId!==D.id)return;e.preventDefault();D.p1=[(e.clientX-D.r.left)/D.r.width,(e.clientY-D.r.top)/D.r.height];
+  if(!D.raf)D.raf=requestAnimationFrame(()=>{D.raf=0;rxPreview(D)})},true);
+document.addEventListener('pointerup',async e=>{const D=RX.drag;if(!D||e.pointerId!==D.id)return;RX.drag=null;D.G.remove();const n=+D.L.dataset.p;
+  const dx=Math.abs(D.p1[0]-D.p0[0]),dy=Math.abs(D.p1[1]-D.p0[1]);if(dx<0.02&&dy<0.01)return;
+  const T=D.T||await rxText(n);const r=T.length?rxSel(T,D.p0,D.p1):null;const rects=r?r.rects:rxBand(D.p0,D.p1),text=r?r.text:'';
+  await lfSet('hls',null,{type:'hl',book:R.book.id,page:n,color:RX.color,rects,text:text.slice(0,1200),at:new Date().toISOString()});toast(text?'🖍 Vurgulandı':'🖍 Vurgulandı')},true);
+document.addEventListener('pointercancel',e=>{const D=RX.drag;if(D&&e.pointerId===D.id){RX.drag=null;D.G.remove()}},true);
 /* vurgu / ifade menüsü */
 function rxMenu(h,x,y){rxPopClose();const m=document.createElement('div');m.className='rxpop';m.id='rxPop';
   m.innerHTML=h.type==='hl'?`${h.text?`<p>“${esc(h.text.slice(0,160))}${h.text.length>160?'…':''}”</p>`:''}<div class="rxpc">${RX_COL.map(([c,l])=>`<button type="button" data-rxa="col" data-v="${c}" style="background:${c}" aria-label="${l}"${c===h.color?' aria-pressed="true"':''}></button>`).join('')}</div>
@@ -7097,7 +7107,7 @@ document.addEventListener('click',async e=>{const s=e.target.closest&&e.target.c
   h.addEventListener('click',()=>{if(R.epub){toast('Vurgulamak için yazının üstüne basılı tut ve seç; çıkan menüden 🖍 Vurgula\'ya dokun');return}rxSetMode(!RX.mode)});
   m.addEventListener('click',e=>{e.stopPropagation();rxEmoPick()});
   $('rInkBtn').addEventListener('click',()=>{if(RX.mode)rxSetMode(false)})})();
-window.__rx={text:rxText};
+window.__rx={text:rxText,open:b=>openReader(b),form:b=>openForm(b),mine:n=>rxMine(n)};
 /* ---------- 🏷 Tür: formda hızlı seçim + rafta hızlı tür verme ---------- */
 const TUR_DEF=['Romantik','Roman','Fantastik','Distopya','Bilim kurgu','Polisiye','Gerilim','Korku','Klasik','Tarih','Psikoloji','Felsefe','Kişisel gelişim','Bilim','Sağlık','Şiir','Öykü','Deneme','Biyografi','Gençlik','Çocuk','Mizah'];
 function turList(){const own={};(st.books||[]).forEach(b=>{if(b.shelf)own[b.shelf]=(own[b.shelf]||0)+1});const o=Object.keys(own).sort((a,b)=>own[b]-own[a]);return [...o,...TUR_DEF.filter(t=>!o.some(x=>trLow(x)===trLow(t)))]}
