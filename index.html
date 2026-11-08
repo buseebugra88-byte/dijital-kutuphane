@@ -1139,7 +1139,7 @@ html body .rstage{overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow
 .rxh{position:absolute;mix-blend-mode:multiply;opacity:.5;border-radius:2px;pointer-events:auto;cursor:pointer}.reader.mode-night .rxh{mix-blend-mode:screen;opacity:.35}
 .rxgw{position:absolute;inset:0;pointer-events:none}.rxg{position:absolute;opacity:.45;border-radius:4px;pointer-events:none;mix-blend-mode:multiply}
 .rxh{border-radius:4px!important}
-#rFocus,#rNb,#rEmoBtn,#rQuote{display:none!important}#reader:not(.ep-foot) #rHlBtn{display:none!important}
+#rFocus,#rNb,#rEmoBtn,#rQuote,#rTts,#ttsBar,.lfc:has(>label>input[data-opt=tts]){display:none!important}#reader:not(.ep-foot) #rHlBtn{display:none!important}
 .rxe{position:absolute;transform:translate(-50%,0);border:0;background:rgba(255,255,255,.85);border-radius:999px;width:34px;height:34px;font-size:19px;line-height:1;display:grid;place-items:center;box-shadow:0 3px 10px -4px rgba(0,0,0,.35);pointer-events:auto;cursor:pointer;padding:0}
 #reader:has(#inkBar:not([hidden])) .rxh,#reader:has(#inkBar:not([hidden])) .rxe{pointer-events:none}
 .pgwrap canvas,.spage canvas{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
@@ -5441,7 +5441,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v147';
+const DK_VER='v148';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
