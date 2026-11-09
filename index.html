@@ -874,6 +874,7 @@ body.sec-notes{background-image:none!important}
 @media (hover:none){.gn-star{opacity:.75}}
 .gnt-m{display:flex;align-items:center;gap:2px;max-width:100%;min-width:0}.gnt-m b{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gn-chev{border:0;background:none;color:var(--muted);cursor:pointer;font-size:14px;padding:0 4px;line-height:1;flex:none}
+.gnt-m .gn-chev{font-size:17px;padding:4px 8px;margin:-4px -4px -4px 0;color:var(--ink)}
 .gnt-d{font-size:12px;color:var(--muted);margin-top:-4px}
 .gnm-w{min-width:310px;max-width:340px;padding:10px;border-radius:18px;max-height:80vh}
 .gnm{display:grid;gap:8px}
@@ -3970,7 +3971,7 @@ function nbBookTile(b){const P=nbPagesOf(b.id),c=b.color||NB_COV[0];let cov;
   else if(b.kind==='doc')cov=`<div class="gnc-doc"><i style="background:${c}"></i>${P.slice(0,5).map(p=>`<div>${esc(p.icon||'📄')} ${esc(p.title||'Başlıksız')}</div>`).join('')||'<div class="hint">Boş</div>'}</div>`;
   else cov=`<div class="gnc-nb" style="--c:${c}">${(b.recs||[]).length?'<span class="gnc-r">🎙</span>':''}</div>`;
   return `<div class="gnt gnc" data-nb="open" data-id="${b.id}" role="button" tabindex="0"><div class="gnt-ic">${cov}<button type="button" class="gn-star${b.star?' on':''}" data-nb="bstar" data-id="${b.id}" aria-label="Favori">${b.star?'★':'☆'}</button></div>
-   <div class="gnt-m"><b>${esc(b.title||'Adsız defter')}</b><button type="button" class="gn-chev nbc-x" data-nb="bmenu" data-id="${b.id}" aria-label="Seçenekler">⌄</button></div><span class="gnt-d">${nbDate(b.updatedAt||b.opened||b.createdAt)}${P.length>1?' · '+P.length+' sayfa':''}</span></div>`}
+   <div class="gnt-m"><b>${esc(b.title||'Adsız defter')}</b><button type="button" class="gn-chev" data-nb="bmenu" data-id="${b.id}" aria-label="Seçenekler">⌄</button></div><span class="gnt-d">${nbDate(b.updatedAt||b.opened||b.createdAt)}${P.length>1?' · '+P.length+' sayfa':''}</span></div>`}
 function nbGrid(){const g=$('nbGrid');if(!g)return;const F=NB.folders,q=NB.q.trim().toLocaleLowerCase('tr-TR'),fid=nbInFolder();
   let FL=[],L;const lo=s=>(s||'').toLocaleLowerCase('tr-TR');
   if(q){FL=F.filter(f=>lo(f.name).includes(q));L=NB.books.filter(b=>lo(b.title).includes(q)||nbPagesOf(b.id).some(p=>lo(nbText(p)).includes(q)))}
@@ -5453,7 +5454,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v150';
+const DK_VER='v151';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
