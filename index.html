@@ -757,6 +757,7 @@ body.nb-open .qc-fab,body.nb-open .gs-btn,body:has(#reader:not([hidden])) .qc-fa
 
 /* defter v3 */
 .nbp{touch-action:none !important}
+#nbScroll{overflow-anchor:none;overscroll-behavior:contain}
 .nbe-tools{flex-direction:column;align-items:stretch !important;gap:6px !important;padding:6px 10px !important;overflow:visible !important}
 .nbt-main,.nbt-opts{display:flex;gap:6px;align-items:center;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.nbt-main::-webkit-scrollbar,.nbt-opts::-webkit-scrollbar{display:none}.nbt-main>*,.nbt-opts>*{flex:none}
 .nbt-b{display:grid;justify-items:center;gap:2px;min-width:58px;padding:6px 6px 4px;border:1px solid transparent;border-radius:14px;background:none;cursor:pointer;color:var(--ink);font:inherit}
@@ -3939,7 +3940,7 @@ function nbListen(db){
     for(const d of s.docs){const x={id:d.id,...d.data()};seen.add(d.id);const old=NB.raw[d.id];if(NB.dirty.has(d.id))continue;
       if(!old||old.updatedAt!==x.updatedAt){NB.raw[d.id]=x;if(NB.pg[d.id]){delete NB.pg[d.id];changed.push(d.id)}}}
     for(const id of Object.keys(NB.raw))if(!seen.has(id)&&!NB.dirty.has(id)){delete NB.raw[id];delete NB.pg[id];changed.push(id)}
-    if(NB.bid&&changed.length){const ae=document.activeElement;if(!(ae&&ae.closest&&ae.closest('#nbEd [contenteditable]'))&&!NB.cur&&!NB.drag)nbBodyRender(true)}
+    if(NB.bid&&changed.length)nbSyncRender();
     nbHomeRe()},()=>{});
 }
 function nbHomeRe(){if(!(st.sec==='notes'||curSub()==='nb')||NB.bid&&!NB.side)return;const ae=document.activeElement;if(ae&&ae.id==='nbQ')return nbGrid();if($('nbHome'))nbRender($('secHost'))}
@@ -4149,7 +4150,7 @@ function nbTools(){const el=$('nbTools');if(!el)return;const t=NB.tool,hl=t==='h
 function nbBaseW(){const sc=$('nbScroll');const w=sc?sc.clientWidth:800;return Math.max(260,Math.min(w-(w<600?16:48),900))}
 
 /* ---- gövde ---- */
-function nbBodyRender(keep){const box=$('nbPages');if(!box)return;const bk=nbBook();if(!bk)return;const sc=$('nbScroll'),top=sc.scrollTop;
+function nbBodyRender(keep){const box=$('nbPages');if(!box)return;const bk=nbBook();if(!bk)return;const sc=$('nbScroll'),top=sc.scrollTop;let anc=null;if(keep){try{const sr=sc.getBoundingClientRect();for(const w of box.querySelectorAll('.nbpw[data-pid]')){const r=w.getBoundingClientRect();if(r.bottom>sr.top+4){anc={id:w.dataset.pid,dy:r.top-sr.top,f:r.height?(sr.top-r.top)/r.height:0};break}}}catch(e){}}
   NB.cvs.forEach(v=>{v.width=v.height=0});NB.cvs.clear();if(NB.obs)NB.obs.disconnect();
   let P=nbPagesOf(bk.id);
   if(bk.kind==='doc'){nbTree();const pg=nbPg(NB.docPid);if(!pg){box.innerHTML='';return}P=[NB.raw[pg.id]];$('nbTools').hidden=pg.type!=='ink'}
@@ -4161,7 +4162,7 @@ function nbBodyRender(keep){const box=$('nbPages');if(!box)return;const bk=nbBoo
       <div class="nbp" data-pid="${pg.id}" style="width:${W}px;height:${h}px;background:${pc};--k:${W/1000}"><div class="nbov">${nbItemsHtml(pg)}</div></div></div>`}).join('')+
     (bk.kind==='doc'?'':`<div class="nbe-add" style="width:${W}px"><button class="btn" type="button" data-ne="addpage" data-v="ink">＋ Yeni sayfa</button><button class="btn" type="button" data-ne="tplmenu">📋 Şablondan</button><button class="btn" type="button" data-ne="addpage" data-v="text">＋ Yazı sayfası</button><button class="btn" type="button" data-ne="addpdf">＋ PDF ekle</button></div>`);
   NB.obs=new IntersectionObserver(es=>{for(const e of es){const pid=e.target.dataset.pid;if(e.isIntersecting)nbMount(e.target);else nbUnmount(pid)}},{root:sc,rootMargin:'900px 0px'});
-  box.querySelectorAll('.nbp').forEach(p=>NB.obs.observe(p));if(keep)sc.scrollTop=top;
+  box.querySelectorAll('.nbp').forEach(p=>NB.obs.observe(p));if(keep){sc.scrollTop=top;if(anc){const w=box.querySelector(`.nbpw[data-pid="${anc.id}"]`);if(w){const sr=sc.getBoundingClientRect(),r=w.getBoundingClientRect();sc.scrollTop+=(r.top-sr.top)-anc.dy}}}
   nbTextBind(box)}
 function nbMount(el){const pid=el.dataset.pid;if(NB.cvs.has(pid))return;const pg=nbPg(pid);if(!pg)return;const cv=document.createElement('canvas');cv.className='nbcv';
   const W=el.clientWidth||parseFloat(el.style.width),dpr=Math.min(window.devicePixelRatio||1,2.4);let pw=Math.round(W*dpr);if(pw>2400)pw=2400;cv.width=pw;cv.height=Math.round(pw*(pg.h||NB_H)/1000);
@@ -5239,7 +5240,7 @@ function nbLiveDraw(){NB.liveRaf=0;const c=NB.cur;if(!c||!c.S)return;const el=NB
 /* ---- işaretçi (kalem/fare) ---- */
 function nbCan(e){if(e.pointerType==='pen'){NB.penSeen=true;return true}if(e.pointerType==='mouse')return e.button===0;return NB.finger&&!NB.multi}
 function nbPress(e){return e.pointerType==='pen'?Math.max(.05,e.pressure||.5):.5}
-function nbDown(e){if(e.pointerType==='pen')NB.penAt=performance.now();const el=e.target.closest('.nbp');if(!el||e.target.closest('.nbx,.nbselbar,.nbx-ref'))return;if(!nbCan(e))return;
+function nbDown(e){if(e.pointerType==='pen'){NB.penAt=performance.now();nbInertiaStop()}const el=e.target.closest('.nbp');if(!el||e.target.closest('.nbx,.nbselbar,.nbx-ref'))return;if(!nbCan(e))return;
   const pg=nbPg(el.dataset.pid);if(!pg)return;e.preventDefault();try{el.setPointerCapture(e.pointerId)}catch(x){}if(!NB.cvs.has(pg.id))nbMount(el);nbInertiaStop();
   const [x,y]=nbLogical(e,el);const t=NB.tool;NB.down={x,y,t:performance.now(),pid:pg.id,el,pointer:e.pointerType};
   if(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('.nbx'))document.activeElement.blur();
@@ -5296,10 +5297,13 @@ function nbPalm(){return localStorage.getItem('nb-palm')!=='0'}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-nbpalm]');if(!b)return;localStorage.setItem('nb-palm',nbPalm()?'0':'1');nbTools();toast(nbPalm()?'✋ Avuç engeli açık: kalemle yazarken elinin dokunuşu sayfayı kaydırmaz':'Avuç engeli kapalı')});
 /* avuç: kalem yeni kullanıldıysa ya da dokunuş geniş bir alansa (avuç/bilek) yok say */
 function nbPalmTouch(t){if(!nbPalm())return false;if(performance.now()-(NB.penAt||0)<900)return true;const r=Math.max(t.radiusX||t.webkitRadiusX||0,t.radiusY||t.webkitRadiusY||0);return r>=22}
+/* başka cihazdan gelen değişiklik: yazarken sayfayı yeniden çizme, el durunca çiz */
+function nbSyncRender(){clearTimeout(NB.syncT);const busy=()=>{const ae=document.activeElement;return NB.cur||NB.drag||NB.pz||NB.inr||(ae&&ae.closest&&ae.closest('#nbEd [contenteditable]'))||performance.now()-(NB.penAt||0)<2500||performance.now()-(NB.touchAt||0)<1500};
+  const go=()=>{if(!NB.bid)return;if(busy()){NB.syncT=setTimeout(go,1200);return}nbBodyRender(true)};NB.syncT=setTimeout(go,300)}
 function nbInertiaStop(){if(NB.inr){cancelAnimationFrame(NB.inr);NB.inr=0}}
 function nbBind(){const sc=$('nbScroll');let T=null;
   const onPage=e=>e.target.closest&&e.target.closest('.nbp')&&!e.target.closest('.nbx,.nbselbar,.nbx-ref');
-  sc.addEventListener('touchstart',e=>{const all=[...e.touches],pen=all.some(t=>t.touchType==='stylus');if(pen)NB.penAt=performance.now();const fing=all.filter(t=>t.touchType!=='stylus'&&!(nbPalm()&&(pen||nbPalmTouch(t))));
+  sc.addEventListener('touchstart',e=>{NB.touchAt=performance.now();const all=[...e.touches],pen=all.some(t=>t.touchType==='stylus');if(pen)NB.penAt=performance.now();const fing=all.filter(t=>t.touchType!=='stylus'&&!(nbPalm()&&(pen||nbPalmTouch(t))));
     if(!onPage(e)&&!T)return;e.preventDefault();nbInertiaStop();if(pen){if(T&&T.mode==='pan'&&nbPalm())T=null;return}if(!fing.length)return;
     NB.multi=fing.length>1;if(NB.multi&&NB.cur&&NB.down&&NB.down.pointer==='touch'){NB.cur=null;nbLiveClear()}
     if(fing.length===1&&!NB.finger){const f=fing[0];T={mode:'pan',x:f.clientX,y:f.clientY,sl:sc.scrollLeft,st:sc.scrollTop,t:performance.now(),mv:0,v:[],tgt:e.target};return}
@@ -5449,7 +5453,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v149';
+const DK_VER='v150';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -5856,7 +5860,7 @@ function nbListen(db){
     for(const d of s.docs){const x={id:d.id,...d.data()};seen.add(d.id);const old=NB.raw[d.id];if(NB.dirty.has(d.id))continue;
       if(!old||old.updatedAt!==x.updatedAt){NB.raw[d.id]=x;if(NB.pg[d.id]){delete NB.pg[d.id];changed.push(d.id)}}}
     for(const id of Object.keys(NB.raw))if(!seen.has(id)&&!NB.dirty.has(id)){delete NB.raw[id];delete NB.pg[id];changed.push(id)}
-    if(NB.bid&&changed.length){const ae=document.activeElement;if(!(ae&&ae.closest&&ae.closest('#nbEd [contenteditable]'))&&!NB.cur&&!NB.drag)nbBodyRender(true)}
+    if(NB.bid&&changed.length)nbSyncRender();
     nbHomeRe()},()=>{});
 }
 
