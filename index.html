@@ -1515,7 +1515,7 @@ body.home-kindle #listArea{max-width:760px;margin-inline:auto}
   </div>
   <div class="rpop" id="rPop" hidden>
     <div class="f"><label>Okuma şekli</label><div class="seg" id="rFlow"><button type="button" data-flow="scroll">Aşağı kaydır</button><button type="button" data-flow="page">Sayfa çevir</button></div></div>
-    <div class="f"><label>Yan tutunca</label><div class="seg" id="rSpread"><button type="button" data-spread="on">📖 İki sayfa</button><button type="button" data-spread="off">Tek sayfa</button></div></div>
+    <div class="f"><label>Sayfa düzeni</label><div class="seg" id="rSpread"><button type="button" data-spread="always">📖 Hep iki sayfa</button><button type="button" data-spread="on">Yan tutunca iki</button><button type="button" data-spread="off">Tek sayfa</button></div></div>
     <div class="f"><label>Okurken üst ve alt çubuk</label><div class="seg" id="rAh"><button type="button" data-ah="1">Kendiliğinden gizle</button><button type="button" data-ah="0">Hep görünsün</button></div></div>
     <div class="f"><label>Sayfa rengi</label><div class="seg" id="rModes"><button type="button" data-m="eink">📖 Kâğıt</button><button type="button" data-m="light">Açık</button><button type="button" data-m="sepia">Sepya</button><button type="button" data-m="night">Gece</button></div></div>
     <div class="f"><label>Yazı tipi <span class="hint">(EPUB)</span></label><div class="seg" id="rFonts"><button type="button" data-f="lora" style="font-family:Lora,serif">Lora</button><button type="button" data-f="cormorant" style="font-family:'Cormorant Garamond',serif">Cormorant</button><button type="button" data-f="sans" style="font-family:'DM Sans',sans-serif">Sade</button><button type="button" data-f="literata" style="font-family:Literata,serif">Literata</button><button type="button" data-f="merri" style="font-family:Merriweather,serif">Merriweather</button><button type="button" data-f="garamond" style="font-family:'EB Garamond',serif">Garamond</button><button type="button" data-f="nunito" style="font-family:Nunito,sans-serif">Yuvarlak</button><button type="button" data-f="atkinson" style="font-family:'Atkinson Hyperlegible',sans-serif">Okunaklı</button></div></div>
@@ -2501,7 +2501,7 @@ $('rModes').addEventListener('click',e=>{const b=e.target.closest('[data-m]');if
 $('rFonts').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b){RS.font=b.dataset.f;applyRS()}});
 $('rLines').addEventListener('click',e=>{const b=e.target.closest('[data-l]');if(b){RS.line=b.dataset.l;applyRS()}});
 $('rFlow').addEventListener('click',e=>{const b=e.target.closest('[data-flow]');if(b){if(R.epub){RS.eflow=b.dataset.flow;applyRS();epRelayout()}else if(RS.flow!==b.dataset.flow){RS.flow=b.dataset.flow;applyRS();SCR.key='';if(R.doc)renderPage()}}});
-$('rSpread').addEventListener('click',e=>{const b=e.target.closest('[data-spread]');if(!b)return;RS.spread=b.dataset.spread;applyRS();if(R.epub)epRelayout();else if(R.doc){SCR.key='';renderPage()}});
+$('rSpread').addEventListener('click',e=>{const b=e.target.closest('[data-spread]');if(!b)return;RS.spread=b.dataset.spread;if(RS.spread!=='off'){if(R.epub){if(RS.eflow==='scroll')RS.eflow='page'}else if(RS.flow==='scroll')RS.flow='page'}applyRS();if(R.epub)epRelayout();else if(R.doc){SCR.key='';renderPage()}});
 $('rAh').addEventListener('click',e=>{const b=e.target.closest('[data-ah]');if(b){RS.ah=b.dataset.ah;applyRS()}});
 $('rStage').addEventListener('click',e=>{const wasOpen=!$('rPop').hidden;$('rPop').hidden=true;$('rModeBtn').setAttribute('aria-expanded','false');if(wasOpen||e.target.closest('a,button,input,select,textarea,[data-epl],mark.rxm'))return;if(R.epub&&EPG.on&&!String(getSelection()||'').trim()){const w=$('rStage').clientWidth,x=e.clientX-$('rStage').getBoundingClientRect().left;if(x>w*0.7)return epTurn(1);if(x<w*0.3)return epTurn(-1)}if(R.doc&&!R.epub&&!isScroll()&&$('inkBar').hidden){const w=$('rStage').clientWidth,x=e.clientX-$('rStage').getBoundingClientRect().left;if(x>w*0.7)return goPage(R.page+1);if(x<w*0.3)return goPage(R.page-1)}barsToggle()});
 applyRS();
@@ -5441,7 +5441,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v148';
+const DK_VER='v149';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -7950,7 +7950,7 @@ $('pickVeil').addEventListener('click',e=>{if(e.target.closest('#blBulkGo'))blBu
 const DD={n:0};
 function ddFiles(e){const t=e.dataTransfer&&e.dataTransfer.types;return t&&[...t].includes('Files')}
 function ddBusy(){return (!$('reader').hidden)||(typeof B!=='undefined'&&B.running)}
-function ddOv(on){let o=$('ddOv');if(!o){o=document.createElement('div');o.id='ddOv';o.innerHTML='<div><b>📚</b><span>Bırak, rafa ekleyeyim</span><small>PDF, EPUB ya da bir klasör</small></div>';document.body.appendChild(o)}o.classList.toggle('on',on)}
+function ddOv(on){let o=$('ddOv');if(!o){o=document.createElement('div');o.id='ddOv';o.innerHTML=window.DK_MASA?'<div><b>📑</b><span>Bırak, Akademik’e ekleyeyim</span><small>Yalnızca Çalışma Masam’da durur</small></div>':'<div><b>📚</b><span>Bırak, rafa ekleyeyim</span><small>PDF, EPUB ya da bir klasör</small></div>';document.body.appendChild(o)}o.classList.toggle('on',on)}
 async function ddWalk(entry,path,out){
   if(entry.isFile){const f=await new Promise((ok,no)=>entry.file(ok,no));if(/\.(pdf|epub)$/i.test(f.name)){try{Object.defineProperty(f,'webkitRelativePath',{value:path+f.name})}catch(e){}out.push(f)}return}
   if(entry.isDirectory){const rd=entry.createReader();let all=[];for(;;){const part=await new Promise((ok,no)=>rd.readEntries(ok,no));if(!part.length)break;all=all.concat(part)}
@@ -7970,7 +7970,7 @@ window.addEventListener('drop',async e=>{if(!ddFiles(e))return;e.preventDefault(
   B.items=parseItems(files);bulkMark();
   const todo=B.items.filter(x=>x.state==='wait').length;
   if(!todo){$('bulkSummary').textContent='Bıraktığın kitapların hepsi zaten rafta.';return}
-  toast(todo+' kitap rafa ekleniyor…');bulkRun();
+  toast(window.DK_MASA?todo+' dosya Akademik’e ekleniyor…':todo+' kitap rafa ekleniyor…');bulkRun();
 });
 
 /* ---------- Defter çıkartmaları: Nörobilim seti ---------- */
@@ -8500,7 +8500,7 @@ function parseItems(files){
     let f=r.folders.slice();const generic=/^(fiction|kurgu|books|kitaplar|pdf|library|kütüphane)$/i;const acadRe=/^(academic|akademik|makaleler?|articles?|papers?|tez|thesis|literatür|literatur)$/i;const isAcad=f.some(x=>acadRe.test(x.trim()));if(isAcad){const ix=f.findIndex(x=>acadRe.test(x.trim()));f=f.slice(ix+1);if(!f.length)f=['Genel']}
     while(f.length>1&&generic.test(f[0]))f.shift();
     const writing=r.folders.some(x=>/^writing$/i.test(x));
-    return {file:r.file,kind:isAcad?'makale':'pdf',title,author,shelf:f[0]?niceCase(f[0]):'',tags:f.slice(1).map(x=>trLow(cleanSeg(x))).filter(Boolean),writing,state:'wait',msg:''};
+    return {file:r.file,kind:(isAcad||window.DK_MASA)?'makale':'pdf',title,author,shelf:f[0]?niceCase(f[0]):'',tags:f.slice(1).map(x=>trLow(cleanSeg(x))).filter(Boolean),writing,state:'wait',msg:''};
   });
 }
 function bulkRow(it,i){const sel=it.state==='wait'||it.state==='off';return `<div class="bulkrow ${it.state}${sel?' selrow':''}" data-i="${i}">${sel?`<input type="checkbox" class="selbox" data-sel="${i}" ${it.state==='wait'?'checked':''} aria-label="${esc(it.title)} eklensin">`:'<span></span>'}<div><b>${esc(it.title)}</b>${it.author?` <span>· ${esc(it.author)}</span>`:''}<br><span>${esc(it.shelf||'Rafsız')}${it.tags.length?' · #'+it.tags.map(esc).join(' #'):''} · ${(it.file.size/1048576).toFixed(1)} MB</span></div><em>${esc(it.msg)}</em></div>`}
@@ -8829,7 +8829,7 @@ function rdDpr(vp){const d=Math.min(2.5,window.devicePixelRatio||1),max=/iP(hone
 function rdFree(root){if(!root)return;root.querySelectorAll('canvas').forEach(c=>{try{c.width=0;c.height=0}catch(e){}})}
 let rdRz,rdW=0,rdH=0;function rdResize(){if(!R.book||$('reader').hidden||R.epub||!R.doc)return;const st_=$('rStage');if(Math.abs(st_.clientWidth-rdW)<4&&Math.abs(st_.clientHeight-rdH)<40)return;rdW=st_.clientWidth;rdH=st_.clientHeight;SCR.key='';R.flipDir=0;renderPage()}
 window.addEventListener('resize',()=>{clearTimeout(rdRz);rdRz=setTimeout(rdResize,250)});window.addEventListener('orientationchange',()=>{clearTimeout(rdRz);rdRz=setTimeout(rdResize,400)});
-function spreadOK(){return RS.spread!=='off'&&innerWidth>=900&&innerWidth>innerHeight}
+function spreadOK(){if(RS.spread==='always')return true;return RS.spread!=='off'&&innerWidth>=900&&innerWidth>innerHeight}
 function pdfSpread(){return !!(R.doc&&!R.epub&&spreadOK()&&!isScroll()&&R.scale<=1.01)}
  async function renderPage(){
   if(!R.doc)return;$('reader').classList.toggle('is-epub',!!R.epub);if(!R.epub&&EPG.on)epUnpage();
