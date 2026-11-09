@@ -5239,7 +5239,7 @@ function nbLiveDraw(){NB.liveRaf=0;const c=NB.cur;if(!c||!c.S)return;const el=NB
 /* ---- işaretçi (kalem/fare) ---- */
 function nbCan(e){if(e.pointerType==='pen'){NB.penSeen=true;return true}if(e.pointerType==='mouse')return e.button===0;return NB.finger&&!NB.multi}
 function nbPress(e){return e.pointerType==='pen'?Math.max(.05,e.pressure||.5):.5}
-function nbDown(e){const el=e.target.closest('.nbp');if(!el||e.target.closest('.nbx,.nbselbar,.nbx-ref'))return;if(!nbCan(e))return;
+function nbDown(e){if(e.pointerType==='pen')NB.penAt=performance.now();const el=e.target.closest('.nbp');if(!el||e.target.closest('.nbx,.nbselbar,.nbx-ref'))return;if(!nbCan(e))return;
   const pg=nbPg(el.dataset.pid);if(!pg)return;e.preventDefault();try{el.setPointerCapture(e.pointerId)}catch(x){}if(!NB.cvs.has(pg.id))nbMount(el);nbInertiaStop();
   const [x,y]=nbLogical(e,el);const t=NB.tool;NB.down={x,y,t:performance.now(),pid:pg.id,el,pointer:e.pointerType};
   if(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('.nbx'))document.activeElement.blur();
@@ -5254,7 +5254,7 @@ function nbDown(e){const el=e.target.closest('.nbp');if(!el||e.target.closest('.
   if(NB.rec&&NB.rec.bid===NB.bid){S.a=NB.rec.idx;S.t=performance.now()-NB.rec.t0}
   NB.cur={pid:pg.id,S};nbLive(el);nbLiveDraw();nbHold()}
 function nbHold(){clearTimeout(NB.holdT);if(!NB.shape||NB.tool!=='pen')return;NB.holdT=setTimeout(()=>{const c=NB.cur;if(!c||!c.S||c.snapped)return;const sh=nbShape(c.S.pts);if(!sh)return;c.S.pts=sh;c.S.pt=c.S.pt==='brush'?'ball':c.S.pt;c.snapped=true;c.S.bb=null;nbLiveDraw();if(navigator.vibrate)navigator.vibrate(8)},520)}
-function nbMove(e){const c=NB.cur,d=NB.drag;if(!c&&!d)return;const el=NB.down&&NB.down.el;if(!el)return;e.preventDefault();
+function nbMove(e){if(e.pointerType==='pen')NB.penAt=performance.now();const c=NB.cur,d=NB.drag;if(!c&&!d)return;const el=NB.down&&NB.down.el;if(!el)return;e.preventDefault();
   const evs=e.getCoalescedEvents&&e.getCoalescedEvents().length?e.getCoalescedEvents():[e];const [x,y]=nbLogical(e,el);
   if(d){const T=d.T;if(d.mode==='move'){T.dx=x-d.x0;T.dy=y-d.y0}else{const r=NB.sel.bb;const sx=(x-r.x)/(d.x0-r.x||1),sy=(y-r.y)/(d.y0-r.y||1);T.sc=Math.max(.15,Math.min(8,(sx+sy)/2))}
     if(!d.raf)d.raf=requestAnimationFrame(()=>{d.raf=0;nbRedraw(NB.sel.pid)});return}
@@ -5292,17 +5292,25 @@ function nbEraseAt(pg,x,y,el){const r=nbErR(el);const ctx=el&&nbLive(el);if(ctx)
 function nbErase(pg,x,y){nbEraseAt(pg,x,y,document.querySelector(`.nbp[data-pid="${pg.id}"]`))}
 
 /* ---- parmak: kaydırma (ivmeli), iki parmak: yakınlaştırma; kalem her zaman yazar ---- */
+function nbPalm(){return localStorage.getItem('nb-palm')!=='0'}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-nbpalm]');if(!b)return;localStorage.setItem('nb-palm',nbPalm()?'0':'1');nbTools();toast(nbPalm()?'✋ Avuç engeli açık: kalemle yazarken elinin dokunuşu sayfayı kaydırmaz':'Avuç engeli kapalı')});
+/* avuç: kalem yeni kullanıldıysa ya da dokunuş geniş bir alansa (avuç/bilek) yok say */
+function nbPalmTouch(t){if(!nbPalm())return false;if(performance.now()-(NB.penAt||0)<900)return true;const r=Math.max(t.radiusX||t.webkitRadiusX||0,t.radiusY||t.webkitRadiusY||0);return r>=22}
 function nbInertiaStop(){if(NB.inr){cancelAnimationFrame(NB.inr);NB.inr=0}}
 function nbBind(){const sc=$('nbScroll');let T=null;
   const onPage=e=>e.target.closest&&e.target.closest('.nbp')&&!e.target.closest('.nbx,.nbselbar,.nbx-ref');
-  sc.addEventListener('touchstart',e=>{const all=[...e.touches],fing=all.filter(t=>t.touchType!=='stylus'),pen=all.some(t=>t.touchType==='stylus');
-    if(!onPage(e)&&!T)return;e.preventDefault();nbInertiaStop();if(pen)return;
+  sc.addEventListener('touchstart',e=>{const all=[...e.touches],pen=all.some(t=>t.touchType==='stylus');if(pen)NB.penAt=performance.now();const fing=all.filter(t=>t.touchType!=='stylus'&&!(nbPalm()&&(pen||nbPalmTouch(t))));
+    if(!onPage(e)&&!T)return;e.preventDefault();nbInertiaStop();if(pen){if(T&&T.mode==='pan'&&nbPalm())T=null;return}if(!fing.length)return;
     NB.multi=fing.length>1;if(NB.multi&&NB.cur&&NB.down&&NB.down.pointer==='touch'){NB.cur=null;nbLiveClear()}
     if(fing.length===1&&!NB.finger){const f=fing[0];T={mode:'pan',x:f.clientX,y:f.clientY,sl:sc.scrollLeft,st:sc.scrollTop,t:performance.now(),mv:0,v:[],tgt:e.target};return}
     if(fing.length===1&&NB.finger){T={mode:'draw',x:fing[0].clientX,y:fing[0].clientY,t:performance.now(),mv:0,tgt:e.target};return}
     if(fing.length===2){const m={x:(fing[0].clientX+fing[1].clientX)/2,y:(fing[0].clientY+fing[1].clientY)/2};T={mode:'pinch',mx:m.x,my:m.y,sl:sc.scrollLeft,st:sc.scrollTop};nbPinch(e,'start')}},{passive:false});
-  sc.addEventListener('touchmove',e=>{if(!T){if(NB.cur||NB.drag)e.preventDefault();return}e.preventDefault();const fing=[...e.touches].filter(t=>t.touchType!=='stylus');
-    if(T.mode==='pan'&&fing.length===1){const f=fing[0],dx=f.clientX-T.x,dy=f.clientY-T.y;T.mv=Math.max(T.mv,Math.hypot(dx,dy));sc.scrollLeft=T.sl-dx;sc.scrollTop=T.st-dy;const now=performance.now();T.v.push([now,f.clientX,f.clientY]);if(T.v.length>6)T.v.shift();return}
+  sc.addEventListener('touchmove',e=>{if([...e.touches].some(t=>t.touchType==='stylus'))NB.penAt=performance.now();if(!T){if(NB.cur||NB.drag||nbPalm())e.preventDefault();return}e.preventDefault();
+    if(T.mode==='pan'&&nbPalm()&&(NB.cur||performance.now()-(NB.penAt||0)<900)){T=null;return}
+    const fing=[...e.touches].filter(t=>t.touchType!=='stylus');
+    if(T.mode==='pan'&&fing.length===1){const f=fing[0];let dx=f.clientX-T.x,dy=f.clientY-T.y;const d0=Math.hypot(dx,dy);T.mv=Math.max(T.mv,d0);
+      if(nbPalm()){if(!T.go){if(d0<12||nbPalmTouch(f))return;T.go=1;T.x=f.clientX;T.y=f.clientY;T.v=[];return}}
+      sc.scrollLeft=T.sl-dx;sc.scrollTop=T.st-dy;const now=performance.now();T.v.push([now,f.clientX,f.clientY]);if(T.v.length>6)T.v.shift();return}
     if(T.mode==='draw'&&fing.length===1){T.mv=Math.max(T.mv,Math.hypot(fing[0].clientX-T.x,fing[0].clientY-T.y));return}
     if(T.mode==='pinch'&&fing.length===2){nbPinch(e,'move');const P=NB.pz;if(P&&Math.abs(P.s-1)<.06){const mx=(fing[0].clientX+fing[1].clientX)/2,my=(fing[0].clientY+fing[1].clientY)/2;sc.scrollLeft=T.sl-(mx-T.mx);sc.scrollTop=T.st-(my-T.my)}}},{passive:false});
   const end=e=>{if(!T)return;const fing=[...e.touches].filter(t=>t.touchType!=='stylus');
@@ -5311,7 +5319,7 @@ function nbBind(){const sc=$('nbScroll');let T=null;
       if(tap&&e.changedTouches[0]){const ct=e.changedTouches[0];const el=document.elementFromPoint(ct.clientX,ct.clientY);const p=el&&el.closest&&el.closest('.nbp');
         if(p&&NB.tool==='text'&&Date.now()-(NB.textAt||0)>600){const pg=nbPg(p.dataset.pid);if(pg){const [x,y]=nbLogical(ct,p);NB.textAt=Date.now();nbAddText(pg,x,y)}}
         else if(p&&NB.playIdx!=null){const pg=nbPg(p.dataset.pid);const [x,y]=nbLogical(ct,p);let best=null,bd=30;for(const S of pg.strokes){if(S.a==null)continue;for(let i=0;i<S.pts.length;i+=3){const dd=Math.hypot(S.pts[i]-x,S.pts[i+1]-y);if(dd<bd){bd=dd;best=S}}}if(best)nbSeek(best.a,best.t)}}
-      else if(T.mode==='pan'&&T.v.length>1){const a=T.v[0],b=T.v[T.v.length-1],dt=Math.max(1,b[0]-a[0]);let vx=(b[1]-a[1])/dt,vy=(b[2]-a[2])/dt;if(performance.now()-b[0]<80&&Math.hypot(vx,vy)>.15){let last=performance.now();const step=now=>{const d=now-last;last=now;sc.scrollLeft-=vx*d;sc.scrollTop-=vy*d;const k=Math.pow(.95,d/16);vx*=k;vy*=k;if(Math.hypot(vx,vy)>.02)NB.inr=requestAnimationFrame(step);else NB.inr=0};NB.inr=requestAnimationFrame(step)}}}
+      else if(T.mode==='pan'&&T.v.length>1){const a=T.v[0],b=T.v[T.v.length-1],dt=Math.max(1,b[0]-a[0]);let vx=(b[1]-a[1])/dt,vy=(b[2]-a[2])/dt;const P_=nbPalm();if(P_){vx*=.6;vy*=.6}if(performance.now()-b[0]<80&&Math.hypot(vx,vy)>(P_?.45:.15)&&(!P_||T.mv>60)){let last=performance.now();const step=now=>{const d=now-last;last=now;sc.scrollLeft-=vx*d;sc.scrollTop-=vy*d;const k=Math.pow(P_?.92:.95,d/16);vx*=k;vy*=k;if(Math.hypot(vx,vy)>.02)NB.inr=requestAnimationFrame(step);else NB.inr=0};NB.inr=requestAnimationFrame(step)}}}
     if(!fing.length){T=null;NB.multi=false}};
   sc.addEventListener('touchend',end);sc.addEventListener('touchcancel',end);
   sc.addEventListener('wheel',()=>nbInertiaStop(),{passive:true});
@@ -5336,7 +5344,7 @@ function nbTools(){const el=$('nbTools');if(!el)return;const t=NB.tool,hl=t==='h
   el.innerHTML=`<div class="nbt-main">${tb('pen','pen','Kalem',t==='pen')}${tb('hl','hl','Fosforlu',hl)}${tb('tape','tape','Bant',t==='tape')}${tb('er','er','Silgi',t==='er')}${tb('lasso','lasso','Kement',t==='lasso')}${tb('text','text','Yazı',t==='text')}${tb('img','img','Görsel',false)}<button type="button" class="nbt-b" data-ne="stk" aria-pressed="false"><b style="font-size:20px;line-height:1">🧠</b><span>Çıkartma</span></button>
     <span class="nbt-sep"></span><button type="button" class="nbt-b" data-ne="undo">${nbIco('undo')}<span>Geri al</span></button><button type="button" class="nbt-b" data-ne="redo">${nbIco('redo')}<span>Yinele</span></button>
     <span class="nbt-sep"></span><button type="button" class="nbt-b nbt-sm" data-ne="zoom" data-v="-1" aria-label="Uzaklaştır"><b>−</b><span>${Math.round(NB.zoom*100)}%</span></button><button type="button" class="nbt-b nbt-sm" data-ne="zoom" data-v="1" aria-label="Yakınlaştır"><b>+</b><span>Büyüt</span></button>
-    <button type="button" class="nbt-b${NB.finger?' on':''}" data-ne="finger" aria-pressed="${NB.finger}">${nbIco('hand')}<span>${NB.finger?'Parmak yazar':'Parmak kaydırır'}</span></button></div>
+    <button type="button" class="nbt-b${NB.finger?' on':''}" data-ne="finger" aria-pressed="${NB.finger}">${nbIco('hand')}<span>${NB.finger?'Parmak yazar':'Parmak kaydırır'}</span></button><button type="button" class="nbt-b${nbPalm()?' on':''}" data-nbpalm="1" aria-pressed="${nbPalm()}" title="Kalemle yazarken eline/avucuna dokunuşları yok sayar"><span style="font-size:19px;line-height:22px">✋</span><span>Avuç engeli</span></button></div>
    <div class="nbt-opts">${opts}</div>`;
   const ed=$('nbEd');if(ed){ed.dataset.tool=t;ed.classList.toggle('fing',NB.finger)}
   const cx=$('nbColX');if(cx)cx.addEventListener('input',()=>{if(NB.tool==='hl')NB.hl=cx.value;else NB.color=cx.value;nbUiSave();nbSelColor();nbTools()});
