@@ -13,5 +13,3 @@ index.html değiştiğinde üçü birlikte yükseltilir: `index.html` içindeki 
 ## 24. yaş hediyesi
 
 `hediye-24.html`: 7 Kasım 2026 doğum günü hediyesi (mühürlü mektup, dilek mumu, 24 notluk "başlayan yıl kavanozu"). Hayatım → Mektuplarım sekmesinden açılır. Çekilen notlar bu tarayıcıda (`buse24-kavanoz`) saklanır.
-
-`malzeme.html`: Malzemelerim — mektup malzemeleri (mühür, mum, kalem, mürekkep, kâğıt, zarf, pul, süs) ve alışveriş listesi. Ayrı olarak ana ekrana eklenir. Veriler bu tarayıcıda (`muhurlu-malzeme-v1`) saklanır; Kütüphanem yedeğine dahildir, kendi Yedek al / Yedekten yükle düğmeleri de vardır.
