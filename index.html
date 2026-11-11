@@ -168,6 +168,8 @@ header.top .sprigL{position:absolute;left:-14px;bottom:-18px;width:90px;height:9
 .viewtog button svg{width:18px;height:18px}
 .viewtog button[aria-pressed="true"]{background:var(--accent);color:var(--paper)}
 .shelves{display:grid;gap:26px}
+.tured-btn{margin-left:auto;border:0;background:none;color:var(--muted);font-size:15px;cursor:pointer;padding:2px 6px;border-radius:8px}.tured-btn:hover{background:var(--line);color:var(--ink)}aside h3:has(.tured-btn){display:flex;align-items:center}
+.tured{display:grid;gap:6px;max-height:50vh;overflow:auto;margin:10px 0}.tured-row{display:flex;gap:6px;align-items:center}.tured-row input{flex:1;min-width:0}.tured-row small{color:var(--muted);font-family:var(--mono);min-width:2.5em;text-align:right}.tured-row button{border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:6px 9px;cursor:pointer}.tured-add{display:flex;gap:6px}.tured-add input{flex:1;min-width:0}
 .shelf h3{font-family:var(--display);font-style:italic;font-weight:500;font-size:22px;display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
 .shelf h3 small{font-family:var(--mono);font-style:normal;font-size:12px;color:var(--muted);font-weight:400}
 .books{--cw:108px;--ch:162px;display:flex;flex-wrap:wrap;gap:30px 18px;align-items:end;padding:18px 18px 12px;border-radius:16px;
@@ -1432,7 +1434,7 @@ body.home-kindle #listArea{max-width:760px;margin-inline:auto}
 
   <div class="main" id="mainArea">
     <aside>
-      <div style="display:none"><h3><svg class="ln" aria-hidden="true"><use href="#i-stack"/></svg>Türler</h3><div id="shelfList"></div></div>
+      <div><h3><svg class="ln" aria-hidden="true"><use href="#i-stack"/></svg>Türler<button class="tured-btn" id="turEdBtn" type="button" title="Türleri düzenle" aria-label="Türleri düzenle">✎</button></h3><div id="shelfList"></div></div>
       <div><h3><svg class="ln" aria-hidden="true"><use href="#i-sprig"/></svg>Etiketler</h3><div class="chips" id="tagList"></div></div>
     </aside>
     <div id="listArea"></div>
@@ -1456,7 +1458,7 @@ body.home-kindle #listArea{max-width:760px;margin-inline:auto}
       <div class="f"><label for="fStatus">Durum</label><select id="fStatus"></select></div>
     </div>
     <div class="row">
-      <div class="f" style="grid-column:1/-1;display:none"><label for="fShelf">Tür</label><div id="turChips" class="tur-chips"></div><input id="fShelf" list="shelfOpts" placeholder="Seç ya da yaz (ör. Distopya)"><datalist id="shelfOpts"></datalist></div>
+      <div class="f" style="grid-column:1/-1"><label for="fShelf">Tür</label><div id="turChips" class="tur-chips"></div><input id="fShelf" list="shelfOpts" placeholder="Seç ya da yaz (ör. Distopya)"><datalist id="shelfOpts"></datalist></div>
       <div class="f"><label for="fTags">Etiketler</label><input id="fTags" placeholder="virgülle ayır"></div>
     </div>
     <div class="chips trope-row" id="tropeRow" aria-label="Tropeler"></div>
@@ -1570,6 +1572,15 @@ body.home-kindle #listArea{max-width:760px;margin-inline:auto}
     <div class="selbar" id="dSel" hidden></div>
     <div id="dList" style="display:grid;gap:4px;max-height:260px;overflow:auto;font-size:13px"></div>
     <div class="actions"><button type="button" class="btn" id="dCovers" hidden>Kapakları hazırla</button><div class="r"><button type="button" class="btn" id="dClose">Kapat</button><button type="button" class="btn" id="dScan" disabled>Tara</button><button type="button" class="btn primary" id="dAdd" disabled>Rafa ekle</button></div></div>
+  </div>
+</div>
+<div class="veil" id="turVeil" hidden>
+  <div class="panel" role="dialog" aria-labelledby="turTitle">
+    <h2 id="turTitle">Türleri düzenle</h2>
+    <p class="hint">Adını değiştirdiğin türdeki kitaplar da yeni adı alır. Sildiğin türdeki kitaplar türsüz kalır, kitapların silinmez.</p>
+    <div id="turEd" class="tured"></div>
+    <div class="tured-add"><input id="turNew" placeholder="Yeni tür (ör. Tarihî romantik)" maxlength="40"><button class="btn" id="turAdd" type="button">＋ Ekle</button></div>
+    <div class="actions"><button class="btn primary" id="turDone" type="button">Bitti</button></div>
   </div>
 </div>
 <div class="veil" id="pickVeil" hidden>
@@ -1828,7 +1839,7 @@ function renderList(){
     const p=PREFIX[b.kind]||'K',sub=b.kind==='roman'?(b.pages?b.pages+' bölüm':''):(b.pages?b.pages+' sayfa':'');
     return `<article class="card" tabindex="0" data-id="${b.id}" aria-label="${esc(b.title)} — düzenle">
       <div class="cover ${p}" aria-hidden="true">${coverSrc(b)?`<img src="${coverSrc(b)}" alt="" loading="lazy" decoding="async">`:ico(artFor(b))}<small>${calls[b.id]}</small></div>
-      <div class="call"><b class="${p}">${{K:'Kitap',P:'PDF',R:'Romanım',M:'Makale'}[p]}</b><span>${(s_=>s_?esc(s_.name)+(s_.no?' #'+s_.no:''):'')(seriesOf(b))}</span></div>
+      <div class="call"><b class="${p}">${{K:'Kitap',P:'PDF',R:'Romanım',M:'Makale'}[p]}</b><span>${(s_=>s_?esc(s_.name)+(s_.no?' #'+s_.no:''):esc(b.shelf||''))(seriesOf(b))}</span></div>
       <h2>${esc(b.title)}</h2>
       ${b.author||b.year?`<div class="author">${esc(b.kind==='makale'?apaAuthorsShort(b)+(b.year?' ('+b.year+')':''):b.author)}${b.kind==='makale'&&b.journal?' · <i>'+esc(b.journal)+'</i>':''}</div>`:''}
       <div class="meta"><span class="pill s-${b.status}">${STATUS_LABEL[b.status]||b.status}</span>
@@ -1954,7 +1965,7 @@ function tStats(){
     <div class="row"><div><h4 class="sth">Hangi gün çok okuyorsun</h4>${bars(dow,i=>['Pt','Sa','Ça','Pe','Cu','Ct','Pz'][i],dmx,(i,v)=>v+' sayfa')}</div>
       <div><h4 class="sth">Hangi saatlerde</h4>${hasH?bars(hk,i=>i%3?'':String(i),hmx,(i,v)=>i+':00 · '+v+' sayfa'):'<p class="hint">Okudukça burası dolacak.</p>'}</div></div>
     <div class="row"><div><h4 class="sth">En çok okuduğun yazarlar</h4>${auth.map(([k,v])=>`<div class="shbar"><span>${esc(k)}</span><span class="hint">${v}</span></div>`).join('')||'<p class="hint">Henüz yok.</p>'}</div>
-      <div style="display:none"><h4 class="sth">En sevdiğin raflar</h4>${shel.map(([k,v])=>`<div class="shbar"><span>${esc(k)}</span><span class="hint">${v}</span></div>`).join('')||'<p class="hint">Henüz yok.</p>'}</div></div>`}
+      <div><h4 class="sth">En sevdiğin türler</h4>${shel.map(([k,v])=>`<div class="shbar"><span>${esc(k)}</span><span class="hint">${v}</span></div>`).join('')||'<p class="hint">Henüz yok.</p>'}</div></div>`}
 
 function trDate(d){return d.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'})}
 function dashHtml(){if(!UI.homeFull)return UI.homeStyle==='rich'?homeSimple():homeKindle();document.body.classList.remove('home-kindle');document.body.classList.remove('home-simple');return '<div class="hs-sw"><button class="btn" type="button" data-hs="simple">✨ Sade ana sayfa</button></div>'+dashFull()}
@@ -1988,7 +1999,7 @@ function dashFull(inner){setTimeout(maybeRecs,1500);
     <section class="dcard d-now"><h3>Şu an okuduklarım <small>${now.length} kitap</small></h3>${nowHtml}</section>
     <section class="dcard d-cal"><h3>${t.toLocaleDateString('tr-TR',{month:'long',year:'numeric'})} <small>${readDays} gün · ${pagesMonth} sayfa</small></h3><div class="cal">${cal}</div><span class="hint" style="font-size:12px">Okuyucuda sayfa çevirdikçe günler kendiliğinden dolar.</span></section>
     ${quoteCard()}${recsCard()}
-    <section class="dcard d-shelves" style="display:none"><h3>Raflarım <small>${reads.length} kitap</small></h3><div class="shbars">${shk.map(([k,v])=>`<div class="shbar"><span>${esc(k)}</span><span class="hint">${v}</span><i><b style="width:${Math.round(v/mx*100)}%"></b></i></div>`).join('')||'<span class="hint">Henüz raf yok.</span>'}</div></section>
+    <section class="dcard d-shelves"><h3>Türlerim <small>${reads.length} kitap</small></h3><div class="shbars">${shk.map(([k,v])=>`<div class="shbar"><span>${esc(k)}</span><span class="hint">${v}</span><i><b style="width:${Math.round(v/mx*100)}%"></b></i></div>`).join('')||'<span class="hint">Henüz raf yok.</span>'}</div></section>
     <section class="dcard d-recent"><h3>Son eklenenler <small><button class="btn" type="button" data-goview="raf" style="padding:4px 12px">Tüm raflar →</button></small></h3><div class="covrow">${recent.map(bookHtml).join('')||'<span class="hint">Henüz kitap yok.</span>'}</div></section>
     ${novels.length?`<section class="dcard d-novels"><h3>Romanlarım <small>${novels.length} roman</small></h3><div class="covrow">${novels.map(b=>`<div style="display:grid;gap:6px;justify-items:start">${bookHtml(b)}<span class="pill s-${b.status}">${STATUS_LABEL[b.status]||b.status}</span></div>`).join('')}</div></section>`:''}
     ${thesisCard(12)}
@@ -5458,7 +5469,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v155';
+const DK_VER='v156';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -7129,7 +7140,21 @@ document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest
 window.__rx={text:rxText,open:b=>openReader(b),form:b=>openForm(b),mine:n=>rxMine(n)};
 /* ---------- 🏷 Tür: formda hızlı seçim + rafta hızlı tür verme ---------- */
 const TUR_DEF=['Romantik','Roman','Fantastik','Distopya','Bilim kurgu','Polisiye','Gerilim','Korku','Klasik','Tarih','Psikoloji','Felsefe','Kişisel gelişim','Bilim','Sağlık','Şiir','Öykü','Deneme','Biyografi','Gençlik','Çocuk','Mizah'];
-function turList(){const own={};(st.books||[]).forEach(b=>{if(b.shelf)own[b.shelf]=(own[b.shelf]||0)+1});const o=Object.keys(own).sort((a,b)=>own[b]-own[a]);return [...o,...TUR_DEF.filter(t=>!o.some(x=>trLow(x)===trLow(t)))]}
+function turBase(){try{const a=JSON.parse(localStorage.getItem('dk-turler')||'null');if(Array.isArray(a))return a}catch(e){}return TUR_DEF.slice()}
+function turSaveBase(a){try{localStorage.setItem('dk-turler',JSON.stringify(a))}catch(e){}}
+function turList(){const own={};(st.books||[]).forEach(b=>{if(b.shelf)own[b.shelf]=(own[b.shelf]||0)+1});const o=Object.keys(own).sort((a,b)=>own[b]-own[a]);return [...o,...turBase().filter(t=>!o.some(x=>trLow(x)===trLow(t)))]}
+function turAll(){const c={};(st.books||[]).forEach(b=>{if(b.shelf)c[b.shelf]=(c[b.shelf]||0)+1});const l=turBase();Object.keys(c).forEach(k=>{if(!l.some(x=>trLow(x)===trLow(k)))l.push(k)});return l.sort((a,b)=>a.localeCompare(b,TR)).map(t=>[t,c[t]||0])}
+function turEdRender(){$('turEd').innerHTML=turAll().map(([t,n])=>`<div class="tured-row"><input value="${esc(t)}" data-turold="${esc(t)}" aria-label="${esc(t)} türünün adı"><small>${n}</small><button type="button" data-turdel="${esc(t)}" title="Sil" aria-label="${esc(t)} türünü sil">🗑</button></div>`).join('')||'<p class="hint">Hiç tür yok.</p>'}
+async function turBooks(old,nv){if(!st.db)return;const bs=st.books.filter(b=>b.shelf===old);for(const b of bs){b.shelf=nv;try{await st.db.collection('books').doc(b.id).update({shelf:nv})}catch(e){}}if(st.shelf===old)st.shelf=nv||null}
+async function turRename(old,nv){nv=nv.trim();if(!nv||nv===old)return turEdRender();const base=turBase().filter(x=>trLow(x)!==trLow(old));if(!base.some(x=>trLow(x)===trLow(nv)))base.push(nv);turSaveBase(base);await turBooks(old,nv);turEdRender();render();toast('“'+old+'” → “'+nv+'”')}
+async function turDelete(t){const n=st.books.filter(b=>b.shelf===t).length;if(n&&!confirm('“'+t+'” türünü sileyim mi? '+n+' kitap türsüz kalacak (kitaplar silinmez).'))return;turSaveBase(turBase().filter(x=>trLow(x)!==trLow(t)));await turBooks(t,'');turEdRender();render();toast('“'+t+'” silindi')}
+function turAddNew(){const i=$('turNew'),t=i.value.trim();if(!t)return;const base=turBase();if(turAll().some(([x])=>trLow(x)===trLow(t))){toast('Bu tür zaten var');return}base.push(t);turSaveBase(base);i.value='';turEdRender();render()}
+$('turEdBtn').addEventListener('click',()=>{turEdRender();$('turVeil').hidden=false});
+$('turDone').addEventListener('click',()=>{$('turVeil').hidden=true});
+$('turVeil').addEventListener('click',e=>{if(e.target===$('turVeil'))$('turVeil').hidden=true;const d=e.target.closest('[data-turdel]');if(d)turDelete(d.dataset.turdel)});
+$('turEd').addEventListener('change',e=>{const i=e.target.closest('[data-turold]');if(i)turRename(i.dataset.turold,i.value)});
+$('turEd').addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.matches('[data-turold]'))e.target.blur()});
+$('turAdd').addEventListener('click',turAddNew);$('turNew').addEventListener('keydown',e=>{if(e.key==='Enter')turAddNew()});
 function turChips(){const box=$('turChips');if(!box)return;const v=trLow($('fShelf').value.trim());box.innerHTML=turList().map(t=>`<button type="button" class="chip" data-tur="${esc(t)}" aria-pressed="${trLow(t)===v}">${esc(t)}</button>`).join('')}
 $('turChips').addEventListener('click',e=>{const c=e.target.closest('[data-tur]');if(!c)return;const f=$('fShelf');f.value=trLow(f.value.trim())===trLow(c.dataset.tur)?'':c.dataset.tur;turChips()});
 $('fShelf').addEventListener('input',turChips);
@@ -7143,7 +7168,7 @@ function tmSet(on){TM.on=on;if(on){TM.n=0;if(QM.on){QM.on=false;document.body.cl
 async function tmToggle(id){const b=st.books.find(x=>x.id===id);if(!b||!st.db)return;if(!TM.tur){toast('Önce yukarıdan bir tür seç');return}
   const v=b.shelf===TM.tur?'':TM.tur;b.shelf=v;TM.n++;renderList();try{await st.db.collection('books').doc(id).update({shelf:v})}catch(e){toast('Kaydedilemedi')}}
 $('listArea').addEventListener('click',e=>{const q=e.target.closest('[data-tm]');if(q){e.stopPropagation();tmSet(q.dataset.tm==='on');return}
-  const c=e.target.closest('[data-tmt]');if(c){e.stopPropagation();let t=c.dataset.tmt;if(t==='__new'){t=(prompt('Yeni türün adı:')||'').trim();if(!t)return}TM.tur=TM.tur===t?'':t;renderList();return}
+  const c=e.target.closest('[data-tmt]');if(c){e.stopPropagation();let t=c.dataset.tmt;if(t==='__new'){t=(prompt('Yeni türün adı:')||'').trim();if(!t)return;const bs_=turBase();if(!bs_.some(x=>trLow(x)===trLow(t))){bs_.push(t);turSaveBase(bs_)}}TM.tur=TM.tur===t?'':t;renderList();return}
   if(!TM.on)return;const bk=e.target.closest('[data-bk]');if(!bk)return;e.preventDefault();e.stopPropagation();tmToggle(bk.dataset.bk)},true);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&TM.on)tmSet(false)});
 
