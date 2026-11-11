@@ -1266,22 +1266,47 @@ function afterSave(l){if(mode==="db"&&!letters.find(x=>x.id===l.id)){letters.pus
   draft.replyTo="";draft.thread="";draft.to="";draft.body="";draft.lock=false;draft.openAfter="";draft.deco=[];draft.photo="";draft.kurgu=null;draft.seed="s"+Date.now().toString(36);saveDraft();updateCount()}
 async function postKart(){const l=letterFromDraft();try{await saveLetter(l)}catch(e){return}afterSave(l);toast("Kartpostalın kutuna kondu.");filter="hepsi";go("kutu")}
 
+/* Yedek: mektupları dosyaya al / dosyadan geri yükle (Kütüphanem yedekleriyle de uyumlu) */
+const MKB={letters:"muhurlu-mektuplar-v1",ozel:"muhurlu-ozel-v1",tomb:"muhurlu-silinen-v1",chars:"muhurlu-karakterler-v1"};
+function mkbGet(k,d){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v==null?d:v}catch(e){return d}}
+function bkHTML(){return IS_ART()?"":`<button class="btn ghost" id="b-exp">💾 Yedek al</button><button class="btn ghost" id="b-imp">📂 Yedekten yükle</button><input type="file" id="f-imp" accept=".json,application/json" hidden>`}
+function bkExport(){
+  const data={letters:mkbGet(MKB.letters,[]),ozel:mkbGet(MKB.ozel,{papers:[],stickers:[]}),tomb:mkbGet(MKB.tomb,[]),chars:mkbGet(MKB.chars,[])};
+  const d=new Date(),ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  const blob=new Blob([JSON.stringify({app:"Mühürlü Mektuplar",version:1,at:d.toISOString(),mektup:data})],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="mektuplarim-"+ds+".json";document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast(data.letters.length+" mektup yedeklendi.")}
+async function bkImport(file){
+  let d;try{d=JSON.parse(await file.text())}catch(e){toast("Bu dosya okunamadı.");return}
+  const inc=d&&(d.app==="Mühürlü Mektuplar"||d.app==="Dijital Kütüphanem")?d.mektup:null;
+  if(!inc){toast("Bu dosyada mektup yedeği yok.");return}
+  const tomb=[...new Set([...mkbGet(MKB.tomb,[]),...(inc.tomb||[])])].slice(-2000),T=new Set(tomb);
+  const mergeArr=(a,b)=>{const m=new Map();for(const x of a||[])if(x&&x.id&&!T.has(x.id))m.set(x.id,x);for(const x of b||[]){if(!x||!x.id||T.has(x.id))continue;const o=m.get(x.id);if(!o||(x.upd||0)>(o.upd||0))m.set(x.id,x)}return [...m.values()]};
+  const before=mkbGet(MKB.letters,[]).length,lo=mkbGet(MKB.ozel,{papers:[],stickers:[]}),io=inc.ozel||{};
+  try{const L=mergeArr(mkbGet(MKB.letters,[]),inc.letters);
+    localStorage.setItem(MKB.tomb,JSON.stringify(tomb));localStorage.setItem(MKB.letters,JSON.stringify(L));
+    const oz={};for(const k of new Set([...Object.keys(lo||{}),...Object.keys(io)]))if(Array.isArray((lo||{})[k])||Array.isArray(io[k]))oz[k]=mergeArr((lo||{})[k],io[k]);
+    localStorage.setItem(MKB.ozel,JSON.stringify(oz));localStorage.setItem(MKB.chars,JSON.stringify(mergeArr(mkbGet(MKB.chars,[]),inc.chars)));
+    const n=Math.max(0,L.length-before);toast(n?n+" mektup eklendi.":"Yedekteki mektupların hepsi zaten burada.");setTimeout(()=>location.reload(),1400)}
+  catch(e){toast("Cihazda yer kalmadı, yüklenemedi.")}}
+function bkBind(){const e=document.getElementById("b-exp"),i=document.getElementById("b-imp"),f=document.getElementById("f-imp");if(!e)return;
+  e.addEventListener("click",bkExport);i.addEventListener("click",()=>f.click());f.addEventListener("change",()=>{if(f.files[0])bkImport(f.files[0]);f.value=""})}
 function renderKutu(){
   const list=letters.filter(l=>filter==="hepsi"||(filter==="kilitli"?isLocked(l):!isLocked(l)));
   if(!letters.length){app.innerHTML=`<div class="empty">${envFront({env:"kraft",stamp:"kus",hand:"caveat",ink:"lacivert",to:"İlk mektubun",created:new Date().toISOString()})}
-    <p style="margin:0;max-width:34ch">Kutun şimdilik boş. Mühürlediğin her mektup burada zarfıyla birlikte durur.</p><button class="btn" id="b-write">Masaya geç</button></div>`;
-    document.getElementById("b-write").addEventListener("click",()=>go("masa"));return}
+    <p style="margin:0;max-width:34ch">Kutun şimdilik boş. Mühürlediğin her mektup burada zarfıyla birlikte durur.</p><button class="btn" id="b-write">Masaya geç</button><div class="row" style="gap:8px;justify-content:center">${bkHTML()}</div></div>`;
+    document.getElementById("b-write").addEventListener("click",()=>go("masa"));bkBind();return}
   const nL=letters.filter(isLocked).length,ready=letters.filter(l=>l.openAfter&&!isLocked(l)&&!l.opened).length;
   app.innerHTML=`<div class="wrap" style="gap:16px">
    ${ready?`<div class="replyban">🔓 Açılış günü gelen ${ready} mektubun var. Mührünü kırabilirsin!</div>`:""}
-   <div class="row" style="justify-content:flex-end;gap:8px"><button class="btn ghost" id="b-candle">🕯️ Mum ışığında oku</button>${IS_ART()?"":`<button class="btn ghost" id="b-book">📕 Yılın kitabı</button>`}</div>${IS_ART()?"":`<div id="bookpick"></div>`}
+   <div class="row" style="justify-content:flex-end;gap:8px"><button class="btn ghost" id="b-candle">🕯️ Mum ışığında oku</button>${bkHTML()}${IS_ART()?"":`<button class="btn ghost" id="b-book">📕 Yılın kitabı</button>`}</div>${IS_ART()?"":`<div id="bookpick"></div>`}
    <div class="filter"><button class="chip" data-f="hepsi" aria-pressed="${filter==="hepsi"}">Hepsi · ${letters.length}</button><button class="chip" data-f="acik" aria-pressed="${filter==="acik"}">Açılabilir · ${letters.length-nL}</button><button class="chip" data-f="kilitli" aria-pressed="${filter==="kilitli"}">Bekleyen · ${nL}</button></div>
    <div class="box">${list.map(l=>{const lk=isLocked(l);
      return `<button class="slot" data-id="${l.id}" style="--t:${((hashStr(l.id)%5)-2)*.6}deg">${envFront(l)}<span class="meta"><span>${esc(fmtDate(l.created))}</span>${lk?`<span class="pill lock">${daysUntil(l.openAfter)} gün kaldı</span>`:(l.opened?`<span class="pill">Okundu</span>`:`<span class="pill new">Mühürlü</span>`)}${threadLetters(l).length>1?`<span class="pill">↩ ${threadLetters(l).length}</span>`:""}${l.received?`<span class="pill">Gelen</span>`:""}${l.kind==="kart"?`<span class="pill">Kartpostal</span>`:""}</span></button>`}).join("")}</div>
    ${list.length?"":`<p class="hint">Bu filtrede mektup yok.</p>`}
   </div>`;
   app.querySelectorAll("[data-f]").forEach(b=>b.addEventListener("click",()=>{filter=b.dataset.f;renderKutu()}));
-  document.getElementById("b-candle").addEventListener("click",candleMode);
+  document.getElementById("b-candle").addEventListener("click",candleMode);bkBind();
   const bk=document.getElementById("b-book");if(bk)bk.addEventListener("click",()=>{const ys=[...new Set(letters.map(l=>String(l.created).slice(0,4)))].sort().reverse();
     if(ys.length===1)return makeBook(ys[0]);document.getElementById("bookpick").innerHTML=`<div class="chips" style="justify-content:flex-end">${ys.map(y=>`<button class="chip" data-year="${y}">${y}</button>`).join("")}</div>`;
     app.querySelectorAll("[data-year]").forEach(b=>b.addEventListener("click",()=>makeBook(b.dataset.year)))});
