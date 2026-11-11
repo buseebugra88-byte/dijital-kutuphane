@@ -1854,10 +1854,10 @@ function bookHtml(b){
 function shelfHtml(list){
   if(st.tab==='done'){const g2={};list.forEach(b=>{const y=(b.finishedAt||'').slice(0,4)||'Tarihsiz';(g2[y]=g2[y]||[]).push(b)});const ks=Object.keys(g2).sort((a,b)=>b.localeCompare(a));ks.forEach(k=>g2[k].sort((a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||'')));
     return '<div class="shelves">'+ks.map(k=>`<section class="shelf"><h3>${k==='Tarihsiz'?'Tarihsiz':'📅 '+k} <small>${g2[k].length} kitap</small></h3><div class="books">${g2[k].map(bookHtml).join('')}</div></section>`).join('')+'</div>'}
-  {const sg={},solo=[];list.forEach(b=>{const s=seriesOf(b);if(s){const k=trLow(s.name);(sg[k]=sg[k]||{name:s.name,bs:[]}).bs.push(b)}else solo.push(b)});
+  {const DONE='✅ Bitirdiklerim',done=[],sg={},solo=[];list.forEach(b=>{if(b.status==='okundu'&&b.kind!=='roman'&&b.kind!=='makale'){done.push(b);return}const s=seriesOf(b);if(s){const k=trLow(s.name);(sg[k]=sg[k]||{name:s.name,bs:[]}).bs.push(b)}else solo.push(b)});
     Object.keys(sg).forEach(k=>{if(sg[k].bs.length<2){solo.push(...sg[k].bs);delete sg[k]}else sg[k].bs.sort((x,y)=>(seriesOf(x).no-seriesOf(y).no)||(x.title||'').localeCompare(y.title||'',TR))});const ord=new Map(list.map((b,i)=>[b,i]));solo.sort((a,b)=>ord.get(a)-ord.get(b));
     const sk=Object.keys(sg).sort((a,b)=>sg[a].name.localeCompare(sg[b].name,TR));
-    return '<div class="shelves">'+sk.map(k=>`<section class="shelf"><h3>📚 ${esc(sg[k].name)} <small>${sg[k].bs.length} kitaplık seri</small></h3><div class="books">${sg[k].bs.map(bookHtml).join('')}</div></section>`).join('')+(solo.length?`<section class="shelf"><h3>${({added:'En son eklenenler',title:'A–Z',author:'Yazara göre',finished:'Bitirme tarihine göre'})[st.sort]||'Kitaplar'}${sk.length?' · tek kitaplar':''} <small>${solo.length}</small></h3><div class="books">${solo.map(bookHtml).join('')}</div></section>`:'')+'</div>'}
+    return '<div class="shelves">'+sk.map(k=>`<section class="shelf"><h3>📚 ${esc(sg[k].name)} <small>${sg[k].bs.length} kitaplık seri</small></h3><div class="books">${sg[k].bs.map(bookHtml).join('')}</div></section>`).join('')+(solo.length?`<section class="shelf"><h3>${({added:'En son eklenenler',title:'A–Z',author:'Yazara göre',finished:'Bitirme tarihine göre'})[st.sort]||'Kitaplar'}${sk.length?' · tek kitaplar':''} <small>${solo.length}</small></h3><div class="books">${solo.map(bookHtml).join('')}</div></section>`:'')+(done.length?`<section class="shelf"><h3>${DONE} <small>${done.length}</small></h3><div class="books">${done.sort((a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||'')).map(bookHtml).join('')}</div></section>`:'')+'</div>'}
   const DONE='✅ Bitirdiklerim',g={};list.forEach(b=>{const k=b.status==='okundu'&&b.kind!=='roman'&&b.kind!=='makale'?DONE:(b.shelf||'Rafsız');(g[k]=g[k]||[]).push(b)});
   if(g[DONE])g[DONE].sort((a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||''));
   const keys=Object.keys(g).sort((a,b)=>a===DONE?1:b===DONE?-1:a==='Rafsız'?1:b==='Rafsız'?-1:a.localeCompare(b,TR));
@@ -5458,7 +5458,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v154';
+const DK_VER='v155';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -7830,7 +7830,7 @@ window.__ep2={toc:()=>R.epub&&epToc(R.epub),pg:()=>({...EPG}),turn:d=>epTurn(d),
 const QM={on:false,n:0,date:''};
 function qmToday(){const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
 function qmBar(){if(st.tab==='roman')return '';
-  if(TM.on)return tmBar();if(!QM.on)return `<div class="qm-bar off"><button class="btn" type="button" data-aihub>✨ Yapay zekâ</button>${(()=>{const n=blCount();return BL.busy?`<button class="btn" type="button" id="blLibBtn" data-blstop>📖 ${esc(BL.msg||'')} — durdur</button>`:n?`<button class="btn" type="button" id="blLibBtn" data-blbulk>📖 ${n} kitabın tanıtımını bul</button>`:''})()}<button class="btn" type="button" data-qm="on">✅ Bitenleri hızlı işaretle</button></div>`;
+  if(TM.on)return tmBar();if(!QM.on)return `<div class="qm-bar off"><button class="btn" type="button" data-aihub>✨ Yapay zekâ</button>${(()=>{const n=blCount();return BL.busy?`<button class="btn" type="button" id="blLibBtn" data-blstop>📖 ${esc(BL.msg||'')} — durdur</button>`:n?`<button class="btn" type="button" id="blLibBtn" data-blbulk>📖 ${n} kitabın tanıtımını bul</button>`:''})()}<button class="btn" type="button" data-tm="on">🏷 Hızlı tür ver</button><button class="btn" type="button" data-qm="on">✅ Bitenleri hızlı işaretle</button></div>`;
   return `<div class="qm-bar"><div><b>✅ Hızlı işaretleme</b><span>Bitirdiğin kitapların kapağına dokun; yeniden dokunursan geri alınır.${QM.n?` <b>${QM.n} kitap</b> işaretlendi.`:''}</span></div>
     <label class="qm-date">Bitirme tarihi <input type="date" id="qmDate" value="${esc(QM.date||qmToday())}" max="${qmToday()}"></label><button class="btn primary" type="button" data-qm="off">Bitti</button></div>`}
 function qmSet(on){QM.on=on;if(on&&TM.on){TM.on=false;document.body.classList.remove('tm-on')}if(on){QM.n=0;QM.date=QM.date||qmToday()}document.body.classList.toggle('qm-on',on);renderList()}
