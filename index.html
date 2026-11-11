@@ -1432,7 +1432,7 @@ body.home-kindle #listArea{max-width:760px;margin-inline:auto}
 
   <div class="main" id="mainArea">
     <aside>
-      <div><h3><svg class="ln" aria-hidden="true"><use href="#i-stack"/></svg>Türler</h3><div id="shelfList"></div></div>
+      <div style="display:none"><h3><svg class="ln" aria-hidden="true"><use href="#i-stack"/></svg>Türler</h3><div id="shelfList"></div></div>
       <div><h3><svg class="ln" aria-hidden="true"><use href="#i-sprig"/></svg>Etiketler</h3><div class="chips" id="tagList"></div></div>
     </aside>
     <div id="listArea"></div>
@@ -1456,7 +1456,7 @@ body.home-kindle #listArea{max-width:760px;margin-inline:auto}
       <div class="f"><label for="fStatus">Durum</label><select id="fStatus"></select></div>
     </div>
     <div class="row">
-      <div class="f" style="grid-column:1/-1"><label for="fShelf">Tür</label><div id="turChips" class="tur-chips"></div><input id="fShelf" list="shelfOpts" placeholder="Seç ya da yaz (ör. Distopya)"><datalist id="shelfOpts"></datalist></div>
+      <div class="f" style="grid-column:1/-1;display:none"><label for="fShelf">Tür</label><div id="turChips" class="tur-chips"></div><input id="fShelf" list="shelfOpts" placeholder="Seç ya da yaz (ör. Distopya)"><datalist id="shelfOpts"></datalist></div>
       <div class="f"><label for="fTags">Etiketler</label><input id="fTags" placeholder="virgülle ayır"></div>
     </div>
     <div class="chips trope-row" id="tropeRow" aria-label="Tropeler"></div>
@@ -1828,7 +1828,7 @@ function renderList(){
     const p=PREFIX[b.kind]||'K',sub=b.kind==='roman'?(b.pages?b.pages+' bölüm':''):(b.pages?b.pages+' sayfa':'');
     return `<article class="card" tabindex="0" data-id="${b.id}" aria-label="${esc(b.title)} — düzenle">
       <div class="cover ${p}" aria-hidden="true">${coverSrc(b)?`<img src="${coverSrc(b)}" alt="" loading="lazy" decoding="async">`:ico(artFor(b))}<small>${calls[b.id]}</small></div>
-      <div class="call"><b class="${p}">${{K:'Kitap',P:'PDF',R:'Romanım',M:'Makale'}[p]}</b><span>${esc(b.shelf||'Rafsız')}</span></div>
+      <div class="call"><b class="${p}">${{K:'Kitap',P:'PDF',R:'Romanım',M:'Makale'}[p]}</b><span>${(s_=>s_?esc(s_.name)+(s_.no?' #'+s_.no:''):'')(seriesOf(b))}</span></div>
       <h2>${esc(b.title)}</h2>
       ${b.author||b.year?`<div class="author">${esc(b.kind==='makale'?apaAuthorsShort(b)+(b.year?' ('+b.year+')':''):b.author)}${b.kind==='makale'&&b.journal?' · <i>'+esc(b.journal)+'</i>':''}</div>`:''}
       <div class="meta"><span class="pill s-${b.status}">${STATUS_LABEL[b.status]||b.status}</span>
@@ -1854,10 +1854,10 @@ function bookHtml(b){
 function shelfHtml(list){
   if(st.tab==='done'){const g2={};list.forEach(b=>{const y=(b.finishedAt||'').slice(0,4)||'Tarihsiz';(g2[y]=g2[y]||[]).push(b)});const ks=Object.keys(g2).sort((a,b)=>b.localeCompare(a));ks.forEach(k=>g2[k].sort((a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||'')));
     return '<div class="shelves">'+ks.map(k=>`<section class="shelf"><h3>${k==='Tarihsiz'?'Tarihsiz':'📅 '+k} <small>${g2[k].length} kitap</small></h3><div class="books">${g2[k].map(bookHtml).join('')}</div></section>`).join('')+'</div>'}
-  if(st.sort==='title'){const sg={},solo=[];list.forEach(b=>{const s=seriesOf(b);if(s){const k=trLow(s.name);(sg[k]=sg[k]||{name:s.name,bs:[]}).bs.push(b)}else solo.push(b)});
-    Object.keys(sg).forEach(k=>{if(sg[k].bs.length<2){solo.push(...sg[k].bs);delete sg[k]}else sg[k].bs.sort((x,y)=>(seriesOf(x).no-seriesOf(y).no)||(x.title||'').localeCompare(y.title||'',TR))});solo.sort((a,b)=>(a.title||'').localeCompare(b.title||'',TR));
+  {const sg={},solo=[];list.forEach(b=>{const s=seriesOf(b);if(s){const k=trLow(s.name);(sg[k]=sg[k]||{name:s.name,bs:[]}).bs.push(b)}else solo.push(b)});
+    Object.keys(sg).forEach(k=>{if(sg[k].bs.length<2){solo.push(...sg[k].bs);delete sg[k]}else sg[k].bs.sort((x,y)=>(seriesOf(x).no-seriesOf(y).no)||(x.title||'').localeCompare(y.title||'',TR))});const ord=new Map(list.map((b,i)=>[b,i]));solo.sort((a,b)=>ord.get(a)-ord.get(b));
     const sk=Object.keys(sg).sort((a,b)=>sg[a].name.localeCompare(sg[b].name,TR));
-    return '<div class="shelves">'+sk.map(k=>`<section class="shelf"><h3>📚 ${esc(sg[k].name)} <small>${sg[k].bs.length} kitaplık seri</small></h3><div class="books">${sg[k].bs.map(bookHtml).join('')}</div></section>`).join('')+(solo.length?`<section class="shelf"><h3>${sk.length?'Tek kitaplar · A–Z':'A–Z'} <small>${solo.length}</small></h3><div class="books">${solo.map(bookHtml).join('')}</div></section>`:'')+'</div>'}
+    return '<div class="shelves">'+sk.map(k=>`<section class="shelf"><h3>📚 ${esc(sg[k].name)} <small>${sg[k].bs.length} kitaplık seri</small></h3><div class="books">${sg[k].bs.map(bookHtml).join('')}</div></section>`).join('')+(solo.length?`<section class="shelf"><h3>${({added:'En son eklenenler',title:'A–Z',author:'Yazara göre',finished:'Bitirme tarihine göre'})[st.sort]||'Kitaplar'}${sk.length?' · tek kitaplar':''} <small>${solo.length}</small></h3><div class="books">${solo.map(bookHtml).join('')}</div></section>`:'')+'</div>'}
   const DONE='✅ Bitirdiklerim',g={};list.forEach(b=>{const k=b.status==='okundu'&&b.kind!=='roman'&&b.kind!=='makale'?DONE:(b.shelf||'Rafsız');(g[k]=g[k]||[]).push(b)});
   if(g[DONE])g[DONE].sort((a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||''));
   const keys=Object.keys(g).sort((a,b)=>a===DONE?1:b===DONE?-1:a==='Rafsız'?1:b==='Rafsız'?-1:a.localeCompare(b,TR));
@@ -1954,7 +1954,7 @@ function tStats(){
     <div class="row"><div><h4 class="sth">Hangi gün çok okuyorsun</h4>${bars(dow,i=>['Pt','Sa','Ça','Pe','Cu','Ct','Pz'][i],dmx,(i,v)=>v+' sayfa')}</div>
       <div><h4 class="sth">Hangi saatlerde</h4>${hasH?bars(hk,i=>i%3?'':String(i),hmx,(i,v)=>i+':00 · '+v+' sayfa'):'<p class="hint">Okudukça burası dolacak.</p>'}</div></div>
     <div class="row"><div><h4 class="sth">En çok okuduğun yazarlar</h4>${auth.map(([k,v])=>`<div class="shbar"><span>${esc(k)}</span><span class="hint">${v}</span></div>`).join('')||'<p class="hint">Henüz yok.</p>'}</div>
-      <div><h4 class="sth">En sevdiğin raflar</h4>${shel.map(([k,v])=>`<div class="shbar"><span>${esc(k)}</span><span class="hint">${v}</span></div>`).join('')||'<p class="hint">Henüz yok.</p>'}</div></div>`}
+      <div style="display:none"><h4 class="sth">En sevdiğin raflar</h4>${shel.map(([k,v])=>`<div class="shbar"><span>${esc(k)}</span><span class="hint">${v}</span></div>`).join('')||'<p class="hint">Henüz yok.</p>'}</div></div>`}
 
 function trDate(d){return d.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'})}
 function dashHtml(){if(!UI.homeFull)return UI.homeStyle==='rich'?homeSimple():homeKindle();document.body.classList.remove('home-kindle');document.body.classList.remove('home-simple');return '<div class="hs-sw"><button class="btn" type="button" data-hs="simple">✨ Sade ana sayfa</button></div>'+dashFull()}
@@ -1988,7 +1988,7 @@ function dashFull(inner){setTimeout(maybeRecs,1500);
     <section class="dcard d-now"><h3>Şu an okuduklarım <small>${now.length} kitap</small></h3>${nowHtml}</section>
     <section class="dcard d-cal"><h3>${t.toLocaleDateString('tr-TR',{month:'long',year:'numeric'})} <small>${readDays} gün · ${pagesMonth} sayfa</small></h3><div class="cal">${cal}</div><span class="hint" style="font-size:12px">Okuyucuda sayfa çevirdikçe günler kendiliğinden dolar.</span></section>
     ${quoteCard()}${recsCard()}
-    <section class="dcard d-shelves"><h3>Raflarım <small>${reads.length} kitap</small></h3><div class="shbars">${shk.map(([k,v])=>`<div class="shbar"><span>${esc(k)}</span><span class="hint">${v}</span><i><b style="width:${Math.round(v/mx*100)}%"></b></i></div>`).join('')||'<span class="hint">Henüz raf yok.</span>'}</div></section>
+    <section class="dcard d-shelves" style="display:none"><h3>Raflarım <small>${reads.length} kitap</small></h3><div class="shbars">${shk.map(([k,v])=>`<div class="shbar"><span>${esc(k)}</span><span class="hint">${v}</span><i><b style="width:${Math.round(v/mx*100)}%"></b></i></div>`).join('')||'<span class="hint">Henüz raf yok.</span>'}</div></section>
     <section class="dcard d-recent"><h3>Son eklenenler <small><button class="btn" type="button" data-goview="raf" style="padding:4px 12px">Tüm raflar →</button></small></h3><div class="covrow">${recent.map(bookHtml).join('')||'<span class="hint">Henüz kitap yok.</span>'}</div></section>
     ${novels.length?`<section class="dcard d-novels"><h3>Romanlarım <small>${novels.length} roman</small></h3><div class="covrow">${novels.map(b=>`<div style="display:grid;gap:6px;justify-items:start">${bookHtml(b)}<span class="pill s-${b.status}">${STATUS_LABEL[b.status]||b.status}</span></div>`).join('')}</div></section>`:''}
     ${thesisCard(12)}
@@ -5458,7 +5458,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v153';
+const DK_VER='v154';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -7830,7 +7830,7 @@ window.__ep2={toc:()=>R.epub&&epToc(R.epub),pg:()=>({...EPG}),turn:d=>epTurn(d),
 const QM={on:false,n:0,date:''};
 function qmToday(){const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
 function qmBar(){if(st.tab==='roman')return '';
-  if(TM.on)return tmBar();if(!QM.on)return `<div class="qm-bar off"><button class="btn" type="button" data-aihub>✨ Yapay zekâ</button>${(()=>{const n=blCount();return BL.busy?`<button class="btn" type="button" id="blLibBtn" data-blstop>📖 ${esc(BL.msg||'')} — durdur</button>`:n?`<button class="btn" type="button" id="blLibBtn" data-blbulk>📖 ${n} kitabın tanıtımını bul</button>`:''})()}<button class="btn" type="button" data-tm="on">🏷 Hızlı tür ver</button><button class="btn" type="button" data-qm="on">✅ Bitenleri hızlı işaretle</button></div>`;
+  if(TM.on)return tmBar();if(!QM.on)return `<div class="qm-bar off"><button class="btn" type="button" data-aihub>✨ Yapay zekâ</button>${(()=>{const n=blCount();return BL.busy?`<button class="btn" type="button" id="blLibBtn" data-blstop>📖 ${esc(BL.msg||'')} — durdur</button>`:n?`<button class="btn" type="button" id="blLibBtn" data-blbulk>📖 ${n} kitabın tanıtımını bul</button>`:''})()}<button class="btn" type="button" data-qm="on">✅ Bitenleri hızlı işaretle</button></div>`;
   return `<div class="qm-bar"><div><b>✅ Hızlı işaretleme</b><span>Bitirdiğin kitapların kapağına dokun; yeniden dokunursan geri alınır.${QM.n?` <b>${QM.n} kitap</b> işaretlendi.`:''}</span></div>
     <label class="qm-date">Bitirme tarihi <input type="date" id="qmDate" value="${esc(QM.date||qmToday())}" max="${qmToday()}"></label><button class="btn primary" type="button" data-qm="off">Bitti</button></div>`}
 function qmSet(on){QM.on=on;if(on&&TM.on){TM.on=false;document.body.classList.remove('tm-on')}if(on){QM.n=0;QM.date=QM.date||qmToday()}document.body.classList.toggle('qm-on',on);renderList()}
