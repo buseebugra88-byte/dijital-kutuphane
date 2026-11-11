@@ -696,7 +696,7 @@ function envBack(l,opts={}){const k=ENVS[l.env]?l.env:"kraft",e=envOf(k),pts=fla
    <div class="flap"><i class="fo ex-${k}" style="clip-path:${poly(pts)}"></i><i class="fl ln-${k}" style="clip-path:${poly(pts,true)}"></i></div>
    <div class="seal ${opts.noSeal?"":""}" ${opts.noSeal?'style="opacity:0"':""}>${sealOf(l)}</div>
   </div>`}
-function readInner(l,hideBody){const tw=l.hand==="daktilo";return `<div class="date">${esc(fmtDate(l.created))}</div><div class="to-r">${l.to?("Sevgili "+esc(l.to)+","):"Sevgili ben,"}</div>
+function readInner(l,hideBody){const tw=l.hand==="daktilo";return `<div class="date">${esc(fmtDate(l.created))}</div>
   <div class="body${tw?" typed":""}">${hideBody?"":(tw?typeHTML(l.body,l.seed||l.id):(l.pen==="tuy"?quillHTML(l.body,l.seed||l.id):inkHTML(l.body)))}</div><div class="sign-r">${esc(l.sign)}</div>`}
 
 /* ---------- typewriter ---------- */
@@ -1006,7 +1006,7 @@ function renderMasa(){
   ${kart?"":`<label class="check"><input type="checkbox" id="f-torn" ${draft.torn?"checked":""}> Yırtık kenarlı kâğıt</label>`}
   ${kart?kartBackHTML({...draft,created:new Date().toISOString()},{},true):sheetHTML(draft,`
     <div class="date">${esc(fmtDate(new Date().toISOString()))}</div>
-    <div class="to-line" style="display:flex;align-items:baseline;gap:6px;font-size:${tw?"":"1.35rem"}"><span>Sevgili</span><input class="to" id="f-to" placeholder="kime?" value="${esc(draft.to)}" maxlength="40" aria-label="Kime" style="flex:1"><span>,</span></div>
+
     ${tw?`<div class="tw"><div class="tw-ink" id="tw-ink" aria-hidden="true">${typeHTML(draft.body,draft.seed,true)}</div><textarea id="f-body" aria-label="Mektup" placeholder="Yazmaya buradan başla..." style="caret-color:${INKS[draft.ink]};--ph:${INKS[draft.ink]}" spellcheck="false">${esc(draft.body)}</textarea></div>`
        :`<textarea id="f-body" aria-label="Mektup" placeholder="Yazmaya buradan başla...">${esc(draft.body)}</textarea>`}
     <input class="sign" id="f-sign" placeholder="imza" value="${esc(draft.sign)}" maxlength="40" aria-label="İmza">`)}
@@ -1036,7 +1036,7 @@ function renderMasa(){
     kf.addEventListener("change",async()=>{const f=kf.files&&kf.files[0];if(!f)return;try{const c=fitCanvas(await readImage(f),900);draft.photo=c.toDataURL("image/jpeg",.78);saveDraft();renderMasa()}catch(e){toast("Bu fotoğraf açılamadı, başka bir tane dene.")}});
     const rm=document.getElementById("kp-rm");if(rm)rm.addEventListener("click",()=>{draft.photo="";saveDraft();renderMasa()})}
   if(!kart)document.getElementById("f-torn").addEventListener("change",e=>{draft.torn=e.target.checked;saveDraft();renderMasa()});
-  const bind=(id,key)=>{const el=document.getElementById(id);el.addEventListener("input",()=>{draft[key]=el.value;clearTimeout(bind.t);bind.t=setTimeout(saveDraft,400)})};
+  const bind=(id,key)=>{const el=document.getElementById(id);if(!el)return;el.addEventListener("input",()=>{draft[key]=el.value;clearTimeout(bind.t);bind.t=setTimeout(saveDraft,400)})};
   bind("f-to","to");bind("f-body","body");bind("f-sign","sign");
   if(tw){
     const ta=document.getElementById("f-body"),ink=document.getElementById("tw-ink");
@@ -1182,6 +1182,7 @@ function renderZarf(){
     <div><div id="pv-back">${envBack(l,{id:"eb",open:true,sheetOut:true,noSeal:true})}</div><div class="cap">Arka yüz</div></div>
   </div>
   <div class="card">
+    <div class="tool"><span class="label">Kime</span><input type="text" id="f-to" placeholder="Zarfın üstüne yazılacak isim (boş kalabilir)" value="${esc(draft.to||"")}" maxlength="40" aria-label="Kime" style="max-width:340px;border:1px solid var(--line);background:var(--desk);color:var(--fg);border-radius:8px;padding:8px 10px;font:inherit"></div>
     <div class="tool"><span class="label">Zarf</span><div class="ptiles">${Object.entries(ENVS).map(([k,e])=>`<div class="ptw"><button class="ptile etile" data-g="env" data-k="${k}" aria-pressed="${k===draft.env}"><span class="esw ex-${k}${e.b==="air"?" airmail":""}"><i class="ex-${k}" style="clip-path:${poly(flapPts(e.fl))}"></i><b style="top:${FLAPY[e.fl]}%;background:${SEALS[draft.seal]||SEALS.bordo}"></b></span><span>${esc(e.n)}</span></button></div>`).join("")}</div></div>
     <div class="tool"><span class="label">Pul</span><div class="stamps">${[...Object.keys(STAMPS),...OZ.stamps.map(x=>"u:"+x.id)].map(k=>`<button data-g="stamp" data-k="${k}" aria-pressed="${k===draft.stamp}" aria-label="${esc((STAMPS[k]||ozStamp(k)||{}).n||"")} pulu">${stampSVG(k)}</button>`).join("")}<button class="addst" id="b-pulyap" aria-label="Kendi pulunu yap">＋<small>Pul yap</small></button></div><input type="file" id="pul-file" accept="image/*" hidden></div>
     <div class="tools">
@@ -1199,6 +1200,7 @@ function renderZarf(){
   </div>`;
   document.getElementById("b-back").addEventListener("click",()=>go("susle"));
   app.querySelectorAll("[data-g]").forEach(b=>b.addEventListener("click",()=>{draft[b.dataset.g]=b.dataset.k;if(draft.seal2===draft.seal)draft.seal2="";saveDraft();renderZarf()}));
+  const fto=document.getElementById("f-to");fto.addEventListener("input",()=>{draft.to=fto.value;saveDraft();document.getElementById("pv-front").innerHTML=envFront(previewLetter())});
   const ini=document.getElementById("f-ini");ini.addEventListener("input",()=>{draft.initial=ini.value.toLocaleUpperCase("tr-TR");saveDraft();document.querySelector("#eb .seal").innerHTML=sealOf({...draft,initial:draft.initial||" "})});
   const pf=document.getElementById("pul-file");document.getElementById("b-pulyap").addEventListener("click",()=>pf.click());
   pf.addEventListener("change",async()=>{const f=pf.files&&pf.files[0];if(!f)return;const st=await makeStamp(f);if(st){draft.stamp="u:"+st.id;saveDraft();renderZarf();toast("Pulun hazır.")}});
