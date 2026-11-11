@@ -6,17 +6,6 @@
 <link rel="manifest" href="mektup.webmanifest">
 <link rel="icon" href="mektup-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="mektup-180.png?v=2"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
-.mz-hd{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}.mz-hd h2{margin:0 0 4px;font-family:var(--f-title,inherit);font-weight:500}
-.mz-form{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mz-form input,.mz-form select{border:1px solid var(--line);background:var(--desk);color:var(--fg);border-radius:8px;padding:9px 10px;font:inherit;min-width:0}
-.mz-form .full{grid-column:1/-1}@media(max-width:560px){.mz-form{grid-template-columns:1fr}}
-.mz-sug{display:flex;flex-wrap:wrap;gap:6px}.mz-sug .chip{font-size:.78rem;padding:4px 9px;border-style:dashed}
-.mz-grp{display:flex;flex-direction:column;gap:6px}.mz-grp h3{margin:6px 0 2px;font-size:.78rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600}
-.mz-it{display:flex;align-items:center;gap:10px;background:var(--surface);border-radius:12px;padding:9px 12px;box-shadow:0 1px 2px rgba(120,80,100,.06)}
-.mz-it .nm{flex:1;min-width:0;display:flex;flex-direction:column}.mz-it .nm b{font-weight:600;overflow-wrap:anywhere}.mz-it .nm small{color:var(--muted);overflow-wrap:anywhere}
-.mz-st{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}.mz-st button{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:3px 8px;font:500 .74rem var(--f-ui);cursor:pointer}
-.mz-st button[aria-pressed="true"]{color:#fff;border-color:transparent}.mz-st .s-var[aria-pressed="true"]{background:#6f8f6a}.mz-st .s-az[aria-pressed="true"]{background:#c08a3e}.mz-st .s-bitti[aria-pressed="true"]{background:#a65d5d}.mz-st .s-al[aria-pressed="true"]{background:var(--accent)}
-.mz-x{border:0;background:transparent;color:var(--muted);font-size:1.1rem;cursor:pointer;padding:2px 6px}
-.mz-shop .mz-it label{display:flex;align-items:center;gap:10px;flex:1;cursor:pointer}.mz-shop input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent)}
 </style></head><body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -394,7 +383,6 @@ button.sealbtn{position:absolute;left:50%;top:var(--sy,60%);width:26%;aspect-rat
       <button id="tab-masa" data-v="masa">Masa</button>
       <button id="tab-kutu" data-v="kutu">Kutu<span class="count" id="count"></span></button>
       <button id="tab-herb" data-v="herb">Koleksiyon</button>
-      <button id="tab-malz" data-v="malz">Malzemeler<span class="count" id="mzcount"></span></button>
     </nav>
   </header>
   <main id="app"></main>
@@ -825,7 +813,7 @@ function saveDraftSafe(){try{localStorage.setItem(DRAFT,JSON.stringify(draft));r
 function toast(t){const el=document.getElementById("toast");el.textContent=t;el.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>el.hidden=true,2600)}
 function updateCount(){document.getElementById("count").textContent=letters.length?letters.length:""}
 function go(v){view=v;window.scrollTo(0,0);render()}
-document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{reading=null;go(["masa","kutu","herb","malz"].includes(b.dataset.v)?b.dataset.v:"masa")}));
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{reading=null;go(["masa","kutu","herb"].includes(b.dataset.v)?b.dataset.v:"masa")}));
 
 function chipRow(group,obj,cur,isDot){return Object.entries(obj).map(([k,v])=>isDot
   ?`<button class="dot" data-g="${group}" data-k="${k}" aria-pressed="${k===cur}" aria-label="${v[0]}" title="${v[0]}" style="background:${v[1]}"></button>`
@@ -1281,67 +1269,16 @@ function afterSave(l){if(mode==="db"&&!letters.find(x=>x.id===l.id)){letters.pus
   draft.replyTo="";draft.thread="";draft.to="";draft.body="";draft.lock=false;draft.openAfter="";draft.deco=[];draft.photo="";draft.kurgu=null;draft.seed="s"+Date.now().toString(36);saveDraft();updateCount()}
 async function postKart(){const l=letterFromDraft();try{await saveLetter(l)}catch(e){return}afterSave(l);toast("Kartpostalın kutuna kondu.");filter="hepsi";go("kutu")}
 
-/* Malzemelerim: gerçek mektup malzemeleri ve alışveriş listesi */
-const MZK="muhurlu-malzeme-v1";
-const MZCAT={muhur:["🔏","Mühür"],mum:["🕯️","Mum"],kalem:["🖋️","Kalem"],murekkep:["🫙","Mürekkep"],kagit:["📜","Kâğıt"],zarf:["✉️","Zarf"],pul:["📮","Pul"],sus:["🌸","Süs"]};
-const MZSUG={muhur:["Baş harf mühür (B)","Kuru çiçek motifli mühür","Değiştirilebilir başlık seti","Mühür sapı (ahşap)"],
- mum:["Granül mum – bordo","Granül mum – koyu yeşil","Granül mum – altın","Granül mum – krem","Eritme kaşığı","Tealight mum","Silikon mühür altlığı"],
- kalem:["Dolma kalem","Kartuş","Konvertör","Daldırma kalem + uç","Kurşun kalem"],
- murekkep:["Sepya mürekkep","Kahverengi mürekkep","Lacivert mürekkep","Siyah mürekkep"],
- kagit:["Krem kâğıt 100 gr","Kraft kâğıt","Dokulu mektup kâğıdı","Çizgi kılavuzu sayfası"],
- zarf:["Kraft zarf","Krem zarf","Uçak postası zarfı","Kartpostal"],
- pul:["PTT anma pulu","Karışık eski pul paketi","Pul albümü"],
- sus:["Washi bant","Kuru çiçek","Çıkartma","Sicim / ip","Etiket"]};
-const MZST={var:["Var","s-var"],az:["Azaldı","s-az"],bitti:["Bitti","s-bitti"],al:["Alınacak","s-al"]};
-let MZ=(()=>{try{const v=JSON.parse(localStorage.getItem(MZK)||"[]");return Array.isArray(v)?v:[]}catch(e){return []}})();
-let mzTab="hepsi",mzCat="mum";
-function mzSave(){try{localStorage.setItem(MZK,JSON.stringify(MZ));return true}catch(e){toast("Cihazda yer kalmadı.");return false}}
-function mzNeed(x){return x.st==="az"||x.st==="bitti"||x.st==="al"}
-function mzCount(){const el=document.getElementById("mzcount");if(!el)return;const n=MZ.filter(mzNeed).length;el.textContent=n?n:"";el.hidden=!n}
-function mzItem(x,shop){const c=MZCAT[x.cat]||["•",""];
-  if(shop)return `<div class="mz-it"><label><input type="checkbox" data-mzgot="${x.id}"><span>${c[0]}</span><span class="nm"><b>${esc(x.n)}</b>${x.note?`<small>${esc(x.note)}</small>`:""}</span></label><span class="pill">${MZST[x.st][0]}</span></div>`;
-  return `<div class="mz-it"><span>${c[0]}</span><span class="nm"><b>${esc(x.n)}</b>${x.note?`<small>${esc(x.note)}</small>`:""}</span>
-   <span class="mz-st">${Object.entries(MZST).map(([k,v])=>`<button class="${v[1]}" data-mzst="${x.id}" data-k="${k}" aria-pressed="${x.st===k}">${v[0]}</button>`).join("")}</span>
-   <button class="mz-x" data-mzdel="${x.id}" aria-label="${esc(x.n)} sil" title="Sil">×</button></div>`}
-function renderMalz(){
-  const need=MZ.filter(mzNeed),owned=MZ.filter(x=>!mzNeed(x));
-  const groups=list=>Object.keys(MZCAT).map(k=>{const L=list.filter(x=>x.cat===k).sort((a,b)=>a.n.localeCompare(b.n,"tr"));return L.length?`<div class="mz-grp"><h3>${MZCAT[k][0]} ${MZCAT[k][1]}</h3>${L.map(x=>mzItem(x,mzTab==="liste")).join("")}</div>`:""}).join("");
-  app.innerHTML=`<div class="wrap" style="gap:16px">
-   <div class="mz-hd"><div><h2>Malzemelerim</h2><p class="hint" style="margin:0">Mühürlerin, mumların, kalemlerin, kâğıt, zarf ve pulların. Azalanlar ve bitenler alışveriş listesine düşer.</p></div></div>
-   <div class="filter"><button class="chip" data-mztab="hepsi" aria-pressed="${mzTab==="hepsi"}">Hepsi · ${MZ.length}</button><button class="chip" data-mztab="liste" aria-pressed="${mzTab==="liste"}">🛒 Alışveriş listesi · ${need.length}</button></div>
-   ${mzTab==="hepsi"?`<form class="card" id="mz-f">
-     <div class="tool"><span class="label">Ne ekliyorsun?</span><div class="chips">${Object.entries(MZCAT).map(([k,v])=>`<button type="button" class="chip" data-mzcat="${k}" aria-pressed="${k===mzCat}">${v[0]} ${v[1]}</button>`).join("")}</div></div>
-     <div class="mz-sug">${MZSUG[mzCat].map(t=>`<button type="button" class="chip" data-mzsug="${esc(t)}">＋ ${esc(t)}</button>`).join("")}</div>
-     <div class="mz-form"><input name="n" required maxlength="50" placeholder="Adı (ör. Granül mum – bordo)" aria-label="Adı"><input name="note" maxlength="80" placeholder="Not: marka, renk, nereden… (isteğe bağlı)" aria-label="Not">
-      <select name="st" aria-label="Durum"><option value="var">Elimde var</option><option value="al">Alınacak</option><option value="az">Azaldı</option></select><button class="btn" type="submit">Ekle</button></div>
-   </form>`:""}
-   ${mzTab==="liste"
-     ?(need.length?`<div class="mz-shop" style="display:flex;flex-direction:column;gap:10px">${groups(need)}</div><div class="row"><span class="hint">Aldıklarını işaretle, “Var”a geçsin.</span><button class="btn ghost" id="mz-copy">📋 Listeyi kopyala</button></div>`:`<p class="hint">Alışveriş listen boş. Bir malzemeyi “Azaldı”, “Bitti” ya da “Alınacak” yaparsan buraya gelir.</p>`)
-     :(MZ.length?`<div style="display:flex;flex-direction:column;gap:10px">${groups(MZ)}</div>`:`<p class="hint">Henüz malzeme yok. Yukarıdan bir tür seçip öneriye dokunarak ya da kendin yazarak ekleyebilirsin.</p>`)}
-  </div>`;
-  app.querySelectorAll("[data-mztab]").forEach(b=>b.addEventListener("click",()=>{mzTab=b.dataset.mztab;renderMalz()}));
-  app.querySelectorAll("[data-mzcat]").forEach(b=>b.addEventListener("click",()=>{mzCat=b.dataset.mzcat;renderMalz();const n=document.querySelector('#mz-f [name="n"]');n&&n.focus()}));
-  app.querySelectorAll("[data-mzsug]").forEach(b=>b.addEventListener("click",()=>{const n=document.querySelector('#mz-f [name="n"]');n.value=b.dataset.mzsug;n.focus()}));
-  const f=document.getElementById("mz-f");if(f)f.addEventListener("submit",e=>{e.preventDefault();const d=new FormData(f),n=String(d.get("n")||"").trim();if(!n)return;
-    MZ.push({id:"mz"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),cat:mzCat,n,note:String(d.get("note")||"").trim(),st:String(d.get("st")||"var"),upd:Date.now()});
-    if(mzSave()){render();toast("Eklendi.")}});
-  app.querySelectorAll("[data-mzst]").forEach(b=>b.addEventListener("click",()=>{const x=MZ.find(y=>y.id===b.dataset.mzst);if(!x)return;x.st=b.dataset.k;x.upd=Date.now();mzSave();render()}));
-  app.querySelectorAll("[data-mzdel]").forEach(b=>b.addEventListener("click",()=>{const x=MZ.find(y=>y.id===b.dataset.mzdel);if(!x||!confirm(`“${x.n}” silinsin mi?`))return;MZ=MZ.filter(y=>y!==x);mkTomb(x.id);mzSave();render()}));
-  app.querySelectorAll("[data-mzgot]").forEach(c=>c.addEventListener("change",()=>{const x=MZ.find(y=>y.id===c.dataset.mzgot);if(!x)return;x.st="var";x.upd=Date.now();mzSave();setTimeout(render,250);toast(`“${x.n}” alındı.`)}));
-  const cp=document.getElementById("mz-copy");if(cp)cp.addEventListener("click",async()=>{const t="Mektup malzemeleri – alınacaklar\n"+Object.keys(MZCAT).map(k=>{const L=need.filter(x=>x.cat===k);return L.length?`\n${MZCAT[k][1]}\n`+L.map(x=>`☐ ${x.n}${x.note?` (${x.note})`:""}`).join("\n"):""}).join("\n");
-    try{await navigator.clipboard.writeText(t.trim());toast("Liste kopyalandı. Notlar'a ya da mesaja yapıştırabilirsin.")}catch(e){toast("Kopyalanamadı.")}});
-}
-
 /* Yedek: mektupları dosyaya al / dosyadan geri yükle (Kütüphanem yedekleriyle de uyumlu) */
-const MKB={letters:"muhurlu-mektuplar-v1",ozel:"muhurlu-ozel-v1",tomb:"muhurlu-silinen-v1",chars:"muhurlu-karakterler-v1",malz:"muhurlu-malzeme-v1"};
+const MKB={letters:"muhurlu-mektuplar-v1",ozel:"muhurlu-ozel-v1",tomb:"muhurlu-silinen-v1",chars:"muhurlu-karakterler-v1"};
 function mkbGet(k,d){try{const v=JSON.parse(localStorage.getItem(k)||"null");return v==null?d:v}catch(e){return d}}
 function bkHTML(){return IS_ART()?"":`<button class="btn ghost" id="b-exp">💾 Yedek al</button><button class="btn ghost" id="b-imp">📂 Yedekten yükle</button><input type="file" id="f-imp" accept=".json,application/json" hidden>`}
 function bkExport(){
-  const data={letters:mkbGet(MKB.letters,[]),ozel:mkbGet(MKB.ozel,{papers:[],stickers:[]}),tomb:mkbGet(MKB.tomb,[]),chars:mkbGet(MKB.chars,[]),malz:mkbGet(MKB.malz,[])};
+  const data={letters:mkbGet(MKB.letters,[]),ozel:mkbGet(MKB.ozel,{papers:[],stickers:[]}),tomb:mkbGet(MKB.tomb,[]),chars:mkbGet(MKB.chars,[])};
   const d=new Date(),ds=d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
   const blob=new Blob([JSON.stringify({app:"Mühürlü Mektuplar",version:1,at:d.toISOString(),mektup:data})],{type:"application/json"});
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="mektuplarim-"+ds+".json";document.body.appendChild(a);a.click();
-  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast(data.letters.length+" mektup ve "+data.malz.length+" malzeme yedeklendi.")}
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast(data.letters.length+" mektup yedeklendi.")}
 async function bkImport(file){
   let d;try{d=JSON.parse(await file.text())}catch(e){toast("Bu dosya okunamadı.");return}
   const inc=d&&(d.app==="Mühürlü Mektuplar"||d.app==="Dijital Kütüphanem")?d.mektup:null;
@@ -1352,7 +1289,7 @@ async function bkImport(file){
   try{const L=mergeArr(mkbGet(MKB.letters,[]),inc.letters);
     localStorage.setItem(MKB.tomb,JSON.stringify(tomb));localStorage.setItem(MKB.letters,JSON.stringify(L));
     const oz={};for(const k of new Set([...Object.keys(lo||{}),...Object.keys(io)]))if(Array.isArray((lo||{})[k])||Array.isArray(io[k]))oz[k]=mergeArr((lo||{})[k],io[k]);
-    localStorage.setItem(MKB.ozel,JSON.stringify(oz));localStorage.setItem(MKB.chars,JSON.stringify(mergeArr(mkbGet(MKB.chars,[]),inc.chars)));localStorage.setItem(MKB.malz,JSON.stringify(mergeArr(mkbGet(MKB.malz,[]),inc.malz)));
+    localStorage.setItem(MKB.ozel,JSON.stringify(oz));localStorage.setItem(MKB.chars,JSON.stringify(mergeArr(mkbGet(MKB.chars,[]),inc.chars)));
     const n=Math.max(0,L.length-before);toast(n?n+" mektup eklendi.":"Yedekteki mektupların hepsi zaten burada.");setTimeout(()=>location.reload(),1400)}
   catch(e){toast("Cihazda yer kalmadı, yüklenemedi.")}}
 function bkBind(){const e=document.getElementById("b-exp"),i=document.getElementById("b-imp"),f=document.getElementById("f-imp");if(!e)return;
@@ -1586,9 +1523,9 @@ function renderHerb(){if(colTab!=="herb")return renderCol2();const S=OZ.stickers
 function render(){
   document.getElementById("tab-masa").setAttribute("aria-current",String(view==="masa"||view==="susle"||view==="zarf"));
   document.getElementById("tab-kutu").setAttribute("aria-current",String(view==="kutu"||view==="oku"));
-  document.getElementById("tab-herb").setAttribute("aria-current",String(view==="herb"));document.getElementById("tab-malz").setAttribute("aria-current",String(view==="malz"));mzCount();
+  document.getElementById("tab-herb").setAttribute("aria-current",String(view==="herb"));
   updateCount();
-  ({gelen:renderGelen,malz:renderMalz,herb:renderHerb,masa:renderMasa,susle:renderSusle,zarf:renderZarf,kutu:renderKutu,oku:renderOku})[view]();
+  ({gelen:renderGelen,herb:renderHerb,masa:renderMasa,susle:renderSusle,zarf:renderZarf,kutu:renderKutu,oku:renderOku})[view]();
 }
 (function(){try{const c=document.createElement("canvas");c.width=c.height=180;const x=c.getContext("2d");const im=x.createImageData(180,180);
   for(let i=0;i<im.data.length;i+=4){const v=200+Math.random()*55;im.data[i]=v;im.data[i+1]=v*.97;im.data[i+2]=v*.9;im.data[i+3]=Math.random()<.5?28:0}
