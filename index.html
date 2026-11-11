@@ -1809,7 +1809,7 @@ function filtered(){
   const q=low(st.q);
   let r=st.books.filter(b=>inTab(b)&&(!st.shelf||b.shelf===st.shelf)&&(!st.tag||(b.tags||[]).includes(st.tag))&&(!st.status||b.status===st.status)&&
     (!q||low([b.title,b.author,b.shelf,b.note,(b.tags||[]).join(' ')].join(' ')).includes(q)));
-  const cmp={added:(a,b)=>(b.addedAt||'').localeCompare(a.addedAt||''),title:(a,b)=>(a.title||'').localeCompare(b.title||'',TR),
+  const cmp={added:(a,b)=>(b.addedAt||'').localeCompare(a.addedAt||''),title:(a,b)=>{const sa=seriesOf(a),sb=seriesOf(b),ka=sa?sa.name:(a.title||''),kb=sb?sb.name:(b.title||'');const c=ka.localeCompare(kb,TR);if(c)return c;if(sa&&sb)return (sa.no-sb.no)||(a.title||'').localeCompare(b.title||'',TR);return (sa?1:0)-(sb?1:0)||(a.title||'').localeCompare(b.title||'',TR)},
     author:(a,b)=>(a.author||'').localeCompare(b.author||'',TR),finished:(a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||'')}[st.sort];
   return r.sort(cmp);
 }
@@ -1854,6 +1854,10 @@ function bookHtml(b){
 function shelfHtml(list){
   if(st.tab==='done'){const g2={};list.forEach(b=>{const y=(b.finishedAt||'').slice(0,4)||'Tarihsiz';(g2[y]=g2[y]||[]).push(b)});const ks=Object.keys(g2).sort((a,b)=>b.localeCompare(a));ks.forEach(k=>g2[k].sort((a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||'')));
     return '<div class="shelves">'+ks.map(k=>`<section class="shelf"><h3>${k==='Tarihsiz'?'Tarihsiz':'📅 '+k} <small>${g2[k].length} kitap</small></h3><div class="books">${g2[k].map(bookHtml).join('')}</div></section>`).join('')+'</div>'}
+  if(st.sort==='title'){const sg={},solo=[];list.forEach(b=>{const s=seriesOf(b);if(s){const k=trLow(s.name);(sg[k]=sg[k]||{name:s.name,bs:[]}).bs.push(b)}else solo.push(b)});
+    Object.keys(sg).forEach(k=>{if(sg[k].bs.length<2){solo.push(...sg[k].bs);delete sg[k]}else sg[k].bs.sort((x,y)=>(seriesOf(x).no-seriesOf(y).no)||(x.title||'').localeCompare(y.title||'',TR))});solo.sort((a,b)=>(a.title||'').localeCompare(b.title||'',TR));
+    const sk=Object.keys(sg).sort((a,b)=>sg[a].name.localeCompare(sg[b].name,TR));
+    return '<div class="shelves">'+sk.map(k=>`<section class="shelf"><h3>📚 ${esc(sg[k].name)} <small>${sg[k].bs.length} kitaplık seri</small></h3><div class="books">${sg[k].bs.map(bookHtml).join('')}</div></section>`).join('')+(solo.length?`<section class="shelf"><h3>${sk.length?'Tek kitaplar · A–Z':'A–Z'} <small>${solo.length}</small></h3><div class="books">${solo.map(bookHtml).join('')}</div></section>`:'')+'</div>'}
   const DONE='✅ Bitirdiklerim',g={};list.forEach(b=>{const k=b.status==='okundu'&&b.kind!=='roman'&&b.kind!=='makale'?DONE:(b.shelf||'Rafsız');(g[k]=g[k]||[]).push(b)});
   if(g[DONE])g[DONE].sort((a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||''));
   const keys=Object.keys(g).sort((a,b)=>a===DONE?1:b===DONE?-1:a==='Rafsız'?1:b==='Rafsız'?-1:a.localeCompare(b,TR));
@@ -5454,7 +5458,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v152';
+const DK_VER='v153';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
