@@ -1358,7 +1358,7 @@ body.home-kindle #listArea{max-width:760px;margin-inline:auto}
 .hk-t .bk .badge,.hk-t .bk .loading,.hk-hero .bk .loading,.hk-hero .bk .badge,.hk .bk .edit,.hk .bk .blinfo{display:none}
 .hk-foot{display:flex;justify-content:center;gap:8px;color:var(--muted);font-size:13px}.hk-lnk{border:0;background:none;color:var(--muted);font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 @media(min-width:700px){.hk-hero .bk{--cw:140px;--ch:210px}.hk-t{width:108px}.hk-t .bk{--cw:108px;--ch:162px}}
-.shelves .shelf{content-visibility:auto;contain-intrinsic-size:auto 260px}.list .card{content-visibility:auto;contain-intrinsic-size:auto 220px}
+.shelves .shelf{content-visibility:auto;contain-intrinsic-size:auto 260px}body.tm-on .shelves .shelf,body.qm-on .shelves .shelf{content-visibility:visible}.list .card{content-visibility:auto;contain-intrinsic-size:auto 220px}
 .hk-btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:6px}.hk-btns .hk-go{margin-top:0}.hk-oe{font-size:13px;padding:8px 12px}
 </style>
 
@@ -1865,7 +1865,7 @@ function bookHtml(b){
 function shelfHtml(list){
   if(st.tab==='done'){const g2={};list.forEach(b=>{const y=(b.finishedAt||'').slice(0,4)||'Tarihsiz';(g2[y]=g2[y]||[]).push(b)});const ks=Object.keys(g2).sort((a,b)=>b.localeCompare(a));ks.forEach(k=>g2[k].sort((a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||'')));
     return '<div class="shelves">'+ks.map(k=>`<section class="shelf"><h3>${k==='Tarihsiz'?'Tarihsiz':'📅 '+k} <small>${g2[k].length} kitap</small></h3><div class="books">${g2[k].map(bookHtml).join('')}</div></section>`).join('')+'</div>'}
-  {const DONE='✅ Bitirdiklerim',done=[],sg={},solo=[];list.forEach(b=>{if(b.status==='okundu'&&b.kind!=='roman'&&b.kind!=='makale'){done.push(b);return}const s=seriesOf(b);if(s){const k=trLow(s.name);(sg[k]=sg[k]||{name:s.name,bs:[]}).bs.push(b)}else solo.push(b)});
+  if(st.sort==='title'){const DONE='✅ Bitirdiklerim',done=[],sg={},solo=[];list.forEach(b=>{if(b.status==='okundu'&&b.kind!=='roman'&&b.kind!=='makale'){done.push(b);return}const s=seriesOf(b);if(s){const k=trLow(s.name);(sg[k]=sg[k]||{name:s.name,bs:[]}).bs.push(b)}else solo.push(b)});
     Object.keys(sg).forEach(k=>{if(sg[k].bs.length<2){solo.push(...sg[k].bs);delete sg[k]}else sg[k].bs.sort((x,y)=>(seriesOf(x).no-seriesOf(y).no)||(x.title||'').localeCompare(y.title||'',TR))});const ord=new Map(list.map((b,i)=>[b,i]));solo.sort((a,b)=>ord.get(a)-ord.get(b));
     const sk=Object.keys(sg).sort((a,b)=>sg[a].name.localeCompare(sg[b].name,TR));
     return '<div class="shelves">'+sk.map(k=>`<section class="shelf"><h3>📚 ${esc(sg[k].name)} <small>${sg[k].bs.length} kitaplık seri</small></h3><div class="books">${sg[k].bs.map(bookHtml).join('')}</div></section>`).join('')+(solo.length?`<section class="shelf"><h3>${({added:'En son eklenenler',title:'A–Z',author:'Yazara göre',finished:'Bitirme tarihine göre'})[st.sort]||'Kitaplar'}${sk.length?' · tek kitaplar':''} <small>${solo.length}</small></h3><div class="books">${solo.map(bookHtml).join('')}</div></section>`:'')+(done.length?`<section class="shelf"><h3>${DONE} <small>${done.length}</small></h3><div class="books">${done.sort((a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||'')).map(bookHtml).join('')}</div></section>`:'')+'</div>'}
@@ -5469,7 +5469,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v157';
+const DK_VER='v158';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -7159,7 +7159,10 @@ function turChips(){const box=$('turChips');if(!box)return;const v=trLow($('fShe
 $('turChips').addEventListener('click',e=>{const c=e.target.closest('[data-tur]');if(!c)return;const f=$('fShelf');f.value=trLow(f.value.trim())===trLow(c.dataset.tur)?'':c.dataset.tur;turChips()});
 $('fShelf').addEventListener('input',turChips);
 const TM={on:false,tur:'',n:0,auto:''};
-function keepScroll(f){const els=[document.scrollingElement];let e=$('listArea');while(e){els.push(e);e=e.parentElement}const ys=els.map(x=>x?x.scrollTop:0);f();const back=()=>els.forEach((x,i)=>{if(x&&ys[i])x.scrollTop=ys[i]});back();requestAnimationFrame(back);setTimeout(back,60)}
+function keepScroll(f,skip){const se=document.scrollingElement,y=se.scrollTop,Q=id=>document.querySelector(`#listArea [data-bk="${CSS.escape(id)}"],#listArea .card[data-id="${CSS.escape(id)}"]`);let anc=null,off=0;
+  if(y>0)for(const e of document.querySelectorAll('#listArea [data-bk],#listArea .card[data-id]')){const id=e.dataset.bk||e.dataset.id;if(id===skip)continue;const r=e.getBoundingClientRect();if(r.bottom>80&&r.height){anc=id;off=r.top;break}}
+  f();if(!y)return;const back=()=>{const e=anc&&Q(anc);if(e){const d=e.getBoundingClientRect().top-off;if(Math.abs(d)>2)se.scrollTop+=d}else if(Math.abs(se.scrollTop-y)>2)se.scrollTop=y};
+  back();requestAnimationFrame(back);setTimeout(back,80);setTimeout(back,300);setTimeout(back,700)}
 const TUR_MAP=[[/romance|romantic|love stor|aşk|romantik/i,'Romantik'],[/dystopi|distopya/i,'Distopya'],[/fantasy|fantastik|fantazi/i,'Fantastik'],[/science fiction|sci-fi|bilim kurgu|bilimkurgu/i,'Bilim kurgu'],[/horror|korku/i,'Korku'],[/thriller|suspense|gerilim/i,'Gerilim'],[/mystery|detective|crime|polisiye|cinayet/i,'Polisiye'],[/classic|klasik/i,'Klasik'],[/biograph|memoir|autobiograph|biyografi|anı/i,'Biyografi'],[/poetry|şiir/i,'Şiir'],[/short stor|öykü/i,'Öykü'],[/essay|deneme/i,'Deneme'],[/humor|humour|mizah/i,'Mizah'],[/young adult|gençlik/i,'Gençlik'],[/juvenile|children|çocuk/i,'Çocuk'],[/self-help|personal growth|kişisel gelişim/i,'Kişisel gelişim'],[/psycholog|psikoloji/i,'Psikoloji'],[/philosoph|felsefe/i,'Felsefe'],[/health|medical|sağlık/i,'Sağlık'],[/^history|historical|tarih/i,'Tarih'],[/science|bilim/i,'Bilim'],[/fiction|novel|roman/i,'Roman']];
 function turMatch(txt,list){for(const [re,g] of TUR_MAP){if(re.test(txt)){const hit=list.find(x=>trLow(x)===trLow(g));if(hit)return hit}}for(const x of list){if(trLow(txt).includes(trLow(x)))return x}return ''}
 async function turGB(b,list){const q=`intitle:${b.title}${b.author?' inauthor:'+b.author:''}`;try{const r=await fetch('https://www.googleapis.com/books/v1/volumes?maxResults=5&printType=books&q='+encodeURIComponent(q)+gbKey());if(!r.ok)return '';const it=((await r.json()).items||[]).map(x=>x.volumeInfo||{});
@@ -7183,7 +7186,7 @@ function tmBar(){if(st.tab==='roman')return '';if(!TM.on)return '';setTimeout(tm
 function tmBadges(){if(!TM.on)return;document.querySelectorAll('#listArea [data-bk]').forEach(el=>{const b=st.books.find(x=>x.id===el.dataset.bk);if(!b)return;let s=el.querySelector('.tm-badge');if(!s){s=document.createElement('span');s.className='tm-badge';el.appendChild(s)}s.textContent=b.shelf||'—';s.classList.toggle('on',!!TM.tur&&b.shelf===TM.tur)})}
 function tmSet(on){TM.on=on;if(on){TM.n=0;if(QM.on){QM.on=false;document.body.classList.remove('qm-on')}}document.body.classList.toggle('tm-on',on);renderList()}
 async function tmToggle(id){const b=st.books.find(x=>x.id===id);if(!b||!st.db)return;if(!TM.tur){toast('Önce yukarıdan bir tür seç');return}
-  const v=b.shelf===TM.tur?'':TM.tur;b.shelf=v;TM.n++;keepScroll(renderList);try{await st.db.collection('books').doc(id).update({shelf:v})}catch(e){toast('Kaydedilemedi')}}
+  const v=b.shelf===TM.tur?'':TM.tur;b.shelf=v;TM.n++;TM.skip=id;keepScroll(renderList,id);try{await st.db.collection('books').doc(id).update({shelf:v})}catch(e){toast('Kaydedilemedi')}}
 $('listArea').addEventListener('click',e=>{const q=e.target.closest('[data-tm]');if(q){e.stopPropagation();tmSet(q.dataset.tm==='on');return}
   const c=e.target.closest('[data-tmt]');if(c){e.stopPropagation();let t=c.dataset.tmt;if(t==='__new'){t=(prompt('Yeni türün adı:')||'').trim();if(!t)return;const bs_=turBase();if(!bs_.some(x=>trLow(x)===trLow(t))){bs_.push(t);turSaveBase(bs_)}}TM.tur=TM.tur===t?'':t;keepScroll(renderList);return}
   if(e.target.closest('[data-tmauto]')){e.stopPropagation();tmAuto();return}
@@ -9030,7 +9033,7 @@ render();
   st.ready=true;const db=st.db;
   try{if(window.claude&&window.claude.use)window.claude.use('sample').then(sm=>{st.sample=sm||null;$('rAsk').hidden=!st.sample}).catch(()=>{})}catch(e){}
   if(!db)return render();
-  db.collection('books').onSnapshot(s=>{st.books=s.docs.map(d=>Object.assign({id:d.id},d.data()));render();kyAutoQ()},()=>{});
+  db.collection('books').onSnapshot(s=>{st.books=s.docs.map(d=>Object.assign({id:d.id},d.data()));keepScroll(render,TM.skip);kyAutoQ()},()=>{});
   db.doc('settings/ui').onSnapshot(s=>{if(s.exists){const d={...s.data()};delete d.updatedAt;if(JSON.stringify({...UIDEF,...d})!==JSON.stringify(UI)){UI={...UIDEF,...d};try{localStorage.setItem('dk-ui',JSON.stringify(UI))}catch(e){}applyUI();if(!$('themeVeil').hidden)fillThemeForm()}}},()=>{});
   db.doc('settings/stickers').onSnapshot(s=>{const d=s.exists?s.data():{};STK={items:Array.isArray(d.items)?d.items:[],emblem:d.emblem||''};stkRender();refreshArt()},()=>{});
   db.collection('quotes').onSnapshot(s_=>{TL.quotes=s_.docs.map(d=>({id:d.id,...d.data()}));rerenderTool();if(st.view==='panel'&&st.sec==='home')renderList()},()=>{});
