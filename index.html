@@ -1143,6 +1143,12 @@ html body .rstage{overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow
 .rxh{position:absolute;mix-blend-mode:multiply;opacity:.5;border-radius:2px;pointer-events:auto;cursor:pointer}.reader.mode-night .rxh{mix-blend-mode:screen;opacity:.35}
 .rxgw{position:absolute;inset:0;pointer-events:none}.rxg{position:absolute;opacity:.45;border-radius:4px;pointer-events:none;mix-blend-mode:multiply}
 .rxh{border-radius:4px!important}
+/* sade okuma: beyaz modda her yer sayfa gibi beyaz; PDF'te yalnızca PDF ayarları */
+.reader.mode-light,.reader.mode-light .rbar,.reader.mode-light .rfoot,.reader.mode-light .rstage{background:#fff!important;background-image:none!important}
+.reader.mode-light .rbar{border-bottom-color:#eee}.reader.mode-light .rfoot{border-top-color:#eee}
+.reader.mode-light .pgwrap,.reader.mode-light .spage,.reader.mode-light .rstage canvas:not(.inklayer){box-shadow:none!important}.reader.mode-light .pgwrap,.reader.mode-light .spage{border-bottom:1px solid #eee}
+.reader.mode-light .iconbtn{background:#fff;border-color:#e6e6e6}
+.reader:not(.ep-foot) #rPop .f:has(#rFonts,#rLines,#rMarg,#rAlign){display:none}
 #rFocus,#rNb,#rEmoBtn,#rQuote,#rTts,#ttsBar,.lfc:has(>label>input[data-opt=tts]){display:none!important}#reader:not(.ep-foot) #rHlBtn{display:none!important}
 .rxe{position:absolute;transform:translate(-50%,0);border:0;background:rgba(255,255,255,.85);border-radius:999px;width:34px;height:34px;font-size:19px;line-height:1;display:grid;place-items:center;box-shadow:0 3px 10px -4px rgba(0,0,0,.35);pointer-events:auto;cursor:pointer;padding:0}
 #reader:has(#inkBar:not([hidden])) .rxh,#reader:has(#inkBar:not([hidden])) .rxe{pointer-events:none}
@@ -1520,8 +1526,8 @@ body.home-kindle #listArea{max-width:760px;margin-inline:auto}
   <div class="rpop" id="rPop" hidden>
     <div class="f"><label>Okuma şekli</label><div class="seg" id="rFlow"><button type="button" data-flow="scroll">Aşağı kaydır</button><button type="button" data-flow="page">Sayfa çevir</button></div></div>
     <div class="f"><label>Sayfa düzeni</label><div class="seg" id="rSpread"><button type="button" data-spread="always">📖 Hep iki sayfa</button><button type="button" data-spread="on">Yan tutunca iki</button><button type="button" data-spread="off">Tek sayfa</button></div></div>
-    <div class="f"><label>Okurken üst ve alt çubuk</label><div class="seg" id="rAh"><button type="button" data-ah="1">Kendiliğinden gizle</button><button type="button" data-ah="0">Hep görünsün</button></div></div>
-    <div class="f"><label>Sayfa rengi</label><div class="seg" id="rModes"><button type="button" data-m="eink">📖 Kâğıt</button><button type="button" data-m="light">Açık</button><button type="button" data-m="sepia">Sepya</button><button type="button" data-m="night">Gece</button></div></div>
+    <div class="f" id="rAhF" hidden><label>Okurken üst ve alt çubuk</label><div class="seg" id="rAh"><button type="button" data-ah="1">Kendiliğinden gizle</button><button type="button" data-ah="0">Hep görünsün</button></div></div>
+    <div class="f"><label>Sayfa rengi</label><div class="seg" id="rModes"><button type="button" data-m="light">Beyaz</button><button type="button" data-m="sepia">Sepya</button><button type="button" data-m="night">Gece</button></div></div>
     <div class="f"><label>Yazı tipi <span class="hint">(EPUB)</span></label><div class="seg" id="rFonts"><button type="button" data-f="lora" style="font-family:Lora,serif">Lora</button><button type="button" data-f="cormorant" style="font-family:'Cormorant Garamond',serif">Cormorant</button><button type="button" data-f="sans" style="font-family:'DM Sans',sans-serif">Sade</button><button type="button" data-f="literata" style="font-family:Literata,serif">Literata</button><button type="button" data-f="merri" style="font-family:Merriweather,serif">Merriweather</button><button type="button" data-f="garamond" style="font-family:'EB Garamond',serif">Garamond</button><button type="button" data-f="nunito" style="font-family:Nunito,sans-serif">Yuvarlak</button><button type="button" data-f="atkinson" style="font-family:'Atkinson Hyperlegible',sans-serif">Okunaklı</button></div></div>
     <div class="f"><label>Satır aralığı <span class="hint">(EPUB)</span></label><div class="seg" id="rLines"><button type="button" data-l="1.5">Sık</button><button type="button" data-l="1.75">Orta</button><button type="button" data-l="2.05">Ferah</button><button type="button" data-l="2.35">Çok ferah</button></div></div>
     <div class="f"><label>Kenar boşluğu <span class="hint">(EPUB)</span></label><div class="seg" id="rMarg"><button type="button" data-marg="w">Dar</button><button type="button" data-marg="m">Orta</button><button type="button" data-marg="n">Geniş</button></div></div>
@@ -2506,10 +2512,10 @@ $('rSum').addEventListener('click',async()=>{const b=R.book&&st.books.find(x=>x.
   out.textContent='Hazırlanıyor…';try{const upd=await summarize(b,m=>{out.textContent=m});out.innerHTML=ozetHtml(upd.ozet)+'<p class="hint" style="font-size:12px">Özet makalenin kaydına eklendi; literatür tablosunda da görünür.</p>'}
   catch(err){out.textContent=err&&err.ui?err.ui:sampleErr(err)}});
 /* okuma modları */
-let RS={mode:'eink',font:'lora',line:'1.75',flow:'scroll',ah:'1'};try{const c=JSON.parse(localStorage.getItem('dk-read')||'null');if(c)RS={...RS,...c}}catch(e){}
+let RS={mode:'light',font:'lora',line:'1.75',flow:'scroll',ah:'1'};try{const c=JSON.parse(localStorage.getItem('dk-read')||'null');if(c)RS={...RS,...c}}catch(e){}
 if(!RS.einkMig){RS.einkMig=1;if(RS.mode==='light')RS.mode='eink';try{localStorage.setItem('dk-read',JSON.stringify(RS))}catch(e){}}
 const RFONT={lora:'"Lora",Georgia,serif',cormorant:'"Cormorant Garamond",Georgia,serif',sans:'"DM Sans",system-ui,sans-serif',literata:'"Literata",Georgia,serif',merri:'"Merriweather",Georgia,serif',garamond:'"EB Garamond",Georgia,serif',atkinson:'"Atkinson Hyperlegible",system-ui,sans-serif',nunito:'"Nunito",system-ui,sans-serif'};
-function applyRS(){const r=$('reader');r.classList.remove('mode-light','mode-sepia','mode-night','mode-eink');r.classList.add('mode-'+RS.mode);
+function applyRS(){if(RS.mode==='eink'||!['light','sepia','night'].includes(RS.mode))RS.mode='light';const r=$('reader');r.classList.toggle('is-pdf',!r.classList.contains('ep-foot'));r.classList.remove('mode-light','mode-sepia','mode-night','mode-eink');r.classList.add('mode-'+RS.mode);
   r.classList.toggle('ah',RS.ah==='1');if(RS.ah!=='1')r.classList.remove('bars-off');r.style.setProperty('--efont',RFONT[RS.font]||RFONT.lora);r.style.setProperty('--eline',RS.line);r.style.setProperty('--ewidth',{n:'560px',m:'680px',w:'900px'}[RS.marg||'m']);r.dataset.align=RS.align||'left';
   [['rModes','m',RS.mode],['rFonts','f',RS.font],['rLines','l',RS.line],['rFlow','flow',epFlowNow()],['rAh','ah',RS.ah],['rSpread','spread',RS.spread||'on'],['rMarg','marg',RS.marg||'m'],['rAlign','align',RS.align||'left']].forEach(([id,k,v])=>$(id).querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset[k]===v)));
   try{localStorage.setItem('dk-read',JSON.stringify(RS))}catch(e){}try{if(typeof EPG!=='undefined'&&R.epub)requestAnimationFrame(epRelayout)}catch(e){}}
@@ -5469,7 +5475,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v162';
+const DK_VER='v163';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
