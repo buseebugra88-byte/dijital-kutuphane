@@ -1046,6 +1046,7 @@ body.pat-waves{background-image:radial-gradient(circle at 50% 120%,transparent 1
 html body .lfc,html body .hs-c,html body .hs-g,html body .dcard,html body .wg,html body .bj-box,html body #secHost>.panel,html body .panel.tool,html body .panel.ky,html body .bk-ban{border-radius:var(--sw-r);box-shadow:var(--sw-sh);border-color:color-mix(in srgb,var(--line) 80%,transparent)}
 html body .lfc{padding:16px 18px}
 html body #secTitle{display:flex;align-items:center;gap:12px;letter-spacing:-.01em}
+#secTitle .sec-st{display:none!important}
 .sec-st{display:inline-block;line-height:0;transform:rotate(-7deg);filter:drop-shadow(0 4px 6px color-mix(in srgb,var(--ink) 18%,transparent));transition:transform .3s}.sec-st:hover{transform:rotate(3deg) scale(1.05)}.sec-st .stamp{margin:0}
 html body #secTabs{background:color-mix(in srgb,var(--paper) 55%,transparent);border-color:color-mix(in srgb,var(--line) 70%,transparent);padding:4px;gap:2px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 html body #secTabs button{padding:7px 14px;border-radius:999px;transition:background .2s,color .2s}
@@ -2322,7 +2323,7 @@ function applyUI(){
 }
 mq&&mq.addEventListener&&mq.addEventListener('change',applyUI);
 function fillThemeForm(){try{fillReadOpts()}catch(e){}
-  {const SHORT=['ereader','kobo','sage','night'],cur=UI.preset||'sage',keys=fillThemeForm.all?Object.keys(PRESETS):[...SHORT,...(SHORT.includes(cur)?[]:[cur])];
+  {const SHORT=['ereader','kobo'],cur=UI.preset||'sage',keys=fillThemeForm.all?Object.keys(PRESETS):[...SHORT,...(SHORT.includes(cur)?[]:[cur])];
   $('tPresets').innerHTML=keys.filter(k=>PRESETS[k]).map(k=>{const p=PRESETS[k];return `<button type="button" class="sw" data-preset="${k}" aria-pressed="${cur===k}"><i>${p.sw.map(c=>`<b style="background:${c}"></b>`).join('')}</i>${esc(p.name)}</button>`}).join('')+`<button type="button" class="tpr-more" data-tprmore="1">${fillThemeForm.all?'Daha az göster':'Tüm temalar ('+Object.keys(PRESETS).length+')'}</button>`}
   $('tBgc').value=UI.bgc||(getComputedStyle(document.documentElement).getPropertyValue('--bg').trim().slice(0,7)||'#efe7e2');
   $('tMode').value=UI.mode;$('tAccent').value=UI.accent||(getComputedStyle(document.documentElement).getPropertyValue('--accent').trim().slice(0,7)||'#7f9a68');
@@ -5490,7 +5491,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v164';
+const DK_VER='v165';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
