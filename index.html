@@ -2028,6 +2028,9 @@ function progHtml(b){
   const G=bkProg(b),tot=G.t,pct=G.p;
   return `<div class="prog">${tot?`<div class="track"><i style="width:${pct}%"></i></div>`:''}<span>🔖 ${tot?G.txt+(G.u?' · %'+pct:''):G.u+' '+G.c}</span></div>`;
 }
+/* aynı içerik tekrar çizilmesin: eşitleme sonrası kapaklar göz kırpmasın */
+(function(){const la=document.getElementById('listArea');if(!la||la.__dkGuard)return;la.__dkGuard=1;const d=Object.getOwnPropertyDescriptor(Element.prototype,'innerHTML');
+  Object.defineProperty(la,'innerHTML',{configurable:true,get(){return d.get.call(this)},set(v){v=String(v);if(v===this.__dkLast&&this.childElementCount)return;this.__dkLast=v;d.set.call(this,v)}})})();
 function render(){applySec();$('litBtn').hidden=true;$("vPanel").setAttribute("aria-pressed",st.view==="panel");document.body.classList.toggle("panel-mode",st.view==="panel");$("vRaf").setAttribute("aria-pressed",st.view==="raf");$("vKart").setAttribute("aria-pressed",st.view==="kart");renderGoal();renderTabs();renderSide();renderList()}
 
 /* events */
@@ -5491,7 +5494,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v165';
+const DK_VER='v166';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
