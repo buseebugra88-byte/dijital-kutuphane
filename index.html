@@ -1150,6 +1150,10 @@ html body .rstage{overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow
 .reader.mode-light .pgwrap,.reader.mode-light .spage,.reader.mode-light .rstage canvas:not(.inklayer){box-shadow:none!important}.reader.mode-light .pgwrap,.reader.mode-light .spage{border-bottom:1px solid #eee}
 .reader.mode-light .iconbtn{background:#fff;border-color:#e6e6e6}
 .reader:not(.ep-foot) #rPop .f:has(#rFonts,#rLines,#rMarg,#rAlign){display:none}
+#reloadBtn .sy-dot{position:absolute;right:6px;top:6px;width:9px;height:9px;border-radius:50%;background:#e8913a;box-shadow:0 0 0 2px var(--paper)}
+#reloadBtn .sy-ok{position:absolute;right:5px;bottom:4px;font-style:normal;font-size:10px;font-weight:700;color:#4c9a6a}
+#reloadBtn .sy-spin{display:inline-flex;animation:syspin 1.1s linear infinite}@keyframes syspin{to{transform:rotate(360deg)}}
+#dbkChip,#ssChip,#dkReauth,[data-act="bkdriveget"]{display:none!important}
 #rFocus,#rNb,#rEmoBtn,#rQuote,#rTts,#ttsBar,.lfc:has(>label>input[data-opt=tts]){display:none!important}#reader:not(.ep-foot) #rHlBtn{display:none!important}
 .rxe{position:absolute;transform:translate(-50%,0);border:0;background:rgba(255,255,255,.85);border-radius:999px;width:34px;height:34px;font-size:19px;line-height:1;display:grid;place-items:center;box-shadow:0 3px 10px -4px rgba(0,0,0,.35);pointer-events:auto;cursor:pointer;padding:0}
 #reader:has(#inkBar:not([hidden])) .rxh,#reader:has(#inkBar:not([hidden])) .rxe{pointer-events:none}
@@ -1683,7 +1687,7 @@ const LOCAL=(()=>{
   const mem={};
   const snapDoc=(id,v)=>({id,exists:v!==undefined,data:()=>v,metadata:{fromCache:false,hasPendingWrites:false}});
   const colSnap=col=>{const docs=Object.entries(mem).filter(([k])=>k.startsWith(col+'/')&&k.split('/').length===2).map(([k,v])=>snapDoc(k.split('/')[1],v));return {docs,size:docs.length,empty:!docs.length,docChanges:()=>[],metadata:{fromCache:false,hasPendingWrites:false}}};
-  const notify=path=>{const col=path.split('/')[0];(listeners[path]||[]).forEach(f=>f(snapDoc(path.split('/')[1],mem[path])));(listeners[col]||[]).forEach(f=>f(colSnap(col)))};
+  const notify=path=>{try{window.dispatchEvent(new CustomEvent('dk-change',{detail:path}))}catch(e){}const col=path.split('/')[0];(listeners[path]||[]).forEach(f=>f(snapDoc(path.split('/')[1],mem[path])));(listeners[col]||[]).forEach(f=>f(colSnap(col)))};
   const tombs=()=>{try{return JSON.parse(localStorage.getItem('dk-tomb')||'[]')}catch(e){return []}};const tombAdd=p=>{if(p.split('/').length!==2)return;const t=tombs();if(!t.includes(p)){t.push(p);try{localStorage.setItem('dk-tomb',JSON.stringify(t.slice(-3000)))}catch(e){}}};
   const rid=()=>[...crypto.getRandomValues(new Uint8Array(10))].map(b=>b.toString(16).padStart(2,'0')).join('');
   const docRef=path=>({id:path.split('/')[1],path,
@@ -1728,7 +1732,7 @@ const GAUTH=(()=>{
     let r;try{r=await SL.login({provider:'google',options:{scopes:[SCOPE]}})}catch(e){throw{ui:'Google girişi tamamlanmadı.'}}
     const a=(r&&r.result&&r.result.accessToken)||{};const t=typeof a==='string'?a:(a.token||a.accessToken||'');
     if(!t)throw{ui:'Google girişi tamamlanmadı.'};save(t,3500)}
-  function reconnectBar(){if(document.getElementById('dkReauth'))return;const b=document.createElement('button');b.id='dkReauth';b.type='button';b.className='dk-ver';b.style.top='calc(env(safe-area-inset-top,0px) + 56px)';b.textContent='☁️ Google Drive bağlantısını yenilemek için dokun';
+  function reconnectBar(){try{window.dkSyncUi&&window.dkSyncUi()}catch(e){}return;if(document.getElementById('dkReauth'))return;const b=document.createElement('button');b.id='dkReauth';b.type='button';b.className='dk-ver';b.style.top='calc(env(safe-area-inset-top,0px) + 56px)';b.textContent='☁️ Google Drive bağlantısını yenilemek için dokun';
     b.onclick=()=>{b.textContent='Google açılıyor…';G.token().then(()=>{b.remove();try{toast('Google Drive yeniden bağlandı ✓')}catch(e){}},e=>{b.textContent='☁️ Tekrar dene — Google Drive\'a bağlan';try{toast((e&&e.ui)||'Olmadı')}catch(x){}})};document.body.appendChild(b)}
   function webLogin(){return new Promise((res,rej)=>{
     if(!CFG.googleWebClientId)return rej({ui:'Google Drive için Client ID henüz eklenmemiş (config.js).'});
@@ -3642,7 +3646,7 @@ function tYear(){
 function tBackup(){setTimeout(bkWeeklyUi,60);return toolHead('💾 Yedekle')+`<div class="f"><label>🗂 Haftalık otomatik yedekler (Drive)</label><div id="bkWeeklyBox" class="lfc"></div></div>`+`<p class="hint" style="margin:0;font-size:14px">Kitap listen, notların, alıntıların, kartların, tez planın ve yazar köşen bir yedek dosyasına yazılır. PDF dosyalarının kendisi yedeğe girmez; onlar Drive'ında ya da kütüphanenin deposunda kalır.</p>
   <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" type="button" data-act="bkjson">⬇️ Tam yedek (.json)</button><button class="btn" type="button" data-act="bkfull">🖼 Görsellerle tam yedek</button><button class="btn" type="button" data-act="bkcsv">⬇️ Kitap listesi (Excel için .csv)</button></div>
   <div class="lfc" style="display:grid;gap:6px"><b>📤 Arkadaşına kitap listeni gönder</b><span class="hint" style="font-size:13px">Tam yedek <b>kişisel</b> şeylerini de içerir (günlük, ruh hâli, bütçe, takvim, notlar). Arkadaşına göndermek için bunu kullan: yalnızca kitapların adı, yazarı, durumu, puanı ve etiketleri gider. Arkadaşın kendi uygulamasında Ayarlar → Yedekle → <b>Yedekten geri yükle</b> ile açar; onun kendi kayıtları silinmez.</span><div><button class="btn" type="button" data-act="bkshare">📤 Sadece kitap listesi (.json)</button></div></div>
-  <div class="f"><label for="bkFile">Yedekten geri yükle</label><input id="bkFile" type="file"><span class="hint" style="font-size:12px">Aynı kayıtlar yedektekiyle değiştirilir, yeni kayıtlar eklenir; hiçbir şey silinmez.</span></div><div class="hint" id="bkMsg"></div>${typeof GAUTH!=='undefined'&&GAUTH.configured()?`<div class="f" style="margin-top:8px"><label>Google Drive yedeği</label><div class="hint dbk-info" style="margin:0;font-size:13px">Drive'a giriş yaptığın sürece her şey Drive'ındaki "Dijital Kütüphanem — yedek.json" dosyasıyla kendiliğinden eşitlenir: değişikliklerin birkaç dakikada bir Drive'a yazılır, uygulamayı açtığında başka cihazdaki daha yeni değişiklikler alınır. Giriş süresi dolduysa köşedeki "Drive ile eşitle" düğmesine bas.</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn primary" type="button" data-act="bkdrive">☁️ Şimdi eşitle</button><button class="btn" type="button" data-act="bkdriveget">⬇️ Drive'dan geri yükle</button></div><span class="hint" id="dbkMsg" style="font-size:12px">${dbkStatus()}</span></div>`:''}`}
+  <div class="f"><label for="bkFile">Yedekten geri yükle</label><input id="bkFile" type="file"><span class="hint" style="font-size:12px">Aynı kayıtlar yedektekiyle değiştirilir, yeni kayıtlar eklenir; hiçbir şey silinmez.</span></div><div class="hint" id="bkMsg"></div>${typeof GAUTH!=='undefined'&&GAUTH.configured()?`<div class="f" style="margin-top:8px"><label>Google Drive yedeği</label><div class="hint dbk-info" style="margin:0;font-size:13px">Drive'a giriş yaptığın sürece her şey Drive'ındaki "Dijital Kütüphanem — yedek.json" dosyasıyla kendiliğinden eşitlenir: değişikliklerin birkaç dakikada bir Drive'a yazılır, uygulamayı açtığında başka cihazdaki daha yeni değişiklikler alınır. Sağ üstteki ☁️ bulut eşitlemenin durumunu gösterir: ✓ her şey eşit, dönüyorsa eşitleniyor. Bulutun üstünde turuncu nokta varsa Google bağlantısının süresi dolmuştur, buluta bir kez dokunman yeter.</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn primary" type="button" data-act="bkdrive">☁️ Şimdi eşitle</button><button class="btn" type="button" data-act="bkdriveget">⬇️ Drive'dan geri yükle</button></div><span class="hint" id="dbkMsg" style="font-size:12px">${dbkStatus()}</span></div>`:''}`}
 async function saveFile(name,data){
   try{const dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;if(!dl){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data]));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},2000);toast('Dosya indirildi');return}await dl.save({filename:name,data});toast('Dosya kaydedildi')}
   catch(e){toast(e&&e.code==='declined'?'İndirme iptal edildi':e&&e.code==='rate_limited'?'Biraz bekleyip tekrar dene':'Bu görünümde dosya indirilemiyor')}}
@@ -3721,14 +3725,14 @@ async function driveSync(force){
   if(typeof GAUTH==='undefined'||!GAUTH.configured()||DBK.busy)return false;
   if(!force&&!GAUTH.signedIn())return false;
   if(!navigator.onLine){if(force)throw{ui:'İnternet bağlantısı yok.'};return false}
-  DBK.busy=true;let pulled=false;
+  DBK.busy=true;let pulled=false;try{window.dkSyncUi&&window.dkSyncUi()}catch(e){}
   try{
     let f=await driveBackupFind(),legacy=false;if(!f){f=await driveBackupFind('Dijital Kütüphanem — yedek.json');legacy=!!f}const synced=legacy?'':dbkGet('synced');
     if(f){dbkSet('id',legacy?'':f.id);
       if(f.modifiedTime&&(!synced||f.modifiedTime>synced)){
         const r=await gfetch(GD+'/'+encodeURIComponent(f.id)+'?alt=media');let txt=await r.text();
         try{const dd=dkTombApply(JSON.parse(txt));txt=JSON.stringify(dd);await dimgPull(dd)}catch(e){}
-        await restore({text:async()=>txt},true);await dkTombLocal();await new Promise(x=>setTimeout(x,300));await dkFix();dbkSet('synced',f.modifiedTime);pulled=true;
+        DBK.pulling=true;try{await restore({text:async()=>txt},true);await dkTombLocal()}finally{setTimeout(()=>{DBK.pulling=false},1500)}await new Promise(x=>setTimeout(x,300));await dkFix();dbkSet('synced',f.modifiedTime);pulled=true;
         await new Promise(x=>setTimeout(x,600));dbkSet('hash',dbkHash(dkPayload(dbkData(await backupData()),dimgMap())))}}
     else dbkSet('id','');
     let fixed=0;try{fixed=await dkFix()}catch(e){}if(legacy)f=null;
@@ -3748,23 +3752,38 @@ async function driveSync(force){
     if(pulled){toast('Diğer cihazdaki değişiklikler alındı ☁️');try{render()}catch(e){}}
     try{const m=document.getElementById('dbkMsg');if(m)m.textContent=dbkStatus()}catch(e){}
     dbkChip();try{ssChip()}catch(e){}return true
-  }finally{DBK.busy=false}}
+  }finally{DBK.busy=false;try{window.dkSyncUi&&window.dkSyncUi()}catch(e){}}}
 const driveBackupNow=driveSync;
 if(typeof LOCAL!=='undefined')window.__dk={st:()=>st,driveSync:f=>driveSync(f)};
 function dbkStatus(){const a=dbkGet('at');if(!a)return "Henüz Drive ile eşitlenmedi.";const d=new Date(a);return "Son eşitleme: "+d.toLocaleDateString('tr-TR')+' '+d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}
 async function driveRestoreLatest(){dbkSet('synced','');await driveSync(true);return {modifiedTime:dbkGet('synced')}}
-function dbkChip(){if(typeof GAUTH==='undefined'||!GAUTH.configured())return;let c=document.getElementById('dbkChip');const need=!!dbkGet('at')&&!GAUTH.signedIn();
+function dbkChip(){try{window.dkSyncUi&&window.dkSyncUi()}catch(e){}{const c=document.getElementById('dbkChip');if(c)c.remove()}return;if(typeof GAUTH==='undefined'||!GAUTH.configured())return;let c=document.getElementById('dbkChip');const need=!!dbkGet('at')&&!GAUTH.signedIn();
   if(!need){if(c)c.remove();return}
   if(!c){c=document.createElement('button');c.id='dbkChip';c.type='button';c.className='btn';c.textContent='☁️ Drive ile eşitle';c.style.cssText='position:fixed;right:88px;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:44;height:32px;padding:0 12px;font-size:13px;box-shadow:0 4px 12px -6px rgba(0,0,0,.35)';
     c.onclick=async()=>{c.disabled=true;c.textContent='Eşitleniyor…';try{await driveSync(true)}catch(e){toast((e&&e.ui)||'Eşitlenemedi')}c.disabled=false;c.textContent='☁️ Drive ile eşitle';dbkChip()};document.body.appendChild(c)}}
 if(typeof GAUTH!=='undefined'){
-  setInterval(()=>{driveSync(false).catch(()=>{})},120000);
+  setInterval(()=>{if(!document.hidden)driveSync(false).catch(()=>{})},90000);
   document.addEventListener('visibilitychange',()=>{driveSync(false).catch(()=>{})});
+  window.addEventListener('pagehide',()=>{driveSync(false).catch(()=>{})});
+  window.addEventListener('online',()=>{setTimeout(()=>driveSync(false).catch(()=>{}),1500)});
+  /* bir şey değişince (sayfa, not, kitap) birkaç saniye içinde Drive'a gönder */
+  {let t=0;window.addEventListener('dk-change',e=>{if(DBK.pulling)return;const pth=String(e.detail||''),w=/^books\//.test(pth)?40000:8000;clearTimeout(t);t=setTimeout(()=>{if(DBK.busy){t=setTimeout(()=>driveSync(false).catch(()=>{}),15000);return}driveSync(false).catch(()=>{})},w)})}
   window.dkAfterAuth=()=>{dbkChip();setTimeout(()=>driveSync(false).catch(()=>{}).finally(()=>{try{queueCovers(st.books)}catch(e){}}),800)};
   setTimeout(()=>{dbkChip();driveSync(false).catch(()=>{})},2500);
 }
 
-(()=>{const b=document.getElementById('reloadBtn');if(b)b.addEventListener('click',async()=>{b.disabled=true;b.textContent='…';try{if(typeof GAUTH!=='undefined'&&GAUTH.configured()&&navigator.onLine){toast('Drive ile eşitleniyor… kapaklar iniyor, biraz sürebilir');await driveSync(true)}}catch(e){toast((e&&e.ui)||'Eşitlenemedi');await new Promise(r=>setTimeout(r,1500))}location.reload()})})();
+/* ☁️ tek eşitleme düğmesi: ✓ eşit · dönüyor = eşitleniyor · turuncu nokta = Google'a yeniden bağlanmak için dokun */
+(()=>{const b=document.getElementById('reloadBtn');if(!b)return;const CL='<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M7 18h10.5a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.3 9.1 4.5 4.5 0 0 0 7 18z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+  const on=()=>typeof GAUTH!=='undefined'&&GAUTH.configured();
+  window.dkSyncUi=()=>{if(!on()){b.innerHTML='↻';b.title='Yenile';return}const busy=DBK.busy,need=!GAUTH.signedIn();
+    b.classList.toggle('sy-busy',busy);b.classList.toggle('sy-need',need&&!busy);
+    b.innerHTML=busy?'<span class="sy-spin">'+CL+'</span>':CL+(need?'<i class="sy-dot"></i>':'<i class="sy-ok">✓</i>');
+    const a=dbkGet('at');b.title=busy?'Eşitleniyor…':need?'Google Drive\'a bağlanmak için dokun':'Eşit · son eşitleme '+(typeof ssAgo==='function'?ssAgo(a):'');b.setAttribute('aria-label',b.title)};
+  b.addEventListener('click',async e=>{e.stopImmediatePropagation();if(!on()){location.reload();return}if(DBK.busy)return;
+    try{if(!GAUTH.signedIn())await GAUTH.token();toast('Eşitleniyor…');try{await dkAutoShare()}catch(x){}await driveSync(true);toast('☁️ Eşitlendi · tüm cihazların güncel')}
+    catch(x){toast((x&&x.ui)||'Eşitlenemedi; internetini kontrol et')}window.dkSyncUi()},true);
+  b.addEventListener('contextmenu',e=>{e.preventDefault();try{ssOpen()}catch(x){}});
+  window.dkSyncUi();setInterval(()=>window.dkSyncUi(),30000)})();
 /* ---------- olaylar ---------- */
 $('toolsBtn').addEventListener('click',()=>openTool('menu'));
 $('focusPill').addEventListener('click',()=>openTool('focus'));
@@ -5494,7 +5513,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v166';
+const DK_VER='v167';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -5553,7 +5572,7 @@ function ssCount(){const B=(st.books||[]).filter(b=>!b.deleted),map=dimgMap();co
     if(b.kind!=='roman'&&b.kind!=='kitap'){if(dkHere(b))here.push(b);else if(b.assetId&&!b.driveId&&!b.fileRemoved&&!LOCAL.has(b.assetId))away.push(b)}});
   return {up,down,here,away}}
 function ssAgo(iso){if(!iso)return 'hiç';const m=Math.round((Date.now()-new Date(iso))/6e4);return m<1?'az önce':m<60?m+' dk önce':m<1440?Math.round(m/60)+' saat önce':Math.round(m/1440)+' gün önce'}
-function ssChip(){if(!ssOn())return;let c=$('ssChip');const signed=GAUTH.signedIn();if(!signed||$('dbkChip')){if(c)c.hidden=true;return}
+function ssChip(){try{window.dkSyncUi&&window.dkSyncUi()}catch(e){}{const c=$('ssChip');if(c)c.hidden=true}return;if(!ssOn())return;let c=$('ssChip');const signed=GAUTH.signedIn();if(!signed||$('dbkChip')){if(c)c.hidden=true;return}
   if(!c){c=document.createElement('button');c.id='ssChip';c.type='button';c.className='iconbtn reloadbtn';c.style.right='88px';c.setAttribute('aria-label','Eşitleme durumu');c.onclick=ssOpen;document.body.appendChild(c)}
   c.hidden=false;const k=ssCount(),n=k.up.length+k.down.length+k.here.length;const CL='<svg class="ss-ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18h10.5a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.3 9.1 4.5 4.5 0 0 0 7 18z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';c.innerHTML=SS.busy?'<span class="ss-spin">'+CL+'</span>':(CL+(n?`<i class="ss-n">${n>99?'99+':n}</i>`:'<i class="ss-ok">✓</i>'));
   c.title=SS.busy?'Eşitleniyor…':n?n+' şey eşitlenmeyi bekliyor':'Her şey eşit · '+ssAgo(dbkGet('at'))}
