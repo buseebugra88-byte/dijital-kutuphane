@@ -5513,7 +5513,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v168';
+const DK_VER='v169';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -5560,9 +5560,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-dk="sharea
 let DKAS={busy:false};
 async function dkAutoShare(){if(DKAS.busy||typeof LOCAL==='undefined'||typeof GAUTH==='undefined'||!GAUTH.configured||!GAUTH.configured()||!GAUTH.signedIn||!GAUTH.signedIn()||UI.autoShare==='off'||!st.ready)return;
   let since='';try{since=localStorage.getItem('dk-as-since')||''}catch(e){}if(!since){since=new Date().toISOString();try{localStorage.setItem('dk-as-since',since)}catch(e){}}
-  const L=st.books.filter(b=>dkHere(b)&&(b.wantDrive||((b.addedAt||'')>=since&&!(b.fileSize>80*1048576)))).sort((a,b)=>(b.wantDrive?1:0)-(a.wantDrive?1:0)).slice(0,12);if(!L.length)return;DKAS.busy=true;let n=0;
-  for(const b of L){try{await dkShareBook(b);n++}catch(e){if(e&&/Drive bağlantısı/.test(e.ui||''))break}}DKAS.busy=false;if(n){toast(`☁️ ${n} kitap tüm cihazlarına gönderildi`);try{if(typeof driveSync==='function')setTimeout(()=>Promise.resolve(driveSync(true)).catch(()=>{}),1500)}catch(e){}}}
-setTimeout(dkAutoShare,6000);setInterval(dkAutoShare,90000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(dkAutoShare,3000)});
+  /* klasörden eklenen her kitap Drive'a gider; Drive'da aynı ad ve boyutta dosya varsa yeniden yüklenmez, ona bağlanır */
+  const L=st.books.filter(b=>!b.deleted&&dkHere(b)&&(b.wantDrive||!(b.fileSize>150*1048576))).sort((a,b)=>((b.wantDrive?1:0)-(a.wantDrive?1:0))||String(b.addedAt||'').localeCompare(String(a.addedAt||''))).slice(0,12);if(!L.length)return;DKAS.busy=true;let n=0;
+  for(const b of L){try{await dkShareBook(b);n++}catch(e){if(e&&/Drive bağlantısı/.test(e.ui||''))break}}DKAS.busy=false;if(n){toast(`☁️ ${n} kitap Drive'daki kütüphanene eklendi`);try{if(typeof driveSync==='function')setTimeout(()=>Promise.resolve(driveSync(true)).catch(()=>{}),1500)}catch(e){}}}
+setTimeout(dkAutoShare,6000);setInterval(dkAutoShare,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(dkAutoShare,3000)});
 
 /* ---------- ☁️ Eşitleme durumu ---------- */
 const SS={busy:false,last:0,msg:''};
