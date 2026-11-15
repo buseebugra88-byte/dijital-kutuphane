@@ -1161,6 +1161,21 @@ html body .rstage{overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow
 #rThumbs .rth canvas{display:block;width:100%;height:100%;object-fit:cover}
 #rThumbs .rth.on{opacity:1;transform:scale(1.25);border:1.5px solid var(--ink);margin:0 5px}
 @media (min-width:900px){#rThumbs .rth{width:36px;height:50px}}
+/* 📚 Rafım */
+.sh-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-bottom:12px}.sh-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.sh-sort{border:1px solid var(--line);border-radius:999px;padding:7px 12px;background:var(--paper);color:var(--ink);font:inherit;font-size:13px}
+.sh-case{background:linear-gradient(#b98d6b,#a87c5c);padding:12px 12px 4px;border-radius:14px;box-shadow:inset 0 0 0 6px #c99f7d,0 8px 24px rgba(60,40,25,.18)}
+.sh-row{position:relative;margin-bottom:10px}.sh-row .shdeco{position:absolute;left:0;right:0;top:0;width:100%;height:26px;pointer-events:none;z-index:2}
+.sh-in{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;min-height:206px;padding:30px 10px 0;background:linear-gradient(#8a644a,#7a573f);border-radius:4px 4px 0 0;box-shadow:inset 0 10px 18px rgba(0,0,0,.25)}
+.sh-in.rev{flex-direction:row}.sh-bk{display:flex;align-items:flex-end;gap:2px;flex:1;min-width:0}.sh-in.rev .sh-bk{justify-content:flex-start}.sh-in:not(.rev) .sh-bk{justify-content:flex-end}
+.sh-board{height:12px;background:linear-gradient(#d9b391,#b98d6b);border-radius:0 0 3px 3px;box-shadow:0 4px 6px rgba(0,0,0,.2)}
+.shb{flex:none;border:0;padding:6px 0;border-radius:2px 2px 1px 1px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden;box-shadow:inset -3px 0 0 rgba(0,0,0,.14),inset 2px 0 0 rgba(255,255,255,.12);transition:transform .15s}
+.shb:hover{transform:translateY(-6px)}.shb-t,.shb-a{writing-mode:vertical-rl;font-size:10.5px;font-weight:700;letter-spacing:.3px;line-height:1.05;max-height:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;text-transform:uppercase}
+.shb-a{font-size:8.5px;font-weight:500;opacity:.8;margin-top:4px;text-transform:none}.sh-obj{flex:none;display:block;align-self:flex-end}.sh-obj svg{display:block;width:100%;height:auto}
+.sh-sheet{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(560px,100%);max-height:70vh;overflow:auto;background:var(--paper);border-radius:22px 22px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.2);padding:16px 18px calc(env(safe-area-inset-bottom,0px) + 18px);z-index:60}
+.sh-sh-h{display:flex;justify-content:space-between;align-items:center;font-size:18px}.sh-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.sh-opt{display:flex;flex-direction:column;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:14px;background:var(--paper);padding:10px 6px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+.sh-opt[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 2px var(--accent-soft)}.sh-prev{display:flex;align-items:flex-end;justify-content:center;height:54px;width:100%}.sh-prev svg{max-height:54px;max-width:90px;width:auto;height:auto}.sh-prev .shdeco{width:100%;height:26px}
 #rFocus,#rNb,#rEmoBtn,#rQuote,#rTts,#ttsBar,.lfc:has(>label>input[data-opt=tts]){display:none!important}#reader:not(.ep-foot) #rHlBtn{display:none!important}
 .rxe{position:absolute;transform:translate(-50%,0);border:0;background:rgba(255,255,255,.85);border-radius:999px;width:34px;height:34px;font-size:19px;line-height:1;display:grid;place-items:center;box-shadow:0 3px 10px -4px rgba(0,0,0,.35);pointer-events:auto;cursor:pointer;padding:0}
 #reader:has(#inkBar:not([hidden])) .rxh,#reader:has(#inkBar:not([hidden])) .rxe{pointer-events:none}
@@ -5520,7 +5535,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v170';
+const DK_VER='v171';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -8445,7 +8460,7 @@ const SECS={
   academic:{t:'Akademik',tabs:[['makale','📄 Makaleler'],['lit','📊 Literatür tablosu'],['thesis','🎓 Tez planlayıcı'],['tezyaz','✍️ Tez yazı odası'],['cards','🃏 Çalışma kartları'],['kaynak','📑 Kaynakça'],['mcard','🗂 Okuma kartları'],['neuro','🧠 Nörobilim'],['nb','📓 Defterlerim']]},
   notes:{t:'Defterlerim',tabs:[]},
   writer:{t:'Yazar köşesi',tabs:[['roman','📖 Romanlarım'],['room','✍️ Yazı odası'],['scenes','🎬 Sahne panosu'],['ideas','💡 Fikir defteri'],['chars','👤 Karakterler'],['rel','🕸 İlişki haritası'],['time','🕰 Zaman çizelgesi'],['world','🗺 Dünya'],['board','🎨 İlham panosu'],['music','🎧 Müzik listesi'],['iv','🎙 Karakter röportajı'],['cons','🔎 Tutarlılık'],['write','📝 Yazım takibi'],['subs','📮 Yayınevleri']]},
-  journal:{t:'Okuma günlüğüm',tabs:[['month','🗓 Aylık sayfa'],['readlist','📖 Okuma listesi'],['club','👭 Okuma kulübü'],['stats','📈 İstatistikler'],['bingo','🎯 Bingo'],['quotes','💬 Alıntı defteri'],['focus','⏱ Odak'],['year','🌟 Yılın özeti']]},
+  journal:{t:'Okuma günlüğüm',tabs:[['shelf','📚 Rafım'],['month','🗓 Aylık sayfa'],['readlist','📖 Okuma listesi'],['club','👭 Okuma kulübü'],['stats','📈 İstatistikler'],['bingo','🎯 Bingo'],['quotes','💬 Alıntı defteri'],['focus','⏱ Odak'],['year','🌟 Yılın özeti']]},
   settings:{t:'Ayarlar',tabs:[['theme','🎨 Görünüm'],['drive','☁️ Google Drive'],['bulk','📁 Klasörden ekle'],['storage','🧹 Depolama'],['backup','💾 Yedekle'],['parts','🧩 Bölümler']]}
 };
 function curSub(){const S=SECS[st.sec];if(!S.tabs.length)return '';const T=secTabs(st.sec);const v=st.secSub[st.sec];return T.some(t=>t[0]===v)?v:(T[0]||S.tabs[0])[0]}
@@ -8480,6 +8495,7 @@ function renderSection(){
   if(sub==='kaynak'){kyRender($('secHost'));kyAutoQ();return}
   if(sub==='neuro'){nsRender($('secHost'));return}
   if(sub==='club'){clRender($('secHost'));return}
+  if(sub==='shelf'){shRender($('secHost'));return}
   if(sub==='cons'||sub==='mcard'){mxRender();return}
   if(sub==='tezyaz'){tzRender($('secHost'));return}
   const toolMap={thesis:['thesis'],cards:['cards'],room:['writer','room'],rel:['writer','rel'],time:['writer','time'],world:['writer','world'],scenes:['writer','scenes'],bingo:['bingo'],month:['month'],readlist:['readlist'],ideas:['writer','ideas'],chars:['writer','chars'],board:['writer','board'],music:['writer','music'],iv:['writer','iv'],write:['writer','write'],subs:['writer','subs'],quotes:['quotes'],stats:['stats'],focus:['focus'],year:['year'],backup:['backup']};
@@ -8490,6 +8506,61 @@ function renderSection(){
   else if(sub==='bulk'){hostPanel('bulkVeil');if(!B.running){bulkRender()}}
   else if(sub==='storage'){stoRender();if(!STO.busy&&st.assets)stoScan().then(()=>{if(curSub()==='storage')stoRender()})}
 }
+/* ===== 📚 Rafım: okuduğun kitaplar sırtlarıyla bir kitaplıkta ===== */
+const SHO={cat:{n:'Uyuyan kedi',w:124,svg:`<svg viewBox="0 0 96 56"><ellipse cx="48" cy="52" rx="40" ry="4" fill="rgba(0,0,0,.15)"/><path d="M12 50c-2-16 12-28 34-28 20 0 36 9 38 22 1 5-3 8-8 8H18c-4 0-6-1-6-2z" fill="#e9a25f"/><path d="M60 24l4-12 8 10M74 26l7-10 3 13" fill="#e9a25f"/><path d="M62 23l3-7 4 5M76 25l4-6 1 7" fill="#f6c9a0"/><path d="M66 36q3 2 6 0M76 36q3 2 6 0" stroke="#5a3a24" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M28 30q6 4 4 12M40 26q5 5 3 13" stroke="#c9813f" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M14 48q-10-2-8 4 8 3 22 1" fill="#e9a25f"/></svg>`},
+ plant:{n:'Monstera',w:84,svg:`<svg viewBox="0 0 84 110"><path d="M26 82h32l-4 26H30z" fill="#d9d2c6"/><rect x="22" y="78" width="40" height="7" rx="3" fill="#e8e2d6"/><g fill="#3f7d4e"><path d="M42 80C30 60 10 58 6 40c14-2 28 10 36 40z"/><path d="M42 80C50 52 70 44 80 30c4 18-14 34-38 50z" fill="#4f9460"/><path d="M42 80C38 50 46 22 58 8c8 22-2 50-16 72z" fill="#5aa36b"/><path d="M42 80C34 58 24 30 30 12c12 14 18 44 12 68z"/></g><g stroke="#2f5f3a" stroke-width="1.2" fill="none"><path d="M42 80L14 44M42 80L74 36M42 80L56 14M42 80L32 18"/></g></svg>`},
+ cactus:{n:'Kaktüsler',w:90,svg:`<svg viewBox="0 0 90 90"><g fill="#6aa36f"><rect x="16" y="22" width="16" height="44" rx="8"/><rect x="6" y="36" width="10" height="18" rx="5"/><rect x="58" y="34" width="20" height="32" rx="10"/></g><g stroke="#4a7d4f" stroke-width="1.2"><path d="M24 26v38M68 38v26"/></g><circle cx="24" cy="20" r="3.5" fill="#f08bb0"/><path d="M10 64h28l-3 22H13z" fill="#cf7b52"/><rect x="8" y="62" width="32" height="6" rx="2" fill="#de8d62"/><path d="M52 64h32l-3 22H55z" fill="#cf7b52"/><rect x="50" y="62" width="36" height="6" rx="2" fill="#de8d62"/></svg>`},
+ lamp:{n:'Mantar lamba',w:96,svg:`<svg viewBox="0 0 96 110"><defs><radialGradient id="shl" cx=".5" cy=".35" r=".7"><stop offset="0" stop-color="#ffd59a"/><stop offset="1" stop-color="#f08a3c"/></radialGradient></defs><ellipse cx="48" cy="40" rx="46" ry="34" fill="#ffc46b" opacity=".25"/><path d="M8 52a40 40 0 0 1 80 0z" fill="url(#shl)"/><rect x="40" y="52" width="16" height="44" rx="5" fill="#f08a3c"/><ellipse cx="48" cy="100" rx="26" ry="7" fill="#ee7f32"/></svg>`},
+ mug:{n:'Kupa',w:64,svg:`<svg viewBox="0 0 64 70"><path d="M24 14q-4-6 0-12M34 14q-4-6 0-12" stroke="#bbb" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="10" y="22" width="36" height="42" rx="6" fill="#8fb59a"/><path d="M46 32h4a8 8 0 0 1 0 16h-4" stroke="#8fb59a" stroke-width="5" fill="none"/><rect x="10" y="22" width="36" height="6" fill="#7aa086"/></svg>`},
+ candle:{n:'Mum',w:56,svg:`<svg viewBox="0 0 56 90"><ellipse cx="28" cy="20" rx="16" ry="18" fill="#ffd27a" opacity=".3"/><path d="M28 6q8 10 0 20q-8-10 0-20z" fill="#ffb648"/><path d="M28 13q4 5 0 10q-4-5 0-10z" fill="#fff3c8"/><path d="M28 26v6" stroke="#5e4a3a" stroke-width="2"/><rect x="16" y="32" width="24" height="52" rx="4" fill="#f6ecd9"/><ellipse cx="28" cy="86" rx="20" ry="4" fill="#d9a3a0"/></svg>`},
+ vase:{n:'Vazo ve çiçek',w:64,svg:`<svg viewBox="0 0 64 100"><path d="M32 52V20M32 44q-12-10-14-22M32 40q12-8 16-20" stroke="#5f8a52" stroke-width="2" fill="none"/><circle cx="32" cy="16" r="7" fill="#f2a7b8"/><circle cx="18" cy="20" r="6" fill="#f7d36b"/><circle cx="48" cy="18" r="6" fill="#b7a0e0"/><path d="M22 52h20c6 10 6 30-2 44H24c-8-14-8-34-2-44z" fill="#8bb3c9"/></svg>`},
+ glasses:{n:'Gözlük',w:80,svg:`<svg viewBox="0 0 80 44"><rect x="6" y="26" width="68" height="16" rx="2" fill="#b98b6a"/><rect x="10" y="20" width="62" height="8" rx="2" fill="#d9b48f"/><g fill="rgba(255,255,255,.35)" stroke="#5a3b26" stroke-width="3"><circle cx="26" cy="12" r="9"/><circle cx="54" cy="12" r="9"/></g><path d="M35 12q5-4 10 0" stroke="#5a3b26" stroke-width="3" fill="none"/></svg>`}};
+const SHD={none:'Süs yok',lights:'Ampuller',flags:'Flamalar'};
+function shCfg(){const c=Object.assign({deco:'lights',objs:['cat','plant','lamp'],filter:'done',sort:'finished'},UI.shelfCfg||{});return c}
+function shSave(c){UI.shelfCfg=c;try{localStorage.setItem('dk-ui',JSON.stringify(UI))}catch(e){}try{window.dispatchEvent(new CustomEvent('dk-change',{detail:'settings/ui'}))}catch(e){}}
+function shHash(s){let h=0;for(const ch of String(s))h=(h*31+ch.charCodeAt(0))|0;return Math.abs(h)}
+const SH_PAL=['#2f3e46','#8c3b3b','#d8b25a','#3d5a80','#6b8f71','#c8553d','#e9d8a6','#5e548e','#9a6b4f','#1d1d1d','#e07a5f','#81b29a','#f2cc8f','#b56576','#264653','#f4f1de'];
+function shSpc(){try{return JSON.parse(localStorage.getItem('dk-spc')||'{}')}catch(e){return {}}}
+function shLum(hex){const n=parseInt(hex.slice(1),16),r=n>>16&255,g=n>>8&255,b=n&255;return (0.299*r+0.587*g+0.114*b)/255}
+function shBooks(c){let L=(st.books||[]).filter(b=>!b.deleted&&b.kind!=='roman');
+  if(c.filter==='done')L=L.filter(b=>b.status==='okundu');else if(c.filter==='now')L=L.filter(b=>b.status==='okunuyor');else if(c.filter==='want')L=L.filter(b=>b.status==='okunacak');
+  const k=c.sort==='added'?(b=>b.addedAt||''):c.sort==='author'?(b=>(b.author||'').toLocaleLowerCase('tr')):(b=>b.finishedAt||b.lastReadAt||b.addedAt||'');
+  L.sort((a,b)=>c.sort==='author'?k(a).localeCompare(k(b),'tr'):String(k(a)).localeCompare(String(k(b))));return L}
+function shSpine(b,spc){const h=shHash(b.id),pg=+b.pages||+b.totalPages||300,w=Math.max(18,Math.min(42,Math.round(16+pg/22))),ht=128+h%54;
+  const col=spc[b.id]||SH_PAL[h%SH_PAL.length],dark=shLum(col)>0.6;const t=esc((b.title||'').slice(0,46)),a=esc((b.author||'').split(/[,&]/)[0].trim().slice(0,22));
+  return {w,html:`<button type="button" class="shb" data-shb="${b.id}" title="${esc(b.title||'')}${b.author?' — '+esc(b.author):''}" style="width:${w}px;height:${ht}px;background:${col};color:${dark?'#1d1d1d':'#fbf8f1'}"><span class="shb-t">${t}</span>${a&&w>=24?`<span class="shb-a">${a}</span>`:''}</button>`}}
+function shDecoSvg(d){if(d==='lights'){let s='<svg class="shdeco" viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0 4Q100 22 200 6T400 4" stroke="#3a2c22" stroke-width="1.2" fill="none"/>';for(let i=1;i<10;i++){const x=i*40,y=4+Math.sin(i/9*Math.PI*2.1)*7+8;s+=`<circle cx="${x}" cy="${y+5}" r="4.2" fill="#ffd77a"/><circle cx="${x}" cy="${y+5}" r="8" fill="#ffd77a" opacity=".25"/>`}return s+'</svg>'}
+  if(d==='flags'){const C=['#e07a5f','#f2cc8f','#81b29a','#3d5a80','#b56576'];let s='<svg class="shdeco" viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0 2Q200 14 400 2" stroke="#3a2c22" stroke-width="1" fill="none"/>';for(let i=0;i<20;i++){const x=i*20+2,y=2+Math.sin((i+.5)/20*Math.PI)*12;s+=`<path d="M${x} ${y}L${x+16} ${y}L${x+8} ${y+14}z" fill="${C[i%5]}"/>`}return s+'</svg>'}return ''}
+function shRender(host){const c=shCfg(),L=shBooks(c),spc=shSpc();const W=Math.max(260,(host.clientWidth||Math.min(innerWidth,900))-44);
+  const objs=c.objs.filter(k=>SHO[k]);const rows=[];let cur={items:[],w:0,obj:null};let oi=0;const cap=r=>W-(r.obj?SHO[r.obj].w+10:0);
+  const newRow=()=>{const r={items:[],w:0,obj:oi<objs.length?objs[oi++]:null,side:rows.length%2};return r};cur=newRow();
+  for(const b of L){const sp=shSpine(b,spc);if(cur.w+sp.w+2>cap(cur)&&cur.items.length){rows.push(cur);cur=newRow()}cur.items.push(sp.html);cur.w+=sp.w+2}
+  rows.push(cur);while(oi<objs.length){rows.push(newRow())}if(rows.length<2)rows.push(newRow());
+  const chip=(k,v,l)=>`<button type="button" class="chip" data-shc="${k}" data-v="${v}" aria-pressed="${c[k]===v}">${l}</button>`;
+  const n=(f)=>(st.books||[]).filter(b=>!b.deleted&&b.kind!=='roman'&&(f==='all'||b.status===f)).length;
+  host.innerHTML=`<div class="sh-top"><div class="sh-chips">${chip('filter','done','Okuduklarım · '+n('okundu'))}${chip('filter','now','Okuyorum · '+n('okunuyor'))}${chip('filter','want','Okunacak · '+n('okunacak'))}${chip('filter','all','Hepsi')}</div>
+    <div class="sh-chips"><select class="sh-sort" data-shsort aria-label="Sırala"><option value="finished"${c.sort==='finished'?' selected':''}>↕ Bitirme sırası</option><option value="added"${c.sort==='added'?' selected':''}>↕ Ekleme sırası</option><option value="author"${c.sort==='author'?' selected':''}>↕ Yazara göre</option></select><button type="button" class="btn" data-shobj="1">🪴 Raf objeleri</button></div></div>
+    <div class="sh-case">${rows.map(r=>{const o=r.obj?`<span class="sh-obj" style="width:${SHO[r.obj].w}px">${SHO[r.obj].svg}</span>`:'';return `<div class="sh-row">${shDecoSvg(c.deco)}<div class="sh-in${r.side?' rev':''}">${r.side?'':o}<div class="sh-bk">${r.items.join('')}</div>${r.side?o:''}</div><div class="sh-board"></div></div>`}).join('')}</div>
+    ${L.length?'':'<p class="hint" style="text-align:center;margin-top:10px">Bu rafta henüz kitap yok. Bir kitabı “Okundu” yapınca buraya gelir.</p>'}
+    <div class="sh-sheet" id="shSheet" hidden><div class="sh-sh-h"><b>Raf objeleri</b><button type="button" class="btn" data-shclose="1">Bitti</button></div>
+      <div class="hint" style="margin:6px 0">RAFIN SÜSÜ</div><div class="sh-opts">${Object.entries(SHD).map(([k,l])=>`<button type="button" class="sh-opt" data-shdeco="${k}" aria-pressed="${c.deco===k}"><span class="sh-prev">${k==='none'?'–':shDecoSvg(k)}</span>${l}</button>`).join('')}</div>
+      <div class="hint" style="margin:10px 0 6px">OBJELER · istediklerini seç</div><div class="sh-opts">${Object.entries(SHO).map(([k,o])=>`<button type="button" class="sh-opt" data-shobjk="${k}" aria-pressed="${c.objs.includes(k)}"><span class="sh-prev">${o.svg}</span>${o.n}</button>`).join('')}</div></div>`;
+  shColors(L)}
+async function shColors(L){const spc=shSpc();let ch=0;for(const b of L){if(spc[b.id])continue;const src=coverSrc(b);if(!src)continue;
+  try{const im=new Image();im.crossOrigin='anonymous';im.src=src;await im.decode();const c=document.createElement('canvas');c.width=12;c.height=18;const x=c.getContext('2d');x.drawImage(im,0,0,12,18);const d=x.getImageData(0,0,12,18).data;
+    let r=0,g=0,bl=0,n=0;for(let i=0;i<d.length;i+=4){r+=d[i];g+=d[i+1];bl+=d[i+2];n++}const hx='#'+[r,g,bl].map(v=>Math.round(v/n).toString(16).padStart(2,'0')).join('');spc[b.id]=hx;ch++;
+    const el=document.querySelector(`.shb[data-shb="${b.id}"]`);if(el){el.style.background=hx;el.style.color=shLum(hx)>0.6?'#1d1d1d':'#fbf8f1'}}catch(e){}
+  if(ch%10===0){try{localStorage.setItem('dk-spc',JSON.stringify(spc))}catch(e){}await new Promise(r=>setTimeout(r,0))}}
+  try{localStorage.setItem('dk-spc',JSON.stringify(spc))}catch(e){}}
+$('secHost').addEventListener('click',e=>{const t=e.target;if(!t.closest)return;
+  const sb=t.closest('[data-shb]');if(sb){const bk=st.books.find(x=>x.id===sb.dataset.shb);if(bk)openForm(bk);return}
+  const ch=t.closest('[data-shc]');if(ch){const c=shCfg();c[ch.dataset.shc]=ch.dataset.v;shSave(c);shRender($('secHost'));return}
+  if(t.closest('[data-shobj]')){const s=$('shSheet');if(s)s.hidden=!s.hidden;return}
+  if(t.closest('[data-shclose]')){const s=$('shSheet');if(s)s.hidden=true;return}
+  const dd=t.closest('[data-shdeco]');if(dd){const c=shCfg();c.deco=dd.dataset.shdeco;shSave(c);shRender($('secHost'));$('shSheet').hidden=false;return}
+  const ok=t.closest('[data-shobjk]');if(ok){const c=shCfg(),k=ok.dataset.shobjk;c.objs=c.objs.includes(k)?c.objs.filter(x=>x!==k):[...c.objs,k];shSave(c);shRender($('secHost'));$('shSheet').hidden=false;return}});
+$('secHost').addEventListener('change',e=>{const s=e.target.closest&&e.target.closest('[data-shsort]');if(!s)return;const c=shCfg();c.sort=s.value;shSave(c);shRender($('secHost'))});
+
 $('secHost').addEventListener('click',async e=>{const b=e.target.closest('[data-sto]');if(!b)return;const k=b.dataset.sto;
   if(k==='stop'){STO.stop=true;b.disabled=true;b.textContent='Durduruluyor…';return}
   if(k==='one'){const bk=st.books.find(x=>x.id===b.dataset.id);if(bk)stoRun([bk]);return}
