@@ -5570,7 +5570,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v184';
+const DK_VER='v185';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -9092,7 +9092,7 @@ async function openReader(b){
     $('rTotal').textContent='/ '+R.doc.numPages;$('rPage').max=R.doc.numPages;
     if(!b.pages&&st.db){try{await st.db.collection('books').doc(b.id).update({pages:R.doc.numPages})}catch(e){}}
     if(b.currentPage>1)$('rSaved').textContent='🔖 Kaldığın yerden: s. '+R.page;
-    renderPage();
+    renderPage();try{rthBuild()}catch(e){}
   }catch(err){
     console.warn('okuyucu',err);
     if(b.source==='drive'&&(bigDrive(b)||(err&&(err.code||err.ui))))rMsg(`${bigDrive(b)?'Bu kitap Google Drive bağlantısının tek seferde getirebildiğinden (yaklaşık 6 MB) büyük. Dosyayı bir kez seçersen uygulamaya eklenir, sıkıştırılır ve bundan sonra hep burada açılır. Seçim ekranında Google Drive\'ı da seçebilirsin.<button class="btn primary" id="rAttach" type="button">Dosyayı seç, uygulamaya ekle</button>':esc(driveErr(err))}${b.driveUrl?`<a class="btn" href="${esc(b.driveUrl)}" target="_blank" rel="noopener">Google Drive'da aç</a>`:''}`);
