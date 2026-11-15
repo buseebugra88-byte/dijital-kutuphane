@@ -1184,7 +1184,7 @@ html body .rstage{overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow
  html body #shelfList::-webkit-scrollbar,html body #tagList::-webkit-scrollbar{display:none}
  html body #shelfList .shelfbtn,html body #tagList>*{flex:none;font-size:13px!important;padding:5px 11px!important;white-space:nowrap;min-height:0!important}
  html body #shelfList .shelfbtn small{font-size:11px}
- html body #tagList:empty{display:none}}
+ html body #tagList:empty,html body #tagList:not(:has(button,a)){display:none!important}}
 .bk .badge{display:none!important}
 .bk .sbadge{position:absolute;left:5px;bottom:5px;max-width:calc(100% - 44px)!important;z-index:3;max-width:calc(100% - 12px);background:rgba(20,20,20,.72);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
 html body.cov-xs .books{--cw:60px!important;--ch:90px!important;gap:16px 8px!important}
@@ -1820,7 +1820,7 @@ const STATUS_LABEL={};Object.values(STATUS).flat().forEach(([k,v])=>STATUS_LABEL
 const KINDS=[['all','Tümü'],['kitap','Kitaplar'],['pdf','E-kitap'],['makale','Akademik'],['roman','Romanlarım']];
 const PREFIX={kitap:'K',pdf:'P',roman:'R',makale:'M'};
 const ART={kitap:['openbook','cupbook','glasses','sprigbook'],pdf:['page','scroll'],roman:['quill','notebook'],makale:['glasses','page','notebook']};
-const TABICON={all:'stack',kitap:'openbook',pdf:'page',epub:'openbook',done:'stack',roman:'quill',makale:'glasses'};
+const TABICON={series:'stack',all:'stack',kitap:'openbook',pdf:'page',epub:'openbook',done:'stack',roman:'quill',makale:'glasses'};
 const ico=(n,c='')=>`<svg class="ln ${c}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
 function artFor(b){const a=ART[b.kind]||ART.kitap;let h=0;for(const ch of (b.id||b.title||''))h=(h*31+ch.charCodeAt(0))>>>0;return a[h%a.length]}
 var STK={items:[],emblem:''};
@@ -1857,9 +1857,9 @@ function callNumbers(){
 
 function renderGoal(){}
 
-function inTab(b){const ep=isEpubB(b)&&b.kind!=='roman'&&b.kind!=='makale',fin=b.status==='okundu'&&b.kind!=='roman'&&b.kind!=='makale';if(st.tab==='done')return fin;if(fin&&!st.q&&st.status!=='okundu'&&['all','kitap','pdf','epub'].includes(st.tab))return false;return st.tab==='all'?(b.kind!=='makale'&&b.kind!=='roman'&&(!ep||!!st.q)):st.tab==='epub'?ep:st.tab==='pdf'?(b.kind==='pdf'&&!ep):b.kind===st.tab}
+function inTab(b){const ep=isEpubB(b)&&b.kind!=='roman'&&b.kind!=='makale',fin=b.status==='okundu'&&b.kind!=='roman'&&b.kind!=='makale';if(st.tab==='done')return fin;if(st.tab==='series')return !b.deleted&&!ep&&b.kind!=='roman'&&b.kind!=='makale'&&!!seriesOf(b);if(fin&&!st.q&&st.status!=='okundu'&&['all','kitap','pdf','epub'].includes(st.tab))return false;return st.tab==='all'?(b.kind!=='makale'&&b.kind!=='roman'&&(!ep||!!st.q)):st.tab==='epub'?ep:st.tab==='pdf'?(b.kind==='pdf'&&!ep):b.kind===st.tab}
 function renderTabs(){
-  if(st.tab==='kitap'||st.tab==='epub')st.tab='all';$('tabs').innerHTML=[...KINDS.filter(([k])=>k==='all'||k==='pdf'),['done','Bitirdiklerim']].map(([k,l])=>{const n=st.books.filter(b=>{const o=st.tab,q=st.q;st.tab=k;st.q='';const r=inTab(b);st.tab=o;st.q=q;return r}).length;
+  if(st.tab==='kitap'||st.tab==='epub')st.tab='all';$('tabs').innerHTML=[...KINDS.filter(([k])=>k==='all'||k==='pdf'),['series','Serilerim'],['done','Bitirdiklerim']].map(([k,l])=>{const n=st.books.filter(b=>{const o=st.tab,q=st.q;st.tab=k;st.q='';const r=inTab(b);st.tab=o;st.q=q;return r}).length;
     return `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${st.tab===k}">${ico(TABICON[k])}${l}<small>${n}</small></button>`}).join('');
   const opts=st.tab==='roman'?STATUS.roman:st.tab==='all'?[...STATUS.kitap,...STATUS.roman]:STATUS.kitap;
   if(st.status&&!opts.some(o=>o[0]===st.status))st.status='';
@@ -1928,7 +1928,7 @@ function bookHtml(b){
 function shelfHtml(list){
   if(st.tab==='done'){const g2={};list.forEach(b=>{const y=(b.finishedAt||'').slice(0,4)||'Tarihsiz';(g2[y]=g2[y]||[]).push(b)});const ks=Object.keys(g2).sort((a,b)=>b.localeCompare(a));ks.forEach(k=>g2[k].sort((a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||'')));
     return '<div class="shelves">'+ks.map(k=>`<section class="shelf"><h3>${k==='Tarihsiz'?'Tarihsiz':'📅 '+k} <small>${g2[k].length} kitap</small></h3><div class="books">${g2[k].map(bookHtml).join('')}</div></section>`).join('')+'</div>'}
-  if(st.sort==='title'){const DONE='✅ Bitirdiklerim',done=[],sg={},solo=[];list.forEach(b=>{if(b.status==='okundu'&&b.kind!=='roman'&&b.kind!=='makale'){done.push(b);return}const s=seriesOf(b);if(s){const k=trLow(s.name);(sg[k]=sg[k]||{name:s.name,bs:[]}).bs.push(b)}else solo.push(b)});
+  if(st.sort==='title'&&st.tab!=='series'){const DONE='✅ Bitirdiklerim',done=[],sg={},solo=[];list.forEach(b=>{if(b.status==='okundu'&&b.kind!=='roman'&&b.kind!=='makale'){done.push(b);return}const s=seriesOf(b);if(s){const k=trLow(s.name);(sg[k]=sg[k]||{name:s.name,bs:[]}).bs.push(b)}else solo.push(b)});
     Object.keys(sg).forEach(k=>{if(sg[k].bs.length<2){solo.push(...sg[k].bs);delete sg[k]}else sg[k].bs.sort((x,y)=>(seriesOf(x).no-seriesOf(y).no)||(x.title||'').localeCompare(y.title||'',TR))});const ord=new Map(list.map((b,i)=>[b,i]));solo.sort((a,b)=>ord.get(a)-ord.get(b));
     const sk=Object.keys(sg).sort((a,b)=>sg[a].name.localeCompare(sg[b].name,TR));
     return '<div class="shelves">'+sk.map(k=>`<section class="shelf"><h3>📚 ${esc(sg[k].name)} <small>${sg[k].bs.length} kitaplık seri</small></h3><div class="books">${sg[k].bs.map(bookHtml).join('')}</div></section>`).join('')+(solo.length?`<section class="shelf"><h3>${({added:'En son eklenenler',title:'A–Z',author:'Yazara göre',finished:'Bitirme tarihine göre'})[st.sort]||'Kitaplar'}${sk.length?' · tek kitaplar':''} <small>${solo.length}</small></h3><div class="books">${solo.map(bookHtml).join('')}</div></section>`:'')+(done.length?`<section class="shelf"><h3>${DONE} <small>${done.length}</small></h3><div class="books">${done.sort((a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||'')).map(bookHtml).join('')}</div></section>`:'')+'</div>'}
@@ -1937,11 +1937,12 @@ function shelfHtml(list){
   const keys=Object.keys(g).sort((a,b)=>a===DONE?1:b===DONE?-1:a==='Rafsız'?1:b==='Rafsız'?-1:a.localeCompare(b,TR));
   const AR=['cat','pengu','bunny','frog'],deco=UI.shelfDeco!=='off';
   /* 📚 Serilerim: serilerin hepsi türünden bağımsız, sırasıyla burada da durur (kitaplar kendi raflarında da kalır) */
-  let serH='';if(!st.shelf&&!st.tag&&!st.q&&UI.serShelf!=='off'){const sg={};(st.books||[]).filter(b=>!b.deleted&&b.kind!=='roman'&&b.kind!=='makale'&&!isEpubB(b)&&(st.tab==='all'||st.tab==='pdf')).forEach(b=>{const sr=seriesOf(b);if(!sr)return;const k=trLow(sr.name);(sg[k]=sg[k]||{name:sr.name,bs:[]}).bs.push(b)});
+  let serH='';if(st.tab==='series'){const sg={};list.forEach(b=>{const sr=seriesOf(b);if(!sr)return;const k=trLow(sr.name);(sg[k]=sg[k]||{name:sr.name,bs:[]}).bs.push(b)});
     const sk=Object.keys(sg).filter(k=>sg[k].bs.length>1||sg[k].bs.some(b=>(seriesOf(b).no||0)>1)).sort((a,b)=>sg[a].name.localeCompare(sg[b].name,TR));
-    if(sk.length)serH=`<section class="shelf sershelf"><h3>📚 Serilerim <small>${sk.length} seri</small></h3>${sk.map(k=>{const L=sg[k].bs.sort((x,y)=>(seriesOf(x).no-seriesOf(y).no)||(x.title||'').localeCompare(y.title||'',TR));const dn=L.filter(b=>b.status==='okundu').length;
+    if(sk.length)serH=`<section class="shelf sershelf"><h3>📚 Serilerim <small>${sk.length} seri · sırayla</small></h3>${sk.map(k=>{const L=sg[k].bs.sort((x,y)=>(seriesOf(x).no-seriesOf(y).no)||(x.title||'').localeCompare(y.title||'',TR));const dn=L.filter(b=>b.status==='okundu').length;
       return `<div class="serrow"><h4>${esc(sg[k].name)} <small>${dn}/${L.length} okundu</small></h4><div class="books">${L.map(bookHtml).join('')}</div></div>`}).join('')}</section>`}
-  return '<div class="shelves">'+serH+keys.map((k,i)=>`<section class="shelf"><h3>${esc(k)} <small>${g[k].length}</small></h3><div class="books">${g[k].map(bookHtml).join('')}${deco&&i%2===0?`<span class="shdeco">${stampSvg(AR[(i/2)%4],58)}</span>`:''}</div></section>`).join('')+'</div>';
+  if(st.tab==='series')return serH?'<div class="shelves">'+serH+'</div>':'<div class="empty"><h2>Henüz seri yok</h2><p>Bir kitabın düzenle ekranında “Seri” ve “Serideki sırası”nı yazınca burada görünür.</p></div>';
+  return '<div class="shelves">'+keys.map((k,i)=>`<section class="shelf"><h3>${esc(k)} <small>${g[k].length}</small></h3><div class="books">${g[k].map(bookHtml).join('')}${deco&&i%2===0?`<span class="shdeco">${stampSvg(AR[(i/2)%4],58)}</span>`:''}</div></section>`).join('')+'</div>';
 }
 async function pdfCoverBlob(bytes){
   const lib=await pdfLib(),doc=await lib.getDocument(bytes&&bytes.url?{url:bytes.url,httpHeaders:bytes.headers,disableAutoFetch:true,disableStream:true,rangeChunkSize:65536}:{data:bytes}).promise;
@@ -2147,7 +2148,7 @@ function openForm(b){
   $('fileHint').textContent=b&&b.fileRemoved&&!hasFile(b)?`Bu kitabın dosyası yer açmak için kaldırılmıştı${b.fileName?' ('+b.fileName+')':''}. Okumak için dosyayı buradan yeniden seç.`:'Büyük taranmış PDF\'ler otomatik küçültülür; 20 MB\'tan büyükler parçalara bölünür.';
   $('formTitle').textContent=b?'Kaydı düzenle':'Yeni ekle';$('delBtn').hidden=!b;{const pb=$('pinBtn');pb.hidden=!(b&&b.kind!=='roman'&&b.kind!=='makale');if(b)pb.textContent=b.pinned?'📌 Sabitlemeyi kaldır':'📌 Ana sayfaya sabitle'}$('cardBtn').hidden=!(b&&b.kind!=='roman'&&b.status==='okundu');
   {const sim=b&&b.kind!=='roman'&&b.kind!=='makale'?similarBooks(b):[];$('simRow').hidden=!sim.length;$('simRow').innerHTML=sim.length?`<span class="hint">Benzer kitapların:</span>${sim.map(x=>`<button type="button" class="chip" data-sim="${x.id}">${esc(x.title)}</button>`).join('')}`:''}
-  let kind=b?b.kind:(['all','done','epub','kitap'].includes(st.tab)?'pdf':st.tab);if(!$('kind-'+kind))kind='pdf';
+  let kind=b?b.kind:(['all','done','epub','kitap','series'].includes(st.tab)?'pdf':st.tab);if(!$('kind-'+kind))kind='pdf';
   $('kindKitapL').hidden=!(b&&b.kind==='kitap');$('kind-'+kind).checked=true;syncKind(b&&b.status);setTimeout(tropeChips,0);
   {const so=b?seriesOf(b):null;$('fSeries').value=b&&b.series?b.series:'';$('fSeriesNo').value=b&&b.series?(b.seriesNo||''):'';$('fSeries').placeholder=so&&!b.series?so.name+' (başlıktan)':'ör. Empyrean';$('seriesOpts').innerHTML=[...new Set(st.books.map(x=>seriesOf(x)).filter(Boolean).map(x=>x.name))].map(n=>`<option value="${esc(n)}">`).join('')}
   if(b){$('fTitle').value=b.title||'';$('fAuthor').value=b.author||'';$('fShelf').value=b.shelf||'';$('fTags').value=(b.tags||[]).join(', ');
@@ -5563,7 +5564,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v180';
+const DK_VER='v181';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -8515,7 +8516,7 @@ function applySec(){
   const listSub=sec==='library'||(sec==='academic'&&sub==='makale')||(sec==='writer'&&sub==='roman');
   body.classList.toggle('sec-list',listSub||sec==='home');body.classList.toggle('sec-page',!listSub&&sec!=='home');
   if(sec==='home'){st.view='panel'}
-  else if(listSub){if(st.view==='panel')st.view=st.libView;st.tab=sec==='academic'?'makale':sec==='writer'?'roman':(['all','kitap','pdf','epub','done'].includes(st.tab)?st.tab:'all')}
+  else if(listSub){if(st.view==='panel')st.view=st.libView;st.tab=sec==='academic'?'makale':sec==='writer'?'roman':(['all','kitap','pdf','epub','done','series'].includes(st.tab)?st.tab:'all')}
   document.querySelectorAll('.sn-item').forEach(b=>b.setAttribute('aria-current',b.dataset.sec===sec?'page':'false'));
   $('secTitle').innerHTML=(UI.shelfDeco!=='off'&&sec!=='home'?`<span class="sec-st">${stampSvg(({life:'bunny',library:'pengu',academic:'frog',notes:'bunny',writer:'cat',journal:'frog',settings:'pengu'})[sec]||'cat',44)}</span>`:'')+esc(SECS[sec].t);
   partsApply();$('secTabs').innerHTML=secTabs(sec).map(([k,l])=>`<button type="button" data-sub="${k}" aria-pressed="${sub===k}">${l}</button>`).join('');$('secTabs').hidden=!SECS[sec].tabs.length;
