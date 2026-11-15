@@ -10,7 +10,7 @@ window.DK_YAZAR=/[?&]app=yazar\b/.test(location.search);if(DK_YAZAR){document.do
  document.querySelector('link[rel=apple-touch-icon]').href='yazar-180.png';document.querySelector('link[rel=icon]').href='yazar-192.png';document.querySelector('meta[name=apple-mobile-web-app-title]').content='Yazar Köşem'}
 window.DK_APP=window.DK_MASA?'masa':window.DK_YAZAR?'yazar':'';</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Lora:ital,wght@0,500;0,600;1,500&family=Caveat:wght@500;600&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Quicksand:wght@500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Playpen+Sans:wght@400;500;600&family=Shantell+Sans:wght@400;500;600&family=Patrick+Hand&family=Literata:ital,wght@0,400;0,600;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Lora:ital,wght@0,500;0,600;1,500&family=Caveat:wght@500;600&family=Nunito:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Quicksand:wght@500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Playpen+Sans:wght@400;500;600&family=Shantell+Sans:wght@400;500;600&family=Patrick+Hand&family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Cutive+Mono&family=Literata:ital,wght@0,400;0,600;1,400&family=Merriweather:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
 <style>
 html{color-scheme:light}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-size:14px}img{max-width:100%}[hidden]{display:none!important}
 
@@ -1187,6 +1187,13 @@ html body .rstage{overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow
  html body #tagList:empty{display:none}}
 .bk .badge{display:none!important}
 .bk .sbadge{position:absolute;left:5px;bottom:5px;max-width:calc(100% - 44px)!important;z-index:3;max-width:calc(100% - 12px);background:rgba(20,20,20,.72);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none}
+html body.cov-xs .books{--cw:60px!important;--ch:90px!important;gap:16px 8px!important}
+html body.cov-s .books{--cw:78px!important;--ch:117px!important;gap:20px 10px!important}
+html body.cov-xs .bk .sbadge,html body.cov-s .bk .sbadge{font-size:9px;padding:1px 5px}html body.cov-xs .bk .sbadge .sbn{display:none}html body.cov-xs .bk .sbadge,.sershelf .bk .sbadge{max-width:none!important}.sershelf .bk .sbadge .sbn{display:none}
+html body.cov-xs .bk .edit,html body.cov-xs .bk .blinfo{transform:scale(.8);transform-origin:bottom right}
+#covSel{max-width:150px}
+.shelves{grid-template-columns:minmax(0,1fr)}.shelves>.shelf,.sershelf .serrow{min-width:0;max-width:100%}.sershelf .serrow{margin:4px 0 14px}.sershelf .serrow h4{margin:6px 4px 6px;font-size:15px;font-weight:600}.sershelf .serrow h4 small{font-weight:400;color:var(--muted);font-size:12px;margin-left:4px}
+.sershelf .serrow .books{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.sershelf .serrow .books::-webkit-scrollbar{display:none}
 #rFocus,#rNb,#rEmoBtn,#rQuote,#rTts,#ttsBar,.lfc:has(>label>input[data-opt=tts]){display:none!important}#reader:not(.ep-foot) #rHlBtn{display:none!important}
 .rxe{position:absolute;transform:translate(-50%,0);border:0;background:rgba(255,255,255,.85);border-radius:999px;width:34px;height:34px;font-size:19px;line-height:1;display:grid;place-items:center;box-shadow:0 3px 10px -4px rgba(0,0,0,.35);pointer-events:auto;cursor:pointer;padding:0}
 #reader:has(#inkBar:not([hidden])) .rxh,#reader:has(#inkBar:not([hidden])) .rxe{pointer-events:none}
@@ -1473,6 +1480,7 @@ body.home-kindle #listArea{max-width:760px;margin-inline:auto}
     <select id="statusFilter" aria-label="Duruma göre filtrele"></select>
     <button class="btn" type="button" id="pickBtn">🎲 Ne okusam?</button><button class="btn" type="button" id="litBtn" hidden>📊 Literatür tablosu</button>
     <div class="viewtog" role="group" aria-label="Görünüm"><button type="button" data-view="panel" id="vPanel" hidden>Ana sayfa</button><button type="button" data-view="raf" id="vRaf"><svg class="ln" aria-hidden="true"><use href="#i-stack"/></svg>Raf</button><button type="button" data-view="kart" id="vKart"><svg class="ln" aria-hidden="true"><use href="#i-openbook"/></svg>Kart</button></div>
+    <select id="covSel" aria-label="Kapak boyutu"><option value="xs">▫ Mini kapak</option><option value="s">▫ Küçük kapak</option><option value="m">▫ Orta kapak</option><option value="l">▫ Büyük kapak</option></select>
     <select id="sortSel" aria-label="Sırala">
       <option value="added">En son eklenen</option>
       <option value="title">Ada göre (A–Z)</option>
@@ -1677,10 +1685,10 @@ body.home-kindle #listArea{max-width:760px;margin-inline:auto}
     </div>
     <div class="row">
       <div class="f"><label for="tPattern">Zemin deseni</label><select id="tPattern"><option value="check">Kareli</option><option value="dots">Puantiyeli</option><option value="stripe">Çizgili</option><option value="grid">Defter karesi</option><option value="paper">Eski kâğıt</option><option value="sakura">Sakura yaprakları</option><option value="stars">Yıldızlar</option><option value="diag">Çapraz çizgiler</option><option value="waves">Dalgalar</option><option value="plain">Düz</option></select></div>
-      <div class="f"><label for="tFont">Başlık yazı tipi</label><select id="tFont"><option value="playfair">Playfair (zarif, klasik)</option><option value="fraunces">Fraunces (yumuşak serif)</option><option value="lora">Lora (kitap gibi)</option><option value="cormorant">Cormorant (ince, şık)</option><option value="quicksand">Quicksand (yuvarlak, sade)</option><option value="playpen">Playpen (el yazısı, yuvarlak)</option><option value="shantell">Shantell (çizgi roman gibi)</option><option value="patrick">Patrick Hand (defter yazısı)</option><option value="caveat">Caveat (el yazısı)</option></select></div>
+      <div class="f"><label for="tFont">Başlık yazı tipi</label><select id="tFont"><option value="playfair">Playfair (zarif, klasik)</option><option value="fraunces">Fraunces (yumuşak serif)</option><option value="lora">Lora (kitap gibi)</option><option value="cormorant">Cormorant (ince, şık)</option><option value="quicksand">Quicksand (yuvarlak, sade)</option><option value="playpen">Playpen (el yazısı, yuvarlak)</option><option value="shantell">Shantell (çizgi roman gibi)</option><option value="patrick">Patrick Hand (defter yazısı)</option><option value="caveat">Caveat (el yazısı)</option><option value="elite">Special Elite (eski daktilo)</option><option value="courier">Courier Prime (daktilo, temiz)</option><option value="cutive">Cutive Mono (ince daktilo)</option></select></div>
     </div>
     <div class="row">
-      <div class="f"><label for="tCover">Raf kapak boyutu</label><select id="tCover"><option value="s">Küçük</option><option value="m">Orta</option><option value="l">Büyük</option></select></div>
+      <div class="f"><label for="tCover">Raf kapak boyutu</label><select id="tCover"><option value="xs">Mini</option><option value="s">Küçük</option><option value="m">Orta</option><option value="l">Büyük</option></select></div>
       <div class="f"><label for="tIllus">Çizimler</label><select id="tIllus"><option value="on">Göster</option><option value="off">Gizle</option></select></div>
     </div>
     <div class="row">
@@ -1696,7 +1704,7 @@ body.home-kindle #listArea{max-width:760px;margin-inline:auto}
       <div id="stkList" class="stk-list"></div>
       <div style="display:flex;gap:8px;align-items:center;margin-top:8px"><label class="btn" style="cursor:pointer">+ Görsel ekle<input type="file" id="stkFile" accept="image/png,image/jpeg,image/webp" multiple hidden></label><span class="hint" id="stkMsg"></span></div></div>
     <div class="row">
-      <div class="f"><label for="tName">Adın (karşılama için)</label><input id="tName" maxlength="30" placeholder="Adın"></div><div class="f"><label for="tBody">Metin yazı tipi</label><select id="tBody"><option value="nunito">Nunito (yuvarlak, yumuşak)</option><option value="dmsans">DM Sans (sade)</option><option value="quicksand">Quicksand (ince, yuvarlak)</option><option value="lora">Lora (serif, kitap gibi)</option></select></div>
+      <div class="f"><label for="tName">Adın (karşılama için)</label><input id="tName" maxlength="30" placeholder="Adın"></div><div class="f"><label for="tBody">Metin yazı tipi</label><select id="tBody"><option value="nunito">Nunito (yuvarlak, yumuşak)</option><option value="dmsans">DM Sans (sade)</option><option value="quicksand">Quicksand (ince, yuvarlak)</option><option value="lora">Lora (serif, kitap gibi)</option><option value="courier">Courier Prime (daktilo)</option><option value="elite">Special Elite (eski daktilo)</option></select></div>
     </div>
     <div class="row">
       <div class="f"><label for="tTitle">Başlık</label><input id="tTitle" maxlength="40" placeholder="Dijital Kütüphanem"></div>
@@ -1913,7 +1921,7 @@ function bookHtml(b){
   const p=PREFIX[b.kind]||'K',src=coverSrc(b),rib=(b.kind!=='roman'&&b.currentPage>0)?'<span class="ribbon" aria-hidden="true"></span>':'';
   const label=esc(b.title)+(b.author?', '+esc(b.author):'')+(b.currentPage>0?', sayfa '+b.currentPage:'');
   const inner=src?`<img src="${src}" alt="" loading="lazy" decoding="async">`:`<span class="t">${esc(b.title)}</span>${ico(artFor(b))}<span class="a">${esc(b.author||'')}</span>`;
-  return `<div class="bk ${src?'':'gen '+p}${b.status==='okundu'?' is-done':''}" role="button" tabindex="0" data-bk="${b.id}" title="${esc(b.title)}" aria-label="${label}">${rib}${inner}${(()=>{const sr_=seriesOf(b);return sr_&&sr_.no?`<span class="sbadge" title="${esc(sr_.name)} #${sr_.no}">${esc(sr_.name.length>14?sr_.name.slice(0,13)+'…':sr_.name)} #${sr_.no}</span>`:''})()}<span class="qm-chk" aria-hidden="true"></span>
+  return `<div class="bk ${src?'':'gen '+p}${b.status==='okundu'?' is-done':''}" role="button" tabindex="0" data-bk="${b.id}" title="${esc(b.title)}" aria-label="${label}">${rib}${inner}${(()=>{const sr_=seriesOf(b);return sr_&&sr_.no?`<span class="sbadge" title="${esc(sr_.name)} #${sr_.no}"><span class="sbn">${esc(sr_.name.length>14?sr_.name.slice(0,13)+'…':sr_.name)} </span>#${sr_.no}</span>`:''})()}<span class="qm-chk" aria-hidden="true"></span>
     ${b.kind==='pdf'||b.fileType?`<span class="badge">${isEpubB(b)?'EPUB':'PDF'}${b.source==='drive'?(bigDrive(b)?' · Drive ↗':' · Drive'):''}${!hasFile(b)&&b.fileRemoved?' · 📎':''}</span>`:''}${!src&&hasFile(b)&&b.kind!=='roman'&&!coverTried.has(b.id)&&!bigDrive(b)?'<span class="loading">kapak hazırlanıyor…</span>':''}
     ${b.blurb?`<button class="blinfo" type="button" data-blinfo="${b.id}" aria-label="${esc(b.title)} tanıtımı" title="Tanıtım">📖</button>`:''}${hasFile(b)?`<button class="edit" type="button" data-edit="${b.id}" aria-label="${esc(b.title)} kaydını düzenle">✎</button>`:''}</div>`;
 }
@@ -1928,7 +1936,12 @@ function shelfHtml(list){
   if(g[DONE])g[DONE].sort((a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||''));
   const keys=Object.keys(g).sort((a,b)=>a===DONE?1:b===DONE?-1:a==='Rafsız'?1:b==='Rafsız'?-1:a.localeCompare(b,TR));
   const AR=['cat','pengu','bunny','frog'],deco=UI.shelfDeco!=='off';
-  return '<div class="shelves">'+keys.map((k,i)=>`<section class="shelf"><h3>${esc(k)} <small>${g[k].length}</small></h3><div class="books">${g[k].map(bookHtml).join('')}${deco&&i%2===0?`<span class="shdeco">${stampSvg(AR[(i/2)%4],58)}</span>`:''}</div></section>`).join('')+'</div>';
+  /* 📚 Serilerim: serilerin hepsi türünden bağımsız, sırasıyla burada da durur (kitaplar kendi raflarında da kalır) */
+  let serH='';if(!st.shelf&&!st.tag&&!st.q&&UI.serShelf!=='off'){const sg={};(st.books||[]).filter(b=>!b.deleted&&b.kind!=='roman'&&b.kind!=='makale'&&!isEpubB(b)&&(st.tab==='all'||st.tab==='pdf')).forEach(b=>{const sr=seriesOf(b);if(!sr)return;const k=trLow(sr.name);(sg[k]=sg[k]||{name:sr.name,bs:[]}).bs.push(b)});
+    const sk=Object.keys(sg).filter(k=>sg[k].bs.length>1||sg[k].bs.some(b=>(seriesOf(b).no||0)>1)).sort((a,b)=>sg[a].name.localeCompare(sg[b].name,TR));
+    if(sk.length)serH=`<section class="shelf sershelf"><h3>📚 Serilerim <small>${sk.length} seri</small></h3>${sk.map(k=>{const L=sg[k].bs.sort((x,y)=>(seriesOf(x).no-seriesOf(y).no)||(x.title||'').localeCompare(y.title||'',TR));const dn=L.filter(b=>b.status==='okundu').length;
+      return `<div class="serrow"><h4>${esc(sg[k].name)} <small>${dn}/${L.length} okundu</small></h4><div class="books">${L.map(bookHtml).join('')}</div></div>`}).join('')}</section>`}
+  return '<div class="shelves">'+serH+keys.map((k,i)=>`<section class="shelf"><h3>${esc(k)} <small>${g[k].length}</small></h3><div class="books">${g[k].map(bookHtml).join('')}${deco&&i%2===0?`<span class="shdeco">${stampSvg(AR[(i/2)%4],58)}</span>`:''}</div></section>`).join('')+'</div>';
 }
 async function pdfCoverBlob(bytes){
   const lib=await pdfLib(),doc=await lib.getDocument(bytes&&bytes.url?{url:bytes.url,httpHeaders:bytes.headers,disableAutoFetch:true,disableStream:true,rangeChunkSize:65536}:{data:bytes}).promise;
@@ -2080,6 +2093,7 @@ $('tagList').addEventListener('click',e=>{const t=e.target.closest('[data-tag]')
 $('q').addEventListener('input',e=>{st.q=e.target.value;renderList()});
 $('statusFilter').addEventListener('change',e=>{st.status=e.target.value;renderList()});
 $('sortSel').addEventListener('change',e=>{st.sort=e.target.value;renderList()});
+$('covSel').addEventListener('change',e=>{UI.cover=e.target.value;try{localStorage.setItem('dk-ui',JSON.stringify(UI))}catch(x){}applyUI();try{window.dispatchEvent(new CustomEvent('dk-change',{detail:'settings/ui'}))}catch(x){}renderList()});
 $('listArea').addEventListener('click',e=>{
   if(e.target.closest('[data-link]'))return;
   const gv=e.target.closest('[data-goview]');if(gv){goSec('library');return}
@@ -2329,8 +2343,8 @@ const PRESETS={
     light:{bg:'#e2e8dd',paper:'#f8faf5',ink:'#24301f',muted:'#6c7b66',line:'#d5ddd0',check:'#d9e1d3',accent:'#3e5f45','accent-soft':'#dbe6dc',brass:'#9b6b43','brass-soft':'#efe2d6',k:'#7f9c6f',p:'#c19a6b',r:'#3e5f45'},
     dark:{bg:'#111712',paper:'#1a221b',ink:'#e6eee2',muted:'#9fb09b',line:'#2a352b',check:'#151c16',accent:'#86b48f','accent-soft':'#213326',brass:'#d4a479','brass-soft':'#3a2c1f',k:'#5f7f55',p:'#9b6b43',r:'#86b48f'}}
 };
-const BODYF={nunito:'"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif',dmsans:'"DM Sans",system-ui,-apple-system,sans-serif',quicksand:'"Quicksand",system-ui,sans-serif',lora:'"Lora",Georgia,serif'};
-const FONTS={fraunces:'"Fraunces",Georgia,serif',quicksand:'"Quicksand",system-ui,sans-serif',cormorant:'"Cormorant Garamond","Iowan Old Style",Georgia,serif',playfair:'"Playfair Display",Georgia,serif',lora:'"Lora",Georgia,serif',caveat:'"Caveat","Segoe Print","Bradley Hand",cursive',playpen:'"Playpen Sans","Segoe Print","Chalkboard SE",cursive',shantell:'"Shantell Sans","Chalkboard SE",cursive',patrick:'"Patrick Hand","Chalkboard SE",cursive'};
+const BODYF={nunito:'"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif',dmsans:'"DM Sans",system-ui,-apple-system,sans-serif',quicksand:'"Quicksand",system-ui,sans-serif',lora:'"Lora",Georgia,serif',courier:'"Courier Prime","Courier New",monospace',elite:'"Special Elite","Courier New",monospace'};
+const FONTS={fraunces:'"Fraunces",Georgia,serif',quicksand:'"Quicksand",system-ui,sans-serif',cormorant:'"Cormorant Garamond","Iowan Old Style",Georgia,serif',playfair:'"Playfair Display",Georgia,serif',lora:'"Lora",Georgia,serif',caveat:'"Caveat","Segoe Print","Bradley Hand",cursive',playpen:'"Playpen Sans","Segoe Print","Chalkboard SE",cursive',shantell:'"Shantell Sans","Chalkboard SE",cursive',patrick:'"Patrick Hand","Chalkboard SE",cursive',elite:'"Special Elite","American Typewriter","Courier New",monospace',courier:'"Courier Prime","Courier New",monospace',cutive:'"Cutive Mono","American Typewriter","Courier New",monospace'};
 const UIDEF={preset:'sage',mode:'auto',accent:'',pattern:'check',font:'playfair',body:'nunito',cover:'m',illus:'on',deco:'emblem',stamps:'on',soft:'on',art:'cat',name:'',title:"Dijital Kütüphanem",sub:'Kitapların, PDF ve EPUB\'ların tek bir okuma köşesinde. Her şey yalnızca bu cihazda, tarayıcında saklanır.'};
 let UI={...UIDEF};try{const c=JSON.parse(localStorage.getItem('dk-ui')||'null');if(c)UI={...UIDEF,...c}}catch(e){}
 if(!UI.kindleMig){UI.kindleMig=1;UI.preset='kindle';UI.kindle='on';UI.accent='';UI.bgc='';try{localStorage.setItem('dk-ui',JSON.stringify(UI))}catch(e){}}
@@ -2352,7 +2366,7 @@ function applyUI(){
   body.classList.remove('tex-pencil','tex-pastel','tex-on','pat-plain','pat-dots','pat-stripe','pat-paper','pat-sakura','pat-grid','style-journal','no-emoji','cov-s','cov-l','no-illus','deco-emblem','no-stamps');
   if((UI.deco||'emblem')==='emblem')body.classList.add('deco-emblem');if(UI.style==='journal')body.classList.add('style-journal');if(UI.tex==='pencil'||UI.tex==='pastel')body.classList.add('tex-'+UI.tex,'tex-on');if(UI.emoji==='off'||(UI.emoji!=='on'&&UI.style==='journal')){body.classList.add('no-emoji');setTimeout(()=>deEmoji(document),0)}if(UI.stamps==='off')body.classList.add('no-stamps');
   $('emblem').innerHTML=emblemSvg('kütüphanem');
-  if(UI.pattern!=='check')body.classList.add('pat-'+UI.pattern);if(UI.cover!=='m')body.classList.add('cov-'+UI.cover);if(UI.illus==='off')body.classList.add('no-illus');
+  if(UI.pattern!=='check')body.classList.add('pat-'+UI.pattern);if(UI.cover!=='m')body.classList.add('cov-'+UI.cover);try{$('covSel').value=UI.cover||'m'}catch(e){}if(UI.illus==='off')body.classList.add('no-illus');
   if(UI.kindle!=='off'){const root_=document.documentElement,cs=getComputedStyle(root_),g=k=>(root_.style.getPropertyValue('--'+k)||cs.getPropertyValue('--'+k)).trim(),dk=isDark(),pap=g('paper'),ink=g('ink'),hx=v=>/^#[0-9a-f]{6}$/i.test(v);
     const tgt=dk?'#efe9df':pap,soft=(k,t)=>{const v=g(k);if(hx(v)&&hx(tgt))root_.style.setProperty('--'+k,mixHex(v,tgt,t))};
     soft('brass',dk?.32:.42);soft('accent',dk?.16:.2);soft('k',.25);soft('p',.25);soft('r',.2);
@@ -5549,7 +5563,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v179';
+const DK_VER='v180';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
