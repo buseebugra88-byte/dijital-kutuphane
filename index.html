@@ -5544,7 +5544,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v173';
+const DK_VER='v174';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -8991,7 +8991,13 @@ async function openReader(b){
     }
     if(b.fileType==='epub'||b.source==='drive'){
       if(b.source==='drive')rMsg(ico('openbook')+'Kitap Google Drive\'dan getiriliyor…');
-      const bytes=await bookBytes(b);if(R.book!==b)return;
+      let bytes=await bookBytes(b);if(R.book!==b)return;
+      /* dosyanın gerçek türüne bak: EPUB diye kayıtlı ama aslında PDF ise PDF aç; yarım inmişse önbelleği silip bir kez daha indir */
+      {const sig=t=>t&&t.length>4?(t[0]===0x25&&t[1]===0x50&&t[2]===0x44&&t[3]===0x46?'pdf':t[0]===0x50&&t[1]===0x4b?'zip':'?'):'?';let k=sig(bytes);
+       const eocd=t=>{for(let i=t.length-22;i>=Math.max(0,t.length-66000);i--)if(t[i]===0x50&&t[i+1]===0x4b&&t[i+2]===5&&t[i+3]===6)return true;return false};
+       if(b.driveId&&(k==='?'||(k==='zip'&&!eocd(bytes)))){try{const C=await caches.open('dk-books');await C.delete('https://dk-offline/drive/'+encodeURIComponent(b.driveId))}catch(e){}try{bytes=await driveBytes(b);k=sig(bytes)}catch(e){}if(R.book!==b)return}
+       if(b.fileType==='epub'&&k==='pdf'){b.fileType='pdf';try{await st.db.collection('books').doc(b.id).update({fileType:'pdf'})}catch(e){}}
+       else if(b.fileType!=='epub'&&k==='zip'){b.fileType='epub';try{await st.db.collection('books').doc(b.id).update({fileType:'epub'})}catch(e){}}}
       if(b.fileType==='epub'){R.epub=await epubOpen(bytes.slice());R.doc={numPages:Math.max(1,R.epub.spine.length),epub:true}}
       else{const lib=await pdfLib();R.doc=await lib.getDocument({data:bytes.slice()}).promise}
       if(R.book!==b)return;
