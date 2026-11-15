@@ -1807,7 +1807,7 @@ const STATUS={
   roman:[['taslak','Taslak'],['yaziliyor','Yazılıyor'],['duzenleniyor','Düzenleniyor'],['tamamlandi','Tamamlandı']]
 };
 const STATUS_LABEL={};Object.values(STATUS).flat().forEach(([k,v])=>STATUS_LABEL[k]=v);
-const KINDS=[['all','Tümü'],['kitap','Kitaplar'],['pdf','PDF rafı'],['makale','Akademik'],['roman','Romanlarım']];
+const KINDS=[['all','Tümü'],['kitap','Kitaplar'],['pdf','E-kitap'],['makale','Akademik'],['roman','Romanlarım']];
 const PREFIX={kitap:'K',pdf:'P',roman:'R',makale:'M'};
 const ART={kitap:['openbook','cupbook','glasses','sprigbook'],pdf:['page','scroll'],roman:['quill','notebook'],makale:['glasses','page','notebook']};
 const TABICON={all:'stack',kitap:'openbook',pdf:'page',epub:'openbook',done:'stack',roman:'quill',makale:'glasses'};
@@ -5544,7 +5544,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v175';
+const DK_VER='v176';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
