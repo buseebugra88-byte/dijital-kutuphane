@@ -1849,7 +1849,7 @@ function renderGoal(){}
 
 function inTab(b){const ep=isEpubB(b)&&b.kind!=='roman'&&b.kind!=='makale',fin=b.status==='okundu'&&b.kind!=='roman'&&b.kind!=='makale';if(st.tab==='done')return fin;if(fin&&!st.q&&st.status!=='okundu'&&['all','kitap','pdf','epub'].includes(st.tab))return false;return st.tab==='all'?(b.kind!=='makale'&&b.kind!=='roman'&&(!ep||!!st.q)):st.tab==='epub'?ep:st.tab==='pdf'?(b.kind==='pdf'&&!ep):b.kind===st.tab}
 function renderTabs(){
-  if(st.tab==='kitap')st.tab='all';$('tabs').innerHTML=[...KINDS.filter(([k])=>k==='all'||k==='pdf'),['epub','EPUB rafı'],['done','Bitirdiklerim']].map(([k,l])=>{const n=st.books.filter(b=>{const o=st.tab,q=st.q;st.tab=k;st.q='';const r=inTab(b);st.tab=o;st.q=q;return r}).length;
+  if(st.tab==='kitap'||st.tab==='epub')st.tab='all';$('tabs').innerHTML=[...KINDS.filter(([k])=>k==='all'||k==='pdf'),['done','Bitirdiklerim']].map(([k,l])=>{const n=st.books.filter(b=>{const o=st.tab,q=st.q;st.tab=k;st.q='';const r=inTab(b);st.tab=o;st.q=q;return r}).length;
     return `<button class="tab" role="tab" type="button" data-tab="${k}" aria-selected="${st.tab===k}">${ico(TABICON[k])}${l}<small>${n}</small></button>`}).join('');
   const opts=st.tab==='roman'?STATUS.roman:st.tab==='all'?[...STATUS.kitap,...STATUS.roman]:STATUS.kitap;
   if(st.status&&!opts.some(o=>o[0]===st.status))st.status='';
@@ -5544,7 +5544,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v174';
+const DK_VER='v175';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -7848,6 +7848,11 @@ document.addEventListener('click',e=>{if(!(e.target.closest&&e.target.closest('[
 function isEpubB(b){return !!b&&(b.fileType==='epub'||/\.(k?epub)(\.zip)?$/i.test(b.fileName||'')||/\.epub$/i.test(b.title||'')&&!b.fileType)}
 async function epSniff(b){if(typeof LOCAL==='undefined'||!LOCAL.fetchAsset||!b.assetId)return null;try{const r=await LOCAL.fetchAsset(b.assetId);if(!r.ok)return null;const ct=r.headers.get('content-type')||'';if(/epub/i.test(ct))return 'epub';
   const u=new Uint8Array(await (await r.blob()).slice(0,80).arrayBuffer());if(u[0]===0x25&&u[1]===0x50&&u[2]===0x44&&u[3]===0x46)return 'pdf';if(u[0]===0x50&&u[1]===0x4b){const t=new TextDecoder().decode(u);return /epub/i.test(t)?'epub':'zip'}return null}catch(e){return null}}
+/* EPUB okunmuyor: kütüphanedeki EPUB kitaplar bir kez silinir (Drive'daki dosyalara dokunulmaz) */
+(function epPurge(){if(!st.ready||!st.db){setTimeout(epPurge,2000);return}try{if(localStorage.getItem('dk-epub-purge1'))return}catch(e){}
+  setTimeout(async()=>{const L=st.books.filter(b=>!b.deleted&&b.kind!=='roman'&&(b.fileType==='epub'||/\.k?epub$/i.test(b.fileName||'')));let n=0;
+    for(const b of L){try{await st.db.collection('books').doc(b.id).delete();if(st.assets){for(const id of fileIds(b)){try{await st.assets.delete(id)}catch(e){}}if(b.coverId){try{await st.assets.delete(b.coverId)}catch(e){}}}n++}catch(e){}}
+    try{localStorage.setItem('dk-epub-purge1','1')}catch(e){}if(n){try{renderTabs();renderList()}catch(e){}toast(`🗑 ${n} EPUB kitap kütüphaneden kaldırıldı`)}},4000)})();
 (function epFixTypes(){if(!st.ready||!st.db){setTimeout(epFixTypes,1500);return}
   const fix=async(L,why)=>{for(const b of L){try{await st.db.collection('books').doc(b.id).update({fileType:'epub'});b.fileType='epub'}catch(e){}}};
   (async()=>{const byName=st.books.filter(b=>b.fileType!=='epub'&&/\.(k?epub)(\.zip)?$/i.test(b.fileName||''));await fix(byName);
