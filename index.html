@@ -1171,7 +1171,7 @@ html body .rstage{overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow
 .sh-board{height:12px;background:linear-gradient(#d9b391,#b98d6b);border-radius:0 0 3px 3px;box-shadow:0 4px 6px rgba(0,0,0,.2)}
 .shb{flex:none;border:0;padding:6px 0;border-radius:2px 2px 1px 1px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:space-between;overflow:hidden;box-shadow:inset -3px 0 0 rgba(0,0,0,.14),inset 2px 0 0 rgba(255,255,255,.12);transition:transform .15s}
 .shb:hover{transform:translateY(-6px)}.shb-t,.shb-a{writing-mode:vertical-rl;font-size:10.5px;font-weight:700;letter-spacing:.3px;line-height:1.05;max-height:100%;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;text-transform:uppercase}
-.shb-a{font-size:8.5px;font-weight:500;opacity:.8;margin-top:4px;text-transform:none}.sh-obj{flex:none;display:block;align-self:flex-end}.sh-obj svg{display:block;width:100%;height:auto}
+.shb-n{font-size:9px;font-weight:800;margin-bottom:3px;opacity:.85}.shb-a{font-size:8.5px;font-weight:500;opacity:.8;margin-top:4px;text-transform:none}.sh-obj{flex:none;display:block;align-self:flex-end}.sh-obj svg{display:block;width:100%;height:auto}
 .sh-sheet{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(560px,100%);max-height:70vh;overflow:auto;background:var(--paper);border-radius:22px 22px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.2);padding:16px 18px calc(env(safe-area-inset-bottom,0px) + 18px);z-index:60}
 .sh-sh-h{display:flex;justify-content:space-between;align-items:center;font-size:18px}.sh-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
 .sh-opt{display:flex;flex-direction:column;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:14px;background:var(--paper);padding:10px 6px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
@@ -5535,7 +5535,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v171';
+const DK_VER='v172';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -5580,7 +5580,13 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-dk="sharea
 
 /* ☁️ yeni eklenen kitaplar kendiliğinden tüm cihazlara gitsin */
 let DKAS={busy:false};
-async function dkAutoShare(){if(DKAS.busy||typeof LOCAL==='undefined'||typeof GAUTH==='undefined'||!GAUTH.configured||!GAUTH.configured()||!GAUTH.signedIn||!GAUTH.signedIn()||UI.autoShare==='off'||!st.ready)return;
+/* 📚 Drive'daki "seriler" listesi: kitaplara seri adı ve sırası yazılır (senin elle girdiğin seriye dokunulmaz) */
+async function dkSeriesPatch(){try{if(typeof GAUTH==='undefined'||!GAUTH.signedIn()||!st.ready)return;const now=Date.now();if(now-(DKAS.serAt||0)<10*60000)return;DKAS.serAt=now;
+  const q="name = 'Dijital Kütüphanem — seriler.json' and trashed = false";const j=await (await gfetch(GD+'?q='+encodeURIComponent(q)+'&pageSize=1&orderBy=modifiedTime desc&fields='+encodeURIComponent('files(id,modifiedTime)'))).json();
+  const f=j.files&&j.files[0];if(!f||dbkGet('serpatch')===f.modifiedTime)return;const data=await (await gfetch(GD+'/'+f.id+'?alt=media')).json();const M=data&&data.series||{};let n=0;
+  for(const b of st.books){const v=M[b.id];if(!v)continue;if(b.series&&!b.serPatch)continue;if(b.series===v[0]&&+b.seriesNo===+v[1])continue;const u={series:v[0],seriesNo:+v[1]||0,serPatch:1};await st.db.collection('books').doc(b.id).update(u);Object.assign(b,u);n++}
+  dbkSet('serpatch',f.modifiedTime);if(n){toast(`📚 ${n} kitabın serisi ve sırası eklendi`);try{SER_C.clear()}catch(e){}try{render()}catch(e){}}}catch(e){}}
+async function dkAutoShare(){dkSeriesPatch();if(DKAS.busy||typeof LOCAL==='undefined'||typeof GAUTH==='undefined'||!GAUTH.configured||!GAUTH.configured()||!GAUTH.signedIn||!GAUTH.signedIn()||UI.autoShare==='off'||!st.ready)return;
   let since='';try{since=localStorage.getItem('dk-as-since')||''}catch(e){}if(!since){since=new Date().toISOString();try{localStorage.setItem('dk-as-since',since)}catch(e){}}
   /* klasörden eklenen her kitap Drive'a gider; Drive'da aynı ad ve boyutta dosya varsa yeniden yüklenmez, ona bağlanır */
   const L=st.books.filter(b=>!b.deleted&&dkHere(b)&&(b.wantDrive||!(b.fileSize>150*1048576))).sort((a,b)=>((b.wantDrive?1:0)-(a.wantDrive?1:0))||String(b.addedAt||'').localeCompare(String(a.addedAt||''))).slice(0,12);if(!L.length)return;DKAS.busy=true;let n=0;
@@ -8525,10 +8531,13 @@ function shLum(hex){const n=parseInt(hex.slice(1),16),r=n>>16&255,g=n>>8&255,b=n
 function shBooks(c){let L=(st.books||[]).filter(b=>!b.deleted&&b.kind!=='roman');
   if(c.filter==='done')L=L.filter(b=>b.status==='okundu');else if(c.filter==='now')L=L.filter(b=>b.status==='okunuyor');else if(c.filter==='want')L=L.filter(b=>b.status==='okunacak');
   const k=c.sort==='added'?(b=>b.addedAt||''):c.sort==='author'?(b=>(b.author||'').toLocaleLowerCase('tr')):(b=>b.finishedAt||b.lastReadAt||b.addedAt||'');
-  L.sort((a,b)=>c.sort==='author'?k(a).localeCompare(k(b),'tr'):String(k(a)).localeCompare(String(k(b))));return L}
+  L.sort((a,b)=>c.sort==='author'?k(a).localeCompare(k(b),'tr'):String(k(a)).localeCompare(String(k(b))));
+  /* seriler bir arada ve sırasıyla durur: seri, ilk kitabının yerinde toplanır */
+  const G={},out=[];L.forEach(b=>{const sr=seriesOf(b);if(sr){const key=trLow(sr.name);if(!G[key]){G[key]=[];out.push(G[key])}G[key].push([sr.no||0,b])}else out.push(b)});
+  return out.flatMap(x=>Array.isArray(x)?x.sort((p,q)=>p[0]-q[0]).map(y=>y[1]):[x])}
 function shSpine(b,spc){const h=shHash(b.id),pg=+b.pages||+b.totalPages||300,w=Math.max(18,Math.min(42,Math.round(16+pg/22))),ht=128+h%54;
   const col=spc[b.id]||SH_PAL[h%SH_PAL.length],dark=shLum(col)>0.6;const t=esc((b.title||'').slice(0,46)),a=esc((b.author||'').split(/[,&]/)[0].trim().slice(0,22));
-  return {w,html:`<button type="button" class="shb" data-shb="${b.id}" title="${esc(b.title||'')}${b.author?' — '+esc(b.author):''}" style="width:${w}px;height:${ht}px;background:${col};color:${dark?'#1d1d1d':'#fbf8f1'}"><span class="shb-t">${t}</span>${a&&w>=24?`<span class="shb-a">${a}</span>`:''}</button>`}}
+  const sr=seriesOf(b);return {w,html:`<button type="button" class="shb" data-shb="${b.id}" title="${esc(b.title||'')}${b.author?' — '+esc(b.author):''}${sr?' · '+esc(sr.name)+(sr.no?' #'+sr.no:''):''}" style="width:${w}px;height:${ht}px;background:${col};color:${dark?'#1d1d1d':'#fbf8f1'}">${sr&&sr.no?`<span class="shb-n">${sr.no}</span>`:''}<span class="shb-t">${t}</span>${a&&w>=24?`<span class="shb-a">${a}</span>`:''}</button>`}}
 function shDecoSvg(d){if(d==='lights'){let s='<svg class="shdeco" viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0 4Q100 22 200 6T400 4" stroke="#3a2c22" stroke-width="1.2" fill="none"/>';for(let i=1;i<10;i++){const x=i*40,y=4+Math.sin(i/9*Math.PI*2.1)*7+8;s+=`<circle cx="${x}" cy="${y+5}" r="4.2" fill="#ffd77a"/><circle cx="${x}" cy="${y+5}" r="8" fill="#ffd77a" opacity=".25"/>`}return s+'</svg>'}
   if(d==='flags'){const C=['#e07a5f','#f2cc8f','#81b29a','#3d5a80','#b56576'];let s='<svg class="shdeco" viewBox="0 0 400 26" preserveAspectRatio="none"><path d="M0 2Q200 14 400 2" stroke="#3a2c22" stroke-width="1" fill="none"/>';for(let i=0;i<20;i++){const x=i*20+2,y=2+Math.sin((i+.5)/20*Math.PI)*12;s+=`<path d="M${x} ${y}L${x+16} ${y}L${x+8} ${y+14}z" fill="${C[i%5]}"/>`}return s+'</svg>'}return ''}
 function shRender(host){const c=shCfg(),L=shBooks(c),spc=shSpc();const W=Math.max(260,(host.clientWidth||Math.min(innerWidth,900))-44);
