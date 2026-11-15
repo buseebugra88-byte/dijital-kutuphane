@@ -5569,7 +5569,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v182';
+const DK_VER='v183';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -5620,7 +5620,39 @@ async function dkSeriesPatch(){try{if(typeof GAUTH==='undefined'||!GAUTH.signedI
   const f=j.files&&j.files[0];if(!f||dbkGet('serpatch')===f.modifiedTime)return;const data=await (await gfetch(GD+'/'+f.id+'?alt=media')).json();const M=data&&data.series||{};let n=0;
   for(const b of st.books){const v=M[b.id];if(!v)continue;if(b.series&&!b.serPatch)continue;if(b.series===v[0]&&+b.seriesNo===+v[1])continue;const u={series:v[0],seriesNo:+v[1]||0,serPatch:1};await st.db.collection('books').doc(b.id).update(u);Object.assign(b,u);n++}
   dbkSet('serpatch',f.modifiedTime);if(n){toast(`📚 ${n} kitabın serisi ve sırası eklendi`);try{SER_C.clear()}catch(e){}try{render()}catch(e){}}}catch(e){}}
-async function dkAutoShare(){dkSeriesPatch();if(DKAS.busy||typeof LOCAL==='undefined'||typeof GAUTH==='undefined'||!GAUTH.configured||!GAUTH.configured()||!GAUTH.signedIn||!GAUTH.signedIn()||UI.autoShare==='off'||!st.ready)return;
+/* 📚 yeni kitaplar seriye kendiliğinden girsin: önce dosya adından/bilinen serilerden, sonra (açıksa) yapay zekâyla */
+const SAU={at:0,busy:false};
+function serNorm(x){return trLow(String(x||'').normalize('NFC').replace(/\.(pdf|epub)$/i,'').replace(/[_]+/g,' ').replace(/@\S+/g,' ').replace(/\s+/g,' ')).trim()}
+function serGuess(b,known,byAuth){const raw=String((b.title||'')+' | '+(b.fileName||'')).normalize('NFC');const s=serNorm(raw);const num=()=>{const m=s.match(/[#№]\s*(\d{1,2})(?!\d)/)||serNorm(b.title).match(/\s(\d{1,2})$/);return m?+m[1]:0};
+  for(const k of known){const n=serNorm(k);if(n.length<4)continue;let i=s.indexOf(n);while(i>=0&&/\p{L}/u.test(s[i+n.length]||''))i=s.indexOf(n,i+1);if(i<0)continue;const after=s.slice(i+n.length,i+n.length+24);
+    let m=after.match(/^\s*(?:saga|serisi|series|duet|düeti|üçlemesi|trilogy)?\s*[,(#№-]*\s*(?:#|no\.?|kitap|book)?\s*(\d{1,2})(?!\d)/);const no=m?+m[1]:num();if(no>0)return {name:k,no}}
+  const no=num();if(!no)return null;
+  const au=b.author&&byAuth&&byAuth.get(serNorm(b.author));if(au&&au.size===1)return {name:[...au][0],no};
+  const t=raw.replace(/_/g,' ').replace(/\.(pdf|epub)/ig,'');const m=t.match(/(?:^|[-–.|(\[])\s*([^-–.|(\[#]{3,40}?)\s*[#№]\s*(\d{1,2})(?!\d)/);
+  if(m){let nm=m[1].replace(/\b(saga|series|serisi)\b/ig,'').replace(/[,;:\s]+$/,'').trim();if(b.author)nm=nm.replace(new RegExp(b.author.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i'),'').trim();const tl=serNorm(b.title),nl=serNorm(nm);
+    if(nm.length>=3&&!/^\d+$/.test(nm)&&!tl.includes(nl)&&!nl.includes(tl))return {name:nm,no:+m[2]}}
+  return null}
+async function serAuto(){if(SAU.busy||!st.ready||Date.now()-SAU.at<90000)return;SAU.at=Date.now();SAU.busy=true;
+  try{const L=st.books.filter(b=>!b.deleted&&b.kind!=='roman'&&b.kind!=='makale');const known=[...new Set(L.map(b=>b.series).filter(Boolean))].sort((a,b)=>b.length-a.length);const byAuth=new Map();L.forEach(b=>{if(b.series&&b.author){const k=serNorm(b.author);if(!byAuth.has(k))byAuth.set(k,new Set());byAuth.get(k).add(b.series)}});
+    let seen;try{seen=new Set(JSON.parse(localStorage.getItem('dk-serseen')||'[]'))}catch(e){seen=new Set()}
+    const todo=L.filter(b=>!b.series&&!seen.has(b.id));if(!todo.length)return;let n=0;const ask=[];
+    for(const b of todo){const g=serGuess(b,known,byAuth);if(g){const u={series:g.name,seriesNo:g.no,serPatch:1};try{await st.db.collection('books').doc(b.id).update(u);Object.assign(b,u);n++;if(!known.includes(g.name))known.push(g.name)}catch(e){}}else ask.push(b)}
+    if(ask.length&&BS()){try{const lines=ask.slice(0,80).map(b=>`${b.id} | ${b.title}${b.author?' | '+b.author:''}${b.fileName&&b.fileName!==b.title?' | dosya: '+b.fileName:''}`).join('\n');
+      const r=await BS().json(`Bir okurun kütüphanesine yeni eklenen kitaplar. Hangileri bir SERİNİN parçası, serideki SIRASI kaç?
+Okurun rafında zaten olan seriler (aynı seriyse adı birebir böyle yaz): ${known.join(' · ')||'yok'}
+Kurallar: yalnızca EMİN olduklarını döndür; tek kitaplık romanları atla. Seri adını Türkçe yayın adıyla (yoksa orijinal adıyla) yaz.
+Satır: id | başlık | yazar | dosya adı
+${lines}
+Sadece JSON dizi: [{"id":"…","seri":"Seri adı","no":2}]`,{modelTier:'default'});
+      const ok=new Map(ask.map(b=>[b.id,b]));for(const x of (Array.isArray(r)?r:[])){const b=x&&ok.get(x.id);if(!b||!x.seri||!(+x.no>0))continue;const u={series:String(x.seri).trim(),seriesNo:+x.no,serPatch:1};try{await st.db.collection('books').doc(b.id).update(u);Object.assign(b,u);n++}catch(e){}}
+      ask.slice(0,80).forEach(b=>seen.add(b.id))}catch(e){}}
+    else ask.forEach(b=>{if(!BS())return;seen.add(b.id)});
+    todo.forEach(b=>{if(b.series)seen.add(b.id)});
+    try{localStorage.setItem('dk-serseen',JSON.stringify([...seen].slice(-3000)))}catch(e){}
+    if(n){toast(`📚 ${n} kitap serisine eklendi`);try{SER_C.clear()}catch(e){}try{render()}catch(e){}}}
+  catch(e){}finally{SAU.busy=false}}
+window.__dkSer={auto:()=>{SAU.at=0;return serAuto()}};
+async function dkAutoShare(){dkSeriesPatch().then(()=>serAuto());if(DKAS.busy||typeof LOCAL==='undefined'||typeof GAUTH==='undefined'||!GAUTH.configured||!GAUTH.configured()||!GAUTH.signedIn||!GAUTH.signedIn()||UI.autoShare==='off'||!st.ready)return;
   let since='';try{since=localStorage.getItem('dk-as-since')||''}catch(e){}if(!since){since=new Date().toISOString();try{localStorage.setItem('dk-as-since',since)}catch(e){}}
   /* klasörden eklenen her kitap Drive'a gider; Drive'da aynı ad ve boyutta dosya varsa yeniden yüklenmez, ona bağlanır */
   const L=st.books.filter(b=>!b.deleted&&dkHere(b)&&(b.wantDrive||!(b.fileSize>150*1048576))).sort((a,b)=>((b.wantDrive?1:0)-(a.wantDrive?1:0))||String(b.addedAt||'').localeCompare(String(a.addedAt||''))).slice(0,12);if(!L.length)return;DKAS.busy=true;let n=0;
