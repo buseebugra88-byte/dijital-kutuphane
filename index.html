@@ -1194,6 +1194,11 @@ html body.cov-xs .bk .edit,html body.cov-xs .bk .blinfo{transform:scale(.8);tran
 #covSel{max-width:150px}
 .shelves{grid-template-columns:minmax(0,1fr)}.shelves>.shelf,.sershelf .serrow{min-width:0;max-width:100%}.sershelf .serrow{margin:4px 0 14px}.sershelf .serrow h4{margin:6px 4px 6px;font-size:15px;font-weight:600}.sershelf .serrow h4 small{font-weight:400;color:var(--muted);font-size:12px;margin-left:4px}
 .sershelf .serrow .books{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.sershelf .serrow .books::-webkit-scrollbar{display:none}
+/* yazılar daha net: biraz kalın ve koyu */
+body{font-weight:500;-webkit-font-smoothing:antialiased}
+body :is(.hint,small,.muted,label,.sub,.a,.tab small){color:color-mix(in srgb,var(--muted) 65%,var(--ink))}
+body :is(h1,h2,h3,h4,b,strong){font-weight:700}
+body .bk .t{font-weight:700}
 #rFocus,#rNb,#rEmoBtn,#rQuote,#rTts,#ttsBar,.lfc:has(>label>input[data-opt=tts]){display:none!important}#reader:not(.ep-foot) #rHlBtn{display:none!important}
 .rxe{position:absolute;transform:translate(-50%,0);border:0;background:rgba(255,255,255,.85);border-radius:999px;width:34px;height:34px;font-size:19px;line-height:1;display:grid;place-items:center;box-shadow:0 3px 10px -4px rgba(0,0,0,.35);pointer-events:auto;cursor:pointer;padding:0}
 #reader:has(#inkBar:not([hidden])) .rxh,#reader:has(#inkBar:not([hidden])) .rxe{pointer-events:none}
@@ -2360,7 +2365,7 @@ function applyUI(){
   TOK.forEach(t=>root.style.removeProperty('--'+t));root.style.removeProperty('--on-brass');try{document.documentElement.dataset.preset=UI.preset||'sage'}catch(e){}
   if(set)Object.entries(set).forEach(([k,v])=>root.style.setProperty('--'+k,v));
   {const dk=isDark(),ink=(set&&set.ink)||(dk?'#f1e8e2':'#4a3a35'),pap=(set&&set.paper)||(dk?'#272c24':'#fdfbf4'),mut=(set&&set.muted)||(dk?'#b0a59d':'#8a7a72');
-   const sf=UI.soft==='off'?0:(dk?0.14:0.24);root.style.setProperty('--ink',mixHex(ink,pap,sf));root.style.setProperty('--muted',mixHex(mut,pap,sf*0.35))}
+   const sf=UI.soft==='off'?0:(dk?0.05:0.06);root.style.setProperty('--ink',mixHex(ink,pap,sf));root.style.setProperty('--muted',mixHex(mut,pap,sf*0.35))}
   if(UI.bgc&&!isDark()){root.style.setProperty('--bg',UI.bgc);root.style.setProperty('--check','color-mix(in srgb,'+UI.bgc+' 86%,#8a7a70)')}
   if(UI.accent&&!isDark()){root.style.setProperty('--accent',UI.accent);root.style.setProperty('--accent-soft','color-mix(in srgb,'+UI.accent+' 18%,#ffffff)');root.style.setProperty('--r',UI.accent)}
   root.style.setProperty('--display',FONTS[UI.font]||FONTS.playfair);document.body.classList.toggle('font-hand',['playpen','shantell','patrick','caveat'].includes(UI.font));root.style.setProperty('--body',BODYF[UI.body]||BODYF.nunito);
@@ -5564,7 +5569,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v181';
+const DK_VER='v182';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
