@@ -1176,6 +1176,15 @@ html body .rstage{overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow
 .sh-sh-h{display:flex;justify-content:space-between;align-items:center;font-size:18px}.sh-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
 .sh-opt{display:flex;flex-direction:column;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:14px;background:var(--paper);padding:10px 6px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
 .sh-opt[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 2px var(--accent-soft)}.sh-prev{display:flex;align-items:flex-end;justify-content:center;height:54px;width:100%}.sh-prev svg{max-height:54px;max-width:90px;width:auto;height:auto}.sh-prev .shdeco{width:100%;height:26px}
+/* Türler kartı küçük: telefonda tek satır, yana kayar */
+@media (max-width:900px){html body #mainArea{grid-template-columns:minmax(0,1fr)!important}html body #mainArea>*{min-width:0!important;max-width:100%}html body #mainArea>aside>div{min-width:0}html body #mainArea>aside{padding:8px 10px!important;gap:6px!important;margin-bottom:10px!important;border-radius:16px!important}
+ html body #mainArea>aside h3{display:none!important}
+ html body #mainArea>aside>div{margin:0!important;padding:0!important}
+ html body #shelfList,html body #tagList{flex-wrap:nowrap!important;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;gap:5px!important;padding:2px 0}
+ html body #shelfList::-webkit-scrollbar,html body #tagList::-webkit-scrollbar{display:none}
+ html body #shelfList .shelfbtn,html body #tagList>*{flex:none;font-size:13px!important;padding:5px 11px!important;white-space:nowrap;min-height:0!important}
+ html body #shelfList .shelfbtn small{font-size:11px}
+ html body #tagList:empty{display:none}}
 #rFocus,#rNb,#rEmoBtn,#rQuote,#rTts,#ttsBar,.lfc:has(>label>input[data-opt=tts]){display:none!important}#reader:not(.ep-foot) #rHlBtn{display:none!important}
 .rxe{position:absolute;transform:translate(-50%,0);border:0;background:rgba(255,255,255,.85);border-radius:999px;width:34px;height:34px;font-size:19px;line-height:1;display:grid;place-items:center;box-shadow:0 3px 10px -4px rgba(0,0,0,.35);pointer-events:auto;cursor:pointer;padding:0}
 #reader:has(#inkBar:not([hidden])) .rxh,#reader:has(#inkBar:not([hidden])) .rxe{pointer-events:none}
@@ -5535,7 +5544,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v172';
+const DK_VER='v173';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
