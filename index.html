@@ -1726,6 +1726,10 @@ body.home-kindle #listArea{max-width:760px;margin-inline:auto}
 
 <script>
 /* yerel depolama (IndexedDB) — kitaplar ve dosyalar bu cihazda kalır */
+/* eşitleme: bu cihazda son gönderimden beri değişen kayıtlar ve alanlar (Drive'dan gelen eski bilgi bunların üstüne yazmasın) */
+function dkDirtyGet(){try{return JSON.parse(localStorage.getItem('dk-dirty')||'{}')}catch(e){return {}}}
+function dkDirty(path,keys){if(window.__dkPulling)return;try{const D=dkDirtyGet(),e=D[path]||(D[path]={}),t=Date.now();(keys&&keys.length?keys:['*']).forEach(k=>e[k]=t);localStorage.setItem('dk-dirty',JSON.stringify(D))}catch(e){}}
+function dkDirtyClear(upTo){try{const D=dkDirtyGet();for(const p of Object.keys(D)){const e=D[p];for(const k of Object.keys(e))if(e[k]<=upTo)delete e[k];if(!Object.keys(e).length)delete D[p]}localStorage.setItem('dk-dirty',JSON.stringify(D))}catch(e){}}
 const LOCAL=(()=>{
   let idb=null;const AURLc={};const BL=new Set();const listeners={};
   const open=()=>new Promise((ok,no)=>{const r=indexedDB.open('dijital-kutuphane',1);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('docs'))d.createObjectStore('docs');if(!d.objectStoreNames.contains('blobs'))d.createObjectStore('blobs')};r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
@@ -1739,8 +1743,8 @@ const LOCAL=(()=>{
   const rid=()=>[...crypto.getRandomValues(new Uint8Array(10))].map(b=>b.toString(16).padStart(2,'0')).join('');
   const docRef=path=>({id:path.split('/')[1],path,
     get:async()=>snapDoc(path.split('/')[1],mem[path]),
-    set:async data=>{const v=JSON.parse(JSON.stringify(data));await tx('docs','readwrite',s=>s.put(v,path));mem[path]=v;notify(path)},
-    update:async data=>{if(mem[path]===undefined)throw{code:'invalid_argument',message:'missing'};const v={...mem[path],...JSON.parse(JSON.stringify(data))};await tx('docs','readwrite',s=>s.put(v,path));mem[path]=v;notify(path)},
+    set:async data=>{const v=JSON.parse(JSON.stringify(data)),o=mem[path];await tx('docs','readwrite',s=>s.put(v,path));mem[path]=v;if(o===undefined)dkDirty(path);else{const ch=[...new Set([...Object.keys(o),...Object.keys(v)])].filter(k=>JSON.stringify(o[k])!==JSON.stringify(v[k]));if(ch.length)dkDirty(path,ch)}notify(path)},
+    update:async data=>{if(mem[path]===undefined)throw{code:'invalid_argument',message:'missing'};const o=mem[path];const v={...mem[path],...JSON.parse(JSON.stringify(data))};await tx('docs','readwrite',s=>s.put(v,path));mem[path]=v;{const ch=Object.keys(data||{}).filter(k=>JSON.stringify(o[k])!==JSON.stringify(v[k]));if(ch.length)dkDirty(path,ch)}notify(path)},
     delete:async()=>{await tx('docs','readwrite',s=>s.delete(path));delete mem[path];tombAdd(path);notify(path)},
     onSnapshot:(cb)=>{(listeners[path]=listeners[path]||[]).push(cb);setTimeout(()=>cb(snapDoc(path.split('/')[1],mem[path])),0);return()=>{listeners[path]=listeners[path].filter(f=>f!==cb)}}});
   const db={doc:p=>docRef(p),collection:col=>({path:col,doc:id=>docRef(col+'/'+(id||rid())),add:async d=>{const r=docRef(col+'/'+rid());await r.set(d);return r},get:async()=>colSnap(col),
@@ -3726,13 +3730,14 @@ async function backupData(){const get=async col=>{try{const s_=await st.db.colle
 function csvBooks(){const H=['Başlık','Yazar','Tür','Raf','Etiketler','Durum','Sayfa','Kaldığı sayfa','Bitirme','Puan','Yıl','Dergi','DOI','Dosya'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   return '﻿'+[H.map(q).join(','),...st.books.map(b=>[b.title,b.author,{kitap:'Kitap',pdf:'PDF',roman:'Romanım',makale:'Makale'}[b.kind]||b.kind,b.shelf,(b.tags||[]).join('; '),STATUS_LABEL[b.status]||b.status,b.pages||'',b.currentPage||'',b.finishedAt||'',b.rating||'',b.year||'',b.journal||'',b.doi||'',b.fileName||''].map(q).join(','))].join('\r\n')}
-async function restore(file,quiet){const m=$('bkMsg')||{textContent:''};try{const d=JSON.parse(await file.text());if(d&&d.app==='Mühürlü Mektuplar'&&d.mektup){mkMerge(d.mektup);m.textContent='Mektuplar yedekten yüklendi.';if(!quiet)toast('✉️ Mektuplar yüklendi');return}if(!d||d.app!=='Dijital Kütüphanem')throw 0;let n=0;try{if(d.mektup)mkMerge(d.mektup)}catch(e){}
+async function restore(file,quiet){const m=$('bkMsg')||{textContent:''};try{const d=JSON.parse(await file.text());if(d&&d.app==='Mühürlü Mektuplar'&&d.mektup){mkMerge(d.mektup);m.textContent='Mektuplar yedekten yüklendi.';if(!quiet)toast('✉️ Mektuplar yüklendi');return}if(!d||d.app!=='Dijital Kütüphanem')throw 0;let n=0;const DIRTY0=dkDirtyGet();try{if(d.mektup)mkMerge(d.mektup)}catch(e){}
   if(d.blobs&&typeof LOCAL!=='undefined'){const ids=Object.keys(d.blobs);let k=0;for(const id of ids){if(!LOCAL.has(id)){const x=d.blobs[id];try{await LOCAL.assets.putId(id,new Blob([b64dec(x.b64)],{type:x.type||'image/jpeg'}))}catch(e){}}if(++k%20===0)m.textContent='Görseller: '+k+'/'+ids.length}}
-  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages],['cal',d.cal],['tasks',d.tasks],['moods',d.moods],['habits',d.habits],['money',d.money],['lists',d.lists],['recipes',d.recipes],['goals',d.goals],['lifecfg',d.lifecfg],['weeks',d.weeks],['worries',d.worries],['mems',d.mems],['films',d.films],['songs',d.songs],['plists',d.plists],['cint',d.cint],['club',d.club],['acards',d.acards],['tzch',d.tzch],['hls',d.hls],['preds',d.preds],['bchars',d.bchars],['chtrash',d.chtrash]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
+  for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages],['cal',d.cal],['tasks',d.tasks],['moods',d.moods],['habits',d.habits],['money',d.money],['lists',d.lists],['recipes',d.recipes],['goals',d.goals],['lifecfg',d.lifecfg],['weeks',d.weeks],['worries',d.worries],['mems',d.mems],['films',d.films],['songs',d.songs],['plists',d.plists],['cint',d.cint],['club',d.club],['acards',d.acards],['tzch',d.tzch],['hls',d.hls],['preds',d.preds],['bchars',d.bchars],['chtrash',d.chtrash]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}if(quiet&&typeof LOCAL!=='undefined'&&window.__dkPulling){const dd=DIRTY0&&DIRTY0[col+'/'+id],curD=LOCAL.docs()[col+'/'+id];if(dd&&curD){if(dd['*'])continue;for(const k of Object.keys(dd)){if(k in curD)rest[k]=curD[k];else delete rest[k]}}}
+      await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
   if(d.settings){if(d.settings.thesis)await st.db.doc('settings/thesis').set(d.settings.thesis);if(d.settings.writing)await st.db.doc('settings/writing').set(d.settings.writing);if(d.settings.log)await st.db.doc('settings/log').set(d.settings.log);if(d.settings.bingo)await st.db.doc('settings/bingo').set(d.settings.bingo);if(d.settings.journal)await st.db.doc('settings/journal').set(d.settings.journal);if(d.settings.widgets)await st.db.doc('settings/widgets').set(d.settings.widgets);if(d.settings.stickers&&Array.isArray(d.settings.stickers.items)){const it=d.settings.stickers.items.filter(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(it.length||!STK.items.length)await st.db.doc('settings/stickers').set({items:it,emblem:it.some(x=>x.id===d.settings.stickers.emblem)?d.settings.stickers.emblem:'',updatedAt:new Date().toISOString()})}if(d.settings.ui){const u={...d.settings.ui};const hasStk=d.settings.stickers&&(d.settings.stickers.items||[]).some(x=>x&&x.id&&(typeof LOCAL==='undefined'||LOCAL.has(x.id)));if(u.art==='custom'&&!hasStk)u.art='fairy';setUI(u)}}
   m.textContent=`Geri yükleme tamam: ${n} kayıt.`+(typeof LOCAL!=='undefined'?' Şimdi Ayarlar → Klasörden ekle ile kitap klasörünü seç; dosyalar kayıtlarına kendiliğinden bağlanır.':'')}catch(e){m.textContent='Bu dosya bir Dijital Kütüphanem yedeği gibi görünmüyor.';if(quiet)throw e}}
 /* Drive ile otomatik eşitleme: açılışta/girişte Drive'daki daha yeni yedeği alır, değişiklikleri Drive'a yazar */
-const DBK={name:'Dijital Kütüphanem — eşitleme.json',busy:false};
+const DBK={name:'Dijital Kütüphanem — eşitleme.json',busy:false};Object.defineProperty(DBK,'pulling',{get(){return !!window.__dkPulling},set(v){window.__dkPulling=!!v}});
 function dbkGet(k){try{return localStorage.getItem('dk-bk-'+k)||''}catch(e){return ''}}
 function dbkSet(k,v){try{localStorage.setItem('dk-bk-'+k,v)}catch(e){}}
 function dbkHash(t){let h=5381;for(let i=0;i<t.length;i++)h=((h<<5)+h+t.charCodeAt(i))|0;return t.length+':'+h}
@@ -3792,10 +3797,10 @@ async function driveSync(force){
         const r=await gfetch(GD+'/'+encodeURIComponent(f.id)+'?alt=media');let txt=await r.text();
         try{const dd=dkTombApply(JSON.parse(txt));txt=JSON.stringify(dd);await dimgPull(dd)}catch(e){}
         DBK.pulling=true;try{await restore({text:async()=>txt},true);await dkTombLocal()}finally{setTimeout(()=>{DBK.pulling=false},1500)}await new Promise(x=>setTimeout(x,300));await dkFix();dbkSet('synced',f.modifiedTime);pulled=true;
-        await new Promise(x=>setTimeout(x,600));dbkSet('hash',dbkHash(dkPayload(dbkData(await backupData()),dimgMap())))}}
+        await new Promise(x=>setTimeout(x,600));dbkSet('hash',Object.keys(dkDirtyGet()).length?'':dbkHash(dkPayload(dbkData(await backupData()),dimgMap())))}}
     else dbkSet('id','');
     let fixed=0;try{fixed=await dkFix()}catch(e){}if(legacy)f=null;
-    const data0=dbkData(await backupData());const imap=dimgMap();try{if(await dimgPush(data0,imap,force?1000:150))dimgSave(imap)}catch(e){}
+    const T0=Date.now();const data0=dbkData(await backupData());const imap=dimgMap();try{if(await dimgPush(data0,imap,force?1000:150))dimgSave(imap)}catch(e){}
     if(!pulled&&(force||fixed||dimgMissing(data0))){try{await dimgPull({...JSON.parse(data0),imgs:imap});Object.assign(imap,dimgMap())}catch(e){}}
     const data=dkPayload(data0,imap),h=dbkHash(data);
     if(!(st.books||[]).length){dbkSet('hash',h)}
@@ -3806,14 +3811,14 @@ async function driveSync(force){
       const up='https://www.googleapis.com/upload/drive/v3/files';
       const go=i=>gfetch((i?up+'/'+encodeURIComponent(i):up)+'?uploadType=multipart&fields=id,modifiedTime',1,{method:i?'PATCH':'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body});
       let r;try{r=await go(id)}catch(e){if(id&&e&&(e.code==='http_404'||e.code==='http_403')){r=await go('')}else throw e}
-      const j=await r.json();dbkSet('id',j.id||id);dbkSet('synced',j.modifiedTime||new Date().toISOString());dbkSet('hash',h)}
+      const j=await r.json();dbkSet('id',j.id||id);dbkSet('synced',j.modifiedTime||new Date().toISOString());dbkSet('hash',h);dkDirtyClear(T0)}
     dbkSet('at',new Date().toISOString());bkWeekly().catch(()=>{});
     if(pulled){toast('Diğer cihazdaki değişiklikler alındı ☁️');try{render()}catch(e){}}
     try{const m=document.getElementById('dbkMsg');if(m)m.textContent=dbkStatus()}catch(e){}
     dbkChip();try{ssChip()}catch(e){}return true
   }finally{DBK.busy=false;try{window.dkSyncUi&&window.dkSyncUi()}catch(e){}}}
 const driveBackupNow=driveSync;
-if(typeof LOCAL!=='undefined')window.__dk={st:()=>st,driveSync:f=>driveSync(f),restore:t=>restore({text:async()=>t},true),sl:()=>seriesList()};
+if(typeof LOCAL!=='undefined')window.__dk={st:()=>st,driveSync:f=>driveSync(f),restore:t=>restore({text:async()=>t},true),sl:()=>seriesList(),pull:async t=>{DBK.pulling=true;try{await restore({text:async()=>t},true)}finally{DBK.pulling=false}},dirty:()=>dkDirtyGet()};
 function dbkStatus(){const a=dbkGet('at');if(!a)return "Henüz Drive ile eşitlenmedi.";const d=new Date(a);return "Son eşitleme: "+d.toLocaleDateString('tr-TR')+' '+d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}
 async function driveRestoreLatest(){dbkSet('synced','');await driveSync(true);return {modifiedTime:dbkGet('synced')}}
 function dbkChip(){try{window.dkSyncUi&&window.dkSyncUi()}catch(e){}{const c=document.getElementById('dbkChip');if(c)c.remove()}return;if(typeof GAUTH==='undefined'||!GAUTH.configured())return;let c=document.getElementById('dbkChip');const need=!!dbkGet('at')&&!GAUTH.signedIn();
@@ -5572,7 +5577,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v186';
+const DK_VER='v187';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
