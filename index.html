@@ -5580,7 +5580,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v190';
+const DK_VER='v191';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -9107,7 +9107,8 @@ async function openReader(b){
     renderPage();try{rthBuild()}catch(e){}
   }catch(err){
     console.warn('okuyucu',err);
-    if(b.source==='drive'&&(bigDrive(b)||(err&&(err.code||err.ui))))rMsg(`${bigDrive(b)?'Bu kitap Google Drive bağlantısının tek seferde getirebildiğinden (yaklaşık 6 MB) büyük. Dosyayı bir kez seçersen uygulamaya eklenir, sıkıştırılır ve bundan sonra hep burada açılır. Seçim ekranında Google Drive\'ı da seçebilirsin.<button class="btn primary" id="rAttach" type="button">Dosyayı seç, uygulamaya ekle</button>':esc(driveErr(err))}${b.driveUrl?`<a class="btn" href="${esc(b.driveUrl)}" target="_blank" rel="noopener">Google Drive'da aç</a>`:''}`);
+    setTimeout(()=>{const x=document.getElementById('rRecon');if(x)x.onclick=()=>{x.textContent='Google açılıyor…';try{GAUTH.expire()}catch(e){}GAUTH.needConsent=true;GAUTH.token().then(()=>{toast('Google izni yenilendi ✓');try{closeReader()}catch(e){}setTimeout(()=>openReader(b),300)},e=>{x.textContent='🔑 Tekrar dene';toast((e&&e.ui)||'Olmadı')})}},50);
+    if(b.source==='drive'&&(bigDrive(b)||(err&&(err.code||err.ui))))rMsg(`${bigDrive(b)?'Bu kitap Google Drive bağlantısının tek seferde getirebildiğinden (yaklaşık 6 MB) büyük. Dosyayı bir kez seçersen uygulamaya eklenir, sıkıştırılır ve bundan sonra hep burada açılır. Seçim ekranında Google Drive\'ı da seçebilirsin.<button class="btn primary" id="rAttach" type="button">Dosyayı seç, uygulamaya ekle</button>':esc(driveErr(err))+(err&&/^(http_40[34]|need_scope)$/.test(err.code||'')?'<button class="btn primary" id="rRecon" type="button">🔑 Google iznini yenile ve tekrar dene</button>':'')}${b.driveUrl?`<a class="btn" href="${esc(b.driveUrl)}" target="_blank" rel="noopener">Google Drive'da aç</a>`:''}`);
     else if(isEpubB(b))rMsg('Bu EPUB açılamadı. Dosya bozuk ya da şifreli (DRM korumalı) olabilir.<br><small class="hint">'+esc(String(err&&err.message||err||'').slice(0,140))+'</small>');
     else rMsg('Bu PDF açılamadı. Dosya bozuk ya da şifreli olabilir.');
     const ra=$('rAttach');if(ra)ra.onclick=()=>{const bb=st.books.find(x=>x.id===b.id)||b;st.openAfter=b.id;closeReader();openForm(bb);const fi=$('fFile');if(fi)fi.click()};
