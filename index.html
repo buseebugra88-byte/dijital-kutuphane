@@ -5580,7 +5580,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v191';
+const DK_VER='v192';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -8982,9 +8982,19 @@ function driveErr(e){if(e&&e.ui)return e.ui;const c=e&&e.code;return {needs_reau
 async function driveBytes(b){const key='https://dk-offline/drive/'+encodeURIComponent(b.driveId);let C=null;try{C=await caches.open('dk-books')}catch(e){}
   if(C){try{const hit=await C.match(key);if(hit)return new Uint8Array(await hit.arrayBuffer())}catch(e){}}
   if(!navigator.onLine)throw{ui:'İnternet yok. Bu kitap bu cihazda daha önce açılmadığı için çevrimdışı okunamıyor.'};
-  const r=await gfetch(GD+'/'+encodeURIComponent(b.driveId)+'?alt=media&supportsAllDrives=true');const buf=await r.arrayBuffer();
+  let r;try{r=await gfetch(GD+'/'+encodeURIComponent(b.driveId)+'?alt=media&supportsAllDrives=true')}catch(e){
+    /* bağlı olduğu Drive dosyası silinmiş/değişmişse: aynı adlı (tercihen aynı boyutlu) dosyayı bul, kitaba yeniden bağla */
+    if(!(e&&e.code==='http_404'))throw e;const nid=await driveRelink(b);if(!nid)throw e;
+    r=await gfetch(GD+'/'+encodeURIComponent(nid)+'?alt=media&supportsAllDrives=true')}
+  const buf=await r.arrayBuffer();
   if(C){try{await C.put(key,new Response(buf.slice(0),{headers:{'Content-Type':'application/octet-stream'}}))}catch(e){}}
   return new Uint8Array(buf)}
+async function driveRelink(b){const qe=x=>String(x||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");const tries=[];
+  if(b.fileName)tries.push("name = '"+qe(b.fileName)+"'");if(b.title){tries.push("name contains '"+qe(String(b.title).slice(0,60))+"' and mimeType = 'application/pdf'")}
+  for(const q of tries){try{const p=new URLSearchParams({q:q+' and trashed = false',pageSize:'20',fields:'files(id,name,size)',supportsAllDrives:'true',includeItemsFromAllDrives:'true'});
+    const j=await (await gfetch(GD+'?'+p)).json();const fs=(j.files||[]).filter(f=>f.id!==b.driveId);if(!fs.length)continue;
+    const f=fs.find(f=>b.fileSize&&+f.size===+b.fileSize)||fs[0];const u={driveId:f.id};try{await st.db.collection('books').doc(b.id).update(u)}catch(x){}Object.assign(b,u);try{toast('📚 Kitabın Drive dosyası yeniden bağlandı')}catch(x){}return f.id}catch(e){}}
+  return ''}
 async function driveEnsureFolder(){
   let d={};try{const s_=await st.db.doc('settings/drive').get();if(s_.exists)d=s_.data()}catch(e){}
   if(d.partsId)return d.partsId;if(!d.rootId)throw{ui:'Önce Ayarlar → Google Drive\'dan kütüphane klasörünü bul.'};
