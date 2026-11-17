@@ -1793,7 +1793,7 @@ const GAUTH=(()=>{
     const go=()=>{client=client||google.accounts.oauth2.initTokenClient({client_id:CFG.googleWebClientId,scope:SCOPE,callback:()=>{}});
       client.callback=r=>{if(!r||r.error)return rej({ui:'Google girişi iptal edildi.'});save(r.access_token,+r.expires_in||3500);res()};
       client.error_callback=e=>{if(!(e&&e.type==='popup_closed'))reconnectBar();rej({ui:e&&e.type==='popup_closed'?'Giriş penceresi kapatıldı.':'Google penceresi açılamadı — üstteki “Google Drive bağlantısını yenile” düğmesine dokun.'})};
-      client.requestAccessToken({prompt:''})};
+      client.requestAccessToken({prompt:G.needConsent?'consent':''});G.needConsent=false};
     if(window.google&&google.accounts&&google.accounts.oauth2)go();else loadGis().then(go,rej)})}
   const G={onchange:null,
     native,configured:()=>native()?!!CFG.googleIosClientId:!!CFG.googleWebClientId,
@@ -1814,6 +1814,7 @@ async function gfetch(url,retry=1,opts){
   if(r.status===401&&retry){GAUTH.expire();return gfetch(url,0,opts)}
   if((r.status===429||r.status>=500)&&retry){await new Promise(x=>setTimeout(x,1500+Math.random()*1000));return gfetch(url,0,opts)}
   if(!r.ok){let m='';try{m=((await r.json()).error||{}).message||''}catch(e){}
+    if(r.status===404&&/\/files\/[^/?]+\?alt=media/.test(url)){try{const ti=await (await fetch('https://oauth2.googleapis.com/tokeninfo?access_token='+encodeURIComponent(t))).json();if(ti&&ti.scope&&!/drive\.readonly|auth\/drive( |$)/.test(ti.scope)){GAUTH.needConsent=true;throw{code:'need_scope',ui:'Google, uygulamanın Drive\'daki kitaplarını görmesine izin vermemiş. Sağ üstteki ☁️ düğmesine dokun; açılan Google penceresinde “Google Drive dosyalarınızı görme” kutusunu işaretleyip Devam\'a bas.'}}}catch(x){if(x&&x.code==='need_scope'){try{GAUTH.expire()}catch(e){}throw x}}}
     throw{code:'http_'+r.status,ui:r.status===404?'Dosya Drive\'da bulunamadı (silinmiş ya da taşınmış olabilir).':r.status===403?'Google Drive bu dosyaya erişime izin vermedi. '+m:'Google Drive hatası ('+r.status+'). '+m}}
   return r}
 function v2q(q){return q.replace(/parentId = '([^']+)'/g,"'$1' in parents").replace(/\btitle\b/g,'name')+' and trashed = false'}
@@ -5579,7 +5580,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v189';
+const DK_VER='v190';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
