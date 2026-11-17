@@ -1248,7 +1248,9 @@ body .bk .t{font-weight:700}
 .actions .btn.danger,#delBtn,#confirmYes{background:#fff5f4!important;color:#c0392b!important;border:1.5px solid #e3a59e!important;font-weight:600;padding:8px 18px!important;font-size:15px!important;width:auto!important}
 .actions .btn.danger:hover,#delBtn:hover,#confirmYes:hover{background:#c0392b!important;color:#fff!important;border-color:#c0392b!important}
 .qm-bar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:0 0 14px;padding:12px 14px;border-radius:18px;background:color-mix(in srgb,#8fb47e 18%,var(--paper,#fff));border:1.5px dashed #9cbf8b;position:sticky;top:8px;z-index:20;box-shadow:0 6px 18px -12px rgba(0,0,0,.35)}
-.qm-bar.off{background:none;border:0;padding:0;position:static;box-shadow:none;justify-content:flex-end}
+.qm-bar.off{background:none;border:0;padding:0;position:static;box-shadow:none;justify-content:flex-end}.qm-bar.off:not(.open)>.btn:not(.qb-tog){display:none}.qm-bar.off .qb-tog{font-size:13px;padding:6px 12px}
+.tools:not(.open) .tx{display:none!important}#toolsMore{flex:none;white-space:nowrap}.tools.open #toolsMore{background:var(--ink);color:var(--paper)}
+html body .tools input#q[type=search]{flex:1 1 0%!important}html body .tools.open input#q[type=search]{flex:1 1 100%!important}
 .qm-bar>div{flex:1 1 260px;display:grid;gap:2px}.qm-bar>div span{font-size:13px;color:var(--muted,#777)}
 .qm-date{display:flex;gap:6px;align-items:center;font-size:13px}.qm-date input{font:inherit;padding:5px 8px;border-radius:10px;border:1px solid var(--line,#ddd);background:var(--paper,#fff)}
 .bk .qm-chk{display:none}
@@ -1483,11 +1485,11 @@ body.home-kindle #listArea{max-width:760px;margin-inline:auto}
 
   <div class="tools">
     <input type="search" id="q" placeholder="Kitap adı, yazar, etiket ya da not ara…" aria-label="Ara">
-    <select id="statusFilter" aria-label="Duruma göre filtrele"></select>
-    <button class="btn" type="button" id="pickBtn">🎲 Ne okusam?</button><button class="btn" type="button" id="litBtn" hidden>📊 Literatür tablosu</button>
-    <div class="viewtog" role="group" aria-label="Görünüm"><button type="button" data-view="panel" id="vPanel" hidden>Ana sayfa</button><button type="button" data-view="raf" id="vRaf"><svg class="ln" aria-hidden="true"><use href="#i-stack"/></svg>Raf</button><button type="button" data-view="kart" id="vKart"><svg class="ln" aria-hidden="true"><use href="#i-openbook"/></svg>Kart</button></div>
-    <select id="covSel" aria-label="Kapak boyutu"><option value="xs">▫ Mini kapak</option><option value="s">▫ Küçük kapak</option><option value="m">▫ Orta kapak</option><option value="l">▫ Büyük kapak</option></select>
-    <select id="sortSel" aria-label="Sırala">
+    <button class="btn" type="button" id="toolsMore" aria-expanded="false">⚙︎ Düzen</button><select id="statusFilter" class="tx" aria-label="Duruma göre filtrele"></select>
+    <button class="btn tx" type="button" id="pickBtn">🎲 Ne okusam?</button><button class="btn" type="button" id="litBtn" hidden>📊 Literatür tablosu</button>
+    <div class="viewtog tx" role="group" aria-label="Görünüm"><button type="button" data-view="panel" id="vPanel" hidden>Ana sayfa</button><button type="button" data-view="raf" id="vRaf"><svg class="ln" aria-hidden="true"><use href="#i-stack"/></svg>Raf</button><button type="button" data-view="kart" id="vKart"><svg class="ln" aria-hidden="true"><use href="#i-openbook"/></svg>Kart</button></div>
+    <select id="covSel" class="tx" aria-label="Kapak boyutu"><option value="xs">▫ Mini kapak</option><option value="s">▫ Küçük kapak</option><option value="m">▫ Orta kapak</option><option value="l">▫ Büyük kapak</option></select>
+    <select id="sortSel" class="tx" aria-label="Sırala">
       <option value="added">En son eklenen</option>
       <option value="title">Ada göre (A–Z)</option>
       <option value="author">Yazara göre</option>
@@ -5577,7 +5579,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v187';
+const DK_VER='v188';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -8031,11 +8033,11 @@ window.__ep2={toc:()=>R.epub&&epToc(R.epub),pg:()=>({...EPG}),turn:d=>epTurn(d),
   new MutationObserver(()=>requestAnimationFrame(fit)).observe(T,{childList:true,subtree:true,attributes:true,attributeFilter:['aria-pressed']});T.addEventListener('scroll',end,{passive:true});addEventListener('resize',fit)})();
 
 /* ---------- ✅ Hızlı "bitti" işaretleme ---------- */
-const QM={on:false,n:0,date:''};var CM={on:false,n:0};
+const QM={on:false,n:0,date:''};var QB={open:false};var CM={on:false,n:0};
 function qmToday(){const d=new Date();return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
 function qmBar(){if(st.tab==='roman')return '';
   if(CM.on)return `<div class="qm-bar"><div><b>🙈 Kapak gizle</b><span>Görmek istemediğin kapaklara dokun, yerine sade kapak gelir. Tekrar dokunursan eski kapak geri gelir.${CM.n?` <b>${CM.n} kapak</b> değişti.`:''}</span></div><button class="btn primary" type="button" data-cm="off">Bitti</button></div>`;
-  if(TM.on)return tmBar();if(!QM.on)return `<div class="qm-bar off"><button class="btn" type="button" data-aihub>✨ Yapay zekâ</button>${(()=>{const n=blCount();return BL.busy?`<button class="btn" type="button" id="blLibBtn" data-blstop>📖 ${esc(BL.msg||'')} — durdur</button>`:n?`<button class="btn" type="button" id="blLibBtn" data-blbulk>📖 ${n} kitabın tanıtımını bul</button>`:''})()}<button class="btn" type="button" data-tm="on">🏷 Hızlı tür ver</button><button class="btn" type="button" data-qm="on">✅ Bitenleri hızlı işaretle</button><button class="btn" type="button" data-cm="on">🙈 Kapak gizle</button></div>`;
+  if(TM.on)return tmBar();if(!QM.on)return `<div class="qm-bar off${QB.open?' open':''}"><button class="btn qb-tog" type="button" data-qbtog>${QB.open?'✕ Kapat':'🧰 Araçlar'}</button><button class="btn" type="button" data-aihub>✨ Yapay zekâ</button>${(()=>{const n=blCount();return BL.busy?`<button class="btn" type="button" id="blLibBtn" data-blstop>📖 ${esc(BL.msg||'')} — durdur</button>`:n?`<button class="btn" type="button" id="blLibBtn" data-blbulk>📖 ${n} kitabın tanıtımını bul</button>`:''})()}<button class="btn" type="button" data-tm="on">🏷 Hızlı tür ver</button><button class="btn" type="button" data-qm="on">✅ Bitenleri hızlı işaretle</button><button class="btn" type="button" data-cm="on">🙈 Kapak gizle</button></div>`;
   return `<div class="qm-bar"><div><b>✅ Hızlı işaretleme</b><span>Bitirdiğin kitapların kapağına dokun; yeniden dokunursan geri alınır.${QM.n?` <b>${QM.n} kitap</b> işaretlendi.`:''}</span></div>
     <label class="qm-date">Bitirme tarihi <input type="date" id="qmDate" value="${esc(QM.date||qmToday())}" max="${qmToday()}"></label><button class="btn primary" type="button" data-qm="off">Bitti</button></div>`}
 function qmSet(on){QM.on=on;if(on&&TM.on){TM.on=false;document.body.classList.remove('tm-on')}if(on){QM.n=0;QM.date=QM.date||qmToday()}document.body.classList.toggle('qm-on',on);renderList()}
@@ -8047,6 +8049,8 @@ async function qmToggle(id){const b=st.books.find(x=>x.id===id);if(!b||!st.db)re
   Object.assign(b,up);QM.n+=done?-1:1;if(QM.n<0)QM.n=0;renderList();
   try{await st.db.collection('books').doc(id).update(up);if(!done)toast(`“${b.title}” bitti 🎉`)}catch(e){toast('Kaydedilemedi')}}
 function cmSet(on){CM.on=on;CM.n=0;if(on){QM.on=false;TM.on=false;document.body.classList.remove('qm-on','tm-on')}document.body.classList.toggle('qm-on',on);renderList()}
+$('listArea').addEventListener('click',e=>{if(e.target.closest('[data-qbtog]')){e.stopPropagation();QB.open=!QB.open;renderList()}},true);
+(()=>{const t=document.querySelector('.tools'),b=$('toolsMore');if(!t||!b)return;const set=o=>{t.classList.toggle('open',o);b.setAttribute('aria-expanded',o);b.textContent=o?'✕ Kapat':'⚙︎ Düzen';try{localStorage.setItem('dk-tools-open',o?'1':'')}catch(e){}};let o0='';try{o0=localStorage.getItem('dk-tools-open')}catch(e){}set(!!o0);b.addEventListener('click',()=>set(!t.classList.contains('open')))})();
 $('listArea').addEventListener('click',async e=>{const q=e.target.closest('[data-cm]');if(q){e.stopPropagation();cmSet(q.dataset.cm==='on');return}
   if(!CM.on)return;const bk=e.target.closest('[data-bk]');if(!bk)return;e.preventDefault();e.stopPropagation();const b=st.books.find(x=>x.id===bk.dataset.bk);if(!b||!st.db)return;
   const v=!b.plainCover;b.plainCover=v;CM.n++;renderList();try{await st.db.collection('books').doc(b.id).update({plainCover:v})}catch(x){toast('Kaydedilemedi')}},true);
