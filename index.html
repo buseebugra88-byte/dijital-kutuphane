@@ -5579,7 +5579,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v188';
+const DK_VER='v189';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -5627,8 +5627,8 @@ let DKAS={busy:false};
 /* 📚 Drive'daki "seriler" listesi: kitaplara seri adı ve sırası yazılır (senin elle girdiğin seriye dokunulmaz) */
 async function dkSeriesPatch(){try{if(typeof GAUTH==='undefined'||!GAUTH.signedIn()||!st.ready)return;const now=Date.now();if(now-(DKAS.serAt||0)<10*60000)return;DKAS.serAt=now;
   const q="name = 'Dijital Kütüphanem — seriler.json' and trashed = false";const j=await (await gfetch(GD+'?q='+encodeURIComponent(q)+'&pageSize=1&orderBy=modifiedTime desc&fields='+encodeURIComponent('files(id,modifiedTime)'))).json();
-  const f=j.files&&j.files[0];if(!f||dbkGet('serpatch')===f.modifiedTime)return;const data=await (await gfetch(GD+'/'+f.id+'?alt=media')).json();const M=data&&data.series||{};let n=0;
-  for(const b of st.books){const v=M[b.id];if(!v)continue;if(b.series&&!b.serPatch)continue;if(b.series===v[0]&&+b.seriesNo===+v[1])continue;const u={series:v[0],seriesNo:+v[1]||0,serPatch:1};await st.db.collection('books').doc(b.id).update(u);Object.assign(b,u);n++}
+  const f=j.files&&j.files[0];if(!f)return;const data=await (await gfetch(GD+'/'+f.id+'?alt=media')).json();const M=data&&data.series||{};let n=0;
+  for(const b of st.books){const v=M[b.id];if(!v)continue;if(b.series&&!b.serPatch)continue;if(b.series===v[0]&&+b.seriesNo===+v[1])continue;const u={series:v[0],seriesNo:+v[1]||0,serPatch:1};try{await st.db.collection('books').doc(b.id).update(u);Object.assign(b,u);n++}catch(e){}}
   dbkSet('serpatch',f.modifiedTime);if(n){toast(`📚 ${n} kitabın serisi ve sırası eklendi`);try{SER_C.clear()}catch(e){}try{render()}catch(e){}}}catch(e){}}
 /* 📚 yeni kitaplar seriye kendiliğinden girsin: önce dosya adından/bilinen serilerden, sonra (açıksa) yapay zekâyla */
 const SAU={at:0,busy:false};
