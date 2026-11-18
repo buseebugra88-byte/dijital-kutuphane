@@ -2064,7 +2064,7 @@ function renderSide(){
   $('shelfOpts').innerHTML=Object.keys(st.books.reduce((a,b)=>(b.shelf&&(a[b.shelf]=1),a),{})).map(s=>`<option value="${esc(s)}">`).join('');
 }
 /* bir serinin bütün kitapları tek rafta dursun: serinin "ev rafı" en küçük numaralı kitabının rafı */
-function serHome(b){const sr=seriesOf(b);if(!sr)return b.shelf||'';const k=trLow(sr.name);let H=serHome.c;if(!H||H.n!==st.books.length||H.t!==serHome.t){H={n:st.books.length,t:serHome.t,m:{}};const best={};st.books.forEach(x=>{if(x.deleted||!x.shelf)return;const s2=seriesOf(x);if(!s2)return;const kk=trLow(s2.name),no=s2.no||99;if(!best[kk]||no<best[kk][0])best[kk]=[no,x.shelf]});Object.keys(best).forEach(kk=>H.m[kk]=best[kk][1]);serHome.c=H}return H.m[k]||b.shelf||''}
+function serHome(b){const sr=seriesOf(b);if(!sr)return b.shelf||'';const k=trLow(sr.name);let H=serHome.c;if(!H||H.n!==st.books.length||H.t!==serHome.t){H={n:st.books.length,t:serHome.t,m:{}};const cnt={};st.books.forEach(x=>{if(x.deleted||!x.shelf)return;const s2=seriesOf(x);if(!s2)return;const kk=trLow(s2.name);const c=cnt[kk]||(cnt[kk]={});c[x.shelf]=(c[x.shelf]||0)+1});Object.keys(cnt).forEach(kk=>{H.m[kk]=Object.entries(cnt[kk]).sort((a,b)=>b[1]-a[1])[0][0]});serHome.c=H}return H.m[k]||b.shelf||''}
 function filtered(){serHome.t=(serHome.t||0)+1;
   const q=low(st.q);
   let r=st.books.filter(b=>inTab(b)&&(!st.shelf||b.shelf===st.shelf)&&(!st.tag||(b.tags||[]).includes(st.tag))&&(!st.status||b.status===st.status)&&
@@ -2476,6 +2476,10 @@ function rvRender(){const pg=$('rvPage'),b=st.books.find(x=>x.id===RV.id);if(!pg
   requestAnimationFrame(()=>pg.querySelectorAll('textarea').forEach(rvGrow))}
 document.addEventListener('click',e=>{const x=e.target.closest('[data-rvopen]');if(!x)return;e.preventDefault();e.stopPropagation();const id=x.dataset.rvopen||(st.editing&&st.editing.id);if(!id)return;if(!$('veil').hidden&&x.id==='rvBtn')$('veil').hidden=true;rvOpen(id)},true);
 setTimeout(async()=>{try{if(typeof shColors!=='function')return;const L=st.books.filter(b=>!b.deleted&&coverSrc(b)&&!shSpc()[b.id]);if(!L.length)return;await shColors(L);bkBoard.m=null;if(st.sec==='library'||st.sec==='home')renderList()}catch(e){}},9000);
+async function serUnify(){if(!st.ready||!st.db||serUnify.done)return;serUnify.done=1;const g={};st.books.forEach(x=>{if(x.deleted||!x.shelf||x.kind==='roman'||x.kind==='makale')return;const s2=seriesOf(x);if(!s2)return;(g[trLow(s2.name)]=g[trLow(s2.name)]||[]).push(x)});let n=0;const empt=new Set();
+  for(const L of Object.values(g)){const c={};L.forEach(x=>c[x.shelf]=(c[x.shelf]||0)+1);const ks=Object.entries(c).sort((a,b)=>b[1]-a[1]);if(ks.length<2||ks[0][1]===ks[1][1])continue;const to=ks[0][0];for(const x of L){if(x.shelf===to)continue;empt.add(x.shelf);x.shelf=to;try{await st.db.collection('books').doc(x.id).update({shelf:to})}catch(e){}n++}}
+  if(n){empt.forEach(t=>{try{turPrune(t)}catch(e){}});try{render()}catch(e){}}}
+setTimeout(()=>{try{serUnify()}catch(e){}},5000);
 function bkBoard(b){let c='';try{c=(bkBoard.m||(bkBoard.m=shSpc()))[b.id]||''}catch(e){}return c||rvColor(b)}
 function bookCap(b){return `<div class="bkw"><div class="bkbox" style="--bc:${bkBoard(b)}">${bookHtml(b)}<span class="bkpg" aria-hidden="true"></span></div><div class="bkc"><b data-rvopen="${b.id}" role="button" tabindex="0" title="İnceleme sayfası" style="cursor:pointer">${esc(b.title||'')}</b>${b.author?`<small>${esc(b.author)}</small>`:''}</div></div>`}
 
@@ -5930,7 +5934,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v202';
+const DK_VER='v203';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
