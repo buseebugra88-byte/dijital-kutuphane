@@ -1666,7 +1666,7 @@ html[data-preset=orman] .sidenav .sn-brand,html[data-preset=orman] .sidenav .sn-
     <select id="sortSel" class="tx" aria-label="Sırala">
       <option value="added">En son eklenen</option>
       <option value="title">Ada göre (A–Z)</option>
-      <option value="author">Yazara göre</option>
+      <option value="author">Yazara ve seriye göre</option>
       <option value="finished">Bitirme tarihine göre</option>
     </select>
   </div>
@@ -2024,7 +2024,7 @@ function emblemSvg(word){
 
 function catHtml(){return `<div class="stamps-row">${'__STAMPS__'}</div><svg class="scene ln no-stamp-alt" style="display:none" viewBox="0 0 120 70" aria-hidden="true"><use href="#i-cat"/></svg>`.replace('__STAMPS__',stampSvg('bunny',72)+stampSvg('frog',84)+stampSvg('cat',72))}
 
-const st={books:[],goal:24,tab:'all',shelf:null,tag:null,status:'',q:'',sort:'added',db:null,assets:null,ready:false,editing:null};
+const st={books:[],goal:24,tab:'all',shelf:null,tag:null,status:'',q:'',sort:(()=>{try{return localStorage.getItem('dk-sort')||'author'}catch(e){return 'author'}})(),db:null,assets:null,ready:false,editing:null};
 st.view='panel';st.sec='home';st.secSub={};st.libView='raf';
 try{const v=localStorage.getItem('kt-libview');if(v)st.libView=v;const sc=localStorage.getItem(window.DK_APP?'kt-sec-'+window.DK_APP:'kt-sec');if(sc)st.sec=sc;const ss=JSON.parse(localStorage.getItem('kt-secsub')||'{}');st.secSub=ss||{}}catch(e){}
 if(window.DK_MASA){if(!['notes','academic','settings'].includes(st.sec))st.sec='notes';try{document.getElementById('snTitle').textContent='Çalışma Masam'}catch(e){}}else if(window.DK_YAZAR){if(!['writer','settings'].includes(st.sec))st.sec='writer';try{document.getElementById('snTitle').textContent='Yazar Köşem'}catch(e){}}else if(['notes','academic','life','writer'].includes(st.sec))st.sec='home';
@@ -2065,12 +2065,14 @@ function renderSide(){
 }
 /* bir serinin bütün kitapları tek rafta dursun: serinin "ev rafı" en küçük numaralı kitabının rafı */
 function serHome(b){const sr=seriesOf(b);if(!sr)return b.shelf||'';const k=trLow(sr.name);let H=serHome.c;if(!H||H.n!==st.books.length||H.t!==serHome.t){H={n:st.books.length,t:serHome.t,m:{}};const cnt={};st.books.forEach(x=>{if(x.deleted||!x.shelf)return;const s2=seriesOf(x);if(!s2)return;const kk=trLow(s2.name);const c=cnt[kk]||(cnt[kk]={});c[x.shelf]=(c[x.shelf]||0)+1});Object.keys(cnt).forEach(kk=>{H.m[kk]=Object.entries(cnt[kk]).sort((a,b)=>b[1]-a[1])[0][0]});serHome.c=H}return H.m[k]||b.shelf||''}
+/* yazar anahtarı: büyük/küçük harf, nokta, boşluk farkları yok sayılır; yazarı boş kitap serisinin yazarını alır */
+function authKey(b){let a=(b.author||'').trim();if(!a){const sr=seriesOf(b);if(sr){const k=trLow(sr.name),o=st.books.find(x=>x.author&&x.author.trim()&&seriesOf(x)&&trLow(seriesOf(x).name)===k);if(o)a=o.author}}if(!a&&b.fileName){const m=String(b.fileName).match(/^([^-–#@]{3,40}?)\s[-–]\s/);if(m&&!/\d/.test(m[1]))a=m[1]}return trLow(a).replace(/[.\s]+/g,' ').replace(/frieda/g,'freida').trim()}
 function filtered(){serHome.t=(serHome.t||0)+1;
   const q=low(st.q);
   let r=st.books.filter(b=>inTab(b)&&(!st.shelf||b.shelf===st.shelf)&&(!st.tag||(b.tags||[]).includes(st.tag))&&(!st.status||b.status===st.status)&&
     (!q||low([b.title,b.author,b.shelf,b.note,(b.tags||[]).join(' ')].join(' ')).includes(q)));
   const cmp={added:(a,b)=>(b.addedAt||'').localeCompare(a.addedAt||''),title:(a,b)=>{const sa=seriesOf(a),sb=seriesOf(b),ka=sa?sa.name:(a.title||''),kb=sb?sb.name:(b.title||'');const c=ka.localeCompare(kb,TR);if(c)return c;if(sa&&sb)return (sa.no-sb.no)||(a.title||'').localeCompare(b.title||'',TR);return (sa?1:0)-(sb?1:0)||(a.title||'').localeCompare(b.title||'',TR)},
-    author:(a,b)=>(a.author||'').localeCompare(b.author||'',TR),finished:(a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||'')}[st.sort];
+    author:(a,b)=>{const ka=authKey(a),kb=authKey(b);if(!ka!==!kb)return ka?-1:1;const c=ka.localeCompare(kb,TR);if(c)return c;const sa=seriesOf(a),sb=seriesOf(b);if(!sa!==!sb)return sa?-1:1;if(sa&&sb){const d=sa.name.localeCompare(sb.name,TR);if(d)return d;return (sa.no-sb.no)}return (a.title||'').localeCompare(b.title||'',TR)},finished:(a,b)=>(b.finishedAt||'').localeCompare(a.finishedAt||'')}[st.sort];
   r.sort(cmp);if(st.sort==='title')return r;
   /* seriler her rafta bir arada ve 1, 2, 3… sırasıyla; seri, rafa ilk düşen kitabının yerinde durur */
   const G={},out=[];r.forEach(b=>{const sr=seriesOf(b);if(sr){const k=trLow(sr.name)+'|'+serHome(b);if(!G[k]){G[k]=[];out.push(G[k])}G[k].push([sr.no||0,b])}else out.push(b)});
@@ -2347,7 +2349,7 @@ $('shelfList').addEventListener('click',e=>{const t=e.target.closest('[data-shel
 $('tagList').addEventListener('click',e=>{const t=e.target.closest('[data-tag]');if(!t)return;st.tag=st.tag===t.dataset.tag?null:t.dataset.tag;render()});st.tag=null;
 $('q').addEventListener('input',e=>{st.q=e.target.value;renderList()});
 $('statusFilter').addEventListener('change',e=>{st.status=e.target.value;renderList()});
-$('sortSel').addEventListener('change',e=>{st.sort=e.target.value;renderList()});
+$('sortSel').addEventListener('change',e=>{st.sort=e.target.value;try{localStorage.setItem('dk-sort',st.sort)}catch(x){}renderList()});try{$('sortSel').value=st.sort}catch(e){}
 $('covSel').addEventListener('change',e=>{UI.cover=e.target.value;try{localStorage.setItem('dk-ui',JSON.stringify(UI))}catch(x){}applyUI();try{window.dispatchEvent(new CustomEvent('dk-change',{detail:'settings/ui'}))}catch(x){}renderList()});
 $('listArea').addEventListener('click',e=>{
   if(e.target.closest('[data-link]'))return;
@@ -2476,10 +2478,13 @@ function rvRender(){const pg=$('rvPage'),b=st.books.find(x=>x.id===RV.id);if(!pg
   requestAnimationFrame(()=>pg.querySelectorAll('textarea').forEach(rvGrow))}
 document.addEventListener('click',e=>{const x=e.target.closest('[data-rvopen]');if(!x)return;e.preventDefault();e.stopPropagation();const id=x.dataset.rvopen||(st.editing&&st.editing.id);if(!id)return;if(!$('veil').hidden&&x.id==='rvBtn')$('veil').hidden=true;rvOpen(id)},true);
 setTimeout(async()=>{try{if(typeof shColors!=='function')return;const L=st.books.filter(b=>!b.deleted&&coverSrc(b)&&!shSpc()[b.id]);if(!L.length)return;await shColors(L);bkBoard.m=null;if(st.sec==='library'||st.sec==='home')renderList()}catch(e){}},9000);
-async function serUnify(){if(!st.ready||!st.db||serUnify.done)return;serUnify.done=1;const g={};st.books.forEach(x=>{if(x.deleted||!x.shelf||x.kind==='roman'||x.kind==='makale')return;const s2=seriesOf(x);if(!s2)return;(g[trLow(s2.name)]=g[trLow(s2.name)]||[]).push(x)});let n=0;const empt=new Set();
-  for(const L of Object.values(g)){const c={};L.forEach(x=>c[x.shelf]=(c[x.shelf]||0)+1);const ks=Object.entries(c).sort((a,b)=>b[1]-a[1]);if(ks.length<2||ks[0][1]===ks[1][1])continue;const to=ks[0][0];for(const x of L){if(x.shelf===to)continue;empt.add(x.shelf);x.shelf=to;try{await st.db.collection('books').doc(x.id).update({shelf:to})}catch(e){}n++}}
-  if(n){empt.forEach(t=>{try{turPrune(t)}catch(e){}});try{render()}catch(e){}}}
-setTimeout(()=>{try{serUnify()}catch(e){}},5000);
+async function serUnify(){if(!st.ready||!st.db||serUnify.busy)return;serUnify.busy=1;try{const g={};st.books.forEach(x=>{if(x.deleted||x.kind==='roman'||x.kind==='makale')return;const s2=seriesOf(x);if(!s2)return;(g[trLow(s2.name)]=g[trLow(s2.name)]||[]).push(x)});let n=0;const empt=new Set(),GEN=/^(roman|kitaplığım|kitapligim|diğer)$/i;
+  for(const L of Object.values(g)){if(L.length<2)continue;const c={};L.forEach(x=>{if(x.shelf)c[x.shelf]=(c[x.shelf]||0)+1});const ks=Object.entries(c).sort((p,q)=>(q[1]-p[1])||((GEN.test(p[0])?1:0)-(GEN.test(q[0])?1:0)));let to=ks.length?ks[0][0]:'';
+    if(ks.length>1&&ks[0][1]===ks[1][1]&&GEN.test(ks[0][0])===GEN.test(ks[1][0])){const lo=L.filter(x=>x.shelf&&c[x.shelf]===ks[0][1]).sort((p,q)=>(seriesOf(p).no||99)-(seriesOf(q).no||99))[0];to=lo?lo.shelf:to}
+    const au={};L.forEach(x=>{const v=(x.author||'').trim();if(v&&!/[.]{2}|lovel/i.test(v))au[v]=(au[v]||0)+1});const auTo=Object.entries(au).sort((p,q)=>q[1]-p[1])[0];
+    for(const x of L){const u={};if(to&&x.shelf!==to){if(x.shelf)empt.add(x.shelf);u.shelf=to}if(!(x.author||'').trim()&&auTo)u.author=auTo[0];if(Object.keys(u).length){Object.assign(x,u);try{await st.db.collection('books').doc(x.id).update(u)}catch(e){}n++}}}
+  if(n){empt.forEach(t=>{try{turPrune(t)}catch(e){}});try{render()}catch(e){}}}finally{serUnify.busy=0}}
+setTimeout(()=>{try{serUnify()}catch(e){}},5000);setInterval(()=>{try{serUnify()}catch(e){}},120000);
 function bkBoard(b){let c='';try{c=(bkBoard.m||(bkBoard.m=shSpc()))[b.id]||''}catch(e){}return c||rvColor(b)}
 function bookCap(b){return `<div class="bkw"><div class="bkbox" style="--bc:${bkBoard(b)}">${bookHtml(b)}<span class="bkpg" aria-hidden="true"></span></div><div class="bkc"><b data-rvopen="${b.id}" role="button" tabindex="0" title="İnceleme sayfası" style="cursor:pointer">${esc(b.title||'')}</b>${b.author?`<small>${esc(b.author)}</small>`:''}</div></div>`}
 
@@ -4175,7 +4180,7 @@ async function driveSync(force){
     dbkChip();try{ssChip()}catch(e){}return true
   }finally{DBK.busy=false;try{window.dkSyncUi&&window.dkSyncUi()}catch(e){}}}
 const driveBackupNow=driveSync;
-if(typeof LOCAL!=='undefined')window.__dk={st:()=>st,driveSync:f=>driveSync(f),restore:t=>restore({text:async()=>t},true),sl:()=>seriesList(),pull:async t=>{DBK.pulling=true;try{await restore({text:async()=>t},true)}finally{DBK.pulling=false}},dirty:()=>dkDirtyGet()};
+if(typeof LOCAL!=='undefined')window.__dk={st:()=>st,driveSync:f=>driveSync(f),restore:t=>restore({text:async()=>t},true),sl:()=>seriesList(),pull:async t=>{DBK.pulling=true;try{await restore({text:async()=>t},true)}finally{DBK.pulling=false}},dirty:()=>dkDirtyGet(),unify:()=>serUnify()};
 function dbkStatus(){const a=dbkGet('at');if(!a)return "Henüz Drive ile eşitlenmedi.";const d=new Date(a);return "Son eşitleme: "+d.toLocaleDateString('tr-TR')+' '+d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}
 async function driveRestoreLatest(){dbkSet('synced','');await driveSync(true);return {modifiedTime:dbkGet('synced')}}
 function dbkChip(){try{window.dkSyncUi&&window.dkSyncUi()}catch(e){}{const c=document.getElementById('dbkChip');if(c)c.remove()}return;if(typeof GAUTH==='undefined'||!GAUTH.configured())return;let c=document.getElementById('dbkChip');const need=!!dbkGet('at')&&!GAUTH.signedIn();
@@ -5934,7 +5939,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v203';
+const DK_VER='v204';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
