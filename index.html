@@ -1816,7 +1816,7 @@ aside div:has(>#tagList),#tagList,#form .f:has(>#fTags),.card .tagt:not(:first-c
 <div class="veil" id="themeVeil" hidden>
   <div class="panel" role="dialog" aria-labelledby="themeTitle">
     <h2 id="themeTitle">Görünüm</h2>
-    <div class="f"><label>Renk teması</label><div class="swatches" id="tPresets"></div></div>
+    <div class="f"><label>Renk teması <small class="hint" style="font-weight:400">· telefonun ve bilgisayar/iPad’in teması ayrı ayrı seçilir</small></label><div class="swatches" id="tPresets"></div></div>
     <div class="row"><div class="f"><label for="tMode">Mod</label><select id="tMode"><option value="auto">Cihaza göre</option><option value="light">Açık</option><option value="dark">Koyu</option></select></div></div>
     <details class="tmore"><summary>Daha fazla ayar</summary>
     <div class="row">
@@ -2542,6 +2542,9 @@ const PRESETS={
   kobo:{name:'Kobo',sw:['#f5f1e8','#1e1d1a','#a59e90','#fbf8f1'],
     light:{bg:'#f5f1e8',paper:'#fbf8f1',ink:'#1e1d1a',muted:'#77736a',line:'#e7e1d4',check:'#efeadf',accent:'#3a3833','accent-soft':'#ebe6da',brass:'#ddd5c6','on-brass':'#1e1d1a','brass-soft':'#efe9dd',k:'#c9c1b2',p:'#ddd6c8',r:'#5a564d'},
     dark:{bg:'#1a1917',paper:'#23221f',ink:'#ece6da',muted:'#a39d91',line:'#36332e',check:'#1e1d1a',accent:'#e6dfd1','accent-soft':'#34312b',brass:'#4a463f','on-brass':'#ece6da','brass-soft':'#2c2a26',k:'#857e72',p:'#5e5950',r:'#cfc7b8'}},
+  defter:{name:'Defter (Notion)',sw:['#f6f1ea','#37352f','#7f9cbd','#fffdf9'],
+    light:{bg:'#f6f1ea',paper:'#fffdf9',ink:'#37352f',muted:'#8b857c',line:'#e8e1d6',check:'#f1ebe2',accent:'#6f8fb3','accent-soft':'#e3ebf3',brass:'#e5d5bd','on-brass':'#37352f','brass-soft':'#f1e7d8',k:'#cdb99c',p:'#c9d6e3',r:'#b98a83'},
+    dark:{bg:'#191919',paper:'#202020',ink:'#e8e4dc',muted:'#9b968e',line:'#2f2f2f',check:'#1c1c1c',accent:'#8fb0d4','accent-soft':'#26303a',brass:'#4a4236','on-brass':'#e8e4dc','brass-soft':'#2a2620',k:'#7d705e',p:'#3d4a57',r:'#c79a92'}},
   sage:{name:'Adaçayı & Pudra',light:null,dark:null,sw:['#e7eedb','#7f9a68','#c4847a','#fdfbf4']},
   kindle:{name:'Kindle kâğıdı',sw:['#efece4','#7b8a78','#a89a86','#f7f5ef'],
     light:{bg:'#efece4',paper:'#f7f5ef',ink:'#2f2e2b',muted:'#7d7a72',line:'#e2ded4',check:'#e8e4da',accent:'#7b8a78','accent-soft':'#e6e9e1',brass:'#d6ccbb','on-brass':'#2f2e2b','brass-soft':'#ece6dc',k:'#d8d2c6',p:'#c9cfc3',r:'#9aa596'},
@@ -2652,11 +2655,13 @@ const mq=window.matchMedia?matchMedia('(prefers-color-scheme: dark)'):null;
 function isDark(){const t=document.documentElement.getAttribute('data-theme');if(UI.mode==='dark')return true;if(UI.mode==='light')return false;if(t)return t==='dark';return !!(mq&&mq.matches)}
 const TOK=['bg','paper','ink','muted','line','check','accent','accent-soft','brass','brass-soft','k','p','r'];
 function mixHex(a,b,t){const ok=x=>/^#[0-9a-f]{6}$/i.test(x);if(!ok(a)||!ok(b)||!t)return a;const p=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16));const A=p(a),B=p(b);return '#'+A.map((v,i)=>Math.round(v*(1-t)+B[i]*t).toString(16).padStart(2,'0')).join('')}
+function dkWideP(){return innerWidth>=768&&UI.presetWide?UI.presetWide:UI.preset}
+{let w0=innerWidth>=768;addEventListener('resize',()=>{const w=innerWidth>=768;if(w!==w0){w0=w;try{applyUI()}catch(e){}}})}
 function applyUI(){
   const root=document.documentElement,body=document.body;body.classList.toggle('lite',UI.lite==='on');body.classList.toggle('ai-off',UI.ai!=='on');
   if(UI.mode==='auto'){if(root.dataset.ktSet){root.removeAttribute('data-theme');delete root.dataset.ktSet}}else{root.setAttribute('data-theme',UI.mode);root.dataset.ktSet='1'}
-  const pr=PRESETS[UI.preset]||PRESETS.sage,set=isDark()?pr.dark:pr.light;
-  TOK.forEach(t=>root.style.removeProperty('--'+t));root.style.removeProperty('--on-brass');try{document.documentElement.dataset.preset=UI.preset||'sage'}catch(e){}
+  const pk=dkWideP(),pr=PRESETS[pk]||PRESETS.sage,set=isDark()?pr.dark:pr.light;
+  TOK.forEach(t=>root.style.removeProperty('--'+t));root.style.removeProperty('--on-brass');try{document.documentElement.dataset.preset=pk||'sage'}catch(e){}
   if(set)Object.entries(set).forEach(([k,v])=>root.style.setProperty('--'+k,v));
   {const dk=isDark(),ink=(set&&set.ink)||(dk?'#f1e8e2':'#4a3a35'),pap=(set&&set.paper)||(dk?'#272c24':'#fdfbf4'),mut=(set&&set.muted)||(dk?'#b0a59d':'#8a7a72');
    const sf=UI.soft==='off'?0:(dk?0.05:0.06);root.style.setProperty('--ink',mixHex(ink,pap,sf));root.style.setProperty('--muted',mixHex(mut,pap,sf*0.35))}
@@ -2680,7 +2685,7 @@ function applyUI(){
 }
 mq&&mq.addEventListener&&mq.addEventListener('change',applyUI);
 function fillThemeForm(){try{fillReadOpts()}catch(e){}
-  {const SHORT=['ereader','kobo'],cur=UI.preset||'sage',keys=fillThemeForm.all?Object.keys(PRESETS):[...SHORT,...(SHORT.includes(cur)?[]:[cur])];
+  {const SHORT=['defter','ereader','kobo'],cur=dkWideP()||'sage',keys=fillThemeForm.all?Object.keys(PRESETS):[...SHORT,...(SHORT.includes(cur)?[]:[cur])];
   $('tPresets').innerHTML=keys.filter(k=>PRESETS[k]).map(k=>{const p=PRESETS[k];return `<button type="button" class="sw" data-preset="${k}" aria-pressed="${cur===k}"><i>${p.sw.map(c=>`<b style="background:${c}"></b>`).join('')}</i>${esc(p.name)}</button>`}).join('')+`<button type="button" class="tpr-more" data-tprmore="1">${fillThemeForm.all?'Daha az göster':'Tüm temalar ('+Object.keys(PRESETS).length+')'}</button>`}
   $('tBgc').value=UI.bgc||(getComputedStyle(document.documentElement).getPropertyValue('--bg').trim().slice(0,7)||'#efe7e2');
   $('tMode').value=UI.mode;$('tAccent').value=UI.accent||(getComputedStyle(document.documentElement).getPropertyValue('--accent').trim().slice(0,7)||'#7f9a68');
@@ -2707,7 +2712,7 @@ function fillReadOpts(){if(!$('tRFlow'))return;$('tRFlow').value=RS.flow;$('tRAh
 [['tRFlow','flow'],['tRAh','ah'],['tRMode','mode']].forEach(([id,k])=>{const el=$(id);if(el)el.addEventListener('change',()=>{RS[k]=el.value;applyRS();toast('Okuma ayarı kaydedildi')})});
 $('tDone').addEventListener('click',()=>{$('themeVeil').hidden=true});
 $('themeVeil').addEventListener('click',e=>{if(e.target===$('themeVeil'))$('themeVeil').hidden=true});
-$('tPresets').addEventListener('click',e=>{if(e.target.closest('[data-tprmore]')){fillThemeForm.all=!fillThemeForm.all;fillThemeForm();return}const b=e.target.closest('[data-preset]');if(!b)return;setUI({preset:b.dataset.preset,accent:'',bgc:''});fillThemeForm()});
+$('tPresets').addEventListener('click',e=>{if(e.target.closest('[data-tprmore]')){fillThemeForm.all=!fillThemeForm.all;fillThemeForm();return}const b=e.target.closest('[data-preset]');if(!b)return;setUI(innerWidth>=768?{presetWide:b.dataset.preset,accent:'',bgc:''}:{preset:b.dataset.preset,accent:'',bgc:''});fillThemeForm()});
 $('tMode').addEventListener('change',e=>{setUI({mode:e.target.value});fillThemeForm()});
 $('tAccent').addEventListener('input',e=>setUI({accent:e.target.value}));
 $('tBgc').addEventListener('input',e=>setUI({bgc:e.target.value}));$('tBgcReset').addEventListener('click',()=>{setUI({bgc:''});fillThemeForm()});
@@ -5864,7 +5869,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v196';
+const DK_VER='v197';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
