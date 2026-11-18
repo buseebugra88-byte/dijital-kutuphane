@@ -1508,6 +1508,55 @@ body.cov-xs .bk.gen.cv svg,body.cov-xs .bk.gen.cv .a,body.cov-s .bk.gen.cv .a{di
 #form .fmore-btn{display:block;margin:-4px 0 6px auto;border:0;background:none;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;padding:4px 8px;border-radius:8px}#form .fmore-btn:hover{background:var(--line)}#form:not(.fsimple) .fmore-btn{color:var(--accent)}
 .bk .blinfo,.card .c-bl,.card .c-bladd,[data-aihub]{display:none!important}
 
+/* ===== v196: Notion tarzı ana sayfa (Mac/iPad) ===== */
+body.home-notion #listArea{max-width:none}
+.hn{display:flex;flex-direction:column;gap:18px;padding-bottom:30px}
+.hn-ban{position:relative;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:26px 30px;border-radius:20px;overflow:hidden;background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 14%,var(--paper)),color-mix(in srgb,#a9b98f 22%,var(--paper)) 60%,color-mix(in srgb,#7f9cbd 18%,var(--paper)));border:1px solid var(--line)}
+.hn-ban small{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.hn-ban h1{font-family:var(--display);font-size:34px;margin:4px 0 6px;line-height:1.1}.hn-ban h1 span{font-size:26px}
+.hn-ban p{margin:0;color:color-mix(in srgb,var(--ink) 75%,var(--muted));font-size:15px}
+.hn-ban-art{width:260px;height:auto;flex:none}
+.hn-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px;align-items:start}
+.hn-c{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:16px 18px;min-width:0;display:flex;flex-direction:column;gap:12px}
+.hn-c>header{display:flex;align-items:center;gap:8px}
+.hn-c h3{margin:0;font-family:var(--sans,inherit);font-size:13px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:color-mix(in srgb,var(--ink) 80%,var(--muted))}
+.hn-i{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 12%,transparent);font-size:14px}
+.hn-cnt{font-size:12px;color:var(--muted);background:var(--bg);border-radius:999px;padding:1px 8px}
+.hn-more{margin-left:auto;border:0;background:none;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;padding:3px 8px;border-radius:8px}.hn-more:hover{background:var(--line);color:var(--ink)}
+.hn-cnt+.hn-more{margin-left:auto}
+.s4{grid-column:span 4}.s8{grid-column:span 8}.s12{grid-column:span 12}
+.hn-side{display:flex;flex-direction:column;gap:16px;min-width:0}
+.hn-now{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.hn-nowi{display:flex;gap:14px;align-items:flex-start;min-width:0}.hn-nowi .bk{--cw:84px;--ch:126px;flex:none}
+.hn-nowt{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}.hn-nowt b{font-size:15px;line-height:1.25}.hn-nowt span{font-size:13px;color:var(--muted)}.hn-nowt small{font-size:12px;color:var(--muted)}
+.hn-bar{height:6px;border-radius:999px;background:color-mix(in srgb,var(--line) 80%,transparent);overflow:hidden;margin-top:6px}.hn-bar i{display:block;height:100%;border-radius:inherit;background:var(--accent)}.hn-bar.lg{height:10px}
+.hn-btn{align-self:flex-start;margin-top:8px;border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:6px 14px;font:inherit;font-size:13px;cursor:pointer}.hn-btn.pri{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.hn-big{font-family:var(--display);font-size:40px;line-height:1}.hn-big small{font-family:inherit;font-size:15px;color:var(--muted);margin-left:6px}
+.hn-mut{color:var(--muted);font-size:12.5px}
+.hn-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.hn-stats div{background:var(--bg);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:2px;text-align:center}.hn-stats b{font-family:var(--display);font-size:22px}.hn-stats span{font-size:11.5px;color:var(--muted)}
+.hn-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font-size:12px}.hn-cal i{font-style:normal;padding:5px 0;border-radius:8px}.hn-cal i.h{color:var(--muted);font-size:11px}
+.hn-cal i.r1{background:color-mix(in srgb,var(--accent) 18%,transparent)}.hn-cal i.r2{background:color-mix(in srgb,var(--accent) 38%,transparent)}.hn-cal i.r3{background:var(--accent);color:var(--paper)}.hn-cal i.td{outline:2px solid var(--ink);outline-offset:-2px}
+.hn-ser{display:flex;flex-direction:column;gap:12px}.hn-seri>div:first-child{display:flex;justify-content:space-between;gap:8px;font-size:14px}.hn-seri small{color:var(--muted)}.hn-seri .hn-mut{display:block;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hn-tbl{width:100%;border-collapse:collapse;font-size:13.5px;table-layout:fixed}.hn-tbl th{text-align:left;font-weight:500;font-size:12px;color:var(--muted);padding:6px 8px;border-bottom:1px solid var(--line)}.hn-tbl th:first-child{width:38%}.hn-tbl th:last-child{width:12%}
+.hn-tbl td{padding:7px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hn-tbl tr:hover td{background:color-mix(in srgb,var(--accent) 6%,transparent)}
+.hn-tt{display:flex;align-items:center;gap:8px;border:0;background:none;font:inherit;color:inherit;cursor:pointer;padding:0;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}.hn-tt img{width:20px;height:30px;object-fit:cover;border-radius:2px;flex:none}.hn-dot{width:20px;height:30px;border-radius:2px;flex:none}
+.hn-tag{display:inline-block;background:color-mix(in srgb,#7f9cbd 22%,transparent);border-radius:6px;padding:1px 8px;font-size:12px}
+.hn-revs{display:flex;flex-direction:column;gap:8px}.hn-rev{display:flex;flex-direction:column;gap:3px;text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:10px 12px;font:inherit;color:inherit;cursor:pointer}.hn-rev b{font-size:14px}.hn-rev span{font-size:13px;color:var(--muted);font-family:'Patrick Hand',var(--sans,inherit);font-size:15px}
+.hn-st{color:#e2b33c;letter-spacing:1px;font-size:13px}.hn-st i{font-style:normal;color:var(--line)}
+.hn-torev{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.hn-torev small{width:100%}
+.hn-chip{border:1px dashed var(--line);background:none;border-radius:999px;padding:5px 12px;font:inherit;font-size:13px;cursor:pointer;color:inherit}
+.hn-gal.books{padding:0!important}
+.hn-links{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hn-link{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:9px 12px;font:inherit;font-size:13.5px;cursor:pointer;color:inherit}.hn-link:hover{border-color:var(--accent)}
+.hn-q{margin:0;font-family:var(--display);font-style:italic;font-size:17px;line-height:1.45}
+.hn-empty{margin:0;color:var(--muted);font-size:14px}.hn-lnk{border:0;background:none;color:var(--accent);font:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.hn-foot{text-align:center}
+@media (max-width:1099px){.hn-grid .s4,.hn-grid .s8{grid-column:span 6}.hn-grid .hnk-now,.hn-grid .hnk-tbr,.hn-grid .hnk-gal{grid-column:span 12}.hn-ban-art{width:190px}.hn-tbl th:nth-child(4),.hn-tbl td:nth-child(4){display:none}}
+
+body.sec-home.home-notion header.top,body.sec-home.home-notion .divider{display:none}
+
+/* v196: etiketler kaldırıldı */
+aside div:has(>#tagList),#tagList,#form .f:has(>#fTags),.card .tagt:not(:first-child),.c-tags .tagt[data-tg]{display:none!important}
+
 </style>
 
 </head><body>
@@ -2136,7 +2185,70 @@ function tStats(){
       <div><h4 class="sth">En sevdiğin türler</h4>${shel.map(([k,v])=>`<div class="shbar"><span>${esc(k)}</span><span class="hint">${v}</span></div>`).join('')||'<p class="hint">Henüz yok.</p>'}</div></div>`}
 
 function trDate(d){return d.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'})}
-function dashHtml(){if(!UI.homeFull)return UI.homeStyle==='rich'?homeSimple():homeKindle();document.body.classList.remove('home-kindle');document.body.classList.remove('home-simple');return '<div class="hs-sw"><button class="btn" type="button" data-hs="simple">✨ Sade ana sayfa</button></div>'+dashFull()}
+/* ===== v196: Mac/iPad için Notion tarzı ayrıntılı ana sayfa ===== */
+function hnWide(){return innerWidth>=768&&UI.hnOff!=='1'}
+function homeNotion(){document.body.classList.remove('home-kindle','home-simple');document.body.classList.add('home-notion');
+  const B=st.books,reads=B.filter(b=>b.kind!=='roman'&&b.kind!=='makale'),name=(UI.name||'').trim(),t=new Date(),Y=t.getFullYear(),h=t.getHours(),greet=h<6?'İyi geceler':h<12?'Günaydın':h<18?'Merhaba':'İyi akşamlar';
+  const by=k=>(a,b)=>(b[k]||'').localeCompare(a[k]||'');
+  const now=reads.filter(b=>b.pinned||b.status==='okunuyor'||(b.currentPage>0&&b.status!=='okundu')).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)||by('lastReadAt')(a,b)).slice(0,4);
+  const tbr=reads.filter(b=>b.status==='okunacak'&&!(b.currentPage>0)&&b.shelf!=='İstek listem').sort(by('addedAt'));
+  const fin=reads.filter(b=>b.status==='okundu'),finY=fin.filter(b=>(b.finishedAt||'').startsWith(String(Y)));
+  let goal=0;try{goal=+bjData().goals[Y]||0}catch(e){}
+  const log=(st.log&&st.log.days)||{};const mk=Y+'-'+String(t.getMonth()+1).padStart(2,'0');let pagesM=0,daysM=0;Object.keys(log).forEach(k=>{if(k.startsWith(mk)&&log[k]){pagesM+=log[k];daysM++}});
+  let streak=0;for(let i=0;i<365;i++){const dd=new Date(Y,t.getMonth(),t.getDate()-i),k=dd.getFullYear()+'-'+String(dd.getMonth()+1).padStart(2,'0')+'-'+String(dd.getDate()).padStart(2,'0');if(log[k])streak++;else if(i>0)break}
+  const rated=fin.filter(b=>b.rating>0),avg=rated.length?(rated.reduce((a,b)=>a+b.rating,0)/rated.length):0;
+  let SL=[];try{SL=seriesList()}catch(e){}const sProg=SL.filter(x=>x.next&&x.done>0).slice(0,5),sAll=SL.length;
+  const reviews=reads.filter(b=>b.review||(b.rv&&(b.rv.sum||b.rv.quote||(b.rv.tk||[]).some(Boolean)))).sort(by('finishedAt')).slice(0,4);
+  const toReview=fin.filter(b=>!reviews.includes(b)).sort(by('finishedAt')).slice(0,3);
+  const recent=[...reads].sort(by('addedAt')).slice(0,12);
+  const ico=k=>({now:'📖',goal:'🎯',stat:'📊',cal:'🗓',ser:'📚',tbr:'📋',rev:'📝',gal:'🖼',link:'🔗',quote:'❝'}[k]||'•');
+  const card=(k,title,body,more,cls)=>`<section class="hn-c hnk-${k} ${cls||''}"><header><span class="hn-i">${ico(k)}</span><h3>${title}</h3>${more||''}</header>${body}</section>`;
+  const stars=n=>n?'<span class="hn-st">'+'★'.repeat(Math.round(n))+'<i>'+'★'.repeat(5-Math.round(n))+'</i></span>':'';
+  // şu an okuduklarım
+  const nowB=now.length?`<div class="hn-now">${now.map(b=>{const G=bkProg(b);return `<div class="hn-nowi">${bookHtml(b)}<div class="hn-nowt"><b>${esc(b.title)}</b><span>${esc(b.author||'')}</span>${G.t?`<div class="hn-bar"><i style="width:${G.p}%"></i></div><small>%${Math.round(G.p)} · ${esc(G.txt)}</small>`:''}${hasFile(b)?`<button class="hn-btn pri" type="button" data-read="${b.id}">Devam et</button>`:''}</div></div>`}).join('')}</div>`:`<p class="hn-empty">Şu an okuduğun bir kitap yok. <button class="hn-lnk" type="button" data-openpick>🎲 Ne okusam?</button></p>`;
+  // hedef
+  const gp=goal?Math.min(100,Math.round(finY.length/goal*100)):0;
+  const goalB=`<div class="hn-goal"><div class="hn-big">${finY.length}<small>/ ${goal||'?'} kitap</small></div><div class="hn-bar lg"><i style="width:${gp}%"></i></div><small class="hn-mut">${goal?(finY.length>=goal?'Hedefini tamamladın 🎉':`Hedefe ${goal-finY.length} kitap kaldı · %${gp}`):'Okuma günlüğünden bu yılın hedefini koyabilirsin.'}</small></div>`;
+  // istatistik
+  const statB=`<div class="hn-stats"><div><b>${pagesM.toLocaleString('tr-TR')}</b><span>bu ay sayfa</span></div><div><b>${streak}</b><span>gün seri</span></div><div><b>${fin.length}</b><span>bitirilen</span></div><div><b>${avg?avg.toFixed(1):'–'}</b><span>ort. puan</span></div><div><b>${reads.length}</b><span>kitap</span></div><div><b>${sAll}</b><span>seri</span></div></div>`;
+  // takvim
+  const m=t.getMonth(),first=new Date(Y,m,1),sd=(first.getDay()+6)%7,dim=new Date(Y,m+1,0).getDate();let cal=['P','S','Ç','P','C','C','P'].map(x=>`<i class="h">${x}</i>`).join('')+'<i></i>'.repeat(sd);
+  for(let d=1;d<=dim;d++){const k=mk+'-'+String(d).padStart(2,'0'),v=log[k]||0,l=v?(v>=40?3:v>=15?2:1):0;cal+=`<i class="${l?'r'+l:''}${d===t.getDate()?' td':''}" title="${v?v+' sayfa':''}">${d}</i>`}
+  const calB=`<div class="hn-cal">${cal}</div><small class="hn-mut">${daysM} gün okudun bu ay</small>`;
+  // seriler
+  const serB=sProg.length?`<div class="hn-ser">${sProg.map(x=>`<div class="hn-seri"><div><b>${esc(x.name)}</b><small>${x.done}/${x.max}</small></div><div class="hn-bar"><i style="width:${Math.round(x.done/x.max*100)}%"></i></div><small class="hn-mut">Sıradaki: ${esc(x.next.b.title)}</small></div>`).join('')}</div>`:'<p class="hn-empty">Yarım kalan serin yok.</p>';
+  // okunacaklar tablosu
+  const tbrB=tbr.length?`<table class="hn-tbl"><thead><tr><th>Kitap</th><th>Yazar</th><th>Tür</th><th>Seri</th><th>Eklendi</th></tr></thead><tbody>${tbr.slice(0,8).map(b=>{const s_=seriesOf(b);return `<tr><td><button type="button" class="hn-tt" data-rvopen="${b.id}">${coverSrc(b)?`<img src="${coverSrc(b)}" alt="">`:'<span class="hn-dot" style="background:'+rvColor(b)+'"></span>'}${esc(b.title)}</button></td><td>${esc(b.author||'')}</td><td>${b.shelf?`<span class="hn-tag">${esc(b.shelf)}</span>`:''}</td><td>${s_?esc(s_.name)+(s_.no?' #'+s_.no:''):''}</td><td class="hn-mut">${b.addedAt?esc(new Date(b.addedAt).toLocaleDateString('tr-TR',{day:'numeric',month:'short'})):''}</td></tr>`}).join('')}</tbody></table>`:'<p class="hn-empty">Okunacaklar listen boş.</p>';
+  // incelemeler
+  const revB=(reviews.length?`<div class="hn-revs">${reviews.map(b=>{const r=b.rv||{};const q=r.quote||r.sum||b.review||'';return `<button type="button" class="hn-rev" data-rvopen="${b.id}"><b>${esc(b.title)}</b>${stars(b.rating)}<span>${esc(q.slice(0,110))}${q.length>110?'…':''}</span></button>`}).join('')}</div>`:'')+(toReview.length?`<div class="hn-torev"><small class="hn-mut">İnceleme bekleyenler</small>${toReview.map(b=>`<button type="button" class="hn-chip" data-rvopen="${b.id}">✎ ${esc(b.title)}</button>`).join('')}</div>`:'')||'<p class="hn-empty">Bitirdiğin kitaplar için inceleme yazabilirsin.</p>';
+  // galeri
+  const galB=`<div class="books hn-gal">${recent.map(bookCap).join('')}</div>`;
+  // bağlantılar
+  const links=[['＋ Kitap ekle','data-hs="add"'],['🎲 Ne okusam?','data-openpick'],['📚 Serilerim','data-hntab="series"'],['✅ Bitirdiklerim','data-hntab="done"'],['📓 Okuma günlüğü','data-gosec="journal"'],['✍️ Yazar Köşem','data-gosec="writer"'],['🗂 Çalışma Masam','data-gosec="notes"']];
+  const linkB=`<div class="hn-links">${links.map(([l,a])=>`<button type="button" class="hn-link" ${a}>${l}</button>`).join('')}</div>`;
+  let qB='';try{const Q=(TL.quotes||[]).filter(q=>q.text);if(Q.length){const q=Q[Math.floor(Date.now()/864e5)%Q.length];qB=card('quote','Günün alıntısı',`<blockquote class="hn-q">“${esc(q.text.slice(0,260))}”</blockquote><small class="hn-mut">— ${esc(q.title||'')}${q.author?', '+esc(q.author):''}</small>`)}}catch(e){}
+  return `<div class="hn">
+    <header class="hn-ban"><div class="hn-ban-t"><small>${esc(trDate(t))}</small><h1>${greet}${name?', '+esc(name):''}! <span>📖</span></h1><p>${now.length?`Kaldığın yerden devam etmek için ${now.length} kitap seni bekliyor.`:'Bugün ne okuyalım?'}${streak>1?` · ${streak} gündür okuyorsun 🌿`:''}</p></div>
+      <svg class="hn-ban-art" viewBox="0 0 320 120" aria-hidden="true"><g opacity=".9"><rect x="40" y="38" width="22" height="72" rx="3" fill="#7f9cbd"/><rect x="64" y="28" width="18" height="82" rx="3" fill="#c98f86"/><rect x="84" y="46" width="26" height="64" rx="3" fill="#a9b98f"/><rect x="112" y="34" width="16" height="76" rx="3" fill="#e2c07a"/><rect x="130" y="52" width="24" height="58" rx="3" fill="#9b86b8" transform="rotate(8 142 81)"/><rect x="30" y="108" width="160" height="6" rx="3" fill="#d8c9b4"/><path d="M210 92c10-30 40-34 52-12 12-22 42-18 52 12-18-8-38-4-52 8-14-12-34-16-52-8z" fill="#fff" stroke="#b9ab98" stroke-width="2"/><path d="M262 80v26" stroke="#b9ab98" stroke-width="2"/><circle cx="250" cy="30" r="3" fill="#e2c07a"/><circle cx="290" cy="46" r="2" fill="#7f9cbd"/><circle cx="196" cy="40" r="2.5" fill="#c98f86"/></g></svg></header>
+    <div class="hn-grid">
+      ${card('now','Şu an okuduklarım',nowB,`<small class="hn-cnt">${now.length}</small>`,'s8')}
+      ${card('goal',Y+' okuma hedefim',goalB,'<button class="hn-more" type="button" data-gosec="journal">Günlük →</button>','s4')}
+      ${card('stat','İstatistiklerim',statB,'','s4')}
+      ${card('cal',t.toLocaleDateString('tr-TR',{month:'long',year:'numeric'}),calB,'','s4')}
+      ${card('ser','Devam eden seriler',serB,'<button class="hn-more" type="button" data-hntab="series">Tümü →</button>','s4')}
+      ${card('tbr','Okunacaklar',tbrB,`<small class="hn-cnt">${tbr.length}</small><button class="hn-more" type="button" data-hk="okunacak">Tümü →</button>`,'s8')}
+      ${card('rev','İncelemelerim',revB,'','s4')}
+      ${card('gal','Son eklenenler',galB,'<button class="hn-more" type="button" data-goview="raf">Kütüphanem →</button>','s8')}
+      <div class="hn-side s4">${card('link','Hızlı bağlantılar',linkB)}${qB}</div>
+    </div>
+    <div class="hn-foot"><button class="hn-lnk" type="button" data-hnoff>Sade ana sayfaya geç</button></div>
+  </div>`}
+document.addEventListener('click',e=>{const t_=e.target.closest('[data-hntab]');if(t_){const k=t_.dataset.hntab;goSec('library');setTimeout(()=>{const x=document.querySelector('#tabs [data-tab='+k+']');x&&x.click()},60);return}
+  if(e.target.closest('[data-hnoff]')){UI.hnOff='1';try{localStorage.setItem('dk-ui',JSON.stringify(UI))}catch(x){}renderList();return}
+  const r=e.target.closest('.hn [data-read]');if(r){e.preventDefault();e.stopPropagation();bkOpen(r.dataset.read)}},true);
+{let w0=innerWidth>=768;addEventListener('resize',()=>{const w=innerWidth>=768;if(w!==w0){w0=w;if(st.view==='panel'&&st.sec==='home')try{renderList()}catch(e){}}})}
+
+function dashHtml(){document.body.classList.remove('home-notion');if(!UI.homeFull&&hnWide())return homeNotion();if(!UI.homeFull)return UI.homeStyle==='rich'?homeSimple():homeKindle();document.body.classList.remove('home-kindle');document.body.classList.remove('home-simple');return '<div class="hs-sw"><button class="btn" type="button" data-hs="simple">✨ Sade ana sayfa</button></div>'+dashFull()}
 function dashFull(inner){setTimeout(maybeRecs,1500);
   const B=st.books,reads=B.filter(b=>b.kind!=='roman'),name=(UI.name||'').trim();
   const now=reads.filter(b=>b.status==='okunuyor'||(b.currentPage>0&&b.status!=='okundu')).sort((a,b)=>(b.lastReadAt||'').localeCompare(a.lastReadAt||'')).slice(0,6);
@@ -2189,7 +2301,7 @@ function render(){applySec();$('litBtn').hidden=true;$("vPanel").setAttribute("a
 /* events */
 $('tabs').addEventListener('click',e=>{const t=e.target.closest('[data-tab]');if(!t)return;st.tab=t.dataset.tab;st.shelf=null;st.tag=null;try{localStorage.setItem('dk-tab',st.tab)}catch(e){}render()});
 $('shelfList').addEventListener('click',e=>{const t=e.target.closest('[data-shelf]');if(!t)return;st.shelf=t.dataset.shelf||null;render()});
-$('tagList').addEventListener('click',e=>{const t=e.target.closest('[data-tag]');if(!t)return;st.tag=st.tag===t.dataset.tag?null:t.dataset.tag;render()});
+$('tagList').addEventListener('click',e=>{const t=e.target.closest('[data-tag]');if(!t)return;st.tag=st.tag===t.dataset.tag?null:t.dataset.tag;render()});st.tag=null;
 $('q').addEventListener('input',e=>{st.q=e.target.value;renderList()});
 $('statusFilter').addEventListener('change',e=>{st.status=e.target.value;renderList()});
 $('sortSel').addEventListener('change',e=>{st.sort=e.target.value;renderList()});
@@ -5752,7 +5864,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v195';
+const DK_VER='v196';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -5880,9 +5992,9 @@ function dkSafeToUpdate(){try{const ae=document.activeElement;if(ae&&(/^(INPUT|T
   if(typeof R!=='undefined'&&R&&R.book)return false;if(typeof NB!=='undefined'&&NB&&(NB.bid||NB.cur))return false;return true}catch(e){return false}}
 async function dkDoUpdate(){if(window.__dkUpd)return;try{if(sessionStorage.getItem('dk-upd-try')===window.__dkNewVer)return;sessionStorage.setItem('dk-upd-try',window.__dkNewVer||'')}catch(x){}window.__dkUpd=1;try{if(typeof driveSync==='function'&&typeof GAUTH!=='undefined'&&GAUTH.signedIn())await Promise.race([driveSync(false),new Promise(r=>setTimeout(r,6000))])}catch(x){}
   try{const r=await navigator.serviceWorker.getRegistration();if(r)await r.update()}catch(x){}try{const ks=await caches.keys();await Promise.all(ks.filter(k=>k.startsWith('kutuphane-')).map(k=>caches.delete(k)))}catch(x){}location.reload()}
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&window.__dkNewVer&&!(typeof R!=='undefined'&&R&&R.book))dkDoUpdate()});
-async function dkVerCheck(){if(typeof LOCAL==='undefined'||DK_VER.startsWith('__'))return;try{const r_=await fetch('version.json?'+Date.now(),{cache:'no-store'});if(!r_.ok)return;const j_=await r_.json();const m=[0,j_&&j_.v];if(m&&m[1]!==DK_VER&&!$('dkVer')){window.__dkNewVer=m[1];let tried_='';try{tried_=sessionStorage.getItem('dk-upd-try')||''}catch(x){}if(tried_!==m[1]&&dkSafeToUpdate()){dkDoUpdate();return}const d=document.createElement('button');d.id='dkVer';d.type='button';d.className='dk-ver';d.textContent='✨ Yeni sürüm hazır — dokun, yenilensin';
-  d.onclick=async()=>{d.textContent='Yenileniyor…';try{const r=await navigator.serviceWorker.getRegistration();if(r)await r.update()}catch(x){}try{const ks=await caches.keys();await Promise.all(ks.filter(k=>k.startsWith('kutuphane-')).map(k=>caches.delete(k)))}catch(x){}location.reload()};document.body.appendChild(d)}}catch(e){}}
+
+async function dkVerCheck(){if(typeof LOCAL==='undefined'||DK_VER.startsWith('__'))return;try{const r_=await fetch('version.json?'+Date.now(),{cache:'no-store'});if(!r_.ok)return;const j_=await r_.json();const m=[0,j_&&j_.v];if(m&&m[1]!==DK_VER&&!$('dkVer')){window.__dkNewVer=m[1];let tried_='';try{tried_=sessionStorage.getItem('dk-upd-try')||''}catch(x){}const d=document.createElement('button');d.id='dkVer';d.type='button';d.className='dk-ver';d.textContent='✨ Yeni sürüm hazır — dokun, yenilensin';
+  d.onclick=async()=>{d.textContent='Yenileniyor…';try{if(typeof driveSync==='function'&&typeof GAUTH!=='undefined'&&GAUTH.signedIn())await Promise.race([driveSync(false),new Promise(r=>setTimeout(r,6000))])}catch(x){}try{const r=await navigator.serviceWorker.getRegistration();if(r)await r.update()}catch(x){}try{const ks=await caches.keys();await Promise.all(ks.filter(k=>k.startsWith('kutuphane-')).map(k=>caches.delete(k)))}catch(x){}location.reload()};document.body.appendChild(d)}}catch(e){}}
 setTimeout(dkVerCheck,3000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)dkVerCheck()});setInterval(dkVerCheck,10*60000);
 
 /* iOS: klasör seçici yok */
