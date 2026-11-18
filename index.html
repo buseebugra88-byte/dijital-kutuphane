@@ -1557,6 +1557,9 @@ body.sec-home.home-notion header.top,body.sec-home.home-notion .divider{display:
 /* v196: etiketler kaldırıldı */
 aside div:has(>#tagList),#tagList,#form .f:has(>#fTags),.card .tagt:not(:first-child),.c-tags .tagt[data-tg]{display:none!important}
 
+.hn-one{display:flex;gap:26px;align-items:center}.hn-one .bk{--cw:150px;--ch:225px;flex:none;box-shadow:3px 3px 0 -1px #fffaf2,3px 3px 0 0 color-mix(in srgb,var(--ink) 14%,transparent),6px 6px 0 -1px #fffaf2,6px 6px 0 0 color-mix(in srgb,var(--ink) 14%,transparent),12px 16px 26px -14px color-mix(in srgb,var(--ink) 60%,transparent)}
+.hn-onet{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}.hn-onet h2{font-family:var(--display);font-size:28px;margin:0;line-height:1.15}.hn-onet>span{color:var(--muted)}.hn-onebtn{display:flex;gap:8px;margin-top:6px}.hn-onebtn .hn-btn{margin-top:0}
+
 </style>
 
 </head><body>
@@ -2190,7 +2193,7 @@ function hnWide(){return innerWidth>=768&&UI.hnOff!=='1'}
 function homeNotion(){document.body.classList.remove('home-kindle','home-simple');document.body.classList.add('home-notion');
   const B=st.books,reads=B.filter(b=>b.kind!=='roman'&&b.kind!=='makale'),name=(UI.name||'').trim(),t=new Date(),Y=t.getFullYear(),h=t.getHours(),greet=h<6?'İyi geceler':h<12?'Günaydın':h<18?'Merhaba':'İyi akşamlar';
   const by=k=>(a,b)=>(b[k]||'').localeCompare(a[k]||'');
-  const now=reads.filter(b=>b.pinned||b.status==='okunuyor'||(b.currentPage>0&&b.status!=='okundu')).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)||by('lastReadAt')(a,b)).slice(0,4);
+  const now=reads.filter(b=>b.pinned||b.status==='okunuyor'||(b.currentPage>0&&b.status!=='okundu')).sort((a,b)=>(b.pinned?1:0)-(a.pinned?1:0)||by('lastReadAt')(a,b)).slice(0,1);
   const tbr=reads.filter(b=>b.status==='okunacak'&&!(b.currentPage>0)&&b.shelf!=='İstek listem').sort(by('addedAt'));
   const fin=reads.filter(b=>b.status==='okundu'),finY=fin.filter(b=>(b.finishedAt||'').startsWith(String(Y)));
   let goal=0;try{goal=+bjData().goals[Y]||0}catch(e){}
@@ -2205,7 +2208,7 @@ function homeNotion(){document.body.classList.remove('home-kindle','home-simple'
   const card=(k,title,body,more,cls)=>`<section class="hn-c hnk-${k} ${cls||''}"><header><span class="hn-i">${ico(k)}</span><h3>${title}</h3>${more||''}</header>${body}</section>`;
   const stars=n=>n?'<span class="hn-st">'+'★'.repeat(Math.round(n))+'<i>'+'★'.repeat(5-Math.round(n))+'</i></span>':'';
   // şu an okuduklarım
-  const nowB=now.length?`<div class="hn-now">${now.map(b=>{const G=bkProg(b);return `<div class="hn-nowi">${bookHtml(b)}<div class="hn-nowt"><b>${esc(b.title)}</b><span>${esc(b.author||'')}</span>${G.t?`<div class="hn-bar"><i style="width:${G.p}%"></i></div><small>%${Math.round(G.p)} · ${esc(G.txt)}</small>`:''}${hasFile(b)?`<button class="hn-btn pri" type="button" data-read="${b.id}">Devam et</button>`:''}</div></div>`}).join('')}</div>`:`<p class="hn-empty">Şu an okuduğun bir kitap yok. <button class="hn-lnk" type="button" data-openpick>🎲 Ne okusam?</button></p>`;
+  const nowB=now.length?(()=>{const b=now[0],G=bkProg(b),s_=seriesOf(b);return `<div class="hn-one">${bookHtml(b)}<div class="hn-onet"><small class="hn-mut">OKUYORSUN</small><h2>${esc(b.title)}</h2><span>${esc(b.author||'')}${s_?' · '+esc(s_.name)+(s_.no?' #'+s_.no:''):''}</span>${G.t?`<div class="hn-bar lg"><i style="width:${G.p}%"></i></div><small class="hn-mut">%${Math.round(G.p)} · ${esc(G.txt)}${G.t&&b.currentPage?` · ${Math.max(0,G.t-(b.currentPage||0))} sayfa kaldı`:''}</small>`:''}<div class="hn-onebtn">${hasFile(b)?`<button class="hn-btn pri" type="button" data-read="${b.id}">Devam et</button>`:''}<button class="hn-btn" type="button" data-rvopen="${b.id}">📝 İnceleme</button></div></div></div>`})():`<p class="hn-empty">Şu an okuduğun bir kitap yok. <button class="hn-lnk" type="button" data-openpick>🎲 Ne okusam?</button></p>`;
   // hedef
   const gp=goal?Math.min(100,Math.round(finY.length/goal*100)):0;
   const goalB=`<div class="hn-goal"><div class="hn-big">${finY.length}<small>/ ${goal||'?'} kitap</small></div><div class="hn-bar lg"><i style="width:${gp}%"></i></div><small class="hn-mut">${goal?(finY.length>=goal?'Hedefini tamamladın 🎉':`Hedefe ${goal-finY.length} kitap kaldı · %${gp}`):'Okuma günlüğünden bu yılın hedefini koyabilirsin.'}</small></div>`;
@@ -2228,10 +2231,10 @@ function homeNotion(){document.body.classList.remove('home-kindle','home-simple'
   const linkB=`<div class="hn-links">${links.map(([l,a])=>`<button type="button" class="hn-link" ${a}>${l}</button>`).join('')}</div>`;
   let qB='';try{const Q=(TL.quotes||[]).filter(q=>q.text);if(Q.length){const q=Q[Math.floor(Date.now()/864e5)%Q.length];qB=card('quote','Günün alıntısı',`<blockquote class="hn-q">“${esc(q.text.slice(0,260))}”</blockquote><small class="hn-mut">— ${esc(q.title||'')}${q.author?', '+esc(q.author):''}</small>`)}}catch(e){}
   return `<div class="hn">
-    <header class="hn-ban"><div class="hn-ban-t"><small>${esc(trDate(t))}</small><h1>${greet}${name?', '+esc(name):''}! <span>📖</span></h1><p>${now.length?`Kaldığın yerden devam etmek için ${now.length} kitap seni bekliyor.`:'Bugün ne okuyalım?'}${streak>1?` · ${streak} gündür okuyorsun 🌿`:''}</p></div>
+    <header class="hn-ban"><div class="hn-ban-t"><small>${esc(trDate(t))}</small><h1>${greet}${name?', '+esc(name):''}! <span>📖</span></h1><p>${now.length?`<i>${esc(now[0].title)}</i> seni bekliyor.`:'Bugün ne okuyalım?'}${streak>1?` · ${streak} gündür okuyorsun 🌿`:''}</p></div>
       <svg class="hn-ban-art" viewBox="0 0 320 120" aria-hidden="true"><g opacity=".9"><rect x="40" y="38" width="22" height="72" rx="3" fill="#7f9cbd"/><rect x="64" y="28" width="18" height="82" rx="3" fill="#c98f86"/><rect x="84" y="46" width="26" height="64" rx="3" fill="#a9b98f"/><rect x="112" y="34" width="16" height="76" rx="3" fill="#e2c07a"/><rect x="130" y="52" width="24" height="58" rx="3" fill="#9b86b8" transform="rotate(8 142 81)"/><rect x="30" y="108" width="160" height="6" rx="3" fill="#d8c9b4"/><path d="M210 92c10-30 40-34 52-12 12-22 42-18 52 12-18-8-38-4-52 8-14-12-34-16-52-8z" fill="#fff" stroke="#b9ab98" stroke-width="2"/><path d="M262 80v26" stroke="#b9ab98" stroke-width="2"/><circle cx="250" cy="30" r="3" fill="#e2c07a"/><circle cx="290" cy="46" r="2" fill="#7f9cbd"/><circle cx="196" cy="40" r="2.5" fill="#c98f86"/></g></svg></header>
     <div class="hn-grid">
-      ${card('now','Şu an okuduklarım',nowB,`<small class="hn-cnt">${now.length}</small>`,'s8')}
+      ${card('now','Şu an okuduğum',nowB,'','s8')}
       ${card('goal',Y+' okuma hedefim',goalB,'<button class="hn-more" type="button" data-gosec="journal">Günlük →</button>','s4')}
       ${card('stat','İstatistiklerim',statB,'','s4')}
       ${card('cal',t.toLocaleDateString('tr-TR',{month:'long',year:'numeric'}),calB,'','s4')}
@@ -5869,7 +5872,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v197';
+const DK_VER='v198';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
