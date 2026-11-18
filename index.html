@@ -1491,11 +1491,22 @@ body.cov-xs .bkc small{display:none}body.cov-xs .bkc b{font-size:10.5px}
 @media print{body>*:not(#rvPage){display:none!important}#rvPage{position:static;background:#fff;overflow:visible}.rv-top{display:none}.rv{box-shadow:none;margin:0 auto}}
 html body #rvPage .rv,html body #rvPage .rv *:not(.rv-stars button){font-family:'Patrick Hand','Caveat',cursive!important}
 html body #rvPage .rv textarea,html body #rvPage .rv input{min-height:1.45em!important;height:auto;width:100%!important;outline:none!important;background:transparent!important;border:0!important;border-bottom:1px dashed transparent!important;box-shadow:none!important;padding:0!important;border-radius:0!important;min-height:0!important;margin:0!important;font:inherit!important;color:inherit!important}
-html body #rvPage .rv [data-rv=review],html body #rvPage .rv [data-rv=blurb]{min-height:4.4em!important}html body #rvPage .rv [data-rv=quote]{min-height:2.9em!important}.rv .rv-meta>span{display:flex;align-items:baseline;gap:4px;min-width:0}
+html body #rvPage .rv [data-rv=review],html body #rvPage .rv [data-rv=sum]{min-height:4.4em!important}html body #rvPage .rv [data-rv=quote]{min-height:2.9em!important}.rv .rv-meta>span{display:flex;align-items:baseline;gap:4px;min-width:0}
 html body #rvPage .rv textarea:focus,html body #rvPage .rv input:focus{border-bottom-color:#b9ab98!important;background:rgba(255,255,255,.35)!important}
 #rvPage{z-index:100000}.dksel-veil{z-index:100001!important}.dksel-pop{z-index:100002!important}
 .bk.gen.cv .t{font-size:clamp(9px,calc(var(--cw) * .12),15px);line-height:1.12;white-space:normal;word-break:normal;overflow-wrap:break-word;hyphens:auto;padding:0 2px}
 body.cov-xs .bk.gen.cv svg,body.cov-xs .bk.gen.cv .a,body.cov-s .bk.gen.cv .a{display:none}
+
+/* v195: telefonda ana sayfa — yalnızca büyük "Okuyorsun" kapağı + 3 öneri */
+@media (max-width:767px){html body .hk-hero{grid-template-columns:1fr!important;justify-items:center;text-align:center;padding:22px 18px 20px;gap:16px}
+ html body .hk-hero .bk{--cw:min(56vw,230px)!important;--ch:calc(min(56vw,230px) * 1.5)!important;width:var(--cw)!important;height:var(--ch)!important;box-shadow:3px 3px 0 -1px #fffaf2,3px 3px 0 0 color-mix(in srgb,var(--ink) 14%,transparent),6px 6px 0 -1px #fffaf2,6px 6px 0 0 color-mix(in srgb,var(--ink) 14%,transparent),12px 16px 26px -14px color-mix(in srgb,var(--ink) 60%,transparent)!important}
+ html body .hk-hero .hk-hi{display:flex;flex-direction:column;align-items:center;width:100%}html body .hk-hero .hk-p{width:100%;max-width:320px}html body .hk-hero .hk-btns{justify-content:center}
+ .hk-sug .hk-row{display:grid!important;grid-template-columns:repeat(3,1fr);gap:14px;overflow:visible!important}.hk-sug .hk-t{width:auto!important;min-width:0}.hk-sug .bk{--cw:100%!important;width:100%!important;height:auto!important;aspect-ratio:2/3}}
+
+/* v195: sade kayıt ekranı + tanıtımlar kapalı */
+#form.fsimple :is(.kinds,#tropeRow,#blField,#seriesRow,#curField,#ftField,#pbField,#simRow),#form.fsimple .f:has(>#fPages){display:none!important}
+#form .fmore-btn{display:block;margin:-4px 0 6px auto;border:0;background:none;color:var(--muted);font:inherit;font-size:13px;cursor:pointer;padding:4px 8px;border-radius:8px}#form .fmore-btn:hover{background:var(--line)}#form:not(.fsimple) .fmore-btn{color:var(--accent)}
+.bk .blinfo,.card .c-bl,.card .c-bladd,[data-aihub]{display:none!important}
 
 </style>
 
@@ -1581,7 +1592,7 @@ body.cov-xs .bk.gen.cv svg,body.cov-xs .bk.gen.cv .a,body.cov-s .bk.gen.cv .a{di
 
 <div class="veil" id="veil" hidden>
   <form class="panel" id="form" novalidate>
-    <h2 id="formTitle">Yeni ekle</h2>
+    <h2 id="formTitle">Yeni ekle</h2><button type="button" class="fmore-btn" id="fMoreBtn">⋯ Diğer bilgiler</button>
     <div class="kinds" role="radiogroup" aria-label="Tür">
       <label id="kindKitapL" hidden><input type="radio" name="kind" value="kitap" id="kind-kitap"><span>📗 Basılı kitap</span></label>
       <label><input type="radio" name="kind" value="pdf" id="kind-pdf"><span>📱 E-kitap</span></label>
@@ -2288,7 +2299,7 @@ function rvRender(){const pg=$('rvPage'),b=st.books.find(x=>x.id===RV.id);if(!pg
           <span>☆</span><span class="rv-k">Puan</span><span>: <span class="rv-stars">${stars}</span></span>
           ${b.finishedAt?`<span>📅</span><span class="rv-k">Bitirdim</span><span>: ${esc(new Date(b.finishedAt).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'}))}</span>`:''}
         </div></div>
-        <div class="rv-box"><h2><u>ÖZET</u> ♡</h2>${ta('blurb',b.blurb,'Kitap kısaca ne anlatıyor?',5)}</div>
+        <div class="rv-box"><h2><u>ÖZET</u> ♡</h2>${ta('sum',r.sum,'Kitap kısaca ne anlatıyor? (kendi cümlelerinle)',5)}</div>
         <div class="rv-box b" style="background:transparent;padding-top:4px"><h2 style="text-align:left;display:inline-block;background:var(--rb);padding:2px 14px;border-radius:4px">AKILDA KALANLAR ♡</h2>
           <div class="rv-tkl">${tk.map(t=>`<div class="rv-tkr"><textarea data-bare class="bare" data-rv="tk" rows="1" placeholder="Bir düşünce yaz, Enter ile yeni satır">${esc(t)}</textarea></div>`).join('')}</div></div>
         <div class="rv-row2"><div class="rv-rec"><span class="rv-q">TAVSİYE EDER MİYİM?</span><span style="color:var(--ra)">♥</span><input data-bare class="bare" data-rv="rec" value="${esc(r.rec||'')}" placeholder="Kesinlikle! 4.5/5"></div>
@@ -2313,14 +2324,14 @@ function syncKind(keepStatus){
   $('acadFields').hidden=k!=='makale';if(k==='makale')apaRefresh();
   $('lPages').textContent=k==='roman'?'Bölüm sayısı':'Sayfa sayısı';
   {$('fFile').accept='application/pdf,.pdf,application/epub+zip,.epub';const fl=document.querySelector('label[for=fFile]');if(fl)fl.textContent='E-kitap dosyası (PDF ya da EPUB)';const pf=$('pbField');if(pf)pf.hidden=k!=='kitap'}
-  syncDone();
+  form.classList.toggle('fsimple',(k==='pdf'||k==='kitap')&&!form.dataset.more);syncDone();
 }
 function syncDone(){const k=kindVal();$('curField').hidden=k==='roman';$('rateField').hidden=k==='roman';starsUI();$('fDone').closest('.f').hidden=k==='roman'||$('fStatus').value!=='okundu'}
-form.querySelectorAll('input[name=kind]').forEach(r=>r.addEventListener('change',()=>syncKind()));
+form.querySelectorAll('input[name=kind]').forEach(r=>r.addEventListener('change',()=>syncKind()));$('fMoreBtn').addEventListener('click',()=>{if(form.dataset.more)delete form.dataset.more;else form.dataset.more='1';$('fMoreBtn').textContent=form.dataset.more?'⋯ Daha az':'⋯ Diğer bilgiler';syncKind()});
 $('fStatus').addEventListener('change',()=>{syncDone();if($('fStatus').value==='okundu'&&!$('fDone').value)$('fDone').value=new Date().toISOString().slice(0,10)});
 
 function openForm(b){
-  st.editing=b;form.reset();formRating=0;$('formErr').hidden=true;$('confirmBox').hidden=true;
+  delete form.dataset.more;$('fMoreBtn').textContent='⋯ Diğer bilgiler';st.editing=b;form.reset();formRating=0;$('formErr').hidden=true;$('confirmBox').hidden=true;
   $('fileHint').textContent=b&&b.fileRemoved&&!hasFile(b)?`Bu kitabın dosyası yer açmak için kaldırılmıştı${b.fileName?' ('+b.fileName+')':''}. Okumak için dosyayı buradan yeniden seç.`:'Büyük taranmış PDF\'ler otomatik küçültülür; 20 MB\'tan büyükler parçalara bölünür.';
   $('formTitle').textContent=b?'Kaydı düzenle':'Yeni ekle';$('delBtn').hidden=!b;{const pb=$('pinBtn');pb.hidden=!(b&&b.kind!=='roman'&&b.kind!=='makale');if(b)pb.textContent=b.pinned?'📌 Sabitlemeyi kaldır':'📌 Ana sayfaya sabitle'}$('cardBtn').hidden=!(b&&b.kind!=='roman'&&b.status==='okundu');$('rvBtn').hidden=!(b&&b.kind!=='roman'&&b.kind!=='makale');
   {const sim=b&&b.kind!=='roman'&&b.kind!=='makale'?similarBooks(b):[];$('simRow').hidden=!sim.length;$('simRow').innerHTML=sim.length?`<span class="hint">Benzer kitapların:</span>${sim.map(x=>`<button type="button" class="chip" data-sim="${x.id}">${esc(x.title)}</button>`).join('')}`:''}
@@ -5741,7 +5752,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v194';
+const DK_VER='v195';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -7653,10 +7664,7 @@ function homeKindle(){document.body.classList.add('home-simple','home-kindle');
   return `<div class="hk">
    <header class="hk-top"><div><small>${esc(trDate(t))}</small><h1>${greet}${name?', '+esc(name):''}</h1></div></header>
    ${hero}
-   ${row('Okumaya devam',more,'')}
-   ${row('Okunacaklar',toRead,'okunacak')}
-   ${row('Bitirdiklerin',done,'done')}
-   ${bkBanner()}
+   ${(()=>{let sg=[];try{sg=seriesList().filter(x=>x.next&&x.done>0&&x.next.b.id!==(cur&&cur.id)).map(x=>x.next.b)}catch(e){}const dk=Math.floor(Date.now()/864e5),tr=toRead.slice().sort((a,b)=>((hashStr(a.id)+dk)%97)-((hashStr(b.id)+dk)%97));const L=[...new Map([...sg,...tr].map(b=>[b.id,b])).values()].filter(b=>!cur||b.id!==cur.id).slice(0,3);return L.length?`<section class="hk-sec hk-sug"><div class="hk-h"><h3>Sıradaki için öneriler</h3></div><div class="hk-row">${L.map(tile).join('')}</div></section>`:''})()}
    <div class="hk-foot"><button class="hk-lnk" type="button" data-lf="go" data-v="today">Takvim ve görevler</button><span>·</span><button class="hk-lnk" type="button" data-hs="rich">Ayrıntılı ana sayfa</button></div>
   </div>`}
 document.addEventListener('click',e=>{const a=e.target.closest('[data-hk]');if(!a)return;const k=a.dataset.hk;goSec('library');setTimeout(()=>{if(k==='done'){const t=document.querySelector('#tabs [data-tab=done]');t&&t.click()}else{st.tab='all';st.status='okunacak';try{$('statusFilter').value='okunacak'}catch(x){}render()}},50)});
