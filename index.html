@@ -1567,7 +1567,7 @@ aside div:has(>#tagList),#tagList,#form .f:has(>#fTags),.card .tagt:not(:first-c
 .bkbox .bkpg{position:absolute;left:5px;right:0;bottom:3px;height:8px;z-index:0;border-radius:0 0 3px 2px;background:repeating-linear-gradient(to bottom,#fffaf0 0 1.6px,#e6dccb 1.6px 2.6px)}
 .bkbox{filter:drop-shadow(0 8px 10px color-mix(in srgb,var(--ink) 22%,transparent))}
 .bkw .bkbox .bk .ribbon{bottom:-12px;height:30px;z-index:3}
-.hn-ban{min-height:150px}.hn-ban-t{position:relative;z-index:1;max-width:58%}
+.hn-ban{min-height:0}.hn-ban-t{position:relative;z-index:1}
 .hn-land{position:absolute;right:0;bottom:0;width:62%;height:100%;pointer-events:none}
 .hn-ban{background:linear-gradient(180deg,color-mix(in srgb,var(--accent-soft) 75%,var(--paper)),var(--paper))!important}
 .hn-genres{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
@@ -2252,11 +2252,7 @@ function homeNotion(){document.body.classList.remove('home-kindle','home-simple'
   let qB='';try{const Q=(TL.quotes||[]).filter(q=>q.text);if(Q.length){const q=Q[Math.floor(Date.now()/864e5)%Q.length];qB=card('quote','Günün alıntısı',`<blockquote class="hn-q">“${esc(q.text.slice(0,260))}”</blockquote><small class="hn-mut">— ${esc(q.title||'')}${q.author?', '+esc(q.author):''}</small>`)}}catch(e){}
   return `<div class="hn">
     <header class="hn-ban"><div class="hn-ban-t"><small>${esc(trDate(t))}</small><h1>${greet}${name?', '+esc(name):''}! <span>📖</span></h1><p>${now.length?`<i>${esc(now[0].title)}</i> seni bekliyor.`:'Bugün ne okuyalım?'}${streak>1?` · ${streak} gündür okuyorsun 🌿`:''}</p></div>
-      <svg class="hn-land" viewBox="0 0 600 160" preserveAspectRatio="xMaxYMax slice" aria-hidden="true"><defs><linearGradient id="hnSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--accent-soft)"/><stop offset="1" style="stop-color:var(--paper)"/></linearGradient></defs><rect width="600" height="160" fill="url(#hnSky)" opacity=".0"/><path d="M0 120 Q120 70 240 105 T480 92 T600 98 V160 H0Z" style="fill:color-mix(in srgb,#9fb58a 55%,var(--paper))"/><path d="M0 138 Q150 100 300 128 T600 120 V160 H0Z" style="fill:color-mix(in srgb,#7f9a68 60%,var(--paper))"/>
-<g style="fill:color-mix(in srgb,#4f6b3e 85%,var(--paper))">${[[330,96,1],[352,90,1.25],[378,98,.9],[520,86,1.35],[548,94,1.05],[572,90,1.2],[300,104,.8]].map(([x,y,k])=>`<path d="M${x} ${y-46*k}l${14*k} ${22*k}h-${6*k}l${12*k} ${16*k}h-${7*k}l${11*k} ${14*k}h-${48*k}l${11*k}-${14*k}h-${7*k}l${12*k}-${16*k}h-${6*k}z"/><rect x="${x-2*k}" y="${y+6*k}" width="${4*k}" height="${8*k}" fill="#7a5a3a"/>`).join('')}</g>
-<g transform="translate(420 92)"><path d="M0 34 L26 0 L52 34Z" style="fill:color-mix(in srgb,#6f8a52 80%,#fff)"/><path d="M26 0 L26 34" stroke="#4f6b3e" stroke-width="1.5"/><path d="M18 34 L26 18 L34 34Z" fill="#4f6b3e" opacity=".6"/></g>
-<g transform="translate(470 104)"><rect x="0" y="10" width="34" height="22" rx="2" fill="#f4ebd8"/><path d="M-4 12 L17 -4 L38 12Z" fill="#b5654e"/><rect x="13" y="18" width="8" height="14" fill="#7a5a3a"/><rect x="4" y="15" width="6" height="6" fill="#e9b44c"/></g>
-<g stroke="#a58b67" stroke-width="1.2" fill="none"><path d="M392 60 q8 -6 16 0 q8 -6 16 0"/><path d="M500 40 q6 -5 12 0 q6 -5 12 0"/></g><circle cx="560" cy="34" r="12" fill="#f3d58f" opacity=".85"/></svg></header>
+      </header>
     <div class="hn-grid">
       ${card('now','Şu an okuduğum',nowB,'','s8')}
       ${card('goal',Y+' okuma hedefim',goalB,'<button class="hn-more" type="button" data-gosec="journal">Günlük →</button>','s4')}
@@ -5903,7 +5899,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v199';
+const DK_VER='v200';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
