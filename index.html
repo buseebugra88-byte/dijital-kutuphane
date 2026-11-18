@@ -1560,6 +1560,26 @@ aside div:has(>#tagList),#tagList,#form .f:has(>#fTags),.card .tagt:not(:first-c
 .hn-one{display:flex;gap:26px;align-items:center}.hn-one .bk{--cw:150px;--ch:225px;flex:none;box-shadow:3px 3px 0 -1px #fffaf2,3px 3px 0 0 color-mix(in srgb,var(--ink) 14%,transparent),6px 6px 0 -1px #fffaf2,6px 6px 0 0 color-mix(in srgb,var(--ink) 14%,transparent),12px 16px 26px -14px color-mix(in srgb,var(--ink) 60%,transparent)}
 .hn-onet{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}.hn-onet h2{font-family:var(--display);font-size:28px;margin:0;line-height:1.15}.hn-onet>span{color:var(--muted)}.hn-onebtn{display:flex;gap:8px;margin-top:6px}.hn-onebtn .hn-btn{margin-top:0}
 
+/* v199: kitap biçimi (arka kapak + sayfa kenarı), manzaralı başlık, tür ikonları, orman yan menüsü */
+.bkbox{position:relative;width:var(--cw);padding-bottom:9px}
+.bkbox::before{content:"";position:absolute;left:0;right:-3px;top:5px;bottom:0;border-radius:3px 9px 9px 4px;background:color-mix(in srgb,var(--bc,#6f8fb3) 82%,#000);z-index:0}
+.bkbox .bk{z-index:1;box-shadow:none!important;border-radius:3px 7px 7px 3px}
+.bkbox .bkpg{position:absolute;left:5px;right:0;bottom:3px;height:8px;z-index:0;border-radius:0 0 3px 2px;background:repeating-linear-gradient(to bottom,#fffaf0 0 1.6px,#e6dccb 1.6px 2.6px)}
+.bkbox{filter:drop-shadow(0 8px 10px color-mix(in srgb,var(--ink) 22%,transparent))}
+.bkw .bkbox .bk .ribbon{bottom:-12px;height:30px;z-index:3}
+.hn-ban{min-height:150px}.hn-ban-t{position:relative;z-index:1;max-width:58%}
+.hn-land{position:absolute;right:0;bottom:0;width:62%;height:100%;pointer-events:none}
+.hn-ban{background:linear-gradient(180deg,color-mix(in srgb,var(--accent-soft) 75%,var(--paper)),var(--paper))!important}
+.hn-genres{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.hn-gen{flex:none;width:86px;display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:none;font:inherit;color:inherit;cursor:pointer;padding:6px 4px;border-radius:12px}.hn-gen:hover{background:var(--bg)}
+.hn-gen svg{width:40px;height:46px}.hn-gen span{font-size:12.5px;text-align:center;line-height:1.2}.hn-gen small{font-size:11px;color:var(--muted)}
+.hnk-goal{position:relative}.hn-stack{position:absolute;right:14px;top:44px;width:92px;opacity:.95}.hnk-goal .hn-goal{padding-right:96px}
+html[data-preset=orman] .sidenav{background:#3f5a34!important;background-image:none!important;color:#f4efe2;border-right:0}
+html[data-preset=orman] .sidenav .sn-item{color:#e6e0cc}html[data-preset=orman] .sidenav .sn-item:hover{background:rgba(255,255,255,.08);color:#fff}
+html[data-preset=orman] .sidenav .sn-item[aria-current="page"]{background:#f6f0e2;color:#2f4427}html[data-preset=orman] .sidenav .sn-item[aria-current="page"]::before{display:none}
+html[data-preset=orman] .sidenav .sn-brand,html[data-preset=orman] .sidenav .sn-brand *{color:#f4efe2}html[data-preset=orman] .sidenav hr,html[data-preset=orman] .sidenav .sn-sep{border-color:rgba(255,255,255,.18)}
+@media (max-width:1099px){.hn-ban-t{max-width:70%}.hn-land{width:70%;opacity:.8}}
+
 </style>
 
 </head><body>
@@ -2204,14 +2224,14 @@ function homeNotion(){document.body.classList.remove('home-kindle','home-simple'
   const reviews=reads.filter(b=>b.review||(b.rv&&(b.rv.sum||b.rv.quote||(b.rv.tk||[]).some(Boolean)))).sort(by('finishedAt')).slice(0,4);
   const toReview=fin.filter(b=>!reviews.includes(b)).sort(by('finishedAt')).slice(0,3);
   const recent=[...reads].sort(by('addedAt')).slice(0,12);
-  const ico=k=>({now:'📖',goal:'🎯',stat:'📊',cal:'🗓',ser:'📚',tbr:'📋',rev:'📝',gal:'🖼',link:'🔗',quote:'❝'}[k]||'•');
+  const ico=k=>({now:'📖',goal:'🎯',stat:'📊',cal:'🗓',ser:'📚',tbr:'📋',rev:'📝',gal:'🖼',link:'🔗',quote:'❝',genre:'🏷'}[k]||'•');
   const card=(k,title,body,more,cls)=>`<section class="hn-c hnk-${k} ${cls||''}"><header><span class="hn-i">${ico(k)}</span><h3>${title}</h3>${more||''}</header>${body}</section>`;
   const stars=n=>n?'<span class="hn-st">'+'★'.repeat(Math.round(n))+'<i>'+'★'.repeat(5-Math.round(n))+'</i></span>':'';
   // şu an okuduklarım
   const nowB=now.length?(()=>{const b=now[0],G=bkProg(b),s_=seriesOf(b);return `<div class="hn-one">${bookHtml(b)}<div class="hn-onet"><small class="hn-mut">OKUYORSUN</small><h2>${esc(b.title)}</h2><span>${esc(b.author||'')}${s_?' · '+esc(s_.name)+(s_.no?' #'+s_.no:''):''}</span>${G.t?`<div class="hn-bar lg"><i style="width:${G.p}%"></i></div><small class="hn-mut">%${Math.round(G.p)} · ${esc(G.txt)}${G.t&&b.currentPage?` · ${Math.max(0,G.t-(b.currentPage||0))} sayfa kaldı`:''}</small>`:''}<div class="hn-onebtn">${hasFile(b)?`<button class="hn-btn pri" type="button" data-read="${b.id}">Devam et</button>`:''}<button class="hn-btn" type="button" data-rvopen="${b.id}">📝 İnceleme</button></div></div></div>`})():`<p class="hn-empty">Şu an okuduğun bir kitap yok. <button class="hn-lnk" type="button" data-openpick>🎲 Ne okusam?</button></p>`;
   // hedef
   const gp=goal?Math.min(100,Math.round(finY.length/goal*100)):0;
-  const goalB=`<div class="hn-goal"><div class="hn-big">${finY.length}<small>/ ${goal||'?'} kitap</small></div><div class="hn-bar lg"><i style="width:${gp}%"></i></div><small class="hn-mut">${goal?(finY.length>=goal?'Hedefini tamamladın 🎉':`Hedefe ${goal-finY.length} kitap kaldı · %${gp}`):'Okuma günlüğünden bu yılın hedefini koyabilirsin.'}</small></div>`;
+  const goalB=`<svg class="hn-stack" viewBox="0 0 120 96" aria-hidden="true"><rect x="14" y="74" width="92" height="16" rx="4" fill="#8a6fb3"/><rect x="18" y="78" width="84" height="8" fill="#fffaf0" opacity=".9"/><rect x="8" y="56" width="98" height="16" rx="4" fill="#5f8f5a"/><rect x="12" y="60" width="90" height="8" fill="#fffaf0" opacity=".9"/><rect x="20" y="38" width="86" height="16" rx="4" fill="#6f8fb3"/><rect x="24" y="42" width="78" height="8" fill="#fffaf0" opacity=".9"/><rect x="12" y="20" width="92" height="16" rx="4" fill="#c9706a"/><rect x="16" y="24" width="84" height="8" fill="#fffaf0" opacity=".9"/><path d="M84 20v-14h10v14l-5-4z" fill="#e9b44c"/></svg><div class="hn-goal"><div class="hn-big">${finY.length}<small>/ ${goal||'?'} kitap</small></div><div class="hn-bar lg"><i style="width:${gp}%"></i></div><small class="hn-mut">${goal?(finY.length>=goal?'Hedefini tamamladın 🎉':`Hedefe ${goal-finY.length} kitap kaldı · %${gp}`):'Okuma günlüğünden bu yılın hedefini koyabilirsin.'}</small></div>`;
   // istatistik
   const statB=`<div class="hn-stats"><div><b>${pagesM.toLocaleString('tr-TR')}</b><span>bu ay sayfa</span></div><div><b>${streak}</b><span>gün seri</span></div><div><b>${fin.length}</b><span>bitirilen</span></div><div><b>${avg?avg.toFixed(1):'–'}</b><span>ort. puan</span></div><div><b>${reads.length}</b><span>kitap</span></div><div><b>${sAll}</b><span>seri</span></div></div>`;
   // takvim
@@ -2232,10 +2252,15 @@ function homeNotion(){document.body.classList.remove('home-kindle','home-simple'
   let qB='';try{const Q=(TL.quotes||[]).filter(q=>q.text);if(Q.length){const q=Q[Math.floor(Date.now()/864e5)%Q.length];qB=card('quote','Günün alıntısı',`<blockquote class="hn-q">“${esc(q.text.slice(0,260))}”</blockquote><small class="hn-mut">— ${esc(q.title||'')}${q.author?', '+esc(q.author):''}</small>`)}}catch(e){}
   return `<div class="hn">
     <header class="hn-ban"><div class="hn-ban-t"><small>${esc(trDate(t))}</small><h1>${greet}${name?', '+esc(name):''}! <span>📖</span></h1><p>${now.length?`<i>${esc(now[0].title)}</i> seni bekliyor.`:'Bugün ne okuyalım?'}${streak>1?` · ${streak} gündür okuyorsun 🌿`:''}</p></div>
-      <svg class="hn-ban-art" viewBox="0 0 320 120" aria-hidden="true"><g opacity=".9"><rect x="40" y="38" width="22" height="72" rx="3" fill="#7f9cbd"/><rect x="64" y="28" width="18" height="82" rx="3" fill="#c98f86"/><rect x="84" y="46" width="26" height="64" rx="3" fill="#a9b98f"/><rect x="112" y="34" width="16" height="76" rx="3" fill="#e2c07a"/><rect x="130" y="52" width="24" height="58" rx="3" fill="#9b86b8" transform="rotate(8 142 81)"/><rect x="30" y="108" width="160" height="6" rx="3" fill="#d8c9b4"/><path d="M210 92c10-30 40-34 52-12 12-22 42-18 52 12-18-8-38-4-52 8-14-12-34-16-52-8z" fill="#fff" stroke="#b9ab98" stroke-width="2"/><path d="M262 80v26" stroke="#b9ab98" stroke-width="2"/><circle cx="250" cy="30" r="3" fill="#e2c07a"/><circle cx="290" cy="46" r="2" fill="#7f9cbd"/><circle cx="196" cy="40" r="2.5" fill="#c98f86"/></g></svg></header>
+      <svg class="hn-land" viewBox="0 0 600 160" preserveAspectRatio="xMaxYMax slice" aria-hidden="true"><defs><linearGradient id="hnSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--accent-soft)"/><stop offset="1" style="stop-color:var(--paper)"/></linearGradient></defs><rect width="600" height="160" fill="url(#hnSky)" opacity=".0"/><path d="M0 120 Q120 70 240 105 T480 92 T600 98 V160 H0Z" style="fill:color-mix(in srgb,#9fb58a 55%,var(--paper))"/><path d="M0 138 Q150 100 300 128 T600 120 V160 H0Z" style="fill:color-mix(in srgb,#7f9a68 60%,var(--paper))"/>
+<g style="fill:color-mix(in srgb,#4f6b3e 85%,var(--paper))">${[[330,96,1],[352,90,1.25],[378,98,.9],[520,86,1.35],[548,94,1.05],[572,90,1.2],[300,104,.8]].map(([x,y,k])=>`<path d="M${x} ${y-46*k}l${14*k} ${22*k}h-${6*k}l${12*k} ${16*k}h-${7*k}l${11*k} ${14*k}h-${48*k}l${11*k}-${14*k}h-${7*k}l${12*k}-${16*k}h-${6*k}z"/><rect x="${x-2*k}" y="${y+6*k}" width="${4*k}" height="${8*k}" fill="#7a5a3a"/>`).join('')}</g>
+<g transform="translate(420 92)"><path d="M0 34 L26 0 L52 34Z" style="fill:color-mix(in srgb,#6f8a52 80%,#fff)"/><path d="M26 0 L26 34" stroke="#4f6b3e" stroke-width="1.5"/><path d="M18 34 L26 18 L34 34Z" fill="#4f6b3e" opacity=".6"/></g>
+<g transform="translate(470 104)"><rect x="0" y="10" width="34" height="22" rx="2" fill="#f4ebd8"/><path d="M-4 12 L17 -4 L38 12Z" fill="#b5654e"/><rect x="13" y="18" width="8" height="14" fill="#7a5a3a"/><rect x="4" y="15" width="6" height="6" fill="#e9b44c"/></g>
+<g stroke="#a58b67" stroke-width="1.2" fill="none"><path d="M392 60 q8 -6 16 0 q8 -6 16 0"/><path d="M500 40 q6 -5 12 0 q6 -5 12 0"/></g><circle cx="560" cy="34" r="12" fill="#f3d58f" opacity=".85"/></svg></header>
     <div class="hn-grid">
       ${card('now','Şu an okuduğum',nowB,'','s8')}
       ${card('goal',Y+' okuma hedefim',goalB,'<button class="hn-more" type="button" data-gosec="journal">Günlük →</button>','s4')}
+      ${(()=>{const sh={};reads.forEach(b=>{if(b.shelf&&b.shelf!=='İstek listem')sh[b.shelf]=(sh[b.shelf]||0)+1});const L=Object.entries(sh).sort((a,b)=>b[1]-a[1]).slice(0,10);if(!L.length)return '';const C=['#c9706a','#6f8fb3','#8a6fb3','#5f8f5a','#d2a03c','#4f7d7a','#b5654e','#7f9cbd','#9b86b8','#a9b98f'];return card('genre','Türlerim',`<div class="hn-genres">${L.map(([k,v],i)=>`<button type="button" class="hn-gen" data-hnshelf="${esc(k)}"><svg viewBox="0 0 40 46" aria-hidden="true"><rect x="6" y="4" width="28" height="34" rx="3" fill="${C[i%C.length]}"/><rect x="8" y="36" width="25" height="5" rx="1" fill="#fffaf0" stroke="#e5dccb"/><rect x="6" y="4" width="4" height="34" fill="#000" opacity=".15"/><path d="M25 36v9l3-2.5 3 2.5v-9z" fill="#e9b44c"/><rect x="14" y="12" width="14" height="3" rx="1.5" fill="#fff" opacity=".7"/></svg><span>${esc(k)}</span><small>${v}</small></button>`).join('')}</div>`,'','s12')})()}
       ${card('stat','İstatistiklerim',statB,'','s4')}
       ${card('cal',t.toLocaleDateString('tr-TR',{month:'long',year:'numeric'}),calB,'','s4')}
       ${card('ser','Devam eden seriler',serB,'<button class="hn-more" type="button" data-hntab="series">Tümü →</button>','s4')}
@@ -2247,6 +2272,7 @@ function homeNotion(){document.body.classList.remove('home-kindle','home-simple'
     <div class="hn-foot"><button class="hn-lnk" type="button" data-hnoff>Sade ana sayfaya geç</button></div>
   </div>`}
 document.addEventListener('click',e=>{const t_=e.target.closest('[data-hntab]');if(t_){const k=t_.dataset.hntab;goSec('library');setTimeout(()=>{const x=document.querySelector('#tabs [data-tab='+k+']');x&&x.click()},60);return}
+  const hs_=e.target.closest('[data-hnshelf]');if(hs_){const k=hs_.dataset.hnshelf;goSec('library');setTimeout(()=>{st.tab='all';st.shelf=k;try{render()}catch(x){}},80);return}
   if(e.target.closest('[data-hnoff]')){UI.hnOff='1';try{localStorage.setItem('dk-ui',JSON.stringify(UI))}catch(x){}renderList();return}
   const r=e.target.closest('.hn [data-read]');if(r){e.preventDefault();e.stopPropagation();bkOpen(r.dataset.read)}},true);
 {let w0=innerWidth>=768;addEventListener('resize',()=>{const w=innerWidth>=768;if(w!==w0){w0=w;if(st.view==='panel'&&st.sec==='home')try{renderList()}catch(e){}}})}
@@ -2424,7 +2450,9 @@ function rvRender(){const pg=$('rvPage'),b=st.books.find(x=>x.id===RV.id);if(!pg
   </article>`;
   requestAnimationFrame(()=>pg.querySelectorAll('textarea').forEach(rvGrow))}
 document.addEventListener('click',e=>{const x=e.target.closest('[data-rvopen]');if(!x)return;e.preventDefault();e.stopPropagation();const id=x.dataset.rvopen||(st.editing&&st.editing.id);if(!id)return;if(!$('veil').hidden&&x.id==='rvBtn')$('veil').hidden=true;rvOpen(id)},true);
-function bookCap(b){return `<div class="bkw">${bookHtml(b)}<div class="bkc"><b data-rvopen="${b.id}" role="button" tabindex="0" title="İnceleme sayfası" style="cursor:pointer">${esc(b.title||'')}</b>${b.author?`<small>${esc(b.author)}</small>`:''}</div></div>`}
+setTimeout(async()=>{try{if(typeof shColors!=='function')return;const L=st.books.filter(b=>!b.deleted&&coverSrc(b)&&!shSpc()[b.id]);if(!L.length)return;await shColors(L);bkBoard.m=null;if(st.sec==='library'||st.sec==='home')renderList()}catch(e){}},9000);
+function bkBoard(b){let c='';try{c=(bkBoard.m||(bkBoard.m=shSpc()))[b.id]||''}catch(e){}return c||rvColor(b)}
+function bookCap(b){return `<div class="bkw"><div class="bkbox" style="--bc:${bkBoard(b)}">${bookHtml(b)}<span class="bkpg" aria-hidden="true"></span></div><div class="bkc"><b data-rvopen="${b.id}" role="button" tabindex="0" title="İnceleme sayfası" style="cursor:pointer">${esc(b.title||'')}</b>${b.author?`<small>${esc(b.author)}</small>`:''}</div></div>`}
 
 /* form */
 const form=$('form');
@@ -2545,6 +2573,9 @@ const PRESETS={
   kobo:{name:'Kobo',sw:['#f5f1e8','#1e1d1a','#a59e90','#fbf8f1'],
     light:{bg:'#f5f1e8',paper:'#fbf8f1',ink:'#1e1d1a',muted:'#77736a',line:'#e7e1d4',check:'#efeadf',accent:'#3a3833','accent-soft':'#ebe6da',brass:'#ddd5c6','on-brass':'#1e1d1a','brass-soft':'#efe9dd',k:'#c9c1b2',p:'#ddd6c8',r:'#5a564d'},
     dark:{bg:'#1a1917',paper:'#23221f',ink:'#ece6da',muted:'#a39d91',line:'#36332e',check:'#1e1d1a',accent:'#e6dfd1','accent-soft':'#34312b',brass:'#4a463f','on-brass':'#ece6da','brass-soft':'#2c2a26',k:'#857e72',p:'#5e5950',r:'#cfc7b8'}},
+  orman:{name:'Orman (Sherwood)',sw:['#efe8d8','#3f5a34','#c9a96a','#fbf7ee'],
+    light:{bg:'#efe8d8',paper:'#fbf7ee',ink:'#3b3a2c',muted:'#7d7a66',line:'#e2d9c3',check:'#ece4d2',accent:'#4f6b3e','accent-soft':'#e2e8d4',brass:'#d9c49a','on-brass':'#3b3a2c',k:'#c9b48a','brass-soft':'#efe5cf',p:'#b8c9a4',r:'#a7745a'},
+    dark:{bg:'#1b2117',paper:'#232b1e',ink:'#ece6d4',muted:'#a8a58f',line:'#344029',check:'#1e2519',accent:'#a9c48e','accent-soft':'#2e3a26',brass:'#5a4e33','on-brass':'#ece6d4',k:'#7d6f4f','brass-soft':'#2b2a1f',p:'#4a5c3c',r:'#c99a80'}},
   defter:{name:'Defter (Notion)',sw:['#f6f1ea','#37352f','#7f9cbd','#fffdf9'],
     light:{bg:'#f6f1ea',paper:'#fffdf9',ink:'#37352f',muted:'#8b857c',line:'#e8e1d6',check:'#f1ebe2',accent:'#6f8fb3','accent-soft':'#e3ebf3',brass:'#e5d5bd','on-brass':'#37352f','brass-soft':'#f1e7d8',k:'#cdb99c',p:'#c9d6e3',r:'#b98a83'},
     dark:{bg:'#191919',paper:'#202020',ink:'#e8e4dc',muted:'#9b968e',line:'#2f2f2f',check:'#1c1c1c',accent:'#8fb0d4','accent-soft':'#26303a',brass:'#4a4236','on-brass':'#e8e4dc','brass-soft':'#2a2620',k:'#7d705e',p:'#3d4a57',r:'#c79a92'}},
@@ -2688,7 +2719,7 @@ function applyUI(){
 }
 mq&&mq.addEventListener&&mq.addEventListener('change',applyUI);
 function fillThemeForm(){try{fillReadOpts()}catch(e){}
-  {const SHORT=['defter','ereader','kobo'],cur=dkWideP()||'sage',keys=fillThemeForm.all?Object.keys(PRESETS):[...SHORT,...(SHORT.includes(cur)?[]:[cur])];
+  {const SHORT=['defter','orman','ereader','kobo'],cur=dkWideP()||'sage',keys=fillThemeForm.all?Object.keys(PRESETS):[...SHORT,...(SHORT.includes(cur)?[]:[cur])];
   $('tPresets').innerHTML=keys.filter(k=>PRESETS[k]).map(k=>{const p=PRESETS[k];return `<button type="button" class="sw" data-preset="${k}" aria-pressed="${cur===k}"><i>${p.sw.map(c=>`<b style="background:${c}"></b>`).join('')}</i>${esc(p.name)}</button>`}).join('')+`<button type="button" class="tpr-more" data-tprmore="1">${fillThemeForm.all?'Daha az göster':'Tüm temalar ('+Object.keys(PRESETS).length+')'}</button>`}
   $('tBgc').value=UI.bgc||(getComputedStyle(document.documentElement).getPropertyValue('--bg').trim().slice(0,7)||'#efe7e2');
   $('tMode').value=UI.mode;$('tAccent').value=UI.accent||(getComputedStyle(document.documentElement).getPropertyValue('--accent').trim().slice(0,7)||'#7f9a68');
@@ -5872,7 +5903,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v198';
+const DK_VER='v199';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
