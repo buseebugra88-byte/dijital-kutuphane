@@ -3099,7 +3099,7 @@ function renderTool(){
 function tMenu(){
   const T=[['focus','⏱','Odak zamanlayıcısı','25 dakikalık okuma seansları'],['quotes','💬','Alıntı defteri',`${TL.quotes.length} alıntı`],['thesis','🎓','Tez planlayıcı','Bölümler, tarihler, makaleler'],
     ['cards','🃏','Çalışma kartları','Soru-cevap kartlarıyla çalış'],['writer','✍️','Yazar köşesi','Karakterler, yazım, yayınevleri'],['year','🌟',`${new Date().getFullYear()} özetim`,'Yılın okuma özeti'],['backup','💾','Yedekle','İndir ya da geri yükle']];
-  return toolHead('🧰 Araçlar',false)+`<div class="tiles">${T.map(([k,i,t,d])=>`<button type="button" class="tile" data-tool="${k}"><span class="ti">${i}</span><b>${t}</b><span class="hint">${esc(d)}</span></button>`).join('')}</div>`;
+  return toolHead('🧰 Araçlar',false)+`<div class="tiles">${T.map(([k,i,t,d])=>`<button type="button" class="tile" data-tool="${k}"><span class="ti">${i}</span><b>${t}</b><span class="hint">${esc(d)}</span></button>`).join('')}<a class="tile" href="mektup.html" style="text-decoration:none;color:inherit"><span class="ti">✉️</span><b>Mühürlü Mektuplar</b><span class="hint">Daktiloyla yaz, kurgu al, zarfla</span></a></div>`;
 }
 
 /* ---------- ⏱ Odak ---------- */
@@ -5939,7 +5939,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v204';
+const DK_VER='v205';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -6567,9 +6567,9 @@ function lfLetters(){let L=[];try{L=JSON.parse(localStorage.getItem('muhurlu-mek
   return `<div class="lf-hd"><h2>✉️ Mektuplarım</h2></div>
   <div class="lfc ml-card"><svg viewBox="0 0 160 100" class="ml-env" aria-hidden="true"><rect x="4" y="8" width="152" height="88" rx="6" fill="#d9b98f"/><path d="M4 14 L80 62 L156 14" fill="none" stroke="#b8935f" stroke-width="2"/><path d="M4 96 L64 52 M156 96 L96 52" stroke="#c7a576" stroke-width="1.5"/><circle cx="80" cy="60" r="14" fill="#8a2a33"/><circle cx="80" cy="60" r="9" fill="none" stroke="#b14a52" stroke-width="1.5"/><path d="M80 54 C77 50 72 53 75 57 L80 62 L85 57 C88 53 83 50 80 54Z" fill="#b14a52"/><g transform="translate(118 18) rotate(6)"><rect width="26" height="30" fill="#f2d6c4" stroke="#fbfaf4" stroke-width="2.5" stroke-dasharray="2 1.5"/><path d="M13 24 V14 M8 9 C8 15 10 17 13 17 C16 17 18 15 18 9 L16 11 L13 7 L10 11Z" fill="#c23b35" stroke="#3f6b3a" stroke-width=".8"/></g></svg>
    <h4>Mühürlü Mektuplar</h4>
-   <p class="muted" style="margin:0">Daktiloyla ya da el yazısıyla yaz, kuru çiçek ve mumla mühürle, zarfla. Her gün yeni bir kurgu; istersen romanlarındaki karakterler birbirine yazar. Kuruttuğun çiçekler Herbaryum'da.</p>
+   <p class="muted" style="margin:0">Daktilo sayfasında yaz, her gün yeni bir kurgu al; istersen romanlarındaki karakterler birbirine yazar. Bitince zarfla ve mumla mühürle.</p>
    ${L.length?`<p style="margin:0">Kutunda <b>${L.length}</b> mektup var${unread?`, <b>${unread}</b> tanesi henüz açılmadı`:''}${wait?`, <b>${wait}</b> tanesi açılış gününü bekliyor`:''}.</p>`:''}
-   <a class="btn primary" href="mektup.html" style="justify-self:start;text-decoration:none">Masaya geç →</a>    <a class="btn" href="hediye-24.html" style="justify-self:start;text-decoration:none">🎂 24. yaş hediyem: mühürlü mektup, mum ve kavanoz →</a>
+   <a class="btn primary" href="mektup.html" style="justify-self:start;text-decoration:none">Mektup yazmaya geç →</a>    <a class="btn" href="hediye-24.html" style="justify-self:start;text-decoration:none">🎂 24. yaş hediyem: mühürlü mektup, mum ve kavanoz →</a>
    <p class="muted" style="margin:0;font-size:12.5px">Telefonda ayrı bir uygulama gibi de kullanabilirsin: mektup sayfasını açıp “Ana Ekrana Ekle” de.</p></div>`}
 function lfFilm(){const F=LF.films||[],W=F.filter(f=>f.st!=='done').sort((a,b)=>(b.at||'').localeCompare(a.at||'')),D=F.filter(f=>f.st==='done').sort((a,b)=>(b.date||'').localeCompare(a.date||''));
   let R=FILM_REC.filter(r=>!fmHave(r[0]));if(FM.mood==='sakin')R=R.filter(r=>/sakin/.test(r[4]||''));else R=R.filter(r=>r[2]===FM.cat);if(FM.mood!=='sakin'&&FM.cat!=='old'&&FM.hideHeavy)R=R.filter(r=>!/agir/.test(r[4]||''));

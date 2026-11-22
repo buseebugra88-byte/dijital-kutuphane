@@ -571,6 +571,7 @@ function renderKutu(){
   document.body.style.overflow="";
   app.innerHTML=`<div class="scr"><div class="wrap">
    <div class="hd"><button class="ic" id="k-back" aria-label="Yazıya dön">${IC.back}</button><h2>Mektup kutum</h2><button class="btn" id="k-new">Yeni mektup</button></div>
+   <a href="./" class="link" style="text-decoration:none;align-self:flex-start">📚 Dijital Kütüphanem'e dön</a>
    ${letters.length?`<div class="box">${letters.map(l=>{const lk=isLocked(l);return `<button data-open="${esc(l.id)}" class="${!l.opened&&!lk?"unread":""}${lk?" lockv":""}">${envFrontM(l)}
      <span class="meta"><span>${esc(shortDate(l.created))}</span><span>${lk?"🔒 "+esc(shortDate(l.openAfter)):(l.opened?"açıldı":"mühürlü")}</span></span></button>`}).join("")}</div>`
    :`<div class="empty"><p>Kutun şimdilik boş.</p><p class="hint">Yazdığın ve mühürlediğin mektuplar burada durur.</p></div>`}
