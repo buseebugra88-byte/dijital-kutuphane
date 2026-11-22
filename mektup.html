@@ -224,6 +224,45 @@ button.sealbtn{position:absolute;left:50%;top:var(--sy,60%);width:26%;aspect-rat
 .cap{font-size:.75rem;color:var(--muted);margin-top:6px;text-align:center}
 @media (max-width:560px){.bench{grid-template-columns:1fr}}
 .envback .flap,.envback .flap i{pointer-events:none}
+
+.pl.curved .sheetp{top:calc(78px + env(safe-area-inset-top));left:6px;right:6px;bottom:-60px;border-radius:50% 50% 0 0/70px 70px 0 0;box-shadow:0 -2px 18px rgba(0,0,0,.35)}
+.pl.curved:not(.open){background:#1b1a19}.pl.curved .pl-top{color:#d9d4ca}
+.pl.nomach .roller{display:none}
+.roller .bar{background:var(--raybg)!important}
+.pl[data-str="75"] .ink{opacity:.68}.pl[data-str="125"] .ink{text-shadow:0 0 1px currentColor,0 0 .5px currentColor;font-weight:700}
+.sheetp .gl,.sheetp .gr{position:absolute;top:0;bottom:0;width:36px;background:var(--garden) repeat-y;display:none;z-index:2;pointer-events:none;opacity:.95}
+.sheetp .gl{left:0}.sheetp .gr{right:0;transform:scaleX(-1);background-position:0 120px}
+.pl.garden .sheetp .gl,.pl.garden .sheetp .gr{display:block}
+.flmark{position:absolute;right:22px;top:calc(96px + env(safe-area-inset-top));z-index:4;transform:rotate(14deg);pointer-events:none;filter:drop-shadow(0 1px 1px rgba(0,0,0,.15))}
+.pl.open .flmark,.pl.curved .flmark{top:40px}
+.bxfl{position:absolute;left:8px;top:-10px;transform:rotate(-18deg);filter:drop-shadow(0 1px 1px rgba(0,0,0,.2))}
+.page{position:relative}.pgfl{position:absolute;right:16px;top:-12px;transform:rotate(12deg)}
+/* settings sheet, Platen style */
+.set{width:min(560px,100%);height:min(92vh,900px);display:flex;flex-direction:column;background:#efede6;background-image:var(--noise);border-radius:34px 34px 0 0;font-family:var(--f-type);color:#2e2b27;box-shadow:0 -8px 40px rgba(0,0,0,.3);animation:up .28s cubic-bezier(.2,.9,.3,1);padding-bottom:env(safe-area-inset-bottom)}
+.set .grab{width:42px;height:5px;border-radius:3px;background:#c9c4b9;margin:10px auto 0}
+.set-hd{display:grid;grid-template-columns:60px 1fr 60px;align-items:center;padding:8px 18px 10px}
+.set-hd h3{margin:0;text-align:center;font:400 1.5rem var(--f-type);letter-spacing:.04em}
+.set-done,.set-bk{border:0;background:none;font:400 1.05rem var(--f-type);cursor:pointer;color:#2e2b27}.set-done{justify-self:end}.set-bk{justify-self:start;font-size:1.8rem;line-height:1}
+.set-bd{flex:1;overflow:auto;padding:0 26px 40px;-webkit-overflow-scrolling:touch}
+.sfind{width:100%;border:0;border-bottom:1px solid #cfcac0;background:none;font:400 .95rem var(--f-type);padding:14px 0;margin-bottom:10px;color:#2e2b27;outline:none}
+.sgrp{display:flex;flex-direction:column;margin:28px 0 4px}.sgrp span{font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;color:#6d675d}.sgrp small{font-size:.8rem;color:#6d675d}
+.srow{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;border:0;border-bottom:1px solid #d6d1c6;background:none;padding:18px 0;text-align:left;font-family:var(--f-type);color:#2e2b27;cursor:pointer}
+.srow.cl{flex-direction:column;align-items:stretch;cursor:default}
+.srow b{display:block;font-weight:400;font-size:1.15rem;letter-spacing:.02em}.srow small{display:block;font-size:.8rem;color:#6d675d;margin-top:3px;line-height:1.35}
+.srow .chev{font-style:normal;font-size:1.6rem;line-height:1;color:#3a3631}
+.ck{font-size:1.1rem;white-space:nowrap;flex-shrink:0}.srow .chev{flex-shrink:0}.set-bd{min-height:0}.ck b{color:#2a4ea8;font-weight:700}
+.flw{display:flex;justify-content:space-between;align-items:center;gap:4px;margin-top:12px}
+.flw button{border:0;background:none;padding:4px;border-radius:50%;cursor:pointer;color:#4a453e;display:grid;place-items:center;width:44px;height:44px}
+.flw button[aria-pressed="true"]{box-shadow:0 0 0 2px #2e2b27}
+.slab{font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:#6d675d;margin:22px 0 10px}
+.spick{display:flex;flex-direction:column}
+.spick button{display:flex;align-items:center;gap:14px;border:0;border-bottom:1px solid #d6d1c6;background:none;padding:14px 0;font:400 1.05rem var(--f-type);color:#2e2b27;cursor:pointer;text-align:left}
+.spick button[aria-pressed="true"]::after{content:"[x]";margin-left:auto;color:#2a4ea8}
+.spick .sw{width:30px;height:30px;border-radius:6px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}.spick .sw.r{border-radius:50%}.spick .sw.ray{height:12px;border-radius:6px;width:44px}
+.set .caps{margin-top:4px}
+.cbt{display:flex;gap:8px}.cbt button{border:1px solid #cfcac0;background:none;border-radius:999px;padding:6px 10px;font:400 .8rem var(--f-type);cursor:pointer;color:#2e2b27}
+.sempty{color:#6d675d;text-align:center;margin:40px 0}
+.sfoot{text-align:center;color:#8a847a;font-size:.78rem;margin-top:34px}
 </style>
 <main id="app"></main>
 <div class="toast" id="toast" hidden></div>
@@ -457,9 +496,9 @@ const IC={
 let placeCaret=null;
 function renderYaz(){
   document.body.style.overflow="hidden";
-  app.innerHTML=`<div class="pl${isNight()?" gece":""}" id="pl" style="--cap:${CAPS[PREF.cap]||CAPS.klasik}">
+  app.innerHTML=`<div class="pl" id="pl">
    <header class="pl-top"><button class="ic" id="p-box" aria-label="Mektup kutum">${IC.box}</button><span class="ctr" id="ctr"></span><button class="ic" id="p-share" aria-label="Paylaş">${IC.share}</button></header>
-   <div class="stage" id="stage"><div class="sheetp" id="sp">
+   <div class="stage" id="stage"><div class="sheetp" id="sp"><i class="gl"></i><i class="gr"></i><div class="flmark" id="flmark"></div>
      <div class="col" id="col" style="color:${inkNow()}"><div class="ink" id="ink"></div><div class="ph" id="ph">Buradan başla.</div><textarea id="ta" aria-label="Mektup" spellcheck="false" autocapitalize="sentences"></textarea><div class="meas" id="meas" aria-hidden="true"></div></div></div>
      <button class="first" id="first" hidden>İlk satır lazım mı?</button>
      <div class="roller" id="rl"><i class="cap l"></i><div class="bar"></div><i class="cap r"></i><div class="car" id="car"><span class="hm"></span><i></i><i></i><i></i></div></div>
@@ -487,8 +526,10 @@ function renderYaz(){
     const cx=col.getBoundingClientRect().left-stage.getBoundingClientRect().left+tx;
     const cw=car.offsetWidth,sw=stage.clientWidth;const left=Math.min(Math.max(cx-cw/2,-cw/2+30),sw-cw/2-30);
     car.style.left=left+"px";car.style.setProperty("--hx",(cx-left)+"px")};
-  paint();requestAnimationFrame(placeCaret);
-  let t;ta.addEventListener("input",()=>{draft.body=ta.value;paint();placeCaret();car.classList.remove("hit");void car.offsetWidth;car.classList.add("hit");clearTimeout(t);t=setTimeout(saveDraft,400)});
+  applyLook();paint();requestAnimationFrame(placeCaret);
+  let t;const cpl=()=>Math.max(10,Math.round(col.clientWidth/11.4));
+  ta.addEventListener("input",e=>{const it=e.inputType||"";if(PREF.sound){if(it==="insertLineBreak"||it==="insertParagraph")sndReturn();else if(it.startsWith("insert")){const pos=ta.selectionStart,ls=ta.value.lastIndexOf("\n",pos-1)+1;if(PREF.bell&&(pos-ls)===cpl()-4)sndDing();else sndKey()}else if(it.startsWith("delete"))sndKey(true)}
+    draft.body=ta.value;paint();placeCaret();car.classList.remove("hit");void car.offsetWidth;car.classList.add("hit");clearTimeout(t);t=setTimeout(saveDraft,400)});
   ["keyup","click","select","focus"].forEach(e=>ta.addEventListener(e,()=>placeCaret()));
   document.addEventListener("selectionchange",()=>{if(document.activeElement===ta)placeCaret()});
   stage.addEventListener("pointerdown",e=>{const pl=document.getElementById("pl");if(pl.classList.contains("open")){pl.classList.remove("open");let n=0;const f=()=>{placeCaret();if(++n<20)requestAnimationFrame(f)};f()}if(e.target!==ta){e.preventDefault();ta.focus({preventScroll:true});ta.setSelectionRange(ta.value.length,ta.value.length);placeCaret()}});
@@ -497,7 +538,7 @@ function renderYaz(){
     try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==="AbortError")return}
     try{await navigator.clipboard.writeText(txt);toast("Yazın kopyalandı.")}catch(e){toast("Kopyalanamadı.")}});
   document.getElementById("t-ink").addEventListener("click",e=>{const ks=Object.keys(INKS);draft.ink=ks[(ks.indexOf(draft.ink)+1)%ks.length];saveDraft();
-    col.style.color=inkNow();e.currentTarget.querySelector(".dot").style.background=INKS[draft.ink];toast(INKN[draft.ink]+" mürekkep")});
+    applyLook();toast(INKN[draft.ink]+" mürekkep")});
   first.addEventListener("click",openKurgu);
   document.getElementById("t-set").addEventListener("click",openSet);
   document.getElementById("t-strike").addEventListener("click",()=>{let a=ta.selectionStart,z=ta.selectionEnd;const v=ta.value;
@@ -526,16 +567,120 @@ const CAPS={klasik:"#ece8df",turuncu:"#d9692f",kiremit:"#a65a3f",adacayi:"#98a58
 const CAPN={klasik:"Klasik",turuncu:"Turuncu",kiremit:"Kiremit",adacayi:"Adaçayı",kobalt:"Kobalt",komur:"Kömür",hardal:"Hardal",bordo:"Bordo",murdum:"Mürdüm",petrol:"Petrol",gul:"Gül",limon:"Limon"};
 const NIGHT_INK={lacivert:"#a9bde6",siyah:"#ece6da",bordo:"#e3a4ab",yesil:"#a6d1b5",sepya:"#dcc0a0",kirmizi:"#f08f8f"};
 function inkNow(){return isNight()?NIGHT_INK[draft.ink]||"#ece6da":INKS[draft.ink]}
-function openSet(){const s=sheet(`<div class="sec"><h3>Kapsül</h3><div class="caps">${Object.entries(CAPS).map(([k,c])=>`<button data-cap="${k}" aria-pressed="${k===PREF.cap}" style="background:${c}" aria-label="${CAPN[k]}"></button>`).join("")}</div></div>
-   <div class="sec"><h3>Işık</h3><div class="chips"><button class="chip" data-gece="0" aria-pressed="${PREF.gece===false}">☀︎ Aydınlık</button><button class="chip" data-gece="1" aria-pressed="${PREF.gece===true}">☾ Karanlık · gece lambası</button><button class="chip" data-gece="oto" aria-pressed="${PREF.gece==="oto"}">◐ Telefona göre</button></div><span class="hint">Kapsüle basılı tutarak da aydınlık/karanlık arasında geçebilirsin.</span></div>
-   <div class="sec"><h3>Sayfa</h3><div><button class="btn ghost" id="s-new">Yeni boş sayfa</button></div><span class="hint">Mühürlenen mektuplar kutunda kalır; bu sadece şu anki taslağı temizler.</span></div>`);
-  const pl=document.getElementById("pl");
-  s.el.querySelectorAll("[data-cap]").forEach(b=>b.addEventListener("click",()=>{PREF.cap=b.dataset.cap;lsSet(PREFK,PREF);pl.style.setProperty("--cap",CAPS[PREF.cap]);s.el.querySelectorAll("[data-cap]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)))}));
-  s.el.querySelectorAll("[data-gece]").forEach(b=>b.addEventListener("click",()=>{const v=b.dataset.gece;PREF.gece=v==="oto"?"oto":v==="1";lsSet(PREFK,PREF);applyNight();s.el.querySelectorAll("[data-gece]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)))}));
-  const nb=document.getElementById("s-new");nb.addEventListener("click",()=>{if(!draft.body){s.close();return}
-    if(nb.dataset.sure!=="1"){nb.dataset.sure="1";nb.textContent="Taslak silinsin mi? Tekrar dokun";return}
-    draft.body="";draft.kurgu=null;draft.to="";draft.seed="s"+Date.now().toString(36);saveDraft();s.close();renderYaz()})}
-const EMBLEM='<svg viewBox="-50 -50 100 100" aria-hidden="true"><g fill="none" stroke="#8f897e" stroke-width="1.6"><path d="M0 -44 '+Array.from({length:24},(_,i)=>{const a=(i+.5)/24*Math.PI*2,b=(i+1)/24*Math.PI*2;return `Q${(Math.sin(a)*49).toFixed(1)} ${(-Math.cos(a)*49).toFixed(1)} ${(Math.sin(b)*44).toFixed(1)} ${(-Math.cos(b)*44).toFixed(1)}`}).join(" ")+'"/><circle r="36"/><path d="M0 24 V-4 M0 8 C-8 4 -12 -2 -12 -8 M0 12 C8 8 12 2 12 -4"/><circle cx="0" cy="-12" r="7"/><circle cx="-12" cy="-12" r="5"/><circle cx="12" cy="-8" r="5"/><circle cx="0" cy="-12" r="2" fill="#8f897e"/></g></svg>';
+
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){return null}}if(AC.state==="suspended")AC.resume();return AC}
+function noise(ctx,dur){const b=ctx.createBuffer(1,Math.ceil(ctx.sampleRate*dur),ctx.sampleRate);const d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;const s=ctx.createBufferSource();s.buffer=b;return s}
+function sndKey(soft){if(!PREF.sound)return;const ctx=ac();if(!ctx)return;const t=ctx.currentTime;
+  const n=noise(ctx,.05),f=ctx.createBiquadFilter(),g=ctx.createGain();f.type="bandpass";f.frequency.value=1800+Math.random()*1400;f.Q.value=.9;
+  g.gain.setValueAtTime((soft?.18:.32)*(0.8+Math.random()*.4),t);g.gain.exponentialRampToValueAtTime(.001,t+.045);n.connect(f).connect(g).connect(ctx.destination);n.start(t);n.stop(t+.05);
+  const o=ctx.createOscillator(),og=ctx.createGain();o.frequency.setValueAtTime(140,t);o.frequency.exponentialRampToValueAtTime(60,t+.04);
+  og.gain.setValueAtTime(soft?.08:.16,t);og.gain.exponentialRampToValueAtTime(.001,t+.05);o.connect(og).connect(ctx.destination);o.start(t);o.stop(t+.06)}
+function sndReturn(){if(!PREF.sound)return;const ctx=ac();if(!ctx)return;const t=ctx.currentTime;
+  for(let k=0;k<7;k++){const n=noise(ctx,.02),f=ctx.createBiquadFilter(),g=ctx.createGain();f.type="highpass";f.frequency.value=2200;
+    const s=t+k*.03;g.gain.setValueAtTime(.12,s);g.gain.exponentialRampToValueAtTime(.001,s+.02);n.connect(f).connect(g).connect(ctx.destination);n.start(s);n.stop(s+.025)}
+  const n=noise(ctx,.08),f=ctx.createBiquadFilter(),g=ctx.createGain();f.type="lowpass";f.frequency.value=700;const s=t+.22;
+  g.gain.setValueAtTime(.4,s);g.gain.exponentialRampToValueAtTime(.001,s+.08);n.connect(f).connect(g).connect(ctx.destination);n.start(s);n.stop(s+.09)}
+function sndDing(){if(!PREF.sound)return;const ctx=ac();if(!ctx)return;const t=ctx.currentTime;
+  [[2093,.16],[4186,.05],[6280,.02]].forEach(([fr,v])=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type="sine";o.frequency.value=fr;
+    g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0005,t+1.4);o.connect(g).connect(ctx.destination);o.start(t);o.stop(t+1.5)})}
+
+/* ---------- Platen-style settings ---------- */
+const PAPERC={krem:["Krem","#efede6"],beyaz:["Beyaz","#f7f6f2"],fildisi:["Fildişi","#f3ecdc"],kraft:["Kraft","#dcc7a4"],gri:["Taş grisi","#e1e0db"],mavi:["Buz mavisi","#e3e9ee"],pembe:["Gül kurusu","#f0e2de"],adacayi:["Adaçayı","#e2e8dc"]};
+const STRN={75:"Soluk şerit",100:"Orijinal",125:"Demlenmiş şerit"};
+const RAYS={antrasit:["Orijinal antrasit","linear-gradient(#5b6066 0,#2f3337 30%,#1b1d20 55%,#3d4247 80%,#26292c 100%)"],gumus:["Gümüş","linear-gradient(#e6e8ea 0,#b9bec3 30%,#8d9298 55%,#c9cdd1 80%,#9ea3a8 100%)"],pirinc:["Pirinç","linear-gradient(#f1d896 0,#c9a24f 30%,#8a6a24 55%,#d4b066 80%,#9c7a2f 100%)"],gul:["Gül altını","linear-gradient(#f3cfc4 0,#d39a8a 30%,#9c6556 55%,#e0b0a2 80%,#b07868 100%)"]};
+const FLOWERS={turuncu:"#e07b45",kirmizi:"#c9383c",sari:"#e8b53a",mavi:"#5b86c9",mor:"#9a74c9",pembe:"#e38da3"};
+const GARDENS={yok:"Yok",sarmasik:"Sarmaşık",kir:"Kır çiçekleri"};
+const COPK="muhurlu-cop-v1";
+PREF=Object.assign({sound:false,bell:true,machine:true,curved:false,garden:"yok",ray:"antrasit",def:{paperC:"krem",ink:"siyah",str:100}},PREF);
+if(!draft.paperC)draft.paperC=PREF.def.paperC||"krem";if(!draft.str)draft.str=PREF.def.str||100;
+function savePref(){lsSet(PREFK,PREF)}
+function flowerSVG(c,size){return `<svg viewBox="-20 -20 40 52" width="${size||24}" height="${(size||24)*1.3}" aria-hidden="true"><path d="M0 6 C1 16 -2 22 1 31" stroke="#5f7d4a" stroke-width="1.6" fill="none"/><path d="M1 20 C6 17 9 18 10 21 C6 23 3 22 1 20Z" fill="#6f8f58"/>${[0,45,90,135,180,225,270,315].map(a=>`<ellipse cx="0" cy="-7.5" rx="3.6" ry="7.5" fill="${c}" transform="rotate(${a})" opacity=".92"/>`).join("")}<circle r="3.6" fill="#5b3a1e"/><circle r="1.6" fill="#8a5a2c"/></svg>`}
+function hexA(h,a){const n=parseInt(h.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`}
+function gardenSVG(k){if(k==="sarmasik"){let p="";for(let y=0;y<240;y+=40){p+=`<path d="M18 ${y} C8 ${y+10} 28 ${y+22} 16 ${y+40}" stroke="#55703f" stroke-width="1.6" fill="none"/><path d="M15 ${y+12} C4 ${y+6} 2 ${y+16} 6 ${y+20} C10 ${y+22} 14 ${y+18} 15 ${y+12}Z" fill="#6c8c4e"/><path d="M19 ${y+28} C30 ${y+22} 34 ${y+32} 30 ${y+36} C26 ${y+38} 21 ${y+34} 19 ${y+28}Z" fill="#7d9c5a"/>`}return svgU(`<svg xmlns="http://www.w3.org/2000/svg" width="36" height="240">${p}</svg>`)}
+  if(k==="kir"){const r=rng("kir");let p="";const cols=["#e7a3b3","#f2d16b","#ffffff","#b7a4dd","#e98c6a"];for(let i=0;i<9;i++){const y=10+i*26+r()*8,x=8+r()*18,c=cols[i%5];p+=`<path d="M${x} ${y+4} C${x+2} ${y+12} ${x-3} ${y+18} ${x} ${y+24}" stroke="#6c8c4e" stroke-width="1.2" fill="none"/>`+[0,72,144,216,288].map(a=>{const t=a*Math.PI/180;return `<circle cx="${(x+Math.cos(t)*3.2).toFixed(1)}" cy="${(y+Math.sin(t)*3.2).toFixed(1)}" r="2.6" fill="${c}" stroke="rgba(0,0,0,.12)" stroke-width=".4"/>`}).join("")+`<circle cx="${x}" cy="${y}" r="1.6" fill="#d9a53a"/>`}return svgU(`<svg xmlns="http://www.w3.org/2000/svg" width="36" height="240">${p}</svg>`)}
+  return ""}
+function applyLook(){const pl=document.getElementById("pl");if(!pl)return;const night=isNight();
+  const pp=night?"#3a3937":(PAPERC[draft.paperC]||PAPERC.krem)[1];pl.style.setProperty("--pp",pp);pl.style.setProperty("--pfade",hexA(pp,0));
+  pl.classList.toggle("gece",night);pl.classList.toggle("curved",!!PREF.curved);pl.classList.toggle("nomach",!PREF.machine);
+  pl.style.setProperty("--cap",CAPS[PREF.cap]||CAPS.klasik);pl.style.setProperty("--raybg",(RAYS[PREF.ray]||RAYS.antrasit)[1]);
+  pl.dataset.str=draft.str||100;const g=gardenSVG(PREF.garden);pl.style.setProperty("--garden",g||"none");pl.classList.toggle("garden",!!g);
+  const col=document.getElementById("col");if(col)col.style.color=inkNow();
+  const fl=document.getElementById("flmark");if(fl)fl.innerHTML=draft.flower&&FLOWERS[draft.flower]?flowerSVG(FLOWERS[draft.flower],30):"";
+  const dot=document.querySelector("#t-ink .dot");if(dot)dot.style.background=INKS[draft.ink];
+  if(typeof placeCaret==="function")requestAnimationFrame(()=>placeCaret&&placeCaret())}
+applyNight=applyLook;
+
+/* trash: deleted letters wait 30 days */
+function copGet(){const t=lsGet(COPK,[]);const now=Date.now();const keep=t.filter(x=>now-x.at<30*864e5);if(keep.length!==t.length)lsSet(COPK,keep);return keep}
+function toTrash(l){const t=copGet();t.unshift({l,at:Date.now()});lsSet(COPK,t.slice(0,200));letters=letters.filter(x=>x.id!==l.id);saveLetters()}
+
+function openSet(){
+  const v=document.createElement("div");v.className="veil";v.innerHTML=`<div class="set" role="dialog" aria-modal="true" aria-label="Ayarlar"><div class="grab"></div><div class="set-hd"><button class="set-bk" id="st-bk" hidden>‹</button><h3 id="st-t">Ayarlar</h3><button class="set-done" id="st-done">Bitti</button></div><div class="set-bd" id="st-bd"></div></div>`;
+  document.body.appendChild(v);const bd=v.querySelector("#st-bd"),bk=v.querySelector("#st-bk"),tt=v.querySelector("#st-t");
+  const close=()=>{v.remove();applyLook()};v.addEventListener("click",e=>{if(e.target===v)close()});v.querySelector("#st-done").addEventListener("click",close);
+  const chk=on=>`<span class="ck">[${on?"<b>x</b>":"&nbsp;"}]</span>`;
+  const row=(id,t,sub,right)=>`<button class="srow" data-r="${id}" data-q="${esc((t+" "+(sub||"")).toLocaleLowerCase("tr-TR"))}"><span><b>${t}</b>${sub?`<small>${sub}</small>`:""}</span>${right||'<i class="chev">›</i>'}</button>`;
+  const head=(t,sub)=>`<div class="sgrp"><span>${t}</span>${sub?`<small>${sub}</small>`:""}</div>`;
+  const pick=(group,obj,cur,sw)=>`<div class="spick">${Object.entries(obj).map(([k,n])=>`<button data-p="${group}" data-k="${k}" aria-pressed="${String(k)===String(cur)}">${sw?sw(k):""}<span>${esc(Array.isArray(n)?n[0]:n)}</span></button>`).join("")}</div>`;
+  function main(){bk.hidden=true;tt.textContent="Ayarlar";const pc=(PAPERC[draft.paperC]||PAPERC.krem)[0];
+    bd.innerHTML=`<input class="sfind" id="st-find" placeholder="Bir ayar bul…" autocomplete="off">
+    ${head("Bu mektup","Yalnızca bu mektup")}
+    ${row("kagit","Kâğıt ve mürekkep",`${pc} · ${INKN[draft.ink]} · ${STRN[draft.str]} · ${draft.str}%`)}
+    <div class="srow cl" data-q="çiçekli yer imi preslenmiş çiçek"><span><b>Çiçekli yer imi</b><small>Preslenmiş bir çiçek, Kutu'da bu mektubu işaretler</small></span>
+      <div class="flw"><button data-fl="" aria-pressed="${!draft.flower}" aria-label="Çiçek yok"><svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M10 30 30 10" stroke="currentColor" stroke-width="1.4"/></svg></button>${Object.entries(FLOWERS).map(([k,c])=>`<button data-fl="${k}" aria-pressed="${draft.flower===k}" aria-label="${k} çiçek">${flowerSVG(c,26)}</button>`).join("")}</div></div>
+    ${row("ses1","Yazma sesi",PREF.sound?"Açık":"Kapalı",chk(PREF.sound))}
+    ${row("paylas","Bu mektubu kaydet veya paylaş","Metin olarak paylaş ya da dosya olarak indir",'<i class="chev">→</i>')}
+    ${row("yeni","Yeni boş sayfa","Şu anki taslağı temizler; kutundakiler kalır",'<i class="chev">→</i>')}
+    ${head("Yazı alanınız","Bu cihazda yazı alanı")}
+    ${row("makine","Makine ve ray",`${CAPN[PREF.cap]} · ${RAYS[PREF.ray][0]}`)}
+    ${row("duzen","Sayfa düzeni",PREF.curved?"Kavisli kâğıt":"Düz kâğıt")}
+    ${row("ses","Ses ve dokunuş",PREF.sound?("Mekanik"+(PREF.bell?" · yumuşak zil":"")):"Kapalı")}
+    ${row("gece","Gece ışığı",(PREF.gece==="oto"?"Telefona göre":PREF.gece?"Açık":"Kapalı")+" · değiştirmek için kapsülü basılı tut")}
+    ${row("mak","Makineyi göster",PREF.machine?"Açık":"Kapalı",chk(PREF.machine))}
+    ${row("bahce","Bahçe ve süsler",GARDENS[PREF.garden])}
+    ${head("Yeni mektuplar","Yeni mektuplar için başlangıç seçimleri")}
+    ${row("varsay","Kâğıt ve mürekkep varsayılanları",`${(PAPERC[PREF.def.paperC]||PAPERC.krem)[0]} · ${INKN[PREF.def.ink]} · ${PREF.def.str}%`)}
+    ${head("Mektupların")}
+    ${row("kutu","Mektup kutum",letters.length+" mektup")}
+    ${row("yedek","Yedek","İndir ya da yedekten geri yükle")}
+    ${row("cop","Son Silinenler",copGet().length?copGet().length+" mektup · 30 gün saklanır":"Boş")}
+    <div class="sfoot">Mühürlü Mektuplar · Dijital Kütüphanem</div>`;
+    const f=bd.querySelector("#st-find");f.addEventListener("input",()=>{const q=f.value.trim().toLocaleLowerCase("tr-TR");bd.querySelectorAll("[data-q]").forEach(r=>r.hidden=!!q&&!r.dataset.q.includes(q));bd.querySelectorAll(".sgrp").forEach(g=>g.hidden=!!q)});
+    bd.querySelectorAll("[data-fl]").forEach(b=>b.addEventListener("click",()=>{draft.flower=b.dataset.fl;saveDraft();bd.querySelectorAll("[data-fl]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));applyLook()}));
+    bd.querySelectorAll("[data-r]").forEach(b=>b.addEventListener("click",()=>act(b.dataset.r)))}
+  function sub(title,html,bind){bk.hidden=false;tt.textContent=title;bd.innerHTML=html;bd.scrollTop=0;
+    bd.querySelectorAll("[data-p]").forEach(b=>b.addEventListener("click",()=>{bind(b.dataset.p,b.dataset.k);bd.querySelectorAll(`[data-p="${b.dataset.p}"]`).forEach(x=>x.setAttribute("aria-pressed",String(x===b)));applyLook()}))}
+  bk.addEventListener("click",main);
+  const paperSw=k=>`<i class="sw" style="background:${PAPERC[k][1]}"></i>`,inkSw=k=>`<i class="sw r" style="background:${INKS[k]}"></i>`;
+  function act(r){const toggle=(k,lab)=>{PREF[k]=!PREF[k];savePref();applyLook();main();toast(lab+(PREF[k]?" açık":" kapalı"))};
+    if(r==="kagit")sub("Kâğıt ve mürekkep",`<div class="slab">Kâğıt</div>${pick("paperC",PAPERC,draft.paperC,paperSw)}<div class="slab">Mürekkep</div>${pick("ink",INKN,draft.ink,inkSw)}<div class="slab">Şerit</div>${pick("str",STRN,draft.str)}`,(g,k)=>{draft[g]=g==="str"?+k:k;saveDraft()});
+    else if(r==="varsay")sub("Varsayılanlar",`<div class="slab">Kâğıt</div>${pick("paperC",PAPERC,PREF.def.paperC,paperSw)}<div class="slab">Mürekkep</div>${pick("ink",INKN,PREF.def.ink,inkSw)}<div class="slab">Şerit</div>${pick("str",STRN,PREF.def.str)}`,(g,k)=>{PREF.def[g]=g==="str"?+k:k;savePref()});
+    else if(r==="makine")sub("Makine ve ray",`<div class="slab">Kapsül</div><div class="caps">${Object.entries(CAPS).map(([k,c])=>`<button data-p="cap" data-k="${k}" aria-pressed="${k===PREF.cap}" style="background:${c}" aria-label="${CAPN[k]}"></button>`).join("")}</div><div class="slab">Ray</div>${pick("ray",RAYS,PREF.ray,k=>`<i class="sw ray" style="background:${RAYS[k][1]}"></i>`)}`,(g,k)=>{PREF[g]=k;savePref()});
+    else if(r==="duzen")sub("Sayfa düzeni",`<div class="slab">Kâğıt</div>${pick("curved",{0:"Düz kâğıt",1:"Kavisli kâğıt"},PREF.curved?1:0)}`,(g,k)=>{PREF.curved=k==="1";savePref()});
+    else if(r==="ses")sub("Ses ve dokunuş",`<div class="slab">Yazma sesi</div>${pick("sound",{0:"Kapalı",1:"Mekanik daktilo"},PREF.sound?1:0)}<div class="slab">Satır sonu zili</div>${pick("bell",{0:"Kapalı",1:"Yumuşak zil"},PREF.bell?1:0)}`,(g,k)=>{PREF[g]=k==="1";savePref();if(PREF.sound){sndKey()}});
+    else if(r==="gece")sub("Gece ışığı",`${pick("gece",{0:"Kapalı · aydınlık",1:"Açık · gece lambası",oto:"Telefona göre"},PREF.gece==="oto"?"oto":PREF.gece?1:0)}`,(g,k)=>{PREF.gece=k==="oto"?"oto":k==="1";savePref()});
+    else if(r==="bahce")sub("Bahçe ve süsler",`<div class="slab">Kâğıdın kenarı</div>${pick("garden",GARDENS,PREF.garden)}`,(g,k)=>{PREF.garden=k;savePref()});
+    else if(r==="ses1")toggle("sound","Yazma sesi");
+    else if(r==="mak")toggle("machine","Makine");
+    else if(r==="paylas")shareLetter();
+    else if(r==="yeni"){const b=bd.querySelector('[data-r="yeni"] b');if(!draft.body){close();return}if(b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="Emin misin? Tekrar dokun";return}
+      Object.assign(draft,{body:"",kurgu:null,to:"",flower:"",paperC:PREF.def.paperC,ink:PREF.def.ink,str:PREF.def.str,seed:"s"+Date.now().toString(36)});saveDraft();close();renderYaz()}
+    else if(r==="kutu"){close();go("kutu")}
+    else if(r==="yedek"){sub("Yedek",`<button class="srow" id="bk-out"><span><b>Yedeği indir</b><small>${letters.length} mektup, taslağın ve ayarların tek dosyada</small></span><i class="chev">↓</i></button>
+      <label class="srow" style="cursor:pointer"><span><b>Yedekten geri yükle</b><small>Hiçbir şey silinmez; eksik mektuplar geri gelir</small></span><i class="chev">↑</i><input type="file" id="bk-in" accept=".json,application/json" hidden></label>`,()=>{});
+      bd.querySelector("#bk-out").addEventListener("click",()=>{const data={app:"Mühürlü Mektuplar",v:2,at:new Date().toISOString(),letters,trash:copGet(),draft,pref:PREF};
+        const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(data)],{type:"application/json"}));a.download="muhurlu-mektuplar-yedek-"+todayStr()+".json";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);toast("Yedek indirildi.")});
+      bd.querySelector("#bk-in").addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());const L=Array.isArray(d)?d:(d.letters||(d.mektup&&d.mektup.letters)||[]);let n=0;
+        L.forEach(l=>{if(l&&l.id&&!letters.find(x=>x.id===l.id)){letters.push(l);n++}});sortL();saveLetters();toast(n?n+" mektup geri geldi.":"Yedekteki mektupların hepsi zaten kutunda.")}catch(x){toast("Bu dosya açılamadı.")}})}
+    else if(r==="cop"){const draw=()=>{const T=copGet();sub("Son Silinenler",T.length?T.map((x,i)=>`<div class="srow"><span><b>${esc(x.l.to||"Kendime")}</b><small>${esc(shortDate(x.l.created))} · ${30-Math.floor((Date.now()-x.at)/864e5)} gün kaldı</small></span><span class="cbt"><button data-rs="${i}">Geri getir</button><button data-pd="${i}">Kalıcı sil</button></span></div>`).join(""):`<p class="sempty">Silinen mektup yok.</p>`,()=>{});
+        bd.querySelectorAll("[data-rs]").forEach(b=>b.addEventListener("click",()=>{const T=copGet(),x=T.splice(+b.dataset.rs,1)[0];lsSet(COPK,T);if(x&&!letters.find(y=>y.id===x.l.id)){letters.push(x.l);sortL();saveLetters()}toast("Mektup kutuna geri döndü.");draw()}));
+        bd.querySelectorAll("[data-pd]").forEach(b=>b.addEventListener("click",()=>{if(b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="Emin misin?";return}const T=copGet(),x=T.splice(+b.dataset.pd,1)[0];lsSet(COPK,T);if(x)mkTomb(x.l.id);draw()}))};draw()}
+  }
+  main()}
+async function shareLetter(){const txt=(draft.body||"").replace(/~~/g,"").trim();if(!txt){toast("Önce birkaç satır yaz.");return}
+  try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==="AbortError")return}
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/plain;charset=utf-8"}));a.download="mektup-"+todayStr()+".txt";document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);toast("Mektubun indirildi.")}
 
 /* ---------- kurgu as a bottom sheet ---------- */
 function sheet(html,onClose){const v=document.createElement("div");v.className="veil";v.innerHTML=`<div class="sh" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
@@ -577,9 +722,9 @@ async function sealIt(){
   seal.style.opacity="";seal.classList.add("drop");await w(800);
   const l={id:"m"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),kind:"mektup",to:draft.to.trim(),body:draft.body,sign:draft.sign.trim(),
     paper:"beyaz",rule:"duz",ink:draft.ink,hand:"daktilo",twMix:false,env:draft.env,stamp:draft.stamp,seal:draft.seal,seal2:"",sealImg:"",initial:draft.initial||"B",
-    openAfter:"",opened:false,seed:draft.seed,deco:[],kurgu:draft.kurgu||null,created:new Date().toISOString()};
+    openAfter:"",opened:false,seed:draft.seed,flower:draft.flower||"",paperC:draft.paperC||"krem",str:draft.str||100,deco:[],kurgu:draft.kurgu||null,created:new Date().toISOString()};
   letters.push(l);sortL();if(!saveLetters()){letters=letters.filter(x=>x.id!==l.id);btn.disabled=false;return}
-  draft.body="";draft.to="";draft.kurgu=null;draft.seed="s"+Date.now().toString(36);saveDraft();
+  Object.assign(draft,{body:"",to:"",kurgu:null,flower:"",paperC:PREF.def.paperC,ink:PREF.def.ink,str:PREF.def.str,seed:"s"+Date.now().toString(36)});saveDraft();
   toast("Mühürlendi, kutuna kondu.");go("kutu");
 }
 
@@ -589,7 +734,7 @@ function renderKutu(){
   app.innerHTML=`<div class="scr"><div class="wrap">
    <div class="hd"><button class="ic" id="k-back" aria-label="Yazıya dön">${IC.back}</button><h2>Mektup kutum</h2><button class="btn" id="k-new">Yeni mektup</button></div>
    <a href="./" class="link" style="text-decoration:none;align-self:flex-start">📚 Dijital Kütüphanem'e dön</a>
-   ${letters.length?`<div class="box">${letters.map(l=>{const lk=isLocked(l);return `<button data-open="${esc(l.id)}" class="${!l.opened&&!lk?"unread":""}${lk?" lockv":""}">${envFrontM(l)}
+   ${letters.length?`<div class="box">${letters.map(l=>{const lk=isLocked(l);return `<button data-open="${esc(l.id)}" class="${!l.opened&&!lk?"unread":""}${lk?" lockv":""}" style="position:relative">${envFrontM(l)}${l.flower&&FLOWERS[l.flower]?`<span class="bxfl">${flowerSVG(FLOWERS[l.flower],30)}</span>`:""}
      <span class="meta"><span>${esc(shortDate(l.created))}</span><span>${lk?"🔒 "+esc(shortDate(l.openAfter)):(l.opened?"açıldı":"mühürlü")}</span></span></button>`}).join("")}</div>`
    :`<div class="empty"><p>Kutun şimdilik boş.</p><p class="hint">Yazdığın ve mühürlediğin mektuplar burada durur.</p></div>`}
   </div></div>`;
@@ -600,7 +745,7 @@ function renderKutu(){
 
 /* ---------- Oku ---------- */
 function pageHTML(l){const kg=l.kurgu&&l.kurgu.yer?`<div class="kline">${esc(l.kurgu.yer)}</div>`:"";
-  return `<div class="page" style="color:${INKS[l.ink]||INKS.siyah}"><div class="dt">${esc(fmtDate(l.created))}</div>${kg?kg+"<br>":""}<div class="body">${typeHTML(l.body,l.seed||l.id)}</div>${l.sign?`<div class="sg">${esc(l.sign)}</div>`:""}</div>`}
+  return `<div class="page" style="color:${INKS[l.ink]||INKS.siyah};background-color:${(PAPERC[l.paperC]||PAPERC.krem)[1]}">${l.flower&&FLOWERS[l.flower]?`<span class="pgfl">${flowerSVG(FLOWERS[l.flower],34)}</span>`:""}<div class="dt">${esc(fmtDate(l.created))}</div>${kg?kg+"<br>":""}<div class="body">${typeHTML(l.body,l.seed||l.id)}</div>${l.sign?`<div class="sg">${esc(l.sign)}</div>`:""}</div>`}
 function renderOku(){
   const l=letters.find(x=>x.id===reading);if(!l){go("kutu");return}
   const lk=isLocked(l);
@@ -612,7 +757,7 @@ function renderOku(){
   </div></div>`;
   document.getElementById("o-back").addEventListener("click",()=>go("kutu"));
   const del=()=>{const b=document.getElementById("o-del");if(!b)return;b.addEventListener("click",()=>{if(b.dataset.sure!=="1"){b.dataset.sure="1";b.textContent="Emin misin? Tekrar dokun";return}
-    mkTomb(l.id);letters=letters.filter(x=>x.id!==l.id);saveLetters();toast("Mektup silindi.");go("kutu")})};
+    toTrash(l);toast("Son Silinenler'e taşındı; 30 gün içinde geri getirebilirsin.");go("kutu")})};
   del();
   const ev=document.getElementById("o-env");if(ev)ev.addEventListener("click",()=>{ev.replaceWith(Object.assign(document.createElement("div"),{innerHTML:envFrontM(l),style:"width:100%"}))});
   const br=document.getElementById("o-break");
