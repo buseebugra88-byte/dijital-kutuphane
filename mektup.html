@@ -37,19 +37,25 @@ button{font:inherit;color:inherit}
 .pl{position:fixed;left:0;right:0;top:var(--vvt);height:var(--vvh);overflow:hidden;display:flex;flex-direction:column;background:#1b1a19;
   --pp:#efede6;--pfade:rgba(239,237,230,0)}
 .pl.gece{--pp:#3a3937;--pfade:rgba(58,57,55,0)}
-.sheetp{position:absolute;left:0;right:0;top:8px;bottom:-40px;background:var(--pp);background-image:var(--noise);border-radius:50% 50% 0 0/64px 64px 0 0;overflow:hidden;box-shadow:0 -2px 18px rgba(0,0,0,.35)}
+.pl{transition:background .35s}.pl:not(.open){background:var(--pp)}
+.pl.open .sheetp{top:calc(78px + env(safe-area-inset-top));left:6px;right:6px;bottom:-60px;border-radius:50% 50% 0 0/70px 70px 0 0;box-shadow:0 -2px 18px rgba(0,0,0,.35)}
+.more{position:absolute;z-index:6;right:18px;bottom:calc(20px + env(safe-area-inset-bottom));width:58px;height:58px;border-radius:50%;border:0;background:#f6f4ee;box-shadow:0 4px 14px rgba(0,0,0,.14);display:grid;place-items:center;cursor:pointer;color:#2e2b27;font:700 22px/1 var(--f-ui);letter-spacing:2px;transition:opacity .2s,transform .2s}
+.pl.gece .more{background:#4a4946;color:#ece6da}
+.pl.open .more{opacity:0;pointer-events:none;transform:scale(.8)}
+.sheetp{position:absolute;left:0;right:0;top:0;bottom:0;transition:top .3s cubic-bezier(.3,.9,.3,1),left .3s,right .3s,border-radius .3s;background:var(--pp);background-image:var(--noise);border-radius:0;overflow:hidden}
 .sheetp::before{content:"";position:absolute;left:0;right:0;top:0;height:28%;background:linear-gradient(var(--pp),var(--pfade));z-index:3;pointer-events:none}
 .pl.gece .sheetp::after{content:"";position:absolute;left:50%;width:130%;height:70%;top:var(--lampy,30%);transform:translate(-50%,-60%);background:radial-gradient(closest-side,rgba(255,236,196,.3),rgba(255,236,196,.07) 55%,transparent);pointer-events:none;z-index:2;mix-blend-mode:screen}
 .pl.gece .ink{text-shadow:0 0 1px currentColor}
 .first{position:absolute;z-index:4;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:12px;border:0;background:none;cursor:pointer;font:500 .86rem var(--f-type);color:#8f897e;white-space:nowrap}
 .first svg{width:62px;height:62px;opacity:.55}
-.pl-top{position:relative;z-index:5;color:#d9d4ca;display:flex;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top)) 18px 6px}
+.pl-top{position:absolute;left:0;right:0;top:0;z-index:5;color:#3a3631;transition:color .3s;display:flex;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top)) 18px 6px}
 .ic{width:46px;height:46px;border:0;background:none;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:inherit}
 .scr .ic,.tb .ic{color:#3a3631}
 .ic svg{width:28px;height:28px}
 .ic:active{background:rgba(0,0,0,.05)}
+.pl.gece .pl-top,.pl.open .pl-top{color:#d9d4ca}
 .ctr{margin-left:auto;margin-right:6px;font:400 .86rem var(--f-type);letter-spacing:.06em;color:#9a948a}
-.stage{position:relative;flex:1;min-height:0;cursor:text}
+.stage{position:absolute;inset:0;cursor:text}
 .col{position:absolute;left:50%;top:0;width:min(25ch,78vw);margin-left:calc(min(25ch,78vw) / -2);font:500 19px/34px var(--f-type);letter-spacing:.02em;transition:transform .14s ease-out;will-change:transform}
 .ink,.col textarea,.meas{white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;font:inherit;letter-spacing:inherit;margin:0;padding:0;border:0}
 .ink{position:relative;z-index:1;pointer-events:none;min-height:34px;text-shadow:0 0 .6px currentColor}
@@ -60,6 +66,7 @@ button{font:inherit;color:inherit}
 .ph{position:absolute;left:0;top:0;color:#b2aca1;pointer-events:none;z-index:1}
 /* roller */
 .roller{position:absolute;left:0;right:0;height:48px;z-index:4;pointer-events:none}
+.car{pointer-events:auto;cursor:pointer;touch-action:none}
 .roller .bar{position:absolute;left:0;right:0;top:12px;height:26px;background:linear-gradient(#5b6066 0,#2f3337 30%,#1b1d20 55%,#3d4247 80%,#26292c 100%);box-shadow:0 4px 8px rgba(0,0,0,.22)}
 .roller .bar::after{content:"";position:absolute;left:0;right:0;top:4px;height:3px;background:rgba(255,255,255,.18)}
 .roller .cap{position:absolute;top:6px;width:32px;height:38px;border-radius:5px;background:linear-gradient(#3a3e42,#16181a);box-shadow:0 3px 6px rgba(0,0,0,.25)}
@@ -73,7 +80,8 @@ button{font:inherit;color:inherit}
 .car.hit .hm{animation:hit .09s ease-out}
 @keyframes hit{50%{transform:translate(-50%,-5px)}}
 /* toolbar */
-.tb{position:relative;z-index:6;margin:0 14px calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:2px;background:rgba(246,244,238,.92);border-radius:999px;padding:6px 10px;box-shadow:0 2px 10px rgba(0,0,0,.08),inset 0 0 0 1px rgba(0,0,0,.04);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.tb{position:absolute;left:14px;right:14px;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateY(160%);transition:transform .35s cubic-bezier(.3,.9,.3,1);display:flex;align-items:center;gap:2px;background:rgba(246,244,238,.92);border-radius:999px;padding:6px 10px;box-shadow:0 2px 10px rgba(0,0,0,.08),inset 0 0 0 1px rgba(0,0,0,.04);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.pl.open .tb{transform:none}
 .tb .ic{flex:1;max-width:58px}
 .tb .sep{width:1px;height:30px;background:#cfcac0;margin:0 4px}
 .tb .go{flex:0 0 auto;border:0;cursor:pointer;background:#2e2b27;color:#f6f4ee;border-radius:999px;padding:10px 16px;font:600 .9rem var(--f-ui);display:flex;align-items:center;gap:6px;white-space:nowrap}
@@ -449,7 +457,7 @@ const IC={
 let placeCaret=null;
 function renderYaz(){
   document.body.style.overflow="hidden";
-  app.innerHTML=`<div class="pl${PREF.gece?" gece":""}" id="pl" style="--cap:${CAPS[PREF.cap]||CAPS.klasik}">
+  app.innerHTML=`<div class="pl${isNight()?" gece":""}" id="pl" style="--cap:${CAPS[PREF.cap]||CAPS.klasik}">
    <header class="pl-top"><button class="ic" id="p-box" aria-label="Mektup kutum">${IC.box}</button><span class="ctr" id="ctr"></span><button class="ic" id="p-share" aria-label="Paylaş">${IC.share}</button></header>
    <div class="stage" id="stage"><div class="sheetp" id="sp">
      <div class="col" id="col" style="color:${inkNow()}"><div class="ink" id="ink"></div><div class="ph" id="ph">Buradan başla.</div><textarea id="ta" aria-label="Mektup" spellcheck="false" autocapitalize="sentences"></textarea><div class="meas" id="meas" aria-hidden="true"></div></div></div>
@@ -463,7 +471,7 @@ function renderYaz(){
      <button class="ic" id="t-set" aria-label="Kapsül, kâğıt ve gece">${IC.lamp}</button>
      <span class="sep"></span>
      <button class="go" id="t-env">${IC.env.replace('<svg','<svg width="18" height="18"')} Zarfla</button>
-   </nav></div>`;
+   </nav><button class="more" id="p-more" aria-label="Araçlar">•••</button></div>`;
   const ta=document.getElementById("ta"),ink=document.getElementById("ink"),meas=document.getElementById("meas"),col=document.getElementById("col"),
         stage=document.getElementById("stage"),car=document.getElementById("car"),rl=document.getElementById("rl"),ph=document.getElementById("ph"),ctr=document.getElementById("ctr"),first=document.getElementById("first"),sp=document.getElementById("sp");
   ta.value=draft.body;
@@ -472,9 +480,9 @@ function renderYaz(){
   placeCaret=()=>{const pos=ta.selectionEnd??ta.value.length;
     meas.textContent=ta.value.slice(0,pos);const m=document.createElement("span");m.textContent="​";meas.appendChild(m);
     const lh=34,ty=m.offsetTop,tx=m.offsetLeft;
-    const H=stage.clientHeight,rollY=Math.round(H*(H<420?.56:.6));
-    rl.style.top=(rollY-4)+"px";first.style.top=Math.max(20,rollY-150)+"px";sp.style.setProperty("--lampy",(rollY-8)+"px");
-    col.style.transform=`translateY(${rollY-ty-lh-6}px)`;
+    const H=stage.clientHeight,rollY=Math.round(H*(H<520?.62:.56));
+    rl.style.top=(rollY-4)+"px";first.style.top=Math.max(20,rollY-150)+"px";sp.style.setProperty("--lampy",(rollY-8-(sp.getBoundingClientRect().top-stage.getBoundingClientRect().top))+"px");
+    const spTop=sp.getBoundingClientRect().top-stage.getBoundingClientRect().top;col.style.transform=`translateY(${rollY-ty-lh-6-spTop}px)`;
     ta.style.height=Math.max(ink.offsetHeight,34)+"px";
     const cx=col.getBoundingClientRect().left-stage.getBoundingClientRect().left+tx;
     const cw=car.offsetWidth,sw=stage.clientWidth;const left=Math.min(Math.max(cx-cw/2,-cw/2+30),sw-cw/2-30);
@@ -483,7 +491,7 @@ function renderYaz(){
   let t;ta.addEventListener("input",()=>{draft.body=ta.value;paint();placeCaret();car.classList.remove("hit");void car.offsetWidth;car.classList.add("hit");clearTimeout(t);t=setTimeout(saveDraft,400)});
   ["keyup","click","select","focus"].forEach(e=>ta.addEventListener(e,()=>placeCaret()));
   document.addEventListener("selectionchange",()=>{if(document.activeElement===ta)placeCaret()});
-  stage.addEventListener("pointerdown",e=>{if(e.target!==ta){e.preventDefault();ta.focus({preventScroll:true});ta.setSelectionRange(ta.value.length,ta.value.length);placeCaret()}});
+  stage.addEventListener("pointerdown",e=>{const pl=document.getElementById("pl");if(pl.classList.contains("open")){pl.classList.remove("open");let n=0;const f=()=>{placeCaret();if(++n<20)requestAnimationFrame(f)};f()}if(e.target!==ta){e.preventDefault();ta.focus({preventScroll:true});ta.setSelectionRange(ta.value.length,ta.value.length);placeCaret()}});
   document.getElementById("p-box").addEventListener("click",()=>go("kutu"));
   document.getElementById("p-share").addEventListener("click",async()=>{const txt=ta.value.replace(/~~/g,"").trim();if(!txt){toast("Önce birkaç satır yaz.");return}
     try{if(navigator.share){await navigator.share({text:txt});return}}catch(e){if(e&&e.name==="AbortError")return}
@@ -498,23 +506,32 @@ function renderYaz(){
     const seg=v.slice(a,z);const w=/^~~.*~~$/.test(seg)?seg.slice(2,-2):"~~"+seg+"~~";
     ta.setRangeText(w,a,z,"end");ta.dispatchEvent(new Event("input"));ta.focus({preventScroll:true})});
   document.getElementById("t-kurgu").addEventListener("click",openKurgu);
+  const pl=document.getElementById("pl");
+  document.getElementById("p-more").addEventListener("click",e=>{e.stopPropagation();ta.blur();pl.classList.add("open");let n=0;const f=()=>{placeCaret();if(++n<20)requestAnimationFrame(f)};f()});
+  let lp=0,lpDone=false;
+  car.addEventListener("pointerdown",e=>{e.stopPropagation();e.preventDefault();lpDone=false;clearTimeout(lp);lp=setTimeout(()=>{lpDone=true;PREF.gece=!isNight();lsSet(PREFK,PREF);applyNight();if(navigator.vibrate)navigator.vibrate(15);toast(isNight()?"☾ Gece lambası":"☀︎ Aydınlık")},550)});
+  ["pointerup","pointerleave","pointercancel"].forEach(ev=>car.addEventListener(ev,()=>{clearTimeout(lp);if(ev==="pointerup"&&!lpDone){ta.focus({preventScroll:true})}}));
   document.getElementById("t-env").addEventListener("click",()=>{if(!ta.value.trim()){toast("Önce birkaç satır yaz, sonra zarfa koyarız.");ta.focus();return}go("zarf")});
   if(matchMedia("(pointer:fine)").matches)ta.focus({preventScroll:true});
 }
 
 /* ---------- capsule, paper and night ---------- */
 const PREFK="muhurlu-platen-v1";
-let PREF=Object.assign({cap:"klasik",gece:false},lsGet(PREFK,{}));
+let PREF=Object.assign({cap:"klasik",gece:"oto"},lsGet(PREFK,{}));
+const DARKQ=matchMedia("(prefers-color-scheme: dark)");
+function isNight(){return PREF.gece==="oto"?DARKQ.matches:!!PREF.gece}
+DARKQ.addEventListener&&DARKQ.addEventListener("change",()=>{if(PREF.gece==="oto"&&view==="yaz")applyNight()});
+function applyNight(){const pl=document.getElementById("pl"),col=document.getElementById("col");if(pl)pl.classList.toggle("gece",isNight());if(col)col.style.color=inkNow()}
 const CAPS={klasik:"#ece8df",turuncu:"#d9692f",kiremit:"#a65a3f",adacayi:"#98a585",kobalt:"#3d5fae",komur:"#3a3c40",hardal:"#d4a73a",bordo:"#6b2a2f",murdum:"#3e3150",petrol:"#2f5560",gul:"#c98c8f",limon:"#bcc23c"};
 const CAPN={klasik:"Klasik",turuncu:"Turuncu",kiremit:"Kiremit",adacayi:"Adaçayı",kobalt:"Kobalt",komur:"Kömür",hardal:"Hardal",bordo:"Bordo",murdum:"Mürdüm",petrol:"Petrol",gul:"Gül",limon:"Limon"};
 const NIGHT_INK={lacivert:"#a9bde6",siyah:"#ece6da",bordo:"#e3a4ab",yesil:"#a6d1b5",sepya:"#dcc0a0",kirmizi:"#f08f8f"};
-function inkNow(){return PREF.gece?NIGHT_INK[draft.ink]||"#ece6da":INKS[draft.ink]}
+function inkNow(){return isNight()?NIGHT_INK[draft.ink]||"#ece6da":INKS[draft.ink]}
 function openSet(){const s=sheet(`<div class="sec"><h3>Kapsül</h3><div class="caps">${Object.entries(CAPS).map(([k,c])=>`<button data-cap="${k}" aria-pressed="${k===PREF.cap}" style="background:${c}" aria-label="${CAPN[k]}"></button>`).join("")}</div></div>
-   <div class="sec"><h3>Kâğıt</h3><div class="chips"><button class="chip" data-gece="0" aria-pressed="${!PREF.gece}">☀︎ Gündüz</button><button class="chip" data-gece="1" aria-pressed="${PREF.gece}">☾ Gece lambası</button></div></div>
+   <div class="sec"><h3>Işık</h3><div class="chips"><button class="chip" data-gece="0" aria-pressed="${PREF.gece===false}">☀︎ Aydınlık</button><button class="chip" data-gece="1" aria-pressed="${PREF.gece===true}">☾ Karanlık · gece lambası</button><button class="chip" data-gece="oto" aria-pressed="${PREF.gece==="oto"}">◐ Telefona göre</button></div><span class="hint">Kapsüle basılı tutarak da aydınlık/karanlık arasında geçebilirsin.</span></div>
    <div class="sec"><h3>Sayfa</h3><div><button class="btn ghost" id="s-new">Yeni boş sayfa</button></div><span class="hint">Mühürlenen mektuplar kutunda kalır; bu sadece şu anki taslağı temizler.</span></div>`);
   const pl=document.getElementById("pl");
   s.el.querySelectorAll("[data-cap]").forEach(b=>b.addEventListener("click",()=>{PREF.cap=b.dataset.cap;lsSet(PREFK,PREF);pl.style.setProperty("--cap",CAPS[PREF.cap]);s.el.querySelectorAll("[data-cap]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)))}));
-  s.el.querySelectorAll("[data-gece]").forEach(b=>b.addEventListener("click",()=>{PREF.gece=b.dataset.gece==="1";lsSet(PREFK,PREF);pl.classList.toggle("gece",PREF.gece);document.getElementById("col").style.color=inkNow();s.el.querySelectorAll("[data-gece]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)))}));
+  s.el.querySelectorAll("[data-gece]").forEach(b=>b.addEventListener("click",()=>{const v=b.dataset.gece;PREF.gece=v==="oto"?"oto":v==="1";lsSet(PREFK,PREF);applyNight();s.el.querySelectorAll("[data-gece]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)))}));
   const nb=document.getElementById("s-new");nb.addEventListener("click",()=>{if(!draft.body){s.close();return}
     if(nb.dataset.sure!=="1"){nb.dataset.sure="1";nb.textContent="Taslak silinsin mi? Tekrar dokun";return}
     draft.body="";draft.kurgu=null;draft.to="";draft.seed="s"+Date.now().toString(36);saveDraft();s.close();renderYaz()})}
