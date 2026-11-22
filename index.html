@@ -3093,11 +3093,12 @@ function closeTool(){$('toolVeil').hidden=true;TL.cur=null;if(TTS.on&&!R.book)tt
 function rerenderTool(){if(TL.cur&&!$('toolVeil').hidden)renderTool()}
 function toolHead(title,back=true){if(TL.embedded)return '';return `<div class="tool-head">${back&&TL.cur!=='menu'?'<button class="iconbtn" type="button" data-act="menu" aria-label="Araçlara dön">←</button>':''}<h2>${title}</h2><button class="iconbtn" type="button" data-act="close" aria-label="Kapat">×</button></div>`}
 function renderTool(){
-  const P=$('toolPanel');const f={menu:tMenu,month:tMonth,readlist:tReadList,stats:tStats,bingo:tBingo,focus:tFocus,quotes:tQuotes,thesis:tThesis,cards:tCards,writer:tWriter,year:tYear,backup:tBackup}[TL.cur];
+  const P=$('toolPanel');const f={menu:tMenu,month:tMonth,readlist:tReadList,stats:tStats,bingo:tBingo,focus:tFocus,quotes:tQuotes,thesis:tThesis,cards:tCards,writer:tWriter,year:tYear,backup:tBackup,apps:tApps}[TL.cur];
   if(!f)return;const keepScroll=P.scrollTop;P.innerHTML=f();P.scrollTop=keepScroll;
 }
 const MYAPPS=[['✉️','Mühürlü Mektuplar','mektup.html'],['🖥','Çalışma Masam','./masa/'],['✍️','Yazar Köşem','./yazar/'],['📊','SPSS Tez Rehberi','./spss/'],['💿','Plak Çalarım','https://buseebugra88-byte.github.io/VinylFlow/'],
  ['🧠','Multifidus Tez Asistanı','https://claude.ai/artifact/KdNx5H4kjyTXNYuCss6NKk'],['🩺','Fizyo Seans','https://claude.ai/artifact/SStfEdbAQwWwuSgoR5FeoW'],['📈','SPSS Tez Rehberi (Claude\'lu)','https://claude.ai/artifact/FFxiaBdqcWLPco8ymnyJoo']];
+function tApps(){return toolHead('📱 Uygulamalarım',false)+`<div class="tiles apps">${MYAPPS.map(([i,t,u])=>`<a class="tile" href="${u}"${u.startsWith('http')?' target="_blank" rel="noopener"':''} style="text-decoration:none;color:inherit"><span class="ti">${i}</span><b>${t}</b>${u.includes('claude.ai')?'<span class="hint">Claude\'da açılır</span>':''}</a>`).join('')}</div>`}
 function tMenu(){
   const T=[['focus','⏱','Odak zamanlayıcısı','25 dakikalık okuma seansları'],['quotes','💬','Alıntı defteri',`${TL.quotes.length} alıntı`],['thesis','🎓','Tez planlayıcı','Bölümler, tarihler, makaleler'],
     ['cards','🃏','Çalışma kartları','Soru-cevap kartlarıyla çalış'],['writer','✍️','Yazar köşesi','Karakterler, yazım, yayınevleri'],['year','🌟',`${new Date().getFullYear()} özetim`,'Yılın okuma özeti'],['backup','💾','Yedekle','İndir ya da geri yükle']];
@@ -5941,7 +5942,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v209';
+const DK_VER='v210';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -8214,10 +8215,11 @@ function snMoreSync(){const m=$('snMore');if(!m)return;const cur=document.queryS
   const l=m.querySelector('.sn-l');if(l){const t=inMore?(cur.querySelector('.sn-l').dataset.s||'Daha'):'Daha';l.dataset.s=t}}
 function snMoreClose(){const p=$('snMorePop');if(p)p.remove();const m=$('snMore');if(m)m.setAttribute('aria-expanded','false')}
 function snMoreOpen(){snMoreClose();const m=$('snMore');const items=SN_MORE.map(k=>document.querySelector(`.sidenav .sn-item[data-sec="${k}"]`)).filter(b=>b&&!b.hidden);
-  const p=document.createElement('div');p.id='snMorePop';p.className='sn-pop';p.innerHTML='<button type="button" data-snai><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><span>Yapay zekâ</span></button>'+items.map(b=>`<button type="button" data-snm="${b.dataset.sec}" aria-current="${b.getAttribute('aria-current')==='page'}">${b.querySelector('.sn-ic').innerHTML}<span>${esc(b.querySelector('.sn-l').textContent)}</span></button>`).join('');
+  const p=document.createElement('div');p.id='snMorePop';p.className='sn-pop';p.innerHTML='<button type="button" data-snai><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.7 2 2 .7-2 .7-.7 2-.7-2-2-.7 2-.7z"/></svg><span>Yapay zekâ</span></button><button type="button" data-snapps><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.6"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.6"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.6"/></svg><span>Uygulamalarım</span></button>'+items.map(b=>`<button type="button" data-snm="${b.dataset.sec}" aria-current="${b.getAttribute('aria-current')==='page'}">${b.querySelector('.sn-ic').innerHTML}<span>${esc(b.querySelector('.sn-l').textContent)}</span></button>`).join('');
   document.body.appendChild(p);m.setAttribute('aria-expanded','true')}
 $('snMore').addEventListener('click',e=>{e.stopPropagation();$('snMorePop')?snMoreClose():snMoreOpen()});
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-snai]')){e.stopPropagation();snMoreClose();aiHub()}},true);
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('[data-snapps]')){e.stopPropagation();snMoreClose();openTool('apps')}},true);
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-snm]');if(b){const t=document.querySelector(`.sidenav .sn-item[data-sec="${b.dataset.snm}"]`);snMoreClose();t&&t.click();setTimeout(snMoreSync,50);return}if($('snMorePop')&&!e.target.closest('#snMorePop'))snMoreClose()});
 new MutationObserver(snMoreSync).observe($('sideNav'),{subtree:true,attributes:true,attributeFilter:['aria-current','hidden']});setTimeout(snMoreSync,500);
 
