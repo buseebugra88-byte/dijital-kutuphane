@@ -56,9 +56,9 @@ button{font:inherit;color:inherit}
 .pl.gece .pl-top,.pl.open .pl-top{color:#d9d4ca}
 .ctr{margin-left:auto;margin-right:6px;font:400 .86rem var(--f-type);letter-spacing:.06em;color:#9a948a}
 .stage{position:absolute;inset:0;cursor:text}
-.col{position:absolute;left:50%;top:0;width:min(25ch,78vw);margin-left:calc(min(25ch,78vw) / -2);font:500 19px/34px var(--f-type);letter-spacing:.02em;transition:transform .14s ease-out;will-change:transform}
+.col{position:absolute;left:50%;top:0;width:min(25ch,78vw);margin-left:calc(min(25ch,78vw) / -2);font:600 17px/23px var(--f-type);letter-spacing:.03em;transition:transform .14s ease-out;will-change:transform}
 .ink,.col textarea,.meas{white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;font:inherit;letter-spacing:inherit;margin:0;padding:0;border:0}
-.ink{position:relative;z-index:1;pointer-events:none;min-height:34px;text-shadow:0 0 .6px currentColor}
+.ink{position:relative;z-index:1;pointer-events:none;min-height:23px;text-shadow:0 0 .6px currentColor}
 .ink span{position:relative}
 .col textarea{position:absolute;inset:0;width:100%;height:100%;resize:none;background:transparent;color:transparent;outline:none;overflow:hidden;z-index:2;caret-color:transparent}
 .col textarea::selection{background:rgba(140,59,59,.18)}
@@ -518,16 +518,16 @@ function renderYaz(){
     ctr.textContent=ta.value.replace(/~~/g,"").length.toLocaleString("tr-TR")+" / 3.000"};
   placeCaret=()=>{const pos=ta.selectionEnd??ta.value.length;
     meas.textContent=ta.value.slice(0,pos);const m=document.createElement("span");m.textContent="​";meas.appendChild(m);
-    const lh=34,ty=m.offsetTop,tx=m.offsetLeft;
+    const lh=parseFloat(getComputedStyle(col).lineHeight)||23,ty=m.offsetTop,tx=m.offsetLeft;
     const H=stage.clientHeight,rollY=Math.round(H*(H<520?.62:.56));
-    rl.style.top=(rollY-4)+"px";first.style.top=Math.max(20,rollY-150)+"px";sp.style.setProperty("--lampy",(rollY-8-(sp.getBoundingClientRect().top-stage.getBoundingClientRect().top))+"px");
-    const spTop=sp.getBoundingClientRect().top-stage.getBoundingClientRect().top;col.style.transform=`translateY(${rollY-ty-lh-6-spTop}px)`;
-    ta.style.height=Math.max(ink.offsetHeight,34)+"px";
+    rl.style.top=(rollY-4)+"px";first.style.top=Math.max(20,rollY-190)+"px";sp.style.setProperty("--lampy",(rollY-8-(sp.getBoundingClientRect().top-stage.getBoundingClientRect().top))+"px");
+    const spTop=sp.getBoundingClientRect().top-stage.getBoundingClientRect().top;col.style.transform=`translateY(${rollY-ty-lh-60-spTop}px)`;
+    ta.style.height=Math.max(ink.offsetHeight,lh)+"px";
     const cx=col.getBoundingClientRect().left-stage.getBoundingClientRect().left+tx;
     const cw=car.offsetWidth,sw=stage.clientWidth;const left=Math.min(Math.max(cx-cw/2,-cw/2+30),sw-cw/2-30);
     car.style.left=left+"px";car.style.setProperty("--hx",(cx-left)+"px")};
   applyLook();paint();requestAnimationFrame(placeCaret);
-  let t;const cpl=()=>Math.max(10,Math.round(col.clientWidth/11.4));
+  let t;const cpl=()=>Math.max(10,Math.round(col.clientWidth/10.6));
   ta.addEventListener("input",e=>{const it=e.inputType||"";if(PREF.sound){if(it==="insertLineBreak"||it==="insertParagraph")sndReturn();else if(it.startsWith("insert")){const pos=ta.selectionStart,ls=ta.value.lastIndexOf("\n",pos-1)+1;if(PREF.bell&&(pos-ls)===cpl()-4)sndDing();else sndKey()}else if(it.startsWith("delete"))sndKey(true)}
     draft.body=ta.value;paint();placeCaret();car.classList.remove("hit");void car.offsetWidth;car.classList.add("hit");clearTimeout(t);t=setTimeout(saveDraft,400)});
   ["keyup","click","select","focus"].forEach(e=>ta.addEventListener(e,()=>placeCaret()));
