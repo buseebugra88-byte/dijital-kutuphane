@@ -1,8 +1,0 @@
-const C='kutuphane-v207';
-self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./config.js','./gizlilik.html','./kamera.html','./kamera.webmanifest','./kamera-192.png?v=3','./mantar.html','./mantar.webmanifest','./mantar-192.png','./mektup.html','./mektup.webmanifest','./mektup-192.png','./hediye-24.html','./calisma.html','./masa/','./masa/manifest.webmanifest','./calisma.webmanifest','./calisma-192.png?v=2','./calisma-180.png?v=2','./yazar/','./yazar/manifest.webmanifest','./yazar-192.png','./yazar-180.png'])).then(()=>self.skipWaiting()))});
-self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
-self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET')return;
-  const u=new URL(r.url);
-  if(u.origin===location.origin){const fresh=r.mode==='navigate'||u.pathname.endsWith('/')||/\.(html|js|webmanifest)$/.test(u.pathname);e.respondWith((fresh?fetch(r.url,{cache:'no-store',credentials:'same-origin'}):fetch(r)).then(res=>{const cp=res.clone();caches.open(C).then(c=>c.put(r,cp));return res}).catch(()=>caches.match(r).then(m=>m||caches.match('./index.html'))));return}
-  if(/cdnjs\.cloudflare\.com|fonts\.(googleapis|gstatic)\.com/.test(u.host)){e.respondWith(caches.match(r).then(m=>m||fetch(r).then(res=>{const cp=res.clone();caches.open(C).then(c=>c.put(r,cp));return res})))}
-});
