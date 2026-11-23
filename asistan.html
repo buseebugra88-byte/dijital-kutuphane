@@ -281,7 +281,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radiu
     <p class="sub">Asistanını kendine göre ayarla. Hepsini sonra Ayarlar'dan değiştirebilirsin.</p>
     <label class="lab" for="s_user">Senin adın</label><input class="field" id="s_user" maxlength="30" placeholder="İsteğe bağlı">
     <label class="lab" for="s_asst">Asistanın adı</label><input class="field" id="s_asst" maxlength="16" value="Orion">
-    <label class="lab" for="s_key">Gemini API anahtarı</label><input class="field" id="s_key" type="password" autocomplete="off" placeholder="AIza… ile başlayan anahtarı yapıştır">
+    <label class="lab" for="s_key">Gemini API anahtarı</label><input class="field" id="s_key" type="password" autocomplete="off" placeholder="AQ. ile başlayan anahtarı yapıştır">
     <div class="mono" style="margin-top:6px;text-transform:none">Anahtar yalnızca bu tarayıcıda saklanır. Almak için: <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:var(--c)">aistudio.google.com/app/apikey</a></div>
     <label class="lab">Takmak istediğin çipi seç · etiketine dokunup adını yazabilirsin</label>
     <div id="setupCards"></div>
@@ -723,7 +723,7 @@ async function gemini(system, msgs, onText, signal){
 function keyRow(){
   const has=!!getKey();
   const r=row('GEMINI API ANAHTARI', has?('Kayıtlı ✓ · yalnızca bu tarayıcıda · model: '+(gModel||'otomatik')):'Henüz anahtar yok. Asistanın konuşabilmesi için gerekli.'); r.classList.add('col2');
-  const w=document.createElement('div'); w.className='in2'; const i=document.createElement('input'); i.className='field'; i.type='password'; i.autocomplete='off'; i.placeholder=has?'Yeni anahtar yapıştır':'AIza… anahtarını yapıştır';
+  const w=document.createElement('div'); w.className='in2'; const i=document.createElement('input'); i.className='field'; i.type='password'; i.autocomplete='off'; i.placeholder=has?'Yeni anahtar yapıştır':'AQ.… anahtarını yapıştır';
   const b=ob('KAYDET',async()=>{ const v=i.value.trim(); if(!v) return; setKey(v); i.value=''; b.textContent='DENENİYOR…';
     try{ await modelCandidates(); $('link').textContent='GEMINI'; sfx('ok'); renderTab(); }catch(e){ sfx('err'); b.textContent='GEÇERSİZ ANAHTAR'; setTimeout(()=>b.textContent='KAYDET',2000); } });
   w.append(i,b); r.appendChild(w);
