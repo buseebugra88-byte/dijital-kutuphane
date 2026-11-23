@@ -334,7 +334,7 @@ const CLAUDE_VOICES = [['buttery','Buttery'],['airy','Airy'],['glassy','Glassy']
 const DEF = { lang:'tr', quality:'high', mic:true,
   panels:{clock:true,timer:true,session:true,notes:true,projects:true,weather:true,map:true},
   sfx:true, hum:false, think:true, sfxVol:.5, voiceOn:true, voiceVol:1,
-  idle:false, idleMin:10, hands:true, wake:false, city:'', agenda:true, water:false, brk:false, voices:{} };
+  idle:false, idleMin:10, hands:true, wake:false, city:'', depth:'fast', agenda:true, water:false, brk:false, voices:{} };
 let cfg = Object.assign({}, DEF, store.get('cfg',{})); cfg.panels=Object.assign({},DEF.panels,cfg.panels||{}); cfg.voices=cfg.voices||{};
 const saveCfg = () => store.set('cfg',cfg);
 let prof = store.get('profile', null);
@@ -700,23 +700,37 @@ async function gemini2(model, body, onText, signal){
         for(const p of parts) if(p.text&&!p.thought) text+=p.text; onText(text); }catch(_){} } } }
   return text;
 }
+function thinkCfg(model){
+  if(cfg.depth==='deep') return null;
+  if(/gemini-2\.5/.test(model)) return /pro/.test(model)?{thinkingBudget:128}:{thinkingBudget:0};
+  if(/gemini-[3-9]/.test(model)) return {thinkingLevel:'minimal'};
+  return null;
+}
+function needsSearch(msgs){
+  const last=[...msgs].reverse().find(m=>m.role==='user'); if(!last) return false;
+  const t=last.content.toLocaleLowerCase('tr-TR'), words=t.split(/\s+/).filter(Boolean).length;
+  if(/bugün|dün|yarın|bu hafta|son |güncel|haber|kazandı|elendi|maç|skor|fiyat|kaç tl|dolar|euro|altın|borsa|seçim|açıklandı|vizyon|yayın|çıktı mı|kimdir|kim |nerede|ne zaman|202\d|ara |araştır|bak bakalım/.test(t)) return true;
+  return words>4 && /\?|mı|mi|mu|mü/.test(t);
+}
 async function gemini(system, msgs, onText, signal){
-  const body={ systemInstruction:{parts:[{text:system}]},
+  const base={ systemInstruction:{parts:[{text:system}]},
     contents: msgs.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]})),
-    generationConfig:{temperature:.9, maxOutputTokens:800}, tools:[{google_search:{}}] };
+    generationConfig:{temperature:.8, maxOutputTokens:600} };
+  const search=needsSearch(msgs);
   let lastErr;
   for(const model of await modelCandidates()){
-    try{
-      const r=await gFetch(`models/${model}:streamGenerateContent?alt=sse`, body, signal);
-      if(gModel!==model){ gModel=model; store.set('gmodel',model); $('link').textContent=model.toUpperCase(); }
-      const rd=r.body.getReader(), dec=new TextDecoder(); let buf='', text='';
-      for(;;){ const {done,value}=await rd.read(); if(done) break; buf+=dec.decode(value,{stream:true});
-        let i; while((i=buf.indexOf('\n'))>=0){ const line=buf.slice(0,i).trim(); buf=buf.slice(i+1);
-          if(line.startsWith('data:')){ try{ const j=JSON.parse(line.slice(5)); const parts=(j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[];
-            for(const p of parts) if(p.text&&!p.thought) text+=p.text; onText(text); }catch(_){} } } }
-      return text;
-    }catch(e){ lastErr=e; if(e.name==='AbortError'||e.code==='key') throw e;
-      if(e.code==='bad' && body.tools){ delete body.tools; try{ return await gemini2(model,body,onText,signal); }catch(e2){ lastErr=e2; if(e2.code==='key') throw e2; continue; } } if(e.code==='model'||e.code==='quota'){ if(gModel===model){ gModel=''; store.set('gmodel',''); } continue; } throw e; }
+    const full=JSON.parse(JSON.stringify(base)); const tc=thinkCfg(model);
+    if(tc) full.generationConfig.thinkingConfig=tc; if(search) full.tools=[{google_search:{}}];
+    const tries=[full]; if(tc||search) tries.push(base); // 400 gelirse sade sürümle tekrar dene
+    for(const body of tries){
+      try{
+        const text=await gemini2(model, body, onText, signal);
+        if(gModel!==model){ gModel=model; store.set('gmodel',model); $('link').textContent=model.toUpperCase(); }
+        return text;
+      }catch(e){ lastErr=e; if(e.name==='AbortError'||e.code==='key') throw e; if(e.code==='bad') continue; break; }
+    }
+    if(lastErr && (lastErr.code==='model'||lastErr.code==='quota'||lastErr.code==='bad')){ if(gModel===model){ gModel=''; store.set('gmodel',''); } continue; }
+    throw lastErr;
   }
   throw lastErr||new Error('no model');
 }
@@ -772,7 +786,7 @@ function hfStart(){
     hf=new SRC(); hf.lang=langCode(); hf.continuous=true; hf.interimResults=true;
     hf.onstart=()=>{ hfOn=true; paintMic(); if(mode==='idle') setMode('listening'); };
     hf.onresult=e=>{ let par=''; for(let i=e.resultIndex;i<e.results.length;i++){ const r=e.results[i]; if(r.isFinal) hfBuf+=r[0].transcript+' '; else par+=r[0].transcript; }
-      if(!cfg.wake) inp.value=(hfBuf+par).trim(); activity(); clearTimeout(hfTimer); hfTimer=setTimeout(()=>{ if(hfBuf.trim()) { try{ hf.stop(); }catch(_){} hfDeliver(); } },1300); };
+      if(!cfg.wake) inp.value=(hfBuf+par).trim(); activity(); clearTimeout(hfTimer); hfTimer=setTimeout(()=>{ if(hfBuf.trim()) { try{ hf.stop(); }catch(_){} hfDeliver(); } },850); };
     hf.onerror=e=>{ if(e.error==='not-allowed'||e.error==='service-not-allowed'){ hfDenied=true; add('sys','Mikrofon izni yok · tarayıcı ayarlarından izin verip sayfayı yenile'); } };
     hf.onend=()=>{ hfOn=false; hf=null; paintMic(); if(mode==='listening') { mode='idle'; $('st').textContent=LABEL.idle; $('hs').textContent=LABEL.idle.toLocaleUpperCase('tr-TR'); }
       if(hfBuf.trim()&&!busy){ clearTimeout(hfTimer); hfDeliver(); } else setTimeout(hfStart,350); };
@@ -804,6 +818,8 @@ function renderTab(){
   if(curTab==='genel'){
     B.appendChild(row('Takılı çip', labelOf(chipOf())+' · '+CHIPS[chipOf()].desc, ob('DEĞİŞTİR',()=>{ $('setM').classList.add('hidden'); $('chipBtn').click(); })));
     B.appendChild(keyRow());
+    const dr=row('Yanıt hızı','HIZLI: düşünmeden, anında cevap verir. DÜŞÜNCELİ: zor sorularda biraz bekletir ama daha dikkatli düşünür.'); dr.classList.add('col2');
+    const ds=seg([['fast','HIZLI'],['deep','DÜŞÜNCELİ']],()=>cfg.depth,v=>cfg.depth=v); ds.style.marginTop='12px'; dr.appendChild(ds); B.appendChild(dr);
     B.appendChild(inputRow('Konum','Hava durumu ve harita için ilçeni ya da şehrini yaz (ör. Kaş). Boş bırakırsan cihazın konumu sorulur.',cfg.city,'ör. Kaş, Antalya',v=>{ cfg.city=v; saveCfg(); loadWeather(); },40));
     B.appendChild(inputRow('Asistanın adı','Asistan kendini bu adla tanıtır.',prof.assistant,'Orion',v=>{ prof.assistant=v||'Orion'; store.set('profile',prof); applyProfile(); },16));
     B.appendChild(inputRow('Senin adın','Boş bırakabilirsin.',prof.user,'Adın',v=>{ prof.user=v; store.set('profile',prof); if(v) addMem('ad',v,true); },30));
