@@ -192,6 +192,14 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radiu
 .map .leaflet-tile-pane{filter:sepia(1) hue-rotate(var(--hue)) saturate(2.2) brightness(.85)}
 .map .leaflet-control-attribution{background:rgba(0,0,0,.6)!important;color:#888!important;font-size:9px}
 .map .leaflet-control-attribution a{color:#aaa!important}
+
+#boot{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 45%,rgba(var(--cr),.18),rgba(0,0,0,.94) 60%);cursor:pointer}
+#boot .b{text-align:center}
+#boot .ring{width:150px;height:150px;margin:0 auto 26px;border-radius:50%;border:2px solid var(--c);box-shadow:0 0 40px rgba(var(--cr),.5),inset 0 0 40px rgba(var(--cr),.3);display:grid;place-items:center;animation:pulse 2.2s ease-in-out infinite}
+#boot .ring i{width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 0 30px var(--c),0 0 60px var(--c)}
+#boot .t{font-weight:600;letter-spacing:.5em;font-size:18px;color:#fff;padding-left:.5em}
+#boot .s{font-family:'IBM Plex Mono',monospace;letter-spacing:.25em;font-size:12px;color:var(--c);margin-top:10px}
+@keyframes pulse{50%{transform:scale(1.06);box-shadow:0 0 70px rgba(var(--cr),.7),inset 0 0 50px rgba(var(--cr),.4)}}
 </style>
 </head>
 <body>
@@ -274,6 +282,7 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radiu
   </aside>
 </div>
 
+<div id="boot" class="hidden" role="button" tabindex="0" aria-label="Sistemi başlat"><div class="b"><div class="ring"><i></i></div><div class="t" id="bootName">SİSTEMİ BAŞLAT</div><div class="s">SESLİ KONUŞMA İÇİN EKRANA DOKUN</div></div></div>
 <!-- setup -->
 <div class="modal hidden" id="setup">
   <div class="sheet"><div class="scroll">
@@ -407,7 +416,7 @@ function openSetup(){
     const lb={}; Object.keys(CHIPS).forEach(k=>{ const v=(labelsDraft[k]||'').trim(); if(v&&v!==CHIPS[k].label) lb[k]=v; });
     prof={user:$('s_user').value.trim(), assistant:a, chip:sel, addr:'', labels:lb}; store.set('profile',prof);
     if(prof.user) addMem('ad',prof.user,true);
-    $('setup').classList.add('hidden'); actx(); unlockAudio(); applyProfile(); sfx('chip'); history=[]; count(); log.innerHTML=''; greet(); };
+    $('setup').classList.add('hidden'); actx(); unlockAudio(); applyProfile(); sfx('chip'); history=[]; count(); log.innerHTML=''; greet(); const lm=[...document.querySelectorAll('#log .msg.ai')].pop(); if(lm) setTimeout(()=>say(lm.innerText),300); };
 }
 function switchChip(k){ setTimeout(()=>{ if(mapMarker){ const col=getComputedStyle(document.body).getPropertyValue('--c').trim(); mapMarker.setStyle({color:col,fillColor:col}); } },60);
   if(!prof||prof.chip===k) return; prof.chip=k; store.set('profile',prof); applyProfile(); sfx('chip'); stopSpeak();
@@ -607,7 +616,8 @@ function speakLocal(text){ add('ai',text); say(text); }
 function speakChunk(k,text){ const v=voiceOf(k);
   if(tts && v.engine!=='browser') return tts.add([{text:text.slice(0,2000),voice:v.claude,rate:v.rate}]).catch(()=>{});
   return new Promise(res=>{ try{ const u=new SpeechSynthesisUtterance(text); u.lang=cfg.lang==='en'?'en-US':'tr-TR'; const bv=pickBrowserVoice(k); if(bv) u.voice=bv;
-    u.rate=v.rate; u.pitch=v.pitch; u.volume=cfg.voiceVol; u.onend=u.onerror=()=>res(); speechSynthesis.speak(u); setTimeout(res, 4000+text.length*120); }catch(e){ res(); } }); }
+    u.rate=v.rate; u.pitch=v.pitch; u.volume=cfg.voiceVol; u.onend=()=>res(); u.onerror=ev=>{ if(ev&&ev.error==='not-allowed') showBoot(); res(); }; window._utt=u;
+    const wait=Math.max(0,350-(Date.now()-(window.hfStoppedAt||0))); setTimeout(()=>{ try{ speechSynthesis.resume(); }catch(_){} speechSynthesis.speak(u); },wait); setTimeout(res, 5000+text.length*120); }catch(e){ res(); } }); }
 const sq={ spoken:0, pending:0, active:false,
   start(){ this.spoken=0; this.pending=0; this.active=!!(cfg.voiceOn&&prof); },
   feed(t){ if(!this.active) return; let rest=t.slice(this.spoken); const br=rest.indexOf('['); if(br>=0) rest=rest.slice(0,br);
@@ -793,7 +803,7 @@ function hfStart(){
     hf.start();
   }catch(e){ hfOn=false; }
 }
-function hfStop(){ clearTimeout(hfTimer); if(hf){ try{ hf.onend=()=>{ hfOn=false; hf=null; paintMic(); }; hf.abort(); }catch(e){} } hfOn=false; paintMic(); }
+function hfStop(){ if(hfOn) window.hfStoppedAt=Date.now(); clearTimeout(hfTimer); if(hf){ try{ hf.onend=()=>{ hfOn=false; hf=null; paintMic(); }; hf.abort(); }catch(e){} } hfOn=false; paintMic(); }
 document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') hfStart(); });
 setInterval(()=>{ if(!hfOn) hfStart(); },5000); // arka planda kapanırsa yeniden dene
 addEventListener('pointerdown',()=>{ unlockAudio(); hfStart(); },{passive:true});
@@ -909,7 +919,10 @@ addEventListener('keydown',e=>{
 
 /* ---------- start ---------- */
 applyPanels();
-if(prof){ applyProfile(); greet(); } else { applyTheme('azure'); openSetup(); }
+function showBoot(){ if(!prof) return; $('bootName').textContent=prof.assistant.toLocaleUpperCase('tr-TR'); $('boot').classList.remove('hidden'); }
+function bootGo(){ $('boot').classList.add('hidden'); unlocked=false; unlockAudio(); actx(); const lm=[...document.querySelectorAll('#log .msg.ai')].pop(); if(lm) setTimeout(()=>say(lm.innerText),250); if(typeof hfStart==='function') setTimeout(hfStart,200); }
+$('boot').addEventListener('click',bootGo); $('boot').addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' ') bootGo(); });
+if(prof){ applyProfile(); greet(); showBoot(); } else { applyTheme('azure'); openSetup(); }
 try{ speechSynthesis.onvoiceschanged=()=>{ if(!$('setM').classList.contains('hidden')&&curTab==='ses') renderTab(); }; }catch(e){}
 
 (()=>{
