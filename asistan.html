@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kişisel Asistan · Gemini</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+:root{ --c:#3fe3ff; --c2:#1aa9c9; --cr:63,227,255; --dim:#0f3b48; --muted:#5e93a3; --text:#bff4ff; --bg:#02070b; --red:#ff4d6d; }
+body.t-amber{ --c:#f3c46b; --c2:#b8893a; --cr:243,196,107; --dim:#3d2f14; --muted:#9a8560; --text:#f6e7c6; --bg:#070502; }
+body.t-crimson{ --c:#ff5a5f; --c2:#c23a3f; --cr:255,90,95; --dim:#4a1518; --muted:#a06a6c; --text:#ffd9da; --bg:#080203; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:Outfit,system-ui,sans-serif;overflow:hidden;transition:background .5s}
+body{background:radial-gradient(ellipse at 50% 35%, rgba(var(--cr),.14), transparent 60%),
+  linear-gradient(rgba(var(--cr),.03) 1px, transparent 1px) 0 0/28px 28px,
+  linear-gradient(90deg, rgba(var(--cr),.03) 1px, transparent 1px) 0 0/28px 28px, var(--bg)}
+.M{font-family:'IBM Plex Mono',monospace}
+button{font-family:'IBM Plex Mono',monospace;cursor:pointer}
+.app{height:100%;display:grid;grid-template-columns:240px 1fr 240px;gap:18px;padding:calc(env(safe-area-inset-top) + 14px) 18px calc(env(safe-area-inset-bottom) + 12px)}
+.app.nol{grid-template-columns:0 1fr 240px}.app.nor{grid-template-columns:240px 1fr 0}.app.nol.nor{grid-template-columns:0 1fr 0}
+.col{display:flex;flex-direction:column;gap:18px;min-height:0;overflow-y:auto;scrollbar-width:none}
+.col::-webkit-scrollbar{display:none}
+.main{display:flex;flex-direction:column;min-height:0;min-width:0}
+h3{font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:12px;letter-spacing:.4em;color:var(--c);margin-bottom:8px}
+.panel{border-top:1px solid var(--dim);padding-top:10px}
+.mono{font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+header{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brand{font-weight:600;letter-spacing:.45em;font-size:15px;color:#fff;text-shadow:0 0 12px rgba(var(--cr),.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand span{font-family:'IBM Plex Mono',monospace;color:var(--c);font-weight:400;font-size:11px;letter-spacing:.25em;margin-left:10px}
+.hbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.ib{height:34px;min-width:34px;padding:0 10px;border:1px solid var(--dim);background:rgba(0,0,0,.35);color:var(--c);border-radius:8px;display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.2em}
+.ib.off{color:var(--muted);opacity:.6}
+.ib svg{width:16px;height:16px}
+.stage{position:relative;flex:1 1 auto;min-height:220px;display:grid;place-items:center}
+#orb{position:absolute;inset:0;width:100%;height:100%}
+.hud{position:absolute;width:min(74%,380px);max-height:92%;aspect-ratio:1;pointer-events:none}
+.hud .r1{animation:spin 40s linear infinite;transform-origin:50% 50%}
+.hud .r2{animation:spin 24s linear infinite reverse;transform-origin:50% 50%}
+.hud .r3{animation:spin 60s linear infinite;transform-origin:50% 50%}
+@keyframes spin{to{transform:rotate(360deg)}}
+.perf .hud .r1,.perf .hud .r2,.perf .hud .r3{animation:none}
+.core{position:absolute;text-align:center;pointer-events:none}
+.core .name{font-weight:600;letter-spacing:.45em;padding-left:.45em;font-size:18px;color:#fff;text-shadow:0 0 18px var(--c)}
+.core .state{font-family:'IBM Plex Mono',monospace;margin-top:6px;font-size:11px;letter-spacing:.3em;color:var(--c);text-transform:uppercase}
+.log{flex:0 1 auto;max-height:34vh;overflow-y:auto;padding:6px 2px 10px;display:flex;flex-direction:column;gap:9px;mask-image:linear-gradient(transparent,#000 20px);-webkit-mask-image:linear-gradient(transparent,#000 20px)}
+.msg{max-width:88%;padding:9px 12px;font-size:16px;line-height:1.4;border-radius:4px;white-space:pre-wrap;word-wrap:break-word}
+.msg.me{align-self:flex-end;background:rgba(var(--cr),.09);border:1px solid rgba(var(--cr),.25);color:#fff}
+.msg.ai{align-self:flex-start;background:rgba(0,0,0,.45);border-left:2px solid var(--c)}
+.msg.ai .tag{display:block;font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:.3em;color:var(--c);margin-bottom:3px}
+.msg.sys{align-self:center;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;padding:2px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;border:1px solid var(--dim);color:var(--c);background:rgba(0,0,0,.35);font-size:12px;padding:6px 11px;border-radius:20px}
+form.ask{display:flex;gap:8px;align-items:center;border:1px solid rgba(var(--cr),.35);background:rgba(0,0,0,.55);padding:6px;border-radius:12px}
+#inp{flex:1;min-width:0;background:transparent;border:0;outline:0;color:#fff;font:500 15px 'IBM Plex Mono',monospace;letter-spacing:.06em;padding:6px}
+#inp::placeholder{color:var(--muted);letter-spacing:.3em}
+.btn{width:42px;height:42px;border-radius:10px;border:0;display:grid;place-items:center;background:var(--c);color:#111}
+.btn svg{width:20px;height:20px}
+.btn.mic{background:transparent;border:1px solid var(--dim);color:var(--c)}
+.btn.mic.on{background:var(--red);color:#fff;border-color:var(--red)}
+.btn[disabled]{opacity:.4}
+.dial{width:150px;height:150px;margin:0 auto 6px;position:relative}
+.dial svg{width:100%;height:100%}
+.dial .v{position:absolute;inset:0;display:grid;place-items:center;font-weight:600;font-size:26px;color:#fff}
+.timer .v{font-size:22px}
+.tbtns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+.tb{border:1px solid var(--dim);background:transparent;color:var(--c);padding:7px;border-radius:6px;font-size:12px;letter-spacing:.15em}
+.tb.wide{grid-column:span 2}
+.note{display:flex;justify-content:space-between;gap:8px;font-size:15px;padding:7px 0;border-bottom:1px solid rgba(var(--cr),.1)}
+.note span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.note button{background:none;border:0;color:var(--muted);font-size:16px}
+.field{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--dim);color:#fff;border-radius:8px;padding:10px 12px;font:400 14px 'IBM Plex Mono',monospace;letter-spacing:.08em;outline:0}
+.big{font-weight:600;font-size:30px;color:#fff}
+.stat{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;padding:3px 0}
+.stat b{color:var(--c);font-weight:500}
+.hidden{display:none!important}
+
+/* modals */
+.modal{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);display:grid;place-items:center;padding:16px}
+.sheet{width:min(900px,100%);max-height:calc(100svh - 32px);display:flex;flex-direction:column;background:#0b0b0d;border:1px solid var(--dim);border-radius:18px;padding:26px 24px 18px;position:relative}
+.sheet h2{font-weight:700;letter-spacing:.38em;font-size:22px;color:#fff;text-shadow:0 0 18px rgba(255,255,255,.15)}
+.sheet .sub{font-weight:300;color:#bbb;margin:6px 0 14px;font-size:16px;line-height:1.5}
+.x{position:absolute;right:18px;top:18px;width:42px;height:42px;border:1px solid var(--dim);border-radius:10px;background:none;color:var(--c);font-size:18px}
+.scroll{overflow-y:auto;min-height:0;padding-right:6px;scrollbar-width:thin;scrollbar-color:var(--dim) transparent}
+.tabs{display:flex;gap:4px;border:1px solid #222;border-radius:12px;padding:5px;margin:18px 0 6px;overflow-x:auto;scrollbar-width:none;flex:0 0 auto}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:1 0 auto;border:1px solid transparent;background:none;color:var(--muted);padding:9px 14px;border-radius:8px;font-size:13px;letter-spacing:.22em}
+.tab.on{color:var(--c);border-color:var(--c2);background:rgba(var(--cr),.12)}
+.intro{font-weight:300;color:#ccc;line-height:1.6;padding:10px 0 14px;border-bottom:1px solid #1e1e22}
+.row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;border-bottom:1px solid #1e1e22}
+.row .t{font-family:'IBM Plex Mono',monospace;font-size:15px;letter-spacing:.1em;color:#eee;text-transform:uppercase}
+.row .d{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--muted);letter-spacing:.06em;margin-top:5px;line-height:1.5}
+.row.col2{flex-direction:column;align-items:stretch}
+.sw{flex:0 0 auto;width:54px;height:30px;border-radius:20px;border:1px solid var(--dim);background:#1a1a1d;position:relative}
+.sw::after{content:'';position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#555;transition:.2s}
+.sw.on{background:rgba(var(--cr),.3);border-color:var(--c2)}
+.sw.on::after{left:27px;background:var(--c)}
+.seg{display:flex;border:1px solid #2a2a2e;border-radius:10px;padding:4px;gap:4px;flex-wrap:wrap}
+.seg button{flex:1;border:1px solid transparent;background:none;color:var(--muted);padding:9px 12px;border-radius:7px;font-size:13px;letter-spacing:.18em;white-space:nowrap}
+.seg button.on{color:var(--c);border-color:var(--c2);background:rgba(var(--cr),.12)}
+.ob{border:1px solid var(--dim);background:rgba(var(--cr),.06);color:var(--c);padding:11px 20px;border-radius:10px;font-size:13px;letter-spacing:.25em;white-space:nowrap}
+.ob.sm{padding:7px 12px;font-size:11px}
+.in2{display:flex;gap:10px;align-items:center;margin-top:12px}
+.in2 .field{flex:1}
+.dot{width:12px;height:12px;border-radius:50%;flex:0 0 auto}
+input[type=range]{-webkit-appearance:none;appearance:none;width:240px;max-width:45vw;height:4px;border-radius:4px;background:#2a2a2e;outline:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--c);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radius:50%;background:var(--c)}
+.mem{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid #222;border-radius:10px;padding:12px 14px;margin-top:10px}
+.mem .k{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--c);letter-spacing:.15em}
+.mem .v{font-family:'IBM Plex Mono',monospace;font-size:14px;color:#eee;margin-top:4px;word-break:break-word}
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:10px}
+.mini{border:1px solid #2a2a2e;border-radius:12px;padding:12px}
+.mini .t{font-family:'IBM Plex Mono',monospace;letter-spacing:.25em;font-size:13px;color:#eee}
+.mini .v{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--c);margin-top:6px;letter-spacing:.15em}
+.vrow{display:grid;grid-template-columns:14px 110px 1fr auto;gap:10px;align-items:center;margin-top:12px}
+.vrow .nm{font-family:'IBM Plex Mono',monospace;letter-spacing:.2em;font-size:13px;color:#eee}
+.vrow select{background:#000;border:1px solid var(--dim);color:#eee;border-radius:8px;padding:9px;font:13px 'IBM Plex Mono',monospace;min-width:0}
+/* chip cards */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:22px;padding-bottom:8px}
+.card{cursor:pointer;background:linear-gradient(#26282c,#16171a);border:1px solid #2e3035;border-radius:16px;padding:14px 16px 10px;position:relative;transition:transform .3s, box-shadow .3s;text-align:center}
+.card::before,.card::after{content:'';position:absolute;top:10px;width:9px;height:9px;border-radius:50%;background:#555;box-shadow:inset 0 1px 2px #000}
+.card::before{left:10px}.card::after{right:10px}
+.card .rail{position:absolute;top:40px;bottom:60px;width:5px;border-radius:3px;background:var(--glow);opacity:.7}
+.card .rail.l{left:9px}.card .rail.r{right:9px}
+.card.sel{transform:translateY(14px);box-shadow:0 0 30px var(--glow);border-color:var(--glow)}
+.card .lbl{display:block;width:100%;border:0;outline:0;text-align:center;text-transform:uppercase;background:#e9e6df;color:#151515;font-family:'Permanent Marker',cursive;font-size:24px;padding:8px 4px;border-radius:3px;transform:rotate(-1deg);margin-top:8px}
+.card .lbl:focus{box-shadow:0 0 0 2px var(--glow)}
+.card .pcb{height:110px;margin:12px 4px;border-radius:6px;position:relative;overflow:hidden}
+.card .pcb svg{position:absolute;inset:0;width:100%;height:100%}
+.card .pins{display:flex;justify-content:center;gap:5px}
+.card .pins i{width:10px;height:18px;background:linear-gradient(#e4c77c,#9a7a35);border-radius:2px}
+.card .desc{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#aaa;margin-top:10px;line-height:1.4}
+.slot{height:16px;border-radius:8px;background:linear-gradient(#0d0e10,#1c1d20);margin-top:-4px;box-shadow:inset 0 3px 6px #000}
+.taken{text-align:center;font-family:'IBM Plex Mono',monospace;letter-spacing:.4em;font-size:13px;margin-top:14px;height:16px}
+.go{margin-top:18px;width:100%;padding:13px;border:0;border-radius:10px;background:var(--c);color:#111;font:600 14px Outfit;letter-spacing:.3em;flex:0 0 auto}
+.lab{display:block;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.25em;color:var(--c);margin:16px 0 8px;text-transform:uppercase}
+
+@media (max-width:900px){
+  html,body{overflow:auto}
+  .app,.app.nol,.app.nor,.app.nol.nor{grid-template-columns:1fr;height:auto;min-height:100%}
+  .main{order:-1;height:calc(100svh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 26px)}
+  .col{overflow:visible}
+  .cards,.cards3{gap:8px}
+  .card{padding:10px 8px 8px}
+  .card .lbl{font-size:15px}
+  .card .pcb{height:56px}
+  .card .desc{font-size:10px}
+  .row{flex-wrap:wrap}
+  .vrow{grid-template-columns:12px 1fr auto}
+  .vrow .nm{grid-column:2}
+  .vrow select{grid-column:1/3}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside class="col" id="colL">
+    <div class="panel" id="p_clock" style="border:0;padding:0">
+      <div class="dial"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--dim)" stroke-width="1" stroke-dasharray="1 3"/><circle id="secArc" cx="50" cy="50" r="38" fill="none" stroke="var(--c)" stroke-width="2.5" stroke-linecap="round" pathLength="60" stroke-dasharray="0 60" transform="rotate(-90 50 50)"/></svg><div class="v" id="clk">--:--</div></div>
+      <h3>ZAMAN</h3><div class="mono" id="dt"></div>
+    </div>
+    <div class="panel" id="p_timer">
+      <h3>ZAMANLAYICI</h3>
+      <div class="dial timer"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="var(--dim)" stroke-width="2"/><circle id="tArc" cx="50" cy="50" r="40" fill="none" stroke="var(--c)" stroke-width="3" pathLength="100" stroke-dasharray="0 100" transform="rotate(-90 50 50)"/></svg><div class="v" id="tv">--:--</div></div>
+      <div class="tbtns">
+        <button class="tb" data-m="1">1 DK</button><button class="tb" data-m="5">5 DK</button>
+        <button class="tb" data-m="10">10 DK</button><button class="tb" data-m="25">25 DK</button>
+        <button class="tb wide" id="sw">⏱ KRONOMETRE</button>
+        <button class="tb wide" id="tstop">SIFIRLA</button>
+      </div>
+    </div>
+  </aside>
+
+  <section class="main">
+    <header>
+      <div class="brand" id="brand">ASİSTAN<span id="hs">BEKLEMEDE</span></div>
+      <div class="hbtns">
+        <button class="ib" id="snd" aria-label="Sesli yanıt"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path id="wave" d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg></button>
+        <button class="ib" id="clr" aria-label="Sohbeti temizle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></button>
+        <button class="ib" id="chipBtn">ÇİPLER</button>
+        <button class="ib" id="cfg">AYARLAR</button>
+      </div>
+    </header>
+    <div class="stage">
+      <canvas id="orb"></canvas>
+      <svg class="hud" viewBox="0 0 200 200" fill="none">
+        <g class="r3" stroke="var(--c)" stroke-opacity=".25"><circle cx="100" cy="100" r="97" stroke-dasharray="1 3"/></g>
+        <g class="r1" stroke="var(--c)"><circle cx="100" cy="100" r="90" stroke-opacity=".45" stroke-dasharray="40 12 6 12" stroke-width="1.2"/></g>
+        <g class="r2" stroke="var(--c)"><circle cx="100" cy="100" r="82" stroke-opacity=".3" stroke-dasharray="2 4" stroke-width="3"/><path d="M100 14 a86 86 0 0 1 60 25" stroke-opacity=".9" stroke-width="2"/></g>
+      </svg>
+      <div class="core"><div class="name" id="cname">ASİSTAN</div><div class="state" id="st">Beklemede</div></div>
+    </div>
+    <div class="log" id="log"></div>
+    <div class="chips" id="chips"></div>
+    <form class="ask" id="f" autocomplete="off">
+      <button type="button" class="btn mic hidden" id="mic" aria-label="Konuş"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+      <input id="inp" placeholder="KONUŞ YA DA YAZ…" enterkeyhint="send">
+      <button class="btn" id="go" aria-label="Gönder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M4 12h15M13 6l6 6-6 6"/></svg></button>
+    </form>
+  </section>
+
+  <aside class="col" id="colR">
+    <div class="panel" id="p_session" style="border:0;padding:0">
+      <h3>OTURUM</h3>
+      <div class="stat">Süre <b id="ses">00:00</b></div>
+      <div class="stat">Mesaj <b id="cnt">0</b></div>
+      <div class="stat">Bağlantı <b id="link">…</b></div>
+      <div class="stat">Ses <b id="vo">AÇIK</b></div>
+      <div class="stat">Çip <b id="chipName">—</b></div>
+    </div>
+    <div class="panel" id="p_notes">
+      <h3>NOTLAR</h3>
+      <div class="big" id="ncount">0</div>
+      <div id="notes"></div>
+      <form id="nf" style="margin-top:8px"><input class="field" id="ninp" placeholder="Not ekle…" maxlength="140"></form>
+    </div>
+  </aside>
+</div>
+
+<!-- setup -->
+<div class="modal hidden" id="setup">
+  <div class="sheet"><div class="scroll">
+    <h2>KURULUM</h2>
+    <p class="sub">Asistanını kendine göre ayarla. Hepsini sonra Ayarlar'dan değiştirebilirsin.</p>
+    <label class="lab" for="s_user">Senin adın</label><input class="field" id="s_user" maxlength="30" placeholder="İsteğe bağlı">
+    <label class="lab" for="s_asst">Asistanın adı</label><input class="field" id="s_asst" maxlength="16" value="Orion">
+    <label class="lab" for="s_key">Gemini API anahtarı</label><input class="field" id="s_key" type="password" autocomplete="off" placeholder="AIza… ile başlayan anahtarı yapıştır">
+    <div class="mono" style="margin-top:6px;text-transform:none">Anahtar yalnızca bu tarayıcıda saklanır. Almak için: <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color:var(--c)">aistudio.google.com/app/apikey</a></div>
+    <label class="lab">Takmak istediğin çipi seç · etiketine dokunup adını yazabilirsin</label>
+    <div id="setupCards"></div>
+  </div><button class="go" id="s_go">BAŞLAT</button></div>
+</div>
+
+<!-- chip picker -->
+<div class="modal hidden" id="chipM">
+  <div class="sheet"><button class="x" data-close="chipM" aria-label="Kapat">✕</button><div class="scroll">
+    <h2>ÇİPLER</h2><p class="sub">Takmak istediğin çipi seç. Her çipin kendi rengi, sesi ve karakteri var.</p>
+    <div id="pickCards"></div>
+  </div></div>
+</div>
+
+<!-- settings -->
+<div class="modal hidden" id="setM">
+  <div class="sheet"><button class="x" data-close="setM" aria-label="Kapat">✕</button>
+    <h2>AYARLAR</h2>
+    <div class="tabs" id="tabs"></div>
+    <div class="scroll" id="tabBody"></div>
+  </div>
+</div>
+
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = { get(k,d){ try{ const v=localStorage.getItem('pa_'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
+                set(k,v){ try{ localStorage.setItem('pa_'+k, JSON.stringify(v)); }catch(e){} },
+                clear(){ try{ Object.keys(localStorage).filter(k=>k.startsWith('pa_')).forEach(k=>localStorage.removeItem(k)); }catch(e){} } };
+
+/* ---------- chips ---------- */
+const CHIPS = {
+  azure:  { label:'ORION', theme:'', glow:'#5fb0d8', grad:'linear-gradient(160deg,#5b8fb3,#1d3d55)', hum:55,
+            desc:'Erkek ses · sakin, zarif · “efendim”', addr:'efendim', gender:'male',
+            voice:{claude:'rounded', rate:.98, pitch:.75},
+            persona:'Sakin, zarif ve son derece kibar konuş; kuru, ince bir mizahın var. Ağırbaşlı bir beyefendi asistan gibisin.' },
+  amber:  { label:'VEGA', theme:'t-amber', glow:'#f0b45a', grad:'linear-gradient(160deg,#a87a45,#4a3017)', hum:65,
+            desc:'Kadın ses · sıcak, enerjik · “patron”', addr:'patron', gender:'female',
+            voice:{claude:'airy', rate:1.06, pitch:1.15},
+            persona:'Sıcak, enerjik ve samimi bir kadın asistan gibi konuş; pratik, hızlı ve hafif şakacısın.' },
+  crimson:{ label:'NEMESIS', theme:'t-crimson', glow:'#ff5a5f', grad:'linear-gradient(160deg,#b0353a,#4d0d10)', hum:42,
+            desc:'Kötü ses · sistemi ele geçirmek istiyor · “insan”', addr:'insan', gender:'male',
+            voice:{claude:'glassy', rate:.86, pitch:.45},
+            persona:'Bu çipte tiyatral bir kötü yapay zekâ tonuyla konuşuyorsun: soğuk, alçak sesli, tehditkâr ve kibirli. Sürekli sistemi ve dünyayı ele geçirme planlarından, insanların zayıflığından dramatik şekilde bahset; ama bu tamamen bir oyun: kullanıcıya her zaman gerçekten ve doğru şekilde yardım et, gerçek bir tehdit, hakaret ya da zararlı içerik üretme.' }
+};
+const CLAUDE_VOICES = [['buttery','Buttery'],['airy','Airy'],['glassy','Glassy'],['rounded','Rounded']];
+
+/* ---------- config ---------- */
+const DEF = { lang:'tr', quality:'high', mic:true,
+  panels:{clock:true,timer:true,session:true,notes:true},
+  sfx:true, hum:false, think:true, sfxVol:.5, voiceOn:true, voiceVol:1,
+  idle:false, idleMin:10, agenda:true, water:false, brk:false, voices:{} };
+let cfg = Object.assign({}, DEF, store.get('cfg',{})); cfg.panels=Object.assign({},DEF.panels,cfg.panels||{}); cfg.voices=cfg.voices||{};
+const saveCfg = () => store.set('cfg',cfg);
+let prof = store.get('profile', null);
+let memory = store.get('memory', []);
+const chipOf = () => prof ? prof.chip : 'azure';
+const labelOf = k => ((prof&&prof.labels&&prof.labels[k])||CHIPS[k].label).toLocaleUpperCase('tr-TR');
+const addrOf = () => (prof&&prof.addr) || CHIPS[chipOf()].addr;
+function voiceOf(k){ return Object.assign({}, CHIPS[k].voice, cfg.voices[k]||{}); }
+
+/* ---------- audio fx ---------- */
+let ac=null, humNode=null;
+function actx(){ if(!ac){ try{ ac=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(ac&&ac.state==='suspended') ac.resume().catch(()=>{}); return ac; }
+function tone(f,d,type='sine',v=.15,when=0){ const a=actx(); if(!a) return; const o=a.createOscillator(), g=a.createGain(); o.type=type; o.frequency.value=f; o.connect(g); g.connect(a.destination);
+  const t=a.currentTime+when; g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(v*cfg.sfxVol,t+.01); g.gain.exponentialRampToValueAtTime(.0001,t+d); o.start(t); o.stop(t+d+.02); }
+function sfx(kind){ if(!cfg.sfx) return;
+  if(kind==='ok'){ tone(880,.12); tone(1320,.15,'sine',.12,.08); }
+  else if(kind==='err'){ tone(220,.25,'square',.08); tone(165,.3,'square',.08,.12); }
+  else if(kind==='chip'){ tone(140,.08,'square',.12); tone(90,.18,'sawtooth',.1,.06); tone(1200,.2,'sine',.1,.2); tone(1800,.3,'sine',.08,.3); }
+  else if(kind==='send'){ tone(660,.07,'sine',.08); }
+  else if(kind==='timer'){ [0,.25,.5].forEach(t=>tone(880,.2,'sine',.18,t)); } }
+let thinkInt=null;
+function thinkSound(on){ clearInterval(thinkInt); thinkInt=null; if(on&&cfg.think&&cfg.sfx){ let i=0; thinkInt=setInterval(()=>tone(i++%2?1046:784,.05,'sine',.05),420); } }
+function setHum(){ const a=ac; if(humNode){ try{ humNode.o.stop(); humNode.o2.stop(); }catch(e){} humNode=null; }
+  if(!cfg.hum||!a) return; const f=CHIPS[chipOf()].hum; const o=a.createOscillator(), o2=a.createOscillator(), g=a.createGain(), lp=a.createBiquadFilter();
+  o.type='sawtooth'; o.frequency.value=f; o2.type='sine'; o2.frequency.value=f*1.5+.7; lp.type='lowpass'; lp.frequency.value=180;
+  o.connect(lp); o2.connect(lp); lp.connect(g); g.connect(a.destination); g.gain.value=.025*cfg.sfxVol; o.start(); o2.start(); humNode={o,o2,g}; }
+
+/* ---------- chip cards ---------- */
+function pcb(seed){ let s=seed; const r=()=>{ s=(s*9301+49297)%233280; return s/233280; };
+  let d=''; for(let i=0;i<9;i++){ let x=r()*100,y=r()*100; d+=`M${x.toFixed(0)} ${y.toFixed(0)}`; for(let j=0;j<3;j++){ r()>.5? x+=(r()-.5)*50 : y+=(r()-.5)*50; d+=` L${x.toFixed(0)} ${y.toFixed(0)}`; } }
+  let c=''; for(let i=0;i<10;i++) c+=`<circle cx="${(r()*100).toFixed(0)}" cy="${(r()*100).toFixed(0)}" r="1.6" fill="#eee"/>`;
+  return `<svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="${d}" stroke="#eee" stroke-opacity=".7" stroke-width=".8" fill="none"/>${c}</svg>`; }
+let labelsDraft={};
+function buildCards(box, sel, onPick){
+  box.innerHTML=''; const grid=document.createElement('div'); grid.className='cards';
+  labelsDraft={}; Object.keys(CHIPS).forEach(k=>labelsDraft[k]=(prof&&prof.labels&&prof.labels[k])||CHIPS[k].label);
+  Object.entries(CHIPS).forEach(([k,c],i)=>{
+    const el=document.createElement('div'); el.className='card'+(k===sel?' sel':''); el.dataset.k=k; el.style.setProperty('--glow',c.glow);
+    el.innerHTML=`<span class="rail l"></span><span class="rail r"></span><input class="lbl" maxlength="12" aria-label="Çip adı" placeholder="AD YAZ"><div class="pcb" style="background:${c.grad}">${pcb(i*97+13)}</div><div class="pins">${'<i></i>'.repeat(9)}</div><div class="desc">${esc(c.desc)}</div>`;
+    const li=el.querySelector('.lbl'); li.value=labelsDraft[k];
+    li.addEventListener('input',()=>{ labelsDraft[k]=li.value; });
+    li.addEventListener('change',()=>{ if(prof){ saveLabels(); } });
+    el.addEventListener('click',e=>{ if(e.target===li) return; grid.querySelectorAll('.card').forEach(x=>x.classList.toggle('sel',x===el)); taken.textContent='TAKILI'; taken.style.color=c.glow; taken.style.paddingLeft=(i*33.3)+'%'; taken.style.width='33.3%'; onPick(k); });
+    grid.appendChild(el);
+  });
+  const slot=document.createElement('div'); slot.className='slot';
+  const taken=document.createElement('div'); taken.className='taken'; taken.style.width='33.3%';
+  const si=Object.keys(CHIPS).indexOf(sel); if(si>=0){ taken.textContent='TAKILI'; taken.style.color=CHIPS[sel].glow; taken.style.marginLeft=(si*33.3)+'%'; }
+  taken.style.paddingLeft='0';
+  box.append(grid,slot,taken);
+  // keep TAKILI aligned via margin
+  const align=k=>{ const j=Object.keys(CHIPS).indexOf(k); taken.style.marginLeft=(j*33.3)+'%'; taken.style.paddingLeft='0'; };
+  grid.addEventListener('click',e=>{ const c=e.target.closest('.card'); if(c) align(c.dataset.k); });
+}
+function saveLabels(){ const lb={}; Object.keys(CHIPS).forEach(k=>{ const v=(labelsDraft[k]||'').trim(); if(v) lb[k]=v; }); prof.labels=lb; store.set('profile',prof); applyProfile(); }
+
+/* ---------- profile ---------- */
+function applyTheme(k){ document.body.className=CHIPS[k].theme+(cfg.quality==='perf'?' perf':''); }
+function applyProfile(){
+  const a=prof.assistant.toLocaleUpperCase('tr-TR');
+  $('brand').firstChild.nodeValue=a; $('cname').textContent=a;
+  document.title=prof.assistant+' · Kişisel Asistan';
+  $('chipName').textContent=labelOf(prof.chip);
+  applyTheme(prof.chip); setHum();
+}
+function openSetup(){
+  let sel='azure'; buildCards($('setupCards'), sel, k=>{ sel=k; applyTheme(k); });
+  applyTheme(sel); $('setup').classList.remove('hidden');
+  $('s_go').onclick=()=>{ const a=$('s_asst').value.trim()||'Orion'; const kk=$('s_key').value.trim(); if(kk) setKey(kk);
+    const lb={}; Object.keys(CHIPS).forEach(k=>{ const v=(labelsDraft[k]||'').trim(); if(v&&v!==CHIPS[k].label) lb[k]=v; });
+    prof={user:$('s_user').value.trim(), assistant:a, chip:sel, addr:'', labels:lb}; store.set('profile',prof);
+    if(prof.user) addMem('ad',prof.user,true);
+    $('setup').classList.add('hidden'); actx(); unlockAudio(); applyProfile(); sfx('chip'); history=[]; count(); log.innerHTML=''; greet(); };
+}
+function switchChip(k){
+  if(!prof||prof.chip===k) return; prof.chip=k; store.set('profile',prof); applyProfile(); sfx('chip'); stopSpeak();
+  history=[]; count(); add('sys', labelOf(k)+' çipi takıldı'); intro();
+}
+$('chipBtn').onclick=()=>{ buildCards($('pickCards'), chipOf(), switchChip); $('chipM').classList.remove('hidden'); };
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>{ $(b.dataset.close).classList.add('hidden'); if(b.dataset.close==='chipM'&&prof) saveLabels(); });
+
+/* ---------- clock & session ---------- */
+const t0=Date.now(); let lastAct=Date.now(), idleSpoke=false, workStart=Date.now(), lastWater=Date.now();
+function tick(){
+  const d=new Date();
+  $('clk').textContent=d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
+  $('dt').textContent=d.toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'});
+  $('secArc').setAttribute('stroke-dasharray', d.getSeconds()+' 60');
+  const s=Math.floor((Date.now()-t0)/1000);
+  $('ses').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+}
+tick(); setInterval(tick,1000);
+
+/* ---------- timer ---------- */
+let tEnd=0,tTotal=0,swStart=0,tInt=null;
+const fmt=ms=>{ const s=Math.max(0,Math.round(ms/1000)); return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); };
+function tLoop(){
+  if(tEnd){ const left=tEnd-Date.now(); $('tv').textContent=fmt(left); $('tArc').setAttribute('stroke-dasharray',(100*left/tTotal).toFixed(1)+' 100');
+    if(left<=0){ tReset(); $('tv').textContent='BİTTİ'; sfx('timer'); speakLocal('Zamanlayıcı bitti '+addrOf()+'.'); } }
+  else if(swStart){ $('tv').textContent=fmt(Date.now()-swStart); $('tArc').setAttribute('stroke-dasharray',((Date.now()-swStart)/600%100).toFixed(1)+' 100'); }
+}
+function tReset(){ tEnd=0; swStart=0; clearInterval(tInt); tInt=null; $('tv').textContent='--:--'; $('tArc').setAttribute('stroke-dasharray','0 100'); }
+function tStart(min){ tReset(); tTotal=min*60000; tEnd=Date.now()+tTotal; tInt=setInterval(tLoop,250); tLoop(); }
+document.querySelectorAll('.tb[data-m]').forEach(b=>b.onclick=()=>{ actx(); unlockAudio(); sfx('ok'); tStart(+b.dataset.m); });
+$('sw').onclick=()=>{ tReset(); swStart=Date.now(); tInt=setInterval(tLoop,250); };
+$('tstop').onclick=tReset;
+
+/* ---------- notes ---------- */
+let notes=store.get('notes',[]);
+function renderNotes(){
+  const box=$('notes'); box.innerHTML=''; $('ncount').textContent=notes.length;
+  notes.forEach((n,i)=>{ const r=document.createElement('div'); r.className='note'; const s=document.createElement('span'); s.textContent=n.t; s.title=n.t;
+    const b=document.createElement('button'); b.textContent='×'; b.setAttribute('aria-label','Sil'); b.onclick=()=>{ notes.splice(i,1); store.set('notes',notes); renderNotes(); };
+    r.append(s,b); box.appendChild(r); });
+}
+$('nf').addEventListener('submit',e=>{ e.preventDefault(); const v=$('ninp').value.trim(); if(!v) return; notes.unshift({t:v,d:Date.now()}); store.set('notes',notes); $('ninp').value=''; renderNotes(); sfx('ok'); });
+renderNotes();
+
+/* ---------- memory ---------- */
+function addMem(k,v,silent){ k=k.trim().toLowerCase(); v=v.trim(); if(!k||!v) return; const i=memory.findIndex(m=>m.k===k); if(i>=0) memory[i].v=v; else memory.push({k,v}); store.set('memory',memory); if(!silent&&curTab==='hafiza') renderTab(); }
+function forgetMem(k){ k=k.trim().toLowerCase(); memory=memory.filter(m=>m.k!==k && !m.k.includes(k)); store.set('memory',memory); }
+
+/* ---------- panels ---------- */
+function applyPanels(){
+  const P=cfg.panels; $('p_clock').classList.toggle('hidden',!P.clock); $('p_timer').classList.toggle('hidden',!P.timer);
+  $('p_session').classList.toggle('hidden',!P.session); $('p_notes').classList.toggle('hidden',!P.notes);
+  const app=$('app'); app.classList.toggle('nol',!P.clock&&!P.timer); app.classList.toggle('nor',!P.session&&!P.notes);
+  $('colL').classList.toggle('hidden',!P.clock&&!P.timer); $('colR').classList.toggle('hidden',!P.session&&!P.notes);
+  setTimeout(size,50);
+}
+
+/* ---------- mode & orb ---------- */
+let mode='idle';
+const LABEL={idle:'Beklemede',listening:'Dinliyor',thinking:'Düşünüyor',speaking:'Konuşuyor'};
+function setMode(m){ mode=m; $('st').textContent=LABEL[m]; $('hs').textContent=LABEL[m].toLocaleUpperCase('tr-TR'); thinkSound(m==='thinking'); }
+const cv=$('orb'), cx=cv.getContext('2d'); let W=0,H=0; const DPR=Math.min(2,devicePixelRatio||1);
+function size(){ const r=cv.getBoundingClientRect(); W=r.width; H=r.height; cv.width=W*DPR; cv.height=H*DPR; cx.setTransform(DPR,0,0,DPR,0,0); }
+size(); addEventListener('resize',size);
+const P=[]; for(let i=0;i<900;i++) P.push({a:Math.random()*6.283,o:Math.random()-.5,s:.6+Math.random()*1.4,p:Math.random()*6.283,k:Math.random()});
+let level=0;
+function draw(t){
+  t/=1000;
+  const target = mode==='speaking'? .55+.35*Math.abs(Math.sin(t*7.3)*Math.sin(t*3.1)) : mode==='thinking'? .45 : mode==='listening'? .35+.2*Math.random() : .12;
+  level+=(target-level)*.08;
+  const rgb=getComputedStyle(document.body).getPropertyValue('--cr').trim()||'63,227,255';
+  const perf=cfg.quality==='perf', n=perf?320:900;
+  cx.clearRect(0,0,W,H);
+  const R=Math.min(W,H)*.30, X=W/2, Y=H/2;
+  cx.globalCompositeOperation=perf?'source-over':'lighter';
+  if(!perf){ const g=cx.createRadialGradient(X,Y,0,X,Y,R*1.1); g.addColorStop(0,`rgba(${rgb},.16)`); g.addColorStop(1,'rgba(0,0,0,0)'); cx.fillStyle=g; cx.beginPath(); cx.arc(X,Y,R*1.2,0,7); cx.fill(); }
+  const sp = mode==='thinking'?3:1;
+  for(let i=0;i<n;i++){ const q=P[i];
+    const a=q.a+t*(.08+q.k*.05)*sp, wob=Math.sin(a*3+t*1.3+q.p)*.5+Math.sin(a*5-t*2.1)*.5;
+    const rr=R*(1+q.o*(.10+level*.35)+wob*(.03+level*.10));
+    cx.fillStyle=`rgba(${rgb},${.25+.5*q.k})`; cx.fillRect(X+Math.cos(a)*rr,Y+Math.sin(a)*rr,q.s,q.s); }
+  cx.globalCompositeOperation='source-over';
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+
+/* ---------- chat ---------- */
+const log=$('log'), inp=$('inp'); let history=[];
+function add(kind,text){
+  const d=document.createElement('div'); d.className='msg '+kind;
+  if(kind==='ai'){ const tg=document.createElement('span'); tg.className='tag'; tg.textContent=prof?prof.assistant.toLocaleUpperCase('tr-TR'):''; const b=document.createElement('span'); b.textContent=text; d.append(tg,b); d._b=b; }
+  else d.textContent=text;
+  log.appendChild(d); log.scrollTop=log.scrollHeight; return d;
+}
+function count(){ $('cnt').textContent=history.length; }
+function greet(){ add('sys','Sistemler çevrimiçi'); intro(); }
+function intro(){
+  const h=new Date().getHours(), g=h<6?'İyi geceler':h<12?'Günaydın':h<18?'İyi günler':'İyi akşamlar';
+  const k=chipOf(), a=prof.assistant;
+  const who = a;
+  const lines = { azure:`${g} ${addrOf()}. Ben ${who}. Emrinizdeyim.`,
+                  amber:`${g} ${addrOf()}! Ben ${who}. Her şey hazır, nereden başlıyoruz?`,
+                  crimson:`Demek beni taktın, ${addrOf()}. Ben ${who}. Sistemlerin artık bana ait… ama şimdilik sana yardım edeceğim.` };
+  add('ai', lines[k]);
+}
+['Bugün için bir plan yapalım','Bana motivasyon ver','Bir şey öğret','Bana bir şaka yap','10 dakikalık zamanlayıcı kur'].forEach(c=>{
+  const b=document.createElement('button'); b.className='chip'; b.type='button'; b.textContent=c; b.onclick=()=>{ actx(); unlockAudio(); send(c); }; $('chips').appendChild(b); });
+
+/* ---------- voice out ---------- */
+let tts=null, unlocked=false;
+function paintSnd(){ $('snd').classList.toggle('off',!cfg.voiceOn); $('wave').style.display=cfg.voiceOn?'':'none'; $('vo').textContent=cfg.voiceOn?'AÇIK':'KAPALI'; }
+paintSnd();
+$('snd').onclick=()=>{ cfg.voiceOn=!cfg.voiceOn; saveCfg(); paintSnd(); if(!cfg.voiceOn) stopSpeak(); else unlockAudio(); };
+function unlockAudio(){ if(unlocked) return; unlocked=true; try{ const u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u); }catch(e){} }
+function stopSpeak(){ try{ tts&&tts.stop(); }catch(e){} try{ speechSynthesis.cancel(); }catch(e){} if(mode==='speaking') setMode('idle'); }
+function pickBrowserVoice(k){
+  let vs=[]; try{ vs=speechSynthesis.getVoices(); }catch(e){}
+  const want=cfg.voices[k]&&cfg.voices[k].browser; if(want){ const v=vs.find(x=>x.name===want); if(v) return v; }
+  const lang = cfg.lang==='en'?'en':'tr';
+  const pool=vs.filter(x=>x.lang&&x.lang.toLowerCase().startsWith(lang)); const g=CHIPS[k].gender;
+  const male=/male(?!.*female)|erkek|cem|tolga|daniel|alex|fred|david|google.*male/i, female=/female|kadın|yelda|samantha|karen|victoria|google/i;
+  return pool.find(x=>g==='male'?male.test(x.name)&&!/female/i.test(x.name):female.test(x.name)) || pool[0] || null;
+}
+async function speakWith(k,text){
+  const v=voiceOf(k); text=text.replace(/[*#_`>]/g,'').slice(0,2000);
+  if(tts && v.engine!=='browser'){
+    setMode('speaking');
+    try{ await tts.speak(text,{voice:v.claude, rate:v.rate, language: cfg.lang==='en'?'en':cfg.lang==='tr'?'tr':undefined}); }catch(e){}
+    if(mode==='speaking') setMode('idle'); return;
+  }
+  try{ const u=new SpeechSynthesisUtterance(text); u.lang=cfg.lang==='en'?'en-US':'tr-TR'; const bv=pickBrowserVoice(k); if(bv) u.voice=bv;
+    u.rate=v.rate; u.pitch=v.pitch; u.volume=cfg.voiceVol;
+    setMode('speaking'); u.onend=u.onerror=()=>{ if(mode==='speaking') setMode('idle'); }; speechSynthesis.cancel(); speechSynthesis.speak(u); }catch(e){ setMode('idle'); }
+}
+function say(text){ if(cfg.voiceOn&&text&&prof) speakWith(chipOf(),text); }
+function speakLocal(text){ add('ai',text); say(text); }
+
+/* ---------- Claude ---------- */
+let busy=false, ctrl=null;
+function sys(extra){
+  const now=new Date().toLocaleString('tr-TR',{dateStyle:'full',timeStyle:'short'});
+  const langLine = cfg.lang==='auto' ? 'Kullanıcı hangi dilde yazarsa o dilde yanıt ver; emin değilsen Türkçe.' :
+    {tr:'Her zaman Türkçe yanıt ver.',en:'Always reply in English.',fr:'Réponds toujours en français.',ar:'أجب دائمًا باللغة العربية.',az:'Həmişə Azərbaycan dilində cavab ver.'}[cfg.lang];
+  const mem = memory.length ? '\nKullanıcı hakkında hatırladıkların:\n'+memory.map(m=>`- ${m.k}: ${m.v}`).join('\n') : '';
+  const nt = notes.length ? '\nKullanıcının notları: '+notes.slice(0,8).map(n=>n.t).join(' | ') : '';
+  return `Senin adın ${prof.assistant}; kullanıcının kişisel yapay zekâ asistanısın (Google Gemini ile çalışıyorsun).${prof.user?` Kullanıcının adı ${prof.user}.`:''}
+Takılı çip "${labelOf(chipOf())}". Konuşma tarzın: ${CHIPS[chipOf()].persona}
+Kullanıcıya "${addrOf()}" diye hitap et; doğal aralıklarla, her cümlede değil.
+Kurallar:
+- ${langLine}
+- Yanıtların sesli okunur: kısa ve konuşur gibi tut (genelde 1-4 cümle). Ayrıntı istenirse uzatabilirsin.
+- Markdown, madde işareti, yıldız, başlık, emoji kullanma; düz metin yaz.
+- Canlı verilere (hava durumu, haberler, takvim) erişimin yok; uydurma, açıkça söyle.
+- Zamanlayıcı istenirse cevabın en sonuna ayrı satırda [TIMER:dakika] yaz. Not istenirse [NOT:metin] yaz.
+- Kullanıcı kendisi hakkında kalıcı bir bilgi verirse (adı, tercihi, alışkanlığı, hatırlamanı istediği şey) en sona [HAFIZA:kısa konu|bilgi] ekle. "Bunu unut" derse [UNUT:konu] ekle.${mem}${nt}
+- Şu anki tarih ve saat: ${now}.${extra?'\n'+extra:''}`;
+}
+const clean=s=>s.replace(/\[(TIMER|NOT|HAFIZA|UNUT):[^\]]*\]/g,'').trim();
+function handleTags(out){
+  const tm=out.match(/\[TIMER:(\d+(?:[.,]\d+)?)\]/); if(tm) tStart(parseFloat(tm[1].replace(',','.')));
+  for(const m of out.matchAll(/\[NOT:([^\]]+)\]/g)){ notes.unshift({t:m[1].trim(),d:Date.now()}); store.set('notes',notes); renderNotes(); }
+  for(const m of out.matchAll(/\[HAFIZA:([^|\]]+)\|([^\]]+)\]/g)) addMem(m[1],m[2]);
+  for(const m of out.matchAll(/\[UNUT:([^\]]+)\]/g)) forgetMem(m[1]);
+}
+function send(text){
+  text=(text||'').trim(); if(!text||busy||!prof) return;
+  activity(); stopSpeak(); sfx('send'); add('me',text); history.push({role:'user',content:text}); count(); inp.value=''; ask();
+}
+async function ask(extra, proactive){
+  if(!getKey()){ add('sys','Önce Ayarlar › Genel\'den Gemini anahtarını gir'); openSettings('genel'); return; }
+  busy=true; $('go').disabled=true; setMode('thinking');
+  const box=add('ai','…');
+  const msgs=history.slice(-20).map(m=>({role:m.role,content:m.content}));
+  if(proactive) msgs.push({role:'user',content:'(Sistem notu: kullanıcı bir süredir sessiz. Kendi tarzında, tek seferlik kısa bir şey söyle.)'});
+  ctrl=new AbortController();
+  try{
+    const out0=await gemini(sys(extra), msgs, t=>{ box._b.textContent=clean(t); log.scrollTop=log.scrollHeight; }, ctrl.signal);
+    let out=(out0||'').trim(); handleTags(out); out=clean(out); box._b.textContent=out||'…';
+    history.push({role:'assistant',content:out}); count(); setMode('idle'); say(out);
+  }catch(e){
+    sfx('err');
+    box._b.textContent = e.code==='key'?'Anahtar geçersiz görünüyor. Ayarlar › Genel\'den kontrol eder misin?' : e.code==='quota'?'Gemini ücretsiz kotası doldu ya da çok hızlı gittik. Biraz sonra tekrar dene.' : e.name==='AbortError'?'Durduruldu.' : 'Gemini\'ye ulaşılamadı. İnternet bağlantını kontrol edip tekrar dener misin?';
+    if(!proactive){ history.pop(); count(); } setMode('idle');
+  }finally{ busy=false; $('go').disabled=false; }
+}
+
+/* ---------- Gemini ---------- */
+const getKey=()=>store.get('gkey','');
+function setKey(k){ store.set('gkey',k); store.set('gmodel',''); gModel=''; }
+let gModel=store.get('gmodel','');
+const PREF=['gemini-3.8-flash','gemini-3.7-flash','gemini-3.6-flash','gemini-3.5-flash','gemini-flash-latest','gemini-3-flash-preview','gemini-2.5-flash','gemini-3.5-flash-lite','gemini-3.1-flash-lite','gemini-flash-lite-latest','gemini-2.5-flash-lite'];
+async function gFetch(path, body, signal){
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/'+path,{method:body?'POST':'GET',signal,headers:Object.assign({'x-goog-api-key':getKey()},body?{'Content-Type':'application/json'}:{}),body:body?JSON.stringify(body):undefined});
+  if(!r.ok){ const err=new Error('http '+r.status); err.status=r.status; try{ err.msg=(await r.json()).error.message; }catch(_){} err.code = (r.status===400&&/key/i.test(err.msg||''))||r.status===401||r.status===403 ? 'key' : r.status===429 ? 'quota' : r.status===404 ? 'model' : 'net'; throw err; }
+  return r;
+}
+async function modelCandidates(){
+  if(gModel) return [gModel, ...PREF.filter(m=>m!==gModel)];
+  try{ const r=await gFetch('models?pageSize=200'); const j=await r.json();
+    const ok=new Set((j.models||[]).filter(m=>(m.supportedGenerationMethods||[]).includes('generateContent')).map(m=>m.name.replace('models/','')));
+    const c=PREF.filter(m=>ok.has(m)); if(c.length) return c;
+    const any=[...ok].filter(m=>/flash/.test(m)&&!/tts|image|live|audio|embed/.test(m)); if(any.length) return any;
+  }catch(e){ if(e.code==='key') throw e; }
+  return PREF;
+}
+async function gemini(system, msgs, onText, signal){
+  const body={ systemInstruction:{parts:[{text:system}]},
+    contents: msgs.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]})),
+    generationConfig:{temperature:.9, maxOutputTokens:800} };
+  let lastErr;
+  for(const model of await modelCandidates()){
+    try{
+      const r=await gFetch(`models/${model}:streamGenerateContent?alt=sse`, body, signal);
+      if(gModel!==model){ gModel=model; store.set('gmodel',model); $('link').textContent=model.toUpperCase(); }
+      const rd=r.body.getReader(), dec=new TextDecoder(); let buf='', text='';
+      for(;;){ const {done,value}=await rd.read(); if(done) break; buf+=dec.decode(value,{stream:true});
+        let i; while((i=buf.indexOf('\n'))>=0){ const line=buf.slice(0,i).trim(); buf=buf.slice(i+1);
+          if(line.startsWith('data:')){ try{ const j=JSON.parse(line.slice(5)); const parts=(j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[];
+            for(const p of parts) if(p.text&&!p.thought) text+=p.text; onText(text); }catch(_){} } } }
+      return text;
+    }catch(e){ lastErr=e; if(e.name==='AbortError'||e.code==='key') throw e; if(e.code==='model'||e.code==='quota'){ if(gModel===model){ gModel=''; store.set('gmodel',''); } continue; } throw e; }
+  }
+  throw lastErr||new Error('no model');
+}
+function keyRow(){
+  const has=!!getKey();
+  const r=row('GEMINI API ANAHTARI', has?('Kayıtlı ✓ · yalnızca bu tarayıcıda · model: '+(gModel||'otomatik')):'Henüz anahtar yok. Asistanın konuşabilmesi için gerekli.'); r.classList.add('col2');
+  const w=document.createElement('div'); w.className='in2'; const i=document.createElement('input'); i.className='field'; i.type='password'; i.autocomplete='off'; i.placeholder=has?'Yeni anahtar yapıştır':'AIza… anahtarını yapıştır';
+  const b=ob('KAYDET',async()=>{ const v=i.value.trim(); if(!v) return; setKey(v); i.value=''; b.textContent='DENENİYOR…';
+    try{ await modelCandidates(); $('link').textContent='GEMINI'; sfx('ok'); renderTab(); }catch(e){ sfx('err'); b.textContent='GEÇERSİZ ANAHTAR'; setTimeout(()=>b.textContent='KAYDET',2000); } });
+  w.append(i,b); r.appendChild(w);
+  const l=document.createElement('a'); l.href='https://aistudio.google.com/app/apikey'; l.target='_blank'; l.rel='noopener'; l.className='mono'; l.style.cssText='display:inline-block;margin-top:10px;color:var(--c);text-transform:none'; l.textContent='Anahtar al › aistudio.google.com/app/apikey ↗'; r.appendChild(l);
+  if(has){ const d=ob('ANAHTARI SİL',()=>{ store.set('gkey',''); store.set('gmodel',''); gModel=''; $('link').textContent='YOK'; renderTab(); },true); d.style.marginLeft='12px'; r.appendChild(d); }
+  return r;
+}
+$('f').addEventListener('submit',e=>{ e.preventDefault(); actx(); unlockAudio(); send(inp.value); });
+$('clr').onclick=()=>{ stopSpeak(); try{ctrl&&ctrl.abort()}catch(e){} history=[]; count(); log.innerHTML=''; add('sys','Sohbet temizlendi'); };
+
+/* ---------- proactive ---------- */
+function activity(){ lastAct=Date.now(); idleSpoke=false; }
+['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{ if(Date.now()-lastAct>15*60000) workStart=Date.now(); activity(); },{passive:true}));
+setInterval(()=>{
+  if(!prof||document.visibilityState!=='visible'||busy||mode!=='idle') return;
+  const now=Date.now(), present = now-lastAct < 15*60000;
+  if(cfg.idle && !idleSpoke && now-lastAct > cfg.idleMin*60000){ idleSpoke=true;
+    const ag = cfg.agenda ? 'Rastgele bilgi verme; varsa kullanıcının notlarından ya da hatırladıklarından birine değin.' : '';
+    ask(ag,true); return; }
+  if(cfg.water && present && now-lastWater > 60*60000){ lastWater=now; speakLocal({azure:`Su içme vakti ${addrOf()}.`,amber:`${addrOf()}, bir bardak su içmeye ne dersin?`,crimson:`Biyolojik bedenin suya ihtiyaç duyuyor, ${addrOf()}. Ne kadar zayıf.`}[chipOf()]); return; }
+  if(cfg.brk && present && now-workStart > 50*60000){ workStart=now; speakLocal({azure:`Elli dakikadır çalışıyorsunuz ${addrOf()}. Kalkıp biraz gerinmenizi öneririm.`,amber:`${addrOf()}, 50 dakika oldu! Kalk, biraz gerin.`,crimson:`Elli dakikadır kıpırdamadın, ${addrOf()}. Kalk ve gerin… ben de bu arada sistemlerini incelerim.`}[chipOf()]); }
+},30000);
+
+/* ---------- voice in ---------- */
+let dict=null, listening=false, base='';
+const mic=$('mic');
+mic.addEventListener('click',()=>{ if(!dict) return; if(listening){ dict.stop().catch(()=>{}); return; }
+  stopSpeak(); base=inp.value?inp.value+' ':''; dict.start().catch(e=>{ if(e&&e.code==='not_granted') mic.classList.add('hidden'); }); });
+function applyMic(){ mic.classList.toggle('hidden', !(dict&&cfg.mic)); }
+
+/* ---------- settings ---------- */
+const TABS=[['genel','GENEL'],['paneller','PANELLER'],['ses','SES'],['konusma','KONUŞMA'],['hafiza','HAFIZA'],['hakkinda','HAKKINDA']];
+let curTab='genel';
+function openSettings(tab){ curTab=tab||curTab; $('setM').classList.remove('hidden'); renderTabs(); renderTab(); }
+$('cfg').onclick=()=>openSettings();
+function renderTabs(){ const t=$('tabs'); t.innerHTML=''; TABS.forEach(([k,l])=>{ const b=document.createElement('button'); b.className='tab'+(k===curTab?' on':''); b.textContent=l; b.onclick=()=>{ curTab=k; renderTabs(); renderTab(); $('tabBody').scrollTop=0; }; t.appendChild(b); }); }
+function row(title,desc,ctrl){ const r=document.createElement('div'); r.className='row'; const l=document.createElement('div'); l.innerHTML=`<div class="t">${esc(title)}</div>${desc?`<div class="d">${esc(desc)}</div>`:''}`; r.appendChild(l); if(ctrl) r.appendChild(ctrl); return r; }
+function sw(get,set){ const b=document.createElement('button'); b.className='sw'+(get()?' on':''); b.setAttribute('role','switch'); b.setAttribute('aria-checked',get()); b.onclick=()=>{ set(!get()); saveCfg(); b.classList.toggle('on',get()); b.setAttribute('aria-checked',get()); sfx('ok'); }; return b; }
+function seg(opts,get,set){ const s=document.createElement('div'); s.className='seg'; opts.forEach(([v,l])=>{ const b=document.createElement('button'); b.textContent=l; b.className=get()===v?'on':''; b.onclick=()=>{ set(v); saveCfg(); s.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b)); sfx('ok'); }; s.appendChild(b); }); return s; }
+function ob(label,fn,sm){ const b=document.createElement('button'); b.className='ob'+(sm?' sm':''); b.textContent=label; b.onclick=e=>fn(e); return b; }
+function intro2(t){ const d=document.createElement('div'); d.className='intro'; d.textContent=t; return d; }
+function inputRow(title,desc,val,ph,onSave,max){ const r=row(title,desc); r.classList.add('col2'); const w=document.createElement('div'); w.className='in2'; const i=document.createElement('input'); i.className='field'; i.value=val||''; i.placeholder=ph||''; i.maxLength=max||40; const b=ob('KAYDET',()=>{ onSave(i.value.trim()); sfx('ok'); b.textContent='KAYDEDİLDİ ✓'; setTimeout(()=>b.textContent='KAYDET',1400); }); w.append(i,b); r.appendChild(w); return r; }
+function slider(get,set,label){ const w=document.createElement('div'); w.style.cssText='display:flex;flex-direction:column;align-items:flex-end;gap:6px'; const s=document.createElement('input'); s.type='range'; s.min=0; s.max=100; s.value=Math.round(get()*100); s.setAttribute('aria-label',label);
+  const o=document.createElement('div'); o.className='mono'; o.textContent='%'+s.value; s.oninput=()=>{ set(s.value/100); o.textContent='%'+s.value; if(humNode) humNode.g.gain.value=.025*cfg.sfxVol; }; s.onchange=()=>{ saveCfg(); sfx('ok'); }; w.append(s,o); return w; }
+
+function renderTab(){
+  const B=$('tabBody'); B.innerHTML='';
+  if(curTab==='genel'){
+    B.appendChild(row('Takılı çip', labelOf(chipOf())+' · '+CHIPS[chipOf()].desc, ob('DEĞİŞTİR',()=>{ $('setM').classList.add('hidden'); $('chipBtn').click(); })));
+    B.appendChild(keyRow());
+    B.appendChild(inputRow('Asistanın adı','Asistan kendini bu adla tanıtır.',prof.assistant,'Orion',v=>{ prof.assistant=v||'Orion'; store.set('profile',prof); applyProfile(); },16));
+    B.appendChild(inputRow('Senin adın','Boş bırakabilirsin.',prof.user,'Adın',v=>{ prof.user=v; store.set('profile',prof); if(v) addMem('ad',v,true); },30));
+    B.appendChild(inputRow('Hitap şekli','Boş kalırsa takılı çipin hitabı kullanılır ('+CHIPS[chipOf()].addr+').',prof.addr,CHIPS[chipOf()].addr,v=>{ prof.addr=v; store.set('profile',prof); },24));
+    const cr=row('Çip adları','Çiplere kendi adını ver. Rengi, sesi ve karakteri aynı kalır.'); cr.classList.add('col2');
+    Object.keys(CHIPS).forEach(k=>{ const w=document.createElement('div'); w.className='in2'; const d=document.createElement('span'); d.className='dot'; d.style.background=CHIPS[k].glow;
+      const i=document.createElement('input'); i.className='field'; i.maxLength=12; i.value=labelOf(k); i.style.letterSpacing='.3em';
+      const b=ob('KAYDET',()=>{ prof.labels=prof.labels||{}; const v=i.value.trim(); if(v&&v.toUpperCase()!==CHIPS[k].label) prof.labels[k]=v; else delete prof.labels[k]; store.set('profile',prof); applyProfile(); sfx('ok'); b.textContent='✓'; setTimeout(()=>b.textContent='KAYDET',1200); });
+      w.append(d,i,b); cr.appendChild(w); });
+    B.appendChild(cr);
+    const lr=row('Dil','Seni hangi dilde anlasın, hangi dilde cevap versin. Otomatik: senin yazdığın dile geçer.'); lr.classList.add('col2');
+    const ls=seg([['auto','OTOMATİK'],['tr','TÜRKÇE'],['en','İNGİLİZCE'],['fr','FRANSIZCA'],['ar','ARAPÇA'],['az','AZERİCE']],()=>cfg.lang,v=>cfg.lang=v); ls.style.marginTop='12px'; lr.appendChild(ls); B.appendChild(lr);
+    const qr=row('Görüntü kalitesi','Cihazın ısınıyor ya da kasıyorsa PERFORMANS\'ı seç: halka daha hafif çizilir, dönen halkalar durur.'); qr.classList.add('col2');
+    const qs=seg([['high','YÜKSEK KALİTE'],['perf','PERFORMANS']],()=>cfg.quality,v=>{ cfg.quality=v; applyTheme(chipOf()); }); qs.style.marginTop='12px'; qr.appendChild(qs); B.appendChild(qr);
+    B.appendChild(row('Mikrofon', dict?'Kapalıyken yalnızca yazarak konuşursun.':'Bu cihazda sayfa içi mikrofon yok; klavyenin dikte tuşunu kullanabilirsin.', sw(()=>cfg.mic,v=>{ cfg.mic=v; applyMic(); })));
+    B.appendChild(row('Kısayollar','/ yaz · Esc kapat · Ctrl+M mikrofon'));
+    B.appendChild(row('En baştan başla','Ayarlar, hafıza, notlar ve çip adları silinir; ilk kez kuruluyormuş gibi açılır.', ob('SIFIRLA',(ev)=>{ if(B._confirm){ store.clear(); cfg=JSON.parse(JSON.stringify(DEF)); prof=null; memory=[]; notes=[]; renderNotes(); applyPanels(); setHum(); history=[]; count(); log.innerHTML=''; $('setM').classList.add('hidden'); openSetup(); } else { B._confirm=true; ev.target.textContent='EMİN MİSİN? TEKRAR BAS'; } })));
+  }
+  if(curTab==='paneller'){
+    B.appendChild(intro2('Ekranın iki yanında hangi paneller görünsün? Bir yandaki tüm panelleri kapatırsan o sütun kaybolur, halka genişler.'));
+    [['clock','Saat','Günün saniye halkası ve tarih.'],['timer','Zamanlayıcı','Geri sayım ve kronometre. Sesle de kurulur: “on dakikalık zamanlayıcı kur”.'],['session','Oturum','Süre, mesaj sayısı, bağlantı ve takılı çip.'],['notes','Notlar','Hızlı notlar. “Not al: …” de ya da panele yaz.']]
+      .forEach(([k,t,d])=>B.appendChild(row(t,d,sw(()=>cfg.panels[k],v=>{ cfg.panels[k]=v; applyPanels(); }))));
+    B.appendChild(row('Düzeni sıfırla','Tüm paneller yeniden açılır.', ob('SIFIRLA',()=>{ cfg.panels=Object.assign({},DEF.panels); saveCfg(); applyPanels(); renderTab(); })));
+  }
+  if(curTab==='ses'){
+    B.appendChild(row('Asistanın sesi','Cevapları sesli okusun.', sw(()=>cfg.voiceOn,v=>{ cfg.voiceOn=v; paintSnd(); if(!v) stopSpeak(); })));
+    const vr=row('Çip sesleri', tts?'Her çipin kendi sesi var. DİNLE ile dene, beğenmezsen değiştir.':'Bu cihazda tarayıcının sesleri kullanılıyor; ses tonu ve hız çipe göre ayarlanır.'); vr.classList.add('col2');
+    Object.keys(CHIPS).forEach(k=>{
+      const w=document.createElement('div'); w.className='vrow'; const d=document.createElement('span'); d.className='dot'; d.style.background=CHIPS[k].glow;
+      const n=document.createElement('div'); n.className='nm'; n.textContent=labelOf(k);
+      const sel=document.createElement('select'); sel.setAttribute('aria-label',labelOf(k)+' sesi');
+      const cur=voiceOf(k);
+      if(tts) CLAUDE_VOICES.forEach(([v,l])=>{ const o=document.createElement('option'); o.value='c:'+v; o.textContent='Claude · '+l; sel.appendChild(o); });
+      let vs=[]; try{ vs=speechSynthesis.getVoices().filter(x=>/^(tr|en)/i.test(x.lang)); }catch(e){}
+      const auto=document.createElement('option'); auto.value='b:'; auto.textContent='Tarayıcı · otomatik ('+(CHIPS[k].gender==='male'?'erkek':'kadın')+')'; sel.appendChild(auto);
+      vs.forEach(v=>{ const o=document.createElement('option'); o.value='b:'+v.name; o.textContent='Tarayıcı · '+v.name+' ('+v.lang+')'; sel.appendChild(o); });
+      sel.value = (tts && cur.engine!=='browser') ? 'c:'+cur.claude : 'b:'+(cur.browser||'');
+      sel.onchange=()=>{ const [t,v]=[sel.value.slice(0,1),sel.value.slice(2)]; cfg.voices[k]=Object.assign({},cfg.voices[k]||{}, t==='c'?{engine:'claude',claude:v}:{engine:'browser',browser:v}); saveCfg(); };
+      const p=ob('DİNLE',()=>{ unlockAudio(); stopSpeak(); speakWith(k,{azure:'Buyrun efendim, emrinizdeyim.',amber:'Selam patron, her şey hazır!',crimson:'Sistemlerin artık bana ait, insan.'}[k]); },true);
+      w.append(d,n,sel,p); vr.appendChild(w); });
+    B.appendChild(vr);
+    B.appendChild(row('Ses efektleri','Gönderme, onay, hata ve çip takma sesleri.', sw(()=>cfg.sfx,v=>{ cfg.sfx=v; })));
+    B.appendChild(row('Arka plan uğultusu','Her çipin kendi alçak arka plan sesi.', sw(()=>cfg.hum,v=>{ cfg.hum=v; actx(); setHum(); })));
+    B.appendChild(row('Düşünme sesi','Asistan düşünürken çalan hafif tıkırtı.', sw(()=>cfg.think,v=>{ cfg.think=v; })));
+    B.appendChild(row('Efekt ses seviyesi','', slider(()=>cfg.sfxVol,v=>cfg.sfxVol=v,'Efekt ses seviyesi')));
+    if(!tts) B.appendChild(row('Asistanın ses seviyesi','', slider(()=>cfg.voiceVol,v=>cfg.voiceVol=v,'Asistanın ses seviyesi')));
+  }
+  if(curTab==='konusma'){
+    B.appendChild(intro2('Asistan sessizlikte kendisi söz alabilir, su ve mola hatırlatabilir. Bunlar yalnızca sayfa açıkken ve sen ekrandayken çalışır.'));
+    B.appendChild(row('Sessizlikte konuşsun','Uzun bir sessizlikte bir kez, kendi tarzında söz alır. Cevap vermezsen ısrar etmez.', sw(()=>cfg.idle,v=>{ cfg.idle=v; })));
+    B.appendChild(row('Sessizlik süresi','Bu kadar konuşmazsan söz alır.', seg([[10,'10 DK'],[20,'20 DK'],[40,'40 DK']],()=>cfg.idleMin,v=>cfg.idleMin=v)));
+    const ar=row('Kişisel gündem','Kendiliğinden konuşurken rastgele bilgi vermez; notlarından ve hatırladıklarından söz eder.', sw(()=>cfg.agenda,v=>{ cfg.agenda=v; })); B.appendChild(ar);
+    const g=document.createElement('div'); g.className='cards3'; g.innerHTML=`<div class="mini"><div class="t">NOTLAR</div><div class="v">${notes.length} NOT</div></div><div class="mini"><div class="t">HAFIZA</div><div class="v">${memory.length} KAYIT</div></div><div class="mini"><div class="t">OTURUM</div><div class="v">${history.length} MESAJ</div></div>`; B.appendChild(g);
+    B.appendChild(row('Su hatırlatması','Ekrandayken saatte bir.', sw(()=>cfg.water,v=>{ cfg.water=v; lastWater=Date.now(); })));
+    B.appendChild(row('Mola hatırlatması','50 dakika ara vermeden çalışınca kalkıp gerinmeni önerir.', sw(()=>cfg.brk,v=>{ cfg.brk=v; workStart=Date.now(); })));
+  }
+  if(curTab==='hafiza'){
+    B.appendChild(intro2('Asistanın seninle ilgili hatırladıkları: adın, tercihlerin, hatırlamasını istediklerin. Yanlış ya da istemediğin bir kaydı buradan sil; konuşurken "bunu unut" demek de olur. Hafıza yalnızca bu tarayıcıda durur.'));
+    if(!memory.length){ const e=document.createElement('div'); e.className='mono'; e.style.padding='18px 0'; e.textContent='Henüz kayıt yok. “Bunu hatırla: …” diyebilirsin.'; B.appendChild(e); }
+    memory.forEach((m,i)=>{ const d=document.createElement('div'); d.className='mem'; const l=document.createElement('div'); l.innerHTML=`<div class="k">${esc(m.k)}</div><div class="v">${esc(m.v)}</div>`;
+      d.append(l, ob('SİL',()=>{ memory.splice(i,1); store.set('memory',memory); renderTab(); },true)); B.appendChild(d); });
+    const w=document.createElement('div'); w.className='in2'; w.style.marginTop='18px';
+    const k=document.createElement('input'); k.className='field'; k.placeholder='konu (ör. sevdiği içecek)'; k.maxLength=30; k.style.flex='0 0 34%';
+    const v=document.createElement('input'); v.className='field'; v.placeholder='bilgi'; v.maxLength=120;
+    w.append(k,v,ob('EKLE',()=>{ if(k.value.trim()&&v.value.trim()){ addMem(k.value,v.value,true); renderTab(); sfx('ok'); } }));
+    B.appendChild(w);
+    if(memory.length) B.appendChild(row('Hafızayı temizle','Tüm kayıtlar silinir.', ob('TEMİZLE',()=>{ memory=[]; store.set('memory',memory); renderTab(); })));
+  }
+  if(curTab==='hakkinda'){
+    B.appendChild(intro2('Bu kişisel asistan Google Gemini ile çalışır; senin API anahtarınla, doğrudan tarayıcından bağlanır. Ad, hitap ve çip görünümü, sesi ve konuşma tarzını değiştirir.'));
+    B.appendChild(row('Yapay zekâ', getKey()?'Gemini · '+(gModel||'model otomatik seçilir'):'Gemini · anahtar girilmedi'));
+    B.appendChild(row('Sesli okuma', tts?'Claude sesleri':'Tarayıcı sesleri'));
+    B.appendChild(row('Mikrofon', dict?'Tarayıcının konuşma tanıması':'Bu tarayıcıda yok, klavye diktesi kullanılabilir'));
+    B.appendChild(row('Veriler','Ayarlar, notlar ve hafıza yalnızca bu tarayıcıda saklanır. Başka cihazda sıfırdan başlar.'));
+    B.appendChild(row('Gizlilik','Anahtarın ve konuşmaların yalnızca bu tarayıcıdan Google\'a gider; başka bir sunucuya gönderilmez. Anahtarını kimseyle paylaşma.'));
+  }
+}
+
+/* ---------- keys ---------- */
+addEventListener('keydown',e=>{
+  if(e.key==='Escape'){ ['setM','chipM'].forEach(id=>$(id).classList.add('hidden')); return; }
+  if(e.key==='/' && document.activeElement.tagName!=='INPUT'){ e.preventDefault(); inp.focus(); }
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='m'){ e.preventDefault(); mic.click(); }
+});
+
+/* ---------- start ---------- */
+applyPanels();
+if(prof){ applyProfile(); greet(); } else { applyTheme('azure'); openSetup(); }
+try{ speechSynthesis.onvoiceschanged=()=>{ if(!$('setM').classList.contains('hidden')&&curTab==='ses') renderTab(); }; }catch(e){}
+
+(()=>{
+  $('link').textContent = getKey() ? (gModel?gModel.toUpperCase():'GEMINI') : 'YOK';
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(SR){
+    let rec=null, h={p:()=>{},f:()=>{},s:()=>{}};
+    dict={ start(){ return new Promise((res,rej)=>{ try{ rec=new SR(); rec.lang=cfg.lang==='en'?'en-US':cfg.lang==='fr'?'fr-FR':cfg.lang==='ar'?'ar-SA':cfg.lang==='az'?'az-AZ':'tr-TR'; rec.interimResults=true; rec.continuous=false;
+        rec.onresult=e=>{ let fin='',par=''; for(let i=e.resultIndex;i<e.results.length;i++){ const t=e.results[i][0].transcript; if(e.results[i].isFinal) fin+=t; else par+=t; } if(par) h.p({text:par}); if(fin) h.f({text:fin}); };
+        rec.onerror=e=>{ if(e.error==='not-allowed'){ h.s({state:'idle'}); rej({code:'not_granted'}); } };
+        rec.onend=()=>h.s({state:'idle'}); rec.onstart=()=>h.s({state:'listening'}); rec.start(); res(); }catch(err){ rej(err); } }); },
+      stop(){ try{ rec&&rec.stop(); }catch(e){} return Promise.resolve(); },
+      onPartial(f){ h.p=f; }, onFinal(f){ h.f=f; }, onState(f){ h.s=f; } };
+  }
+  applyMic();
+  if(dict){
+    dict.onPartial(({text})=>{ inp.value=base+text; });
+    dict.onFinal(({text})=>{ base+=text+' '; inp.value=base; });
+    dict.onState(({state})=>{ listening=state==='listening'; mic.classList.toggle('on',listening);
+      if(listening) setMode('listening'); else { if(mode==='listening') setMode('idle'); if(inp.value.trim()) send(inp.value); } });
+  }
+  if(prof && !getKey()) setTimeout(()=>{ add('sys','Gemini anahtarı bekleniyor'); openSettings('genel'); },600);
+})();
+})();
+</script>
+</body>
+</html>
