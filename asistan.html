@@ -4,6 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kişisel Asistan · Gemini</title>
+<meta name="theme-color" content="#05080b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Asistan">
+<link rel="manifest" href="asistan.webmanifest">
+<link rel="apple-touch-icon" href="asistan-180.png?v=1">
+<link rel="icon" href="asistan-192.png?v=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Permanent+Marker&display=swap" rel="stylesheet">
 <style>
 :root{ --c:#3fe3ff; --c2:#1aa9c9; --cr:63,227,255; --dim:#0f3b48; --muted:#5e93a3; --text:#bff4ff; --bg:#02070b; --red:#ff4d6d; }
@@ -151,6 +160,38 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radiu
   .vrow .nm{grid-column:2}
   .vrow select{grid-column:1/3}
 }
+
+/* subtitle-style conversation */
+.log{align-items:center;text-align:center;gap:6px;max-height:30vh}
+.msg{max-width:min(760px,96%);background:none!important;border:0!important;padding:2px 8px!important;border-radius:0}
+.msg.me{color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.04em}
+.msg.me::before{content:'› '}
+.msg.ai{color:#fff;font-size:18px;font-weight:400;line-height:1.45}
+.msg.ai .tag{display:none}
+.msg.me,.msg.ai{align-self:center}
+.log .msg{opacity:.22;transition:opacity .5s}
+.log .msg:nth-last-child(3){opacity:.5}
+.log .msg:nth-last-child(-n+2){opacity:1}
+.proj{padding:9px 0;border-bottom:1px solid rgba(var(--cr),.1)}
+.proj .n{display:flex;justify-content:space-between;gap:8px;font-size:15px}
+.proj .n button{background:none;border:0;color:var(--muted);font-size:16px}
+.proj .s{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.08em;margin-top:3px}
+.pbar{height:6px;background:rgba(var(--cr),.12);border-radius:3px;margin-top:6px;cursor:pointer;overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--c);border-radius:3px;transition:width .3s}
+
+:root{--hue:150deg} body.t-amber{--hue:0deg} body.t-crimson{--hue:-40deg}
+.wbox{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--dim);padding:14px;border-radius:4px;background:linear-gradient(rgba(var(--cr),.07),transparent)}
+.wt{font-size:40px;font-weight:600;color:#fff;line-height:1}
+.wc{font-family:'IBM Plex Mono',monospace;letter-spacing:.18em;font-size:13px;color:#eee;text-transform:uppercase}
+.wd{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);margin-top:4px}
+.wr{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);margin-top:10px}
+.wl{flex:1;height:2px;background:var(--dim);position:relative}
+.wl i{position:absolute;top:-4px;width:9px;height:9px;border-radius:50%;background:var(--c);transform:translateX(-50%)}
+.map{height:170px;border:1px solid var(--dim);border-radius:4px;overflow:hidden;cursor:zoom-in;background:#000}
+.map.big{position:fixed;inset:6vh 6vw;height:auto;z-index:30;cursor:zoom-out;box-shadow:0 0 0 100vmax rgba(0,0,0,.7)}
+.map .leaflet-tile-pane{filter:sepia(1) hue-rotate(var(--hue)) saturate(2.2) brightness(.85)}
+.map .leaflet-control-attribution{background:rgba(0,0,0,.6)!important;color:#888!important;font-size:9px}
+.map .leaflet-control-attribution a{color:#aaa!important}
 </style>
 </head>
 <body>
@@ -201,7 +242,16 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radiu
   </section>
 
   <aside class="col" id="colR">
-    <div class="panel" id="p_session" style="border:0;padding:0">
+    <div class="panel" id="p_weather" style="border:0;padding:0">
+      <div class="wbox"><div class="wt" id="wTemp">--°</div><div style="min-width:0"><div class="wc" id="wCity">KONUM</div><div class="wd" id="wDesc">yükleniyor…</div></div></div>
+      <div class="wr"><span id="wMin">--°</span><div class="wl"><i id="wDot" style="left:50%"></i></div><span id="wMax">--°</span></div>
+      <h3 style="margin-top:12px">HAVA</h3><div class="mono" id="wMore"></div>
+    </div>
+    <div class="panel" id="p_map">
+      <div id="map" class="map" title="Büyütmek için dokun"></div>
+      <h3 style="margin-top:10px">HARİTA</h3><div class="mono" id="mapCity">—</div>
+    </div>
+    <div class="panel" id="p_session">
       <h3>OTURUM</h3>
       <div class="stat">Süre <b id="ses">00:00</b></div>
       <div class="stat">Mesaj <b id="cnt">0</b></div>
@@ -214,6 +264,12 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border:0;border-radiu
       <div class="big" id="ncount">0</div>
       <div id="notes"></div>
       <form id="nf" style="margin-top:8px"><input class="field" id="ninp" placeholder="Not ekle…" maxlength="140"></form>
+    </div>
+    <div class="panel" id="p_projects">
+      <h3>PROJELER</h3>
+      <div class="big" id="pcount">0</div>
+      <div id="projects"></div>
+      <form id="pf" style="margin-top:8px"><input class="field" id="pinp" placeholder="Proje ekle…" maxlength="60"></form>
     </div>
   </aside>
 </div>
@@ -276,9 +332,9 @@ const CLAUDE_VOICES = [['buttery','Buttery'],['airy','Airy'],['glassy','Glassy']
 
 /* ---------- config ---------- */
 const DEF = { lang:'tr', quality:'high', mic:true,
-  panels:{clock:true,timer:true,session:true,notes:true},
+  panels:{clock:true,timer:true,session:true,notes:true,projects:true,weather:true,map:true},
   sfx:true, hum:false, think:true, sfxVol:.5, voiceOn:true, voiceVol:1,
-  idle:false, idleMin:10, hands:true, wake:false, agenda:true, water:false, brk:false, voices:{} };
+  idle:false, idleMin:10, hands:true, wake:false, city:'', agenda:true, water:false, brk:false, voices:{} };
 let cfg = Object.assign({}, DEF, store.get('cfg',{})); cfg.panels=Object.assign({},DEF.panels,cfg.panels||{}); cfg.voices=cfg.voices||{};
 const saveCfg = () => store.set('cfg',cfg);
 let prof = store.get('profile', null);
@@ -353,7 +409,7 @@ function openSetup(){
     if(prof.user) addMem('ad',prof.user,true);
     $('setup').classList.add('hidden'); actx(); unlockAudio(); applyProfile(); sfx('chip'); history=[]; count(); log.innerHTML=''; greet(); };
 }
-function switchChip(k){
+function switchChip(k){ setTimeout(()=>{ if(mapMarker){ const col=getComputedStyle(document.body).getPropertyValue('--c').trim(); mapMarker.setStyle({color:col,fillColor:col}); } },60);
   if(!prof||prof.chip===k) return; prof.chip=k; store.set('profile',prof); applyProfile(); sfx('chip'); stopSpeak();
   history=[]; count(); add('sys', labelOf(k)+' çipi takıldı'); intro();
 }
@@ -397,17 +453,76 @@ function renderNotes(){
 $('nf').addEventListener('submit',e=>{ e.preventDefault(); const v=$('ninp').value.trim(); if(!v) return; notes.unshift({t:v,d:Date.now()}); store.set('notes',notes); $('ninp').value=''; renderNotes(); sfx('ok'); });
 renderNotes();
 
+/* ---------- projects ---------- */
+let projects=store.get('projects',[]);
+function saveProjects(){ store.set('projects',projects); renderProjects(); }
+function renderProjects(){
+  const box=$('projects'); box.innerHTML=''; $('pcount').textContent=projects.length;
+  projects.forEach((p,i)=>{ const d=document.createElement('div'); d.className='proj';
+    const n=document.createElement('div'); n.className='n'; const t=document.createElement('span'); t.textContent=p.n;
+    const x=document.createElement('button'); x.textContent='×'; x.setAttribute('aria-label','Projeyi sil'); x.onclick=()=>{ projects.splice(i,1); saveProjects(); };
+    n.append(t,x); d.appendChild(n);
+    const st=document.createElement('div'); st.className='s'; st.textContent=(p.s||'devam ediyor')+' · %'+(p.p||0); d.appendChild(st);
+    const bar=document.createElement('div'); bar.className='pbar'; bar.title='İlerlemeyi ayarlamak için dokun'; const f=document.createElement('i'); f.style.width=(p.p||0)+'%'; bar.appendChild(f);
+    bar.onclick=e=>{ const r=bar.getBoundingClientRect(); p.p=Math.max(0,Math.min(100,Math.round((e.clientX-r.left)/r.width*10)*10)); saveProjects(); sfx('ok'); };
+    d.appendChild(bar); box.appendChild(d); });
+}
+function upsertProject(name,status,pct){ name=(name||'').trim(); if(!name) return; const i=projects.findIndex(p=>p.n.toLocaleLowerCase('tr-TR')===name.toLocaleLowerCase('tr-TR'));
+  const v={n:name,s:(status||'').trim(),p:pct===''||pct==null||isNaN(+pct)?undefined:Math.max(0,Math.min(100,+pct))};
+  if(i>=0){ const o=projects[i]; projects[i]={n:o.n,s:v.s||o.s,p:v.p!=null?v.p:o.p}; } else projects.unshift({n:v.n,s:v.s,p:v.p||0}); saveProjects(); }
+$('pf').addEventListener('submit',e=>{ e.preventDefault(); const v=$('pinp').value.trim(); if(!v) return; upsertProject(v,'',0); $('pinp').value=''; sfx('ok'); });
+renderProjects();
+
+/* ---------- weather & map ---------- */
+const WMO={0:'açık',1:'çoğunlukla açık',2:'parçalı bulutlu',3:'kapalı',45:'sisli',48:'kırağılı sis',51:'hafif çisenti',53:'çisenti',55:'yoğun çisenti',56:'donan çisenti',57:'donan çisenti',61:'hafif yağmur',63:'yağmurlu',65:'şiddetli yağmur',66:'donan yağmur',67:'donan yağmur',71:'hafif kar',73:'karlı',75:'yoğun kar',77:'kar taneleri',80:'yer yer sağanak',81:'sağanak',82:'şiddetli sağanak',85:'kar sağanağı',86:'yoğun kar sağanağı',95:'gök gürültülü fırtına',96:'dolulu fırtına',99:'dolulu fırtına'};
+window._wx=null; window._map=null; let mapMarker=null;
+async function locate(){
+  if(cfg.city){ const r=await fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&language=tr&name='+encodeURIComponent(cfg.city.split(',')[0].trim())); const j=await r.json(); const g=j.results&&j.results[0]; if(!g) throw new Error('nf'); return {lat:g.latitude,lon:g.longitude,name:g.name,region:[g.admin1,g.country].filter(Boolean).join(' · ')}; }
+  const pos=await new Promise((res,rej)=>{ if(!navigator.geolocation) return rej(new Error('geo')); navigator.geolocation.getCurrentPosition(p=>res(p.coords),rej,{timeout:12000,maximumAge:3600000}); });
+  let name='Konumun', region='';
+  try{ const r=await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${pos.latitude}&longitude=${pos.longitude}&localityLanguage=tr`); const j=await r.json(); name=j.locality||j.city||name; region=[j.principalSubdivision,j.countryName].filter(Boolean).join(' · '); }catch(e){}
+  return {lat:pos.latitude,lon:pos.longitude,name,region};
+}
+async function loadWeather(){
+  if(!$('p_weather')) return;
+  try{
+    const L=await locate();
+    const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${L.lat}&longitude=${L.lon}&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code&daily=temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=1`);
+    const j=await r.json(), c=j.current, d=j.daily; const desc=WMO[c.weather_code]||'';
+    const t=Math.round(c.temperature_2m), mn=Math.round(d.temperature_2m_min[0]), mx=Math.round(d.temperature_2m_max[0]);
+    $('wTemp').textContent=t+'°'; $('wCity').textContent=L.name; $('wDesc').textContent=desc; $('wMin').textContent=mn+'°'; $('wMax').textContent=mx+'°';
+    $('wDot').style.left=(mx>mn?Math.max(0,Math.min(100,(c.temperature_2m-mn)/(mx-mn)*100)):50)+'%';
+    $('wMore').textContent=`Hissedilen ${Math.round(c.apparent_temperature)}° · nem %${c.relative_humidity_2m} · rüzgâr ${Math.round(c.wind_speed_10m)} km/s`;
+    window._wx={line:`${L.name}: ${t}°, ${desc}, en düşük ${mn}°, en yüksek ${mx}°, hissedilen ${Math.round(c.apparent_temperature)}°, nem %${c.relative_humidity_2m}, rüzgâr ${Math.round(c.wind_speed_10m)} km/s`};
+    $('mapCity').textContent=(L.name+(L.region?' · '+L.region:'')).toLocaleUpperCase('tr-TR');
+    showMap(L.lat,L.lon);
+  }catch(e){
+    $('wDesc').textContent= cfg.city ? 'şehir bulunamadı' : 'konum izni yok';
+    $('wCity').textContent='KONUM'; $('mapCity').textContent='Ayarlar › Genel › Konum\'a şehrini yaz';
+  }
+}
+function showMap(lat,lon){
+  if(!window.L||!$('p_map')) return;
+  const col=getComputedStyle(document.body).getPropertyValue('--c').trim()||'#3fe3ff';
+  if(!window._map){ window._map=L.map('map',{zoomControl:false,attributionControl:true,scrollWheelZoom:false,dragging:true}).setView([lat,lon],9);
+    L.tileLayer('https://{s}.basemap.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:18,attribution:'© OpenStreetMap · © CARTO'}).addTo(window._map); }
+  else window._map.setView([lat,lon],window._map.getZoom());
+  if(mapMarker) mapMarker.remove(); mapMarker=L.circleMarker([lat,lon],{radius:6,color:col,fillColor:col,fillOpacity:.9,weight:2}).addTo(window._map);
+}
+$('map').addEventListener('click',()=>{ const m=$('map'); m.classList.toggle('big'); setTimeout(()=>{ try{ window._map.invalidateSize(); window._map.scrollWheelZoom[m.classList.contains('big')?'enable':'disable'](); }catch(e){} },80); });
+setInterval(loadWeather, 15*60000);
+
 /* ---------- memory ---------- */
 function addMem(k,v,silent){ k=k.trim().toLowerCase(); v=v.trim(); if(!k||!v) return; const i=memory.findIndex(m=>m.k===k); if(i>=0) memory[i].v=v; else memory.push({k,v}); store.set('memory',memory); if(!silent&&curTab==='hafiza') renderTab(); }
 function forgetMem(k){ k=k.trim().toLowerCase(); memory=memory.filter(m=>m.k!==k && !m.k.includes(k)); store.set('memory',memory); }
 
 /* ---------- panels ---------- */
 function applyPanels(){
-  const P=cfg.panels; $('p_clock').classList.toggle('hidden',!P.clock); $('p_timer').classList.toggle('hidden',!P.timer);
-  $('p_session').classList.toggle('hidden',!P.session); $('p_notes').classList.toggle('hidden',!P.notes);
-  const app=$('app'); app.classList.toggle('nol',!P.clock&&!P.timer); app.classList.toggle('nor',!P.session&&!P.notes);
-  $('colL').classList.toggle('hidden',!P.clock&&!P.timer); $('colR').classList.toggle('hidden',!P.session&&!P.notes);
-  setTimeout(size,50);
+  const P=cfg.panels, L=['clock','timer'], RR=['weather','map','session','projects','notes']; let anyL=false, anyR=false;
+  [...L,...RR].forEach(k=>{ const el=$('p_'+k); if(!el) return; const on=P[k]!==false; el.classList.toggle('hidden',!on); if(on){ if(L.includes(k)) anyL=true; else anyR=true; } });
+  const app=$('app'); app.classList.toggle('nol',!anyL); app.classList.toggle('nor',!anyR);
+  $('colL').classList.toggle('hidden',!anyL); $('colR').classList.toggle('hidden',!anyR);
+  setTimeout(()=>{ size(); if(window._map) try{ window._map.invalidateSize(); }catch(e){} },60);
 }
 
 /* ---------- mode & orb ---------- */
@@ -467,7 +582,7 @@ function paintSnd(){ $('snd').classList.toggle('off',!cfg.voiceOn); $('wave').st
 paintSnd();
 $('snd').onclick=()=>{ cfg.voiceOn=!cfg.voiceOn; saveCfg(); paintSnd(); if(!cfg.voiceOn) stopSpeak(); else unlockAudio(); };
 function unlockAudio(){ if(unlocked) return; unlocked=true; try{ const u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u); }catch(e){} }
-function stopSpeak(){ try{ tts&&tts.stop(); }catch(e){} try{ speechSynthesis.cancel(); }catch(e){} if(mode==='speaking') setMode('idle'); }
+function stopSpeak(){ try{ sq.stop(); }catch(e){} try{ tts&&tts.stop(); }catch(e){} try{ speechSynthesis.cancel(); }catch(e){} if(mode==='speaking') setMode('idle'); }
 function pickBrowserVoice(k){
   let vs=[]; try{ vs=speechSynthesis.getVoices(); }catch(e){}
   const want=cfg.voices[k]&&cfg.voices[k].browser; if(want){ const v=vs.find(x=>x.name===want); if(v) return v; }
@@ -489,6 +604,20 @@ async function speakWith(k,text){
 }
 function say(text){ if(cfg.voiceOn&&text&&prof) speakWith(chipOf(),text); }
 function speakLocal(text){ add('ai',text); say(text); }
+function speakChunk(k,text){ const v=voiceOf(k);
+  if(tts && v.engine!=='browser') return tts.add([{text:text.slice(0,2000),voice:v.claude,rate:v.rate}]).catch(()=>{});
+  return new Promise(res=>{ try{ const u=new SpeechSynthesisUtterance(text); u.lang=cfg.lang==='en'?'en-US':'tr-TR'; const bv=pickBrowserVoice(k); if(bv) u.voice=bv;
+    u.rate=v.rate; u.pitch=v.pitch; u.volume=cfg.voiceVol; u.onend=u.onerror=()=>res(); speechSynthesis.speak(u); setTimeout(res, 4000+text.length*120); }catch(e){ res(); } }); }
+const sq={ spoken:0, pending:0, active:false,
+  start(){ this.spoken=0; this.pending=0; this.active=!!(cfg.voiceOn&&prof); },
+  feed(t){ if(!this.active) return; let rest=t.slice(this.spoken); const br=rest.indexOf('['); if(br>=0) rest=rest.slice(0,br);
+    let idx=-1; const re=/[.!?…]+(?=\s)/g; let m; while((m=re.exec(rest))) idx=m.index+m[0].length;
+    if(idx>=8){ this.push(rest.slice(0,idx)); this.spoken+=idx; } },
+  end(t){ if(!this.active) return; const rest=t.slice(this.spoken).trim(); this.active=false; if(rest) this.push(rest); },
+  push(text){ text=text.replace(/[*#_`>]/g,'').trim(); if(!text) return; this.pending++; if(mode!=='speaking') setMode('speaking');
+    let done=false; const fin=()=>{ if(done) return; done=true; this.pending--; if(this.pending<=0&&!this.active){ this.pending=0; if(mode==='speaking') setMode('idle'); } };
+    speakChunk(chipOf(),text).then(fin,fin); },
+  stop(){ this.active=false; this.pending=0; } };
 
 /* ---------- Claude ---------- */
 let busy=false, ctrl=null;
@@ -497,6 +626,8 @@ function sys(extra){
   const langLine = cfg.lang==='auto' ? 'Kullanıcı hangi dilde yazarsa o dilde yanıt ver; emin değilsen Türkçe.' :
     {tr:'Her zaman Türkçe yanıt ver.',en:'Always reply in English.',fr:'Réponds toujours en français.',ar:'أجب دائمًا باللغة العربية.',az:'Həmişə Azərbaycan dilində cavab ver.'}[cfg.lang];
   const mem = memory.length ? '\nKullanıcı hakkında hatırladıkların:\n'+memory.map(m=>`- ${m.k}: ${m.v}`).join('\n') : '';
+  const pj = projects.length ? '\nKullanıcının projeleri: '+projects.map(p=>`${p.n} (${p.s||'devam ediyor'}, %${p.p||0})`).join(' | ') : '';
+  const wx = (window._wx&&window._wx.line) ? '\nŞu anki hava: '+window._wx.line : '';
   const nt = notes.length ? '\nKullanıcının notları: '+notes.slice(0,8).map(n=>n.t).join(' | ') : '';
   return `Senin adın ${prof.assistant}; kullanıcının kişisel yapay zekâ asistanısın (Google Gemini ile çalışıyorsun).${prof.user?` Kullanıcının adı ${prof.user}.`:''}
 Takılı çip "${labelOf(chipOf())}". Konuşma tarzın: ${CHIPS[chipOf()].persona}
@@ -505,17 +636,19 @@ Kurallar:
 - ${langLine}
 - Yanıtların sesli okunur: kısa ve konuşur gibi tut (genelde 1-4 cümle). Ayrıntı istenirse uzatabilirsin.
 - Markdown, madde işareti, yıldız, başlık, emoji kullanma; düz metin yaz.
-- Canlı verilere (hava durumu, haberler, takvim) erişimin yok; uydurma, açıkça söyle.
+- Güncel bir bilgi gerekiyorsa (haberler, sonuçlar, fiyatlar, olaylar) Google aramasını kullan; bulamazsan uydurma, açıkça söyle. Hava durumu aşağıda verildiyse onu kullan.
 - Zamanlayıcı istenirse cevabın en sonuna ayrı satırda [TIMER:dakika] yaz. Not istenirse [NOT:metin] yaz.
-- Kullanıcı kendisi hakkında kalıcı bir bilgi verirse (adı, tercihi, alışkanlığı, hatırlamanı istediği şey) en sona [HAFIZA:kısa konu|bilgi] ekle. "Bunu unut" derse [UNUT:konu] ekle.${mem}${nt}
+- Kullanıcı kendisi hakkında kalıcı bir bilgi verirse (adı, tercihi, alışkanlığı, hatırlamanı istediği şey) en sona [HAFIZA:kısa konu|bilgi] ekle. "Bunu unut" derse [UNUT:konu] ekle.
+- Kullanıcı bir projesini eklemeni ya da güncellemeni isterse ya da bir projesinin durumundan bahsederse en sona [PROJE:proje adı|kısa durum|yüzde] ekle (yüzde bilinmiyorsa boş bırak).${mem}${nt}${pj}${wx}
 - Şu anki tarih ve saat: ${now}.${extra?'\n'+extra:''}`;
 }
-const clean=s=>s.replace(/\[(TIMER|NOT|HAFIZA|UNUT):[^\]]*\]/g,'').trim();
+const clean=s=>s.replace(/\[(TIMER|NOT|HAFIZA|UNUT|PROJE):[^\]]*\]/g,'').trim();
 function handleTags(out){
   const tm=out.match(/\[TIMER:(\d+(?:[.,]\d+)?)\]/); if(tm) tStart(parseFloat(tm[1].replace(',','.')));
   for(const m of out.matchAll(/\[NOT:([^\]]+)\]/g)){ notes.unshift({t:m[1].trim(),d:Date.now()}); store.set('notes',notes); renderNotes(); }
   for(const m of out.matchAll(/\[HAFIZA:([^|\]]+)\|([^\]]+)\]/g)) addMem(m[1],m[2]);
   for(const m of out.matchAll(/\[UNUT:([^\]]+)\]/g)) forgetMem(m[1]);
+  for(const m of out.matchAll(/\[PROJE:([^\]]+)\]/g)){ const [n,st,pc]=m[1].split('|'); upsertProject(n,st,pc!=null?pc.replace(/[^0-9]/g,''):''); }
 }
 function send(text){
   text=(text||'').trim(); if(!text||busy||!prof) return;
@@ -527,11 +660,11 @@ async function ask(extra, proactive){
   const box=add('ai','…');
   const msgs=history.slice(-20).map(m=>({role:m.role,content:m.content}));
   if(proactive) msgs.push({role:'user',content:'(Sistem notu: kullanıcı bir süredir sessiz. Kendi tarzında, tek seferlik kısa bir şey söyle.)'});
-  ctrl=new AbortController();
+  ctrl=new AbortController(); sq.start();
   try{
-    const out0=await gemini(sys(extra), msgs, t=>{ box._b.textContent=clean(t); log.scrollTop=log.scrollHeight; }, ctrl.signal);
+    const out0=await gemini(sys(extra), msgs, t=>{ box._b.textContent=clean(t); sq.feed(clean(t)); log.scrollTop=log.scrollHeight; }, ctrl.signal);
     let out=(out0||'').trim(); handleTags(out); out=clean(out); box._b.textContent=out||'…';
-    history.push({role:'assistant',content:out}); count(); setMode('idle'); say(out);
+    history.push({role:'assistant',content:out}); count(); sq.end(out); if(sq.pending<=0) setMode('idle');
   }catch(e){
     sfx('err');
     box._b.textContent = e.code==='key'?'Anahtar geçersiz görünüyor. Ayarlar › Genel\'den kontrol eder misin?' : e.code==='quota'?'Gemini ücretsiz kotası doldu ya da çok hızlı gittik. Biraz sonra tekrar dene.' : e.name==='AbortError'?'Durduruldu.' : 'Gemini\'ye ulaşılamadı. İnternet bağlantını kontrol edip tekrar dener misin?';
@@ -546,7 +679,7 @@ let gModel=store.get('gmodel','');
 const PREF=['gemini-3.8-flash','gemini-3.7-flash','gemini-3.6-flash','gemini-3.5-flash','gemini-flash-latest','gemini-3-flash-preview','gemini-2.5-flash','gemini-3.5-flash-lite','gemini-3.1-flash-lite','gemini-flash-lite-latest','gemini-2.5-flash-lite'];
 async function gFetch(path, body, signal){
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/'+path,{method:body?'POST':'GET',signal,headers:Object.assign({'x-goog-api-key':getKey()},body?{'Content-Type':'application/json'}:{}),body:body?JSON.stringify(body):undefined});
-  if(!r.ok){ const err=new Error('http '+r.status); err.status=r.status; try{ err.msg=(await r.json()).error.message; }catch(_){} err.code = (r.status===400&&/key/i.test(err.msg||''))||r.status===401||r.status===403 ? 'key' : r.status===429 ? 'quota' : r.status===404 ? 'model' : 'net'; throw err; }
+  if(!r.ok){ const err=new Error('http '+r.status); err.status=r.status; try{ err.msg=(await r.json()).error.message; }catch(_){} err.code = (r.status===400&&/key/i.test(err.msg||''))||r.status===401||r.status===403 ? 'key' : r.status===429 ? 'quota' : r.status===404 ? 'model' : r.status===400 ? 'bad' : 'net'; throw err; }
   return r;
 }
 async function modelCandidates(){
@@ -558,10 +691,19 @@ async function modelCandidates(){
   }catch(e){ if(e.code==='key') throw e; }
   return PREF;
 }
+async function gemini2(model, body, onText, signal){
+  const r=await gFetch(`models/${model}:streamGenerateContent?alt=sse`, body, signal);
+  const rd=r.body.getReader(), dec=new TextDecoder(); let buf='', text='';
+  for(;;){ const {done,value}=await rd.read(); if(done) break; buf+=dec.decode(value,{stream:true});
+    let i; while((i=buf.indexOf('\n'))>=0){ const line=buf.slice(0,i).trim(); buf=buf.slice(i+1);
+      if(line.startsWith('data:')){ try{ const j=JSON.parse(line.slice(5)); const parts=(j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[];
+        for(const p of parts) if(p.text&&!p.thought) text+=p.text; onText(text); }catch(_){} } } }
+  return text;
+}
 async function gemini(system, msgs, onText, signal){
   const body={ systemInstruction:{parts:[{text:system}]},
     contents: msgs.map(m=>({role:m.role==='assistant'?'model':'user',parts:[{text:m.content}]})),
-    generationConfig:{temperature:.9, maxOutputTokens:800} };
+    generationConfig:{temperature:.9, maxOutputTokens:800}, tools:[{google_search:{}}] };
   let lastErr;
   for(const model of await modelCandidates()){
     try{
@@ -573,7 +715,8 @@ async function gemini(system, msgs, onText, signal){
           if(line.startsWith('data:')){ try{ const j=JSON.parse(line.slice(5)); const parts=(j.candidates&&j.candidates[0]&&j.candidates[0].content&&j.candidates[0].content.parts)||[];
             for(const p of parts) if(p.text&&!p.thought) text+=p.text; onText(text); }catch(_){} } } }
       return text;
-    }catch(e){ lastErr=e; if(e.name==='AbortError'||e.code==='key') throw e; if(e.code==='model'||e.code==='quota'){ if(gModel===model){ gModel=''; store.set('gmodel',''); } continue; } throw e; }
+    }catch(e){ lastErr=e; if(e.name==='AbortError'||e.code==='key') throw e;
+      if(e.code==='bad' && body.tools){ delete body.tools; try{ return await gemini2(model,body,onText,signal); }catch(e2){ lastErr=e2; if(e2.code==='key') throw e2; continue; } } if(e.code==='model'||e.code==='quota'){ if(gModel===model){ gModel=''; store.set('gmodel',''); } continue; } throw e; }
   }
   throw lastErr||new Error('no model');
 }
@@ -661,6 +804,7 @@ function renderTab(){
   if(curTab==='genel'){
     B.appendChild(row('Takılı çip', labelOf(chipOf())+' · '+CHIPS[chipOf()].desc, ob('DEĞİŞTİR',()=>{ $('setM').classList.add('hidden'); $('chipBtn').click(); })));
     B.appendChild(keyRow());
+    B.appendChild(inputRow('Konum','Hava durumu ve harita için ilçeni ya da şehrini yaz (ör. Kaş). Boş bırakırsan cihazın konumu sorulur.',cfg.city,'ör. Kaş, Antalya',v=>{ cfg.city=v; saveCfg(); loadWeather(); },40));
     B.appendChild(inputRow('Asistanın adı','Asistan kendini bu adla tanıtır.',prof.assistant,'Orion',v=>{ prof.assistant=v||'Orion'; store.set('profile',prof); applyProfile(); },16));
     B.appendChild(inputRow('Senin adın','Boş bırakabilirsin.',prof.user,'Adın',v=>{ prof.user=v; store.set('profile',prof); if(v) addMem('ad',v,true); },30));
     B.appendChild(inputRow('Hitap şekli','Boş kalırsa takılı çipin hitabı kullanılır ('+CHIPS[chipOf()].addr+').',prof.addr,CHIPS[chipOf()].addr,v=>{ prof.addr=v; store.set('profile',prof); },24));
@@ -682,8 +826,8 @@ function renderTab(){
   }
   if(curTab==='paneller'){
     B.appendChild(intro2('Ekranın iki yanında hangi paneller görünsün? Bir yandaki tüm panelleri kapatırsan o sütun kaybolur, halka genişler.'));
-    [['clock','Saat','Günün saniye halkası ve tarih.'],['timer','Zamanlayıcı','Geri sayım ve kronometre. Sesle de kurulur: “on dakikalık zamanlayıcı kur”.'],['session','Oturum','Süre, mesaj sayısı, bağlantı ve takılı çip.'],['notes','Notlar','Hızlı notlar. “Not al: …” de ya da panele yaz.']]
-      .forEach(([k,t,d])=>B.appendChild(row(t,d,sw(()=>cfg.panels[k],v=>{ cfg.panels[k]=v; applyPanels(); }))));
+    [['weather','Hava durumu','Bulunduğun yerin havası.'],['map','Harita','Bulunduğun yer; dokununca büyür.'],['projects','Projeler','Üzerinde çalıştığın projeler ve ilerlemeleri. “X projesini ekle” de ya da panele yaz.'],['clock','Saat','Günün saniye halkası ve tarih.'],['timer','Zamanlayıcı','Geri sayım ve kronometre. Sesle de kurulur: “on dakikalık zamanlayıcı kur”.'],['session','Oturum','Süre, mesaj sayısı, bağlantı ve takılı çip.'],['notes','Notlar','Hızlı notlar. “Not al: …” de ya da panele yaz.']]
+      .filter(([k])=>$('p_'+k)).forEach(([k,t,d])=>B.appendChild(row(t,d,sw(()=>cfg.panels[k]!==false,v=>{ cfg.panels[k]=v; applyPanels(); }))));
     B.appendChild(row('Düzeni sıfırla','Tüm paneller yeniden açılır.', ob('SIFIRLA',()=>{ cfg.panels=Object.assign({},DEF.panels); saveCfg(); applyPanels(); renderTab(); })));
   }
   if(curTab==='ses'){
@@ -773,6 +917,7 @@ try{ speechSynthesis.onvoiceschanged=()=>{ if(!$('setM').classList.contains('hid
   }
   if(prof && !getKey()) setTimeout(()=>{ add('sys','Gemini anahtarı bekleniyor'); openSettings('genel'); },600);
   setTimeout(hfStart,800);
+  loadWeather();
 })();
 })();
 </script>
