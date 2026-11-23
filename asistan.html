@@ -278,7 +278,7 @@ const CLAUDE_VOICES = [['buttery','Buttery'],['airy','Airy'],['glassy','Glassy']
 const DEF = { lang:'tr', quality:'high', mic:true,
   panels:{clock:true,timer:true,session:true,notes:true},
   sfx:true, hum:false, think:true, sfxVol:.5, voiceOn:true, voiceVol:1,
-  idle:false, idleMin:10, agenda:true, water:false, brk:false, voices:{} };
+  idle:false, idleMin:10, hands:true, wake:false, agenda:true, water:false, brk:false, voices:{} };
 let cfg = Object.assign({}, DEF, store.get('cfg',{})); cfg.panels=Object.assign({},DEF.panels,cfg.panels||{}); cfg.voices=cfg.voices||{};
 const saveCfg = () => store.set('cfg',cfg);
 let prof = store.get('profile', null);
@@ -413,7 +413,7 @@ function applyPanels(){
 /* ---------- mode & orb ---------- */
 let mode='idle';
 const LABEL={idle:'Beklemede',listening:'Dinliyor',thinking:'Düşünüyor',speaking:'Konuşuyor'};
-function setMode(m){ mode=m; $('st').textContent=LABEL[m]; $('hs').textContent=LABEL[m].toLocaleUpperCase('tr-TR'); thinkSound(m==='thinking'); }
+function setMode(m){ mode=m; $('st').textContent=LABEL[m]; $('hs').textContent=LABEL[m].toLocaleUpperCase('tr-TR'); thinkSound(m==='thinking'); if(m==='speaking'||m==='thinking') hfStop(); else if(m==='idle') setTimeout(hfStart,450); }
 const cv=$('orb'), cx=cv.getContext('2d'); let W=0,H=0; const DPR=Math.min(2,devicePixelRatio||1);
 function size(){ const r=cv.getBoundingClientRect(); W=r.width; H=r.height; cv.width=W*DPR; cv.height=H*DPR; cx.setTransform(DPR,0,0,DPR,0,0); }
 size(); addEventListener('resize',size);
@@ -595,7 +595,7 @@ $('clr').onclick=()=>{ stopSpeak(); try{ctrl&&ctrl.abort()}catch(e){} history=[]
 function activity(){ lastAct=Date.now(); idleSpoke=false; }
 ['pointerdown','keydown'].forEach(ev=>addEventListener(ev,()=>{ if(Date.now()-lastAct>15*60000) workStart=Date.now(); activity(); },{passive:true}));
 setInterval(()=>{
-  if(!prof||document.visibilityState!=='visible'||busy||mode!=='idle') return;
+  if(!prof||document.visibilityState!=='visible'||busy||(mode!=='idle'&&mode!=='listening')) return;
   const now=Date.now(), present = now-lastAct < 15*60000;
   if(cfg.idle && !idleSpoke && now-lastAct > cfg.idleMin*60000){ idleSpoke=true;
     const ag = cfg.agenda ? 'Rastgele bilgi verme; varsa kullanıcının notlarından ya da hatırladıklarından birine değin.' : '';
@@ -607,9 +607,39 @@ setInterval(()=>{
 /* ---------- voice in ---------- */
 let dict=null, listening=false, base='';
 const mic=$('mic');
-mic.addEventListener('click',()=>{ if(!dict) return; if(listening){ dict.stop().catch(()=>{}); return; }
+mic.addEventListener('click',()=>{ if(cfg.hands&&SRC){ hfPaused=!hfPaused; if(hfPaused){ hfStop(); setMode('idle'); add('sys','Dinleme duraklatıldı · tekrar başlatmak için mikrofona dokun'); } else { hfStart(); } paintMic(); return; } if(!dict) return; if(listening){ dict.stop().catch(()=>{}); return; }
   stopSpeak(); base=inp.value?inp.value+' ':''; dict.start().catch(e=>{ if(e&&e.code==='not_granted') mic.classList.add('hidden'); }); });
-function applyMic(){ mic.classList.toggle('hidden', !(dict&&cfg.mic)); }
+function applyMic(){ mic.classList.toggle('hidden', !(dict&&cfg.mic)); if(!cfg.mic||!cfg.hands) hfStop(); else hfStart(); paintMic(); }
+/* ---------- hands-free ---------- */
+const SRC=window.SpeechRecognition||window.webkitSpeechRecognition;
+let hf=null, hfOn=false, hfPaused=false, hfBuf='', hfTimer=null, hfDenied=false;
+function paintMic(){ mic.classList.toggle('on', cfg.hands&&hfOn&&!hfPaused); mic.title = cfg.hands ? (hfPaused?'Dinleme duraklatıldı':'Sürekli dinliyor · duraklatmak için dokun') : 'Konuş'; }
+function langCode(){ return cfg.lang==='en'?'en-US':cfg.lang==='fr'?'fr-FR':cfg.lang==='ar'?'ar-SA':cfg.lang==='az'?'az-AZ':'tr-TR'; }
+const norm=t=>t.toLocaleLowerCase('tr-TR').replace(/[.,!?;:'"’]/g,' ').replace(/\s+/g,' ').trim();
+function hfDeliver(){
+  let t=hfBuf.trim(); hfBuf=''; inp.value=''; if(!t||!prof) return;
+  if(cfg.wake){ const name=norm(prof.assistant), n=norm(t), i=n.indexOf(name);
+    if(i<0) return; // adı söylenmediyse yok say
+    t=n.slice(i+name.length).trim(); if(!t){ say({azure:'Efendim?',amber:'Buradayım!',crimson:'Ne var, insan?'}[chipOf()]); return; } }
+  send(t);
+}
+function hfStart(){
+  if(!SRC||!cfg.hands||!cfg.mic||hfOn||hfPaused||hfDenied||!prof||busy||mode==='speaking'||mode==='thinking') return;
+  try{
+    hf=new SRC(); hf.lang=langCode(); hf.continuous=true; hf.interimResults=true;
+    hf.onstart=()=>{ hfOn=true; paintMic(); if(mode==='idle') setMode('listening'); };
+    hf.onresult=e=>{ let par=''; for(let i=e.resultIndex;i<e.results.length;i++){ const r=e.results[i]; if(r.isFinal) hfBuf+=r[0].transcript+' '; else par+=r[0].transcript; }
+      if(!cfg.wake) inp.value=(hfBuf+par).trim(); activity(); clearTimeout(hfTimer); hfTimer=setTimeout(()=>{ if(hfBuf.trim()) { try{ hf.stop(); }catch(_){} hfDeliver(); } },1300); };
+    hf.onerror=e=>{ if(e.error==='not-allowed'||e.error==='service-not-allowed'){ hfDenied=true; add('sys','Mikrofon izni yok · tarayıcı ayarlarından izin verip sayfayı yenile'); } };
+    hf.onend=()=>{ hfOn=false; hf=null; paintMic(); if(mode==='listening') { mode='idle'; $('st').textContent=LABEL.idle; $('hs').textContent=LABEL.idle.toLocaleUpperCase('tr-TR'); }
+      if(hfBuf.trim()&&!busy){ clearTimeout(hfTimer); hfDeliver(); } else setTimeout(hfStart,350); };
+    hf.start();
+  }catch(e){ hfOn=false; }
+}
+function hfStop(){ clearTimeout(hfTimer); if(hf){ try{ hf.onend=()=>{ hfOn=false; hf=null; paintMic(); }; hf.abort(); }catch(e){} } hfOn=false; paintMic(); }
+document.addEventListener('visibilitychange',()=>{ if(document.visibilityState==='visible') hfStart(); });
+setInterval(()=>{ if(!hfOn) hfStart(); },5000); // arka planda kapanırsa yeniden dene
+addEventListener('pointerdown',()=>{ unlockAudio(); hfStart(); },{passive:true});
 
 /* ---------- settings ---------- */
 const TABS=[['genel','GENEL'],['paneller','PANELLER'],['ses','SES'],['konusma','KONUŞMA'],['hafiza','HAFIZA'],['hakkinda','HAKKINDA']];
@@ -645,6 +675,8 @@ function renderTab(){
     const qr=row('Görüntü kalitesi','Cihazın ısınıyor ya da kasıyorsa PERFORMANS\'ı seç: halka daha hafif çizilir, dönen halkalar durur.'); qr.classList.add('col2');
     const qs=seg([['high','YÜKSEK KALİTE'],['perf','PERFORMANS']],()=>cfg.quality,v=>{ cfg.quality=v; applyTheme(chipOf()); }); qs.style.marginTop='12px'; qr.appendChild(qs); B.appendChild(qr);
     B.appendChild(row('Mikrofon', dict?'Kapalıyken yalnızca yazarak konuşursun.':'Bu cihazda sayfa içi mikrofon yok; klavyenin dikte tuşunu kullanabilirsin.', sw(()=>cfg.mic,v=>{ cfg.mic=v; applyMic(); })));
+    B.appendChild(row('Eller serbest', SRC?'Mikrofona basmana gerek kalmaz: sürekli dinler, sustuğunda mesajı gönderir. O konuşurken dinlemez.':'Bu tarayıcı sürekli dinlemeyi desteklemiyor; Chrome ya da Safari kullan.', sw(()=>cfg.hands,v=>{ cfg.hands=v; hfPaused=false; applyMic(); })));
+    B.appendChild(row('Uyandırma kelimesi','Açıksa yalnızca adıyla başlayan cümlelere cevap verir: “'+prof.assistant+', saat kaç?” Ortamda başkaları konuşuyorsa aç.', sw(()=>cfg.wake,v=>{ cfg.wake=v; })));
     B.appendChild(row('Kısayollar','/ yaz · Esc kapat · Ctrl+M mikrofon'));
     B.appendChild(row('En baştan başla','Ayarlar, hafıza, notlar ve çip adları silinir; ilk kez kuruluyormuş gibi açılır.', ob('SIFIRLA',(ev)=>{ if(B._confirm){ store.clear(); cfg=JSON.parse(JSON.stringify(DEF)); prof=null; memory=[]; notes=[]; renderNotes(); applyPanels(); setHum(); history=[]; count(); log.innerHTML=''; $('setM').classList.add('hidden'); openSetup(); } else { B._confirm=true; ev.target.textContent='EMİN MİSİN? TEKRAR BAS'; } })));
   }
@@ -740,6 +772,7 @@ try{ speechSynthesis.onvoiceschanged=()=>{ if(!$('setM').classList.contains('hid
       if(listening) setMode('listening'); else { if(mode==='listening') setMode('idle'); if(inp.value.trim()) send(inp.value); } });
   }
   if(prof && !getKey()) setTimeout(()=>{ add('sys','Gemini anahtarı bekleniyor'); openSettings('genel'); },600);
+  setTimeout(hfStart,800);
 })();
 })();
 </script>
