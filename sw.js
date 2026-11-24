@@ -1,14 +1,10 @@
 // Dijital Kütüphanem — çevrimdışı çalışma (service worker)
 // Sürüm yükseltirken: C'yi, index.html'deki DK_VER'i ve version.json'u birlikte değiştir.
-const C='kutuphane-v214';
+const C='kutuphane-v215';
 const ONBELLEK=[
   './','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./config.js','./gizlilik.html',
   './mektup/','./mektup/manifest.webmanifest','./mektup/icon-192.png','./mektup/icon-180.png',
   './defter/','./defter/manifest.webmanifest','./defter/icon-192.png','./defter/icon-180.png',
-  './kamera/','./kamera/manifest.webmanifest','./kamera/icon-192.png','./kamera/icon-180.png',
-  './mantar/','./mantar/manifest.webmanifest','./mantar/icon-192.png','./mantar/icon-180.png',
-  './asistan/','./asistan/manifest.webmanifest','./asistan/icon-192.png','./asistan/icon-180.png',
-  './hediye-24/',
   // Eski adresler (ana ekrandaki eski kısayollar internetsiz de doğru uygulamayı açsın)
   './mektup.html','./defter.html','./kamera.html','./mantar.html','./asistan.html','./hediye-24.html','./calisma.html',
   './masa/','./masa/manifest.webmanifest','./calisma-192.png','./calisma-180.png',

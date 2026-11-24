@@ -4089,13 +4089,42 @@ function mkMerge(inc){if(!inc)return;const tomb=[...new Set([...mkGet(MKK.tomb,[
   try{localStorage.setItem(MKK.tomb,JSON.stringify(tomb));localStorage.setItem(MKK.letters,JSON.stringify(mergeArr(mkGet(MKK.letters,[]),inc.letters)));
     const oz={};for(const k of new Set([...Object.keys(lo||{}),...Object.keys(io)]))if(Array.isArray((lo||{})[k])||Array.isArray(io[k]))oz[k]=mergeArr((lo||{})[k],io[k]);localStorage.setItem(MKK.ozel,JSON.stringify(oz));
     localStorage.setItem(MKK.chars,JSON.stringify(mergeArr(mkGet(MKK.chars,[]),inc.chars)))}catch(e){}}
+/* Yırtık Yaprak (defter/) notları bu tarayıcıda (IndexedDB "yirtik-yaprak") durur; kütüphanenin yedeğine ve Drive eşitlemesine katılır.
+   Son eşitlemedeki hâli (taban) hatırlanır: değişiklik tek cihazdaysa o sürüm alınır (silmeler de taşınır), ikisinde birden varsa notlar birleştirilir. */
+const YP={db:'yirtik-yaprak',pref:'yaprak-pref-v1',base:'dk-yaprak-taban',last:null};
+function ypOpen(create){return new Promise(ok=>{let r;try{r=indexedDB.open(YP.db,1)}catch(e){return ok(null)}
+  r.onupgradeneeded=()=>{if(create)r.result.createObjectStore('kv');else try{r.transaction.abort()}catch(e){}};
+  r.onsuccess=()=>{const d=r.result;if(!d.objectStoreNames.contains('kv')){d.close();ok(null)}else ok(d)};r.onerror=()=>ok(null);r.onblocked=()=>ok(null)})}
+function ypGet(d,k){return new Promise(ok=>{try{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>ok(q.result??null);q.onerror=()=>ok(null)}catch(e){ok(null)}})}
+function ypLsGet(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
+async function ypData(){let notes=null,trash=null;const d=await ypOpen(false);
+  if(d){notes=await ypGet(d,'notes');trash=await ypGet(d,'trash');d.close()}
+  if(!notes)notes=ypLsGet('yaprak-notes');if(!trash)trash=ypLsGet('yaprak-trash');
+  notes=Array.isArray(notes)?notes:[];trash=Array.isArray(trash)?trash:[];
+  const pref=ypLsGet(YP.pref);if(!notes.length&&!trash.length)return (YP.last=null);
+  const x={notes,trash,pref};YP.last=dbkHash(JSON.stringify(x));return x}
+function ypCommit(){if(YP.last)try{localStorage.setItem(YP.base,YP.last)}catch(e){}}
+function ypUnion(a,b){const m=new Map();for(const x of [...(a||[]),...(b||[])]){if(!x||!x.id)continue;const o=m.get(x.id);if(!o||(x.upd||0)>(o.upd||0))m.set(x.id,x)}return [...m.values()]}
+async function ypMerge(inc){if(!inc||!Array.isArray(inc.notes))return;const loc=await ypData(),base=localStorage.getItem(YP.base),hi=dbkHash(JSON.stringify(inc));
+  let out;
+  if(!loc||(base&&YP.last===base))out=inc;                 // bu cihazda değişiklik yok: Drive'daki sürüm
+  else if(hi===YP.last||(base&&hi===base))return;          // Drive'da yeni bir şey yok: buradaki kalır
+  else{                                                    // iki cihazda da değişmiş: birleştir, hiçbir not kaybolmasın
+    const tr=new Map();for(const t of [...(loc.trash||[]),...(inc.trash||[])])if(t&&t.n&&t.n.id){const o=tr.get(t.n.id);if(!o||(t.at||0)>(o.at||0))tr.set(t.n.id,t)}
+    const notes=ypUnion(loc.notes,inc.notes).filter(n=>{const t=tr.get(n.id);return !t||(n.upd||0)>(t.at||0)});const live=new Set(notes.map(n=>n.id));
+    out={notes,trash:[...tr.values()].filter(t=>!live.has(t.n.id)),pref:loc.pref||inc.pref}}
+  const d=await ypOpen(true);
+  if(d){await new Promise(ok=>{try{const t=d.transaction('kv','readwrite'),s=t.objectStore('kv');s.put(out.notes,'notes');s.put(out.trash||[],'trash');t.oncomplete=ok;t.onerror=ok;t.onabort=ok}catch(e){ok()}});d.close()}
+  else try{localStorage.setItem('yaprak-notes',JSON.stringify(out.notes));localStorage.setItem('yaprak-trash',JSON.stringify(out.trash||[]))}catch(e){}
+  if(out.pref)try{localStorage.setItem(YP.pref,JSON.stringify(out.pref))}catch(e){}
+  YP.last=dbkHash(JSON.stringify({notes:out.notes,trash:out.trash||[],pref:out.pref??null}));ypCommit()}
 async function backupData(){const get=async col=>{try{const s_=await st.db.collection(col).get();return s_.docs.map(d=>({id:d.id,...d.data()}))}catch(e){return []}};
-  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),mektup:mkData(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),nfolders:await get('nfolders'),nbooks:await get('nbooks'),npages:await get('npages'),cal:await get('cal'),tasks:await get('tasks'),moods:await get('moods'),habits:await get('habits'),money:await get('money'),lists:await get('lists'),recipes:await get('recipes'),goals:await get('goals'),lifecfg:await get('lifecfg'),weeks:await get('weeks'),worries:await get('worries'),mems:await get('mems'),films:await get('films'),songs:await get('songs'),plists:await get('plists'),cint:await get('cint'),club:await get('club'),acards:await get('acards'),tzch:await get('tzch'),hls:await get('hls'),preds:await get('preds'),bchars:await get('bchars'),chtrash:await get('chtrash'),
+  return {app:'Dijital Kütüphanem',version:1,at:new Date().toISOString(),mektup:mkData(),yaprak:await ypData(),books:st.books,quotes:await get('quotes'),cards:await get('cards'),chars:await get('chars'),subs:await get('subs'),pubs:await get('pubs'),boards:await get('boards'),ideas:await get('ideas'),chapters:await get('chapters'),styles:await get('styles'),scenes:await get('scenes'),rels:await get('rels'),events:await get('events'),lore:await get('lore'),ink:await get('ink'),nfolders:await get('nfolders'),nbooks:await get('nbooks'),npages:await get('npages'),cal:await get('cal'),tasks:await get('tasks'),moods:await get('moods'),habits:await get('habits'),money:await get('money'),lists:await get('lists'),recipes:await get('recipes'),goals:await get('goals'),lifecfg:await get('lifecfg'),weeks:await get('weeks'),worries:await get('worries'),mems:await get('mems'),films:await get('films'),songs:await get('songs'),plists:await get('plists'),cint:await get('cint'),club:await get('club'),acards:await get('acards'),tzch:await get('tzch'),hls:await get('hls'),preds:await get('preds'),bchars:await get('bchars'),chtrash:await get('chtrash'),
     settings:{ui:UI,thesis:TL.thesis,writing:TL.writing,log:st.log,bingo:TL.bingo,journal:TL.journal,widgets:TL.widgets,stickers:{items:STK.items,emblem:STK.emblem}}}}
 function csvBooks(){const H=['Başlık','Yazar','Tür','Raf','Etiketler','Durum','Sayfa','Kaldığı sayfa','Bitirme','Puan','Yıl','Dergi','DOI','Dosya'];
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   return '﻿'+[H.map(q).join(','),...st.books.map(b=>[b.title,b.author,{kitap:'Kitap',pdf:'PDF',roman:'Romanım',makale:'Makale'}[b.kind]||b.kind,b.shelf,(b.tags||[]).join('; '),STATUS_LABEL[b.status]||b.status,b.pages||'',b.currentPage||'',b.finishedAt||'',b.rating||'',b.year||'',b.journal||'',b.doi||'',b.fileName||''].map(q).join(','))].join('\r\n')}
-async function restore(file,quiet){const m=$('bkMsg')||{textContent:''};try{const d=JSON.parse(await file.text());if(d&&d.app==='Mühürlü Mektuplar'&&d.mektup){mkMerge(d.mektup);m.textContent='Mektuplar yedekten yüklendi.';if(!quiet)toast('✉️ Mektuplar yüklendi');return}if(!d||d.app!=='Dijital Kütüphanem')throw 0;let n=0;const DIRTY0=dkDirtyGet();try{if(d.mektup)mkMerge(d.mektup)}catch(e){}
+async function restore(file,quiet){const m=$('bkMsg')||{textContent:''};try{const d=JSON.parse(await file.text());if(d&&d.yaprak)try{await ypMerge(d.yaprak)}catch(e){}if(d&&d.app==='Mühürlü Mektuplar'&&d.mektup){mkMerge(d.mektup);m.textContent='Mektuplar yedekten yüklendi.';if(!quiet)toast('✉️ Mektuplar yüklendi');return}if(!d||d.app!=='Dijital Kütüphanem')throw 0;let n=0;const DIRTY0=dkDirtyGet();try{if(d.mektup)mkMerge(d.mektup)}catch(e){}
   if(d.blobs&&typeof LOCAL!=='undefined'){const ids=Object.keys(d.blobs);let k=0;for(const id of ids){if(!LOCAL.has(id)){const x=d.blobs[id];try{await LOCAL.assets.putId(id,new Blob([b64dec(x.b64)],{type:x.type||'image/jpeg'}))}catch(e){}}if(++k%20===0)m.textContent='Görseller: '+k+'/'+ids.length}}
   for(const [col,arr] of [['books',d.books],['quotes',d.quotes],['cards',d.cards],['chars',d.chars],['subs',d.subs],['pubs',d.pubs],['boards',d.boards],['ideas',d.ideas],['chapters',d.chapters],['styles',d.styles],['scenes',d.scenes],['rels',d.rels],['events',d.events],['lore',d.lore],['ink',d.ink],['nfolders',d.nfolders],['nbooks',d.nbooks],['npages',d.npages],['cal',d.cal],['tasks',d.tasks],['moods',d.moods],['habits',d.habits],['money',d.money],['lists',d.lists],['recipes',d.recipes],['goals',d.goals],['lifecfg',d.lifecfg],['weeks',d.weeks],['worries',d.worries],['mems',d.mems],['films',d.films],['songs',d.songs],['plists',d.plists],['cint',d.cint],['club',d.club],['acards',d.acards],['tzch',d.tzch],['hls',d.hls],['preds',d.preds],['bchars',d.bchars],['chtrash',d.chtrash]]){for(const x of (arr||[])){const {id,...rest}=x;if(!id)continue;if(col==='books'&&typeof LOCAL!=='undefined'){const cur=st.books.find(b=>b.id===id);if(!(rest.assetId&&LOCAL.has(rest.assetId))){if(cur&&cur.assetId&&LOCAL.has(cur.assetId)){Object.assign(rest,{assetId:cur.assetId,parts:cur.parts||[],fileName:cur.fileName||rest.fileName,fileSize:cur.fileSize||rest.fileSize,fileType:cur.fileType||rest.fileType,source:'',driveId:'',driveParts:[],squeezed:!!cur.squeezed,noSqueeze:cur.noSqueeze||0,fileRemoved:false})}else{const did=rest.kind!=='kitap'&&(rest.driveId||urlDriveId(rest.driveUrl));Object.assign(rest,{assetId:'',parts:[],driveParts:did?(rest.driveParts||[]):[],driveId:did||'',source:did?'drive':'',squeezed:false,noSqueeze:0});if(did&&!rest.fileType)rest.fileType=/\.epub$/i.test(rest.fileName||'')?'epub':'pdf'}}if(rest.coverId&&!LOCAL.has(rest.coverId)){if(cur&&cur.coverId&&LOCAL.has(cur.coverId)){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}else if(!rest.coverId&&cur&&cur.coverId){rest.coverId=cur.coverId;rest.autoCover=!!cur.autoCover}}if(quiet&&typeof LOCAL!=='undefined'&&window.__dkPulling){const dd=DIRTY0&&DIRTY0[col+'/'+id],curD=LOCAL.docs()[col+'/'+id];if(dd&&curD){if(dd['*'])continue;for(const k of Object.keys(dd)){if(k in curD)rest[k]=curD[k];else delete rest[k]}}}
       await st.db.collection(col).doc(id).set(rest);n++;if(n%10===0)m.textContent=n+' kayıt yüklendi…'}}
@@ -4176,14 +4205,14 @@ async function driveSync(force){
       const up='https://www.googleapis.com/upload/drive/v3/files';
       const go=i=>gfetch((i?up+'/'+encodeURIComponent(i):up)+'?uploadType=multipart&fields=id,modifiedTime',1,{method:i?'PATCH':'POST',headers:{'Content-Type':'multipart/related; boundary='+b},body});
       let r;try{r=await go(id)}catch(e){if(id&&e&&(e.code==='http_404'||e.code==='http_403')){r=await go('')}else throw e}
-      const j=await r.json();dbkSet('id',j.id||id);dbkSet('synced',j.modifiedTime||new Date().toISOString());dbkSet('hash',h);dkDirtyClear(T0)}
+      const j=await r.json();dbkSet('id',j.id||id);dbkSet('synced',j.modifiedTime||new Date().toISOString());dbkSet('hash',h);dkDirtyClear(T0);ypCommit()}
     dbkSet('at',new Date().toISOString());bkWeekly().catch(()=>{});
     if(pulled){toast('Diğer cihazdaki değişiklikler alındı ☁️');try{render()}catch(e){}}
     try{const m=document.getElementById('dbkMsg');if(m)m.textContent=dbkStatus()}catch(e){}
     dbkChip();try{ssChip()}catch(e){}return true
   }finally{DBK.busy=false;try{window.dkSyncUi&&window.dkSyncUi()}catch(e){}}}
 const driveBackupNow=driveSync;
-if(typeof LOCAL!=='undefined')window.__dk={st:()=>st,driveSync:f=>driveSync(f),restore:t=>restore({text:async()=>t},true),sl:()=>seriesList(),pull:async t=>{DBK.pulling=true;try{await restore({text:async()=>t},true)}finally{DBK.pulling=false}},dirty:()=>dkDirtyGet(),unify:()=>serUnify()};
+if(typeof LOCAL!=='undefined')window.__dk={st:()=>st,driveSync:f=>driveSync(f),restore:t=>restore({text:async()=>t},true),sl:()=>seriesList(),pull:async t=>{DBK.pulling=true;try{await restore({text:async()=>t},true)}finally{DBK.pulling=false}},dirty:()=>dkDirtyGet(),unify:()=>serUnify(),backup:()=>backupData(),yp:{data:()=>ypData(),merge:x=>ypMerge(x),commit:()=>ypCommit()}};
 function dbkStatus(){const a=dbkGet('at');if(!a)return "Henüz Drive ile eşitlenmedi.";const d=new Date(a);return "Son eşitleme: "+d.toLocaleDateString('tr-TR')+' '+d.toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'})}
 async function driveRestoreLatest(){dbkSet('synced','');await driveSync(true);return {modifiedTime:dbkGet('synced')}}
 function dbkChip(){try{window.dkSyncUi&&window.dkSyncUi()}catch(e){}{const c=document.getElementById('dbkChip');if(c)c.remove()}return;if(typeof GAUTH==='undefined'||!GAUTH.configured())return;let c=document.getElementById('dbkChip');const need=!!dbkGet('at')&&!GAUTH.signedIn();
@@ -5942,7 +5971,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v214';
+const DK_VER='v215';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -6576,7 +6605,7 @@ function lfLetters(){let L=[];try{L=JSON.parse(localStorage.getItem('muhurlu-mek
    <h4>Mühürlü Mektuplar</h4>
    <p class="exp muted" style="margin:0">Daktilo sayfasında yaz, her gün yeni bir kurgu al; istersen romanlarındaki karakterler birbirine yazar. Bitince zarfla ve mumla mühürle.</p>
    ${L.length?`<p style="margin:0">Kutunda <b>${L.length}</b> mektup var${unread?`, <b>${unread}</b> tanesi henüz açılmadı`:''}${wait?`, <b>${wait}</b> tanesi açılış gününü bekliyor`:''}.</p>`:''}
-   <a class="btn primary" href="./mektup/" style="justify-self:start;text-decoration:none">Mektup yazmaya geç →</a>    <a class="btn" href="./hediye-24/" style="justify-self:start;text-decoration:none">🎂 24. yaş hediyem: mühürlü mektup, mum ve kavanoz →</a>
+   <a class="btn primary" href="./mektup/" style="justify-self:start;text-decoration:none">Mektup yazmaya geç →</a>
    <p class="exp muted" style="margin:0;font-size:12.5px">Telefonda ayrı bir uygulama gibi de kullanabilirsin: mektup sayfasını açıp “Ana Ekrana Ekle” de.</p></div>`}
 function lfFilm(){const F=LF.films||[],W=F.filter(f=>f.st!=='done').sort((a,b)=>(b.at||'').localeCompare(a.at||'')),D=F.filter(f=>f.st==='done').sort((a,b)=>(b.date||'').localeCompare(a.date||''));
   let R=FILM_REC.filter(r=>!fmHave(r[0]));if(FM.mood==='sakin')R=R.filter(r=>/sakin/.test(r[4]||''));else R=R.filter(r=>r[2]===FM.cat);if(FM.mood!=='sakin'&&FM.cat!=='old'&&FM.hideHeavy)R=R.filter(r=>!/agir/.test(r[4]||''));
