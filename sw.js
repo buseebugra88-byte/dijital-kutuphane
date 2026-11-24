@@ -1,6 +1,6 @@
 // Dijital Kütüphanem — çevrimdışı çalışma (service worker)
 // Sürüm yükseltirken: C'yi, index.html'deki DK_VER'i ve version.json'u birlikte değiştir.
-const C='kutuphane-v216';
+const C='kutuphane-v217';
 const ONBELLEK=[
   './','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./config.js','./gizlilik.html',
   './mektup/','./mektup/manifest.webmanifest','./mektup/icon-192.png','./mektup/icon-180.png',
@@ -8,7 +8,11 @@ const ONBELLEK=[
   // Eski adresler (ana ekrandaki eski kısayollar internetsiz de doğru uygulamayı açsın)
   './mektup.html','./defter.html','./kamera.html','./mantar.html','./asistan.html','./hediye-24.html','./calisma.html',
   './masa/','./masa/manifest.webmanifest','./calisma-192.png','./calisma-180.png',
-  './yazar/','./yazar/manifest.webmanifest','./yazar-192.png','./yazar-180.png'
+  './yazar/','./yazar/manifest.webmanifest','./yazar-192.png','./yazar-180.png',
+  // PDF Atölyem (OCR motoru ve dil dosyaları ilk kullanımda önbelleğe girer)
+  './pdf/','./pdf/manifest.webmanifest','./pdf/icon-192.png','./pdf/icon-180.png','./pdf/style.css','./pdf/core.js','./pdf/viewer.js','./pdf/tools.js',
+  './pdf/lib/pdf.min.js','./pdf/lib/pdf.worker.min.js','./pdf/lib/pdf-lib.min.js','./pdf/lib/fontkit.umd.min.js','./pdf/lib/Sortable.min.js',
+  './pdf/lib/fonts/LiberationSans-Regular.ttf','./pdf/lib/fonts/LiberationSans-Bold.ttf'
 ];
 // Her dosya ayrı eklenir: biri eksik olsa bile geri kalanı önbelleğe girer.
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>Promise.all(ONBELLEK.map(u=>c.add(new Request(u,{cache:'reload'})).catch(()=>{})))).then(()=>self.skipWaiting()))});
@@ -22,6 +26,8 @@ self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET')return;
   if(u.origin===location.origin){
     // Kütüphanenin dışındaki depolar (ör. /spss-tez-rehberi/) bu önbelleğe karışmasın.
     if(!u.pathname.startsWith(new URL('./',self.registration.scope).pathname))return;
+    // PDF Atölyem kütüphaneleri değişmez ve büyüktür (OCR motoru, dil dosyaları): önce önbellekten
+    if(u.pathname.includes('/pdf/lib/')){e.respondWith(caches.match(r,{ignoreSearch:true}).then(m=>m||fetch(r).then(res=>kaydet(r,res))));return}
     const taze=r.mode==='navigate'||u.pathname.endsWith('/')||/\.(html|js|json|webmanifest)$/.test(u.pathname);
     e.respondWith((taze?fetch(r.url,{cache:'no-store',credentials:'same-origin'}):fetch(r)).then(res=>kaydet(r,res)).catch(()=>yedek(r)));return}
   if(/cdnjs\.cloudflare\.com|cdn\.jsdelivr\.net|unpkg\.com|fonts\.(googleapis|gstatic)\.com/.test(u.host)){
