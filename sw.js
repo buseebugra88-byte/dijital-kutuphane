@@ -9,6 +9,8 @@ const ONBELLEK=[
   './mantar/','./mantar/manifest.webmanifest','./mantar/icon-192.png','./mantar/icon-180.png',
   './asistan/','./asistan/manifest.webmanifest','./asistan/icon-192.png','./asistan/icon-180.png',
   './hediye-24/',
+  // Eski adresler (ana ekrandaki eski kısayollar internetsiz de doğru uygulamayı açsın)
+  './mektup.html','./defter.html','./kamera.html','./mantar.html','./asistan.html','./hediye-24.html','./calisma.html',
   './masa/','./masa/manifest.webmanifest','./calisma-192.png','./calisma-180.png',
   './yazar/','./yazar/manifest.webmanifest','./yazar-192.png','./yazar-180.png'
 ];
