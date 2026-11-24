@@ -176,3 +176,21 @@ html.app-hatira button.primary { background: var(--pro-gold-bright); color: #111
 html.app-yazi { --bg: var(--pro-bg); --ink: var(--pro-ink); --mute: var(--pro-muted); --acc: var(--pro-accent); }
 html.app-yazi body { font: 16px/1.65 var(--pro-font); -webkit-font-smoothing: antialiased; }
 html.app-yazi :is(h1, h2) { font-weight: 650; letter-spacing: -.01em; }
+
+/* Görünüm paneli: başlıklı, sade gruplar */
+.tgrup { border: 1px solid var(--line); border-radius: 12px; padding: 0; margin: 10px 0 0; background: var(--paper); }
+.tgrup > summary { list-style: none; cursor: pointer; display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 12px 14px; align-items: center; }
+.tgrup > summary::-webkit-details-marker { display: none; }
+.tgrup > summary b { font-weight: 600; font-size: 14.5px; color: var(--ink); }
+.tgrup > summary .hint { grid-column: 1; font-size: 12.5px; color: var(--muted); }
+.tgrup > summary::after { content: "›"; grid-column: 2; grid-row: 1 / span 2; font-size: 20px; color: var(--muted); transition: transform .15s; }
+.tgrup[open] > summary::after { transform: rotate(90deg); }
+.tgrup[open] > summary { border-bottom: 1px solid var(--line); }
+.tgrup > :not(summary) { padding: 4px 14px 0; }
+.tgrup > :last-child:not(summary) { padding-bottom: 14px; }
+.tgrup .eye { border: 0; padding: 0; background: none; box-shadow: none; }
+.tgrup .eye-h { display: none; }
+:root[data-preset="pro"] #tSusGrup { opacity: .85; }
+:root[data-preset="pro"] .swatches .sw[aria-pressed="true"] { border-color: var(--pro-navy); box-shadow: 0 0 0 1px var(--pro-navy); }
+details.tmore.tgrup > summary { padding: 12px 14px; color: var(--ink); }
+details.tmore.tgrup > summary::before, details.tmore.tgrup[open] > summary::before { content: none; display: none; }
