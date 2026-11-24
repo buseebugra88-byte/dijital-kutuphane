@@ -21,5 +21,16 @@ Bu depo sadece uygulamanın kodunu içerir, kitapların ve notların burada değ
 - **Dijital Kütüphanem bağlantısı:** PDF Atölyem'in ana ekranında kütüphanedeki PDF kitaplar listelenir; kütüphanedeki okuyucuda 🛠 düğmesi kitabı PDF Atölyem'de açar (kaldığın sayfadan). "Kütüphaneme ekle" / "Kütüphanemdeki kitabı güncelle" dosyayı kütüphanenin kendi ekleme formuna bırakır (`pdf-atolyem` veritabanında `kv/handoff`, kütüphane `?pdfa=1` ile açılınca forma yerleştirir); kayıt kütüphanenin normal yoluyla yapıldığı için Drive eşitlemesi bozulmaz. PDF Atölyem kütüphane verisini yalnızca okur.
 - **Kütüphaneler** `pdf/lib/` içinde durur, internet gerekmez: pdf.js 3.11.174, pdf-lib 1.17.1, @pdf-lib/fontkit, SortableJS, tesseract.js 5 (tur ve eng dil verisi), Liberation yazı tipleri (Sans, Serif, Mono). OCR motoru büyük olduğu için önceden önbelleğe alınmaz, ilk kullanımda alınır.
 
+## Veri Analisti
+
+`veri/`: veri analizi uygulaması. Kütüphanede Uygulamalarım'dan açılır; ayrı olarak ana ekrana da eklenebilir. Python sunucusu gerektirmez, her şey tarayıcının içinde çalışır.
+
+- **Yükleme:** CSV/TSV (UTF-8 ya da Türkçe Windows kodlaması, `,` `;` sekme `|` ayırıcıları kendiliğinden bulunur), Excel (her sayfa ayrı tablo), JSON, Parquet.
+- **Otomatik profil:** sütun tipi, boş ve aykırı değerler, dağılım, en sık değerler, korelasyon. Tek tıkla düzeltme önerileri: tekrar eden satırlar, metin olarak kaydedilmiş tarih ve sayılar (1.234,56 dahil), boşluklar.
+- **Soru sor:** Türkçe soru Gemini ile DuckDB SQL'ine çevrilir, tarayıcıda çalıştırılır, grafik çizilir ve yorumlanır. Model yoğunsa sıradaki modele geçilir. Gemini'ye yalnızca şema, birkaç örnek satır ve sonucun ilk satırları gider. Anahtar ⚙︎ Ayarlar'dan girilir ve yalnızca o cihazda saklanır.
+- **Panel:** sabitlenen sorular her açılışta güncel veriyle yeniden çalışır.
+- **Saklama:** veriler IndexedDB'de (`veri-analisti`) Arrow biçiminde tutulur. Ayarlar → Yedek al / Yedekten yükle ile tek dosyaya alınıp başka cihaza taşınabilir.
+- **Kütüphaneler** `veri/lib/` içinde durur: DuckDB-WASM 1.32.0 (Arrow ile birlikte `duckdb.min.js` olarak paketlendi), SheetJS 0.18.5, Chart.js 4, marked, DOMPurify. Not: bu DuckDB-WASM sürümünde `COPY ... TO parquet` çöküyor; bu yüzden kayıt Arrow IPC ile yapılır.
+
 ## Sürüm yükseltme (geliştirici notu)
 index.html değiştiğinde üçü birlikte yükseltilir: `index.html` içindeki `DK_VER`, `sw.js` içindeki `kutuphane-vN` ve `version.json` (`{"v":"vN"}`). Uygulamadaki "Yeni sürüm hazır" uyarısı yalnızca `version.json`a bakar; sadece `mektup.html` gibi diğer sayfalar değiştiyse `sw.js` yükseltmek yeterli, `version.json`a dokunma.

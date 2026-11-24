@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Veri Analisti</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png?v=1"><link rel="apple-touch-icon" href="icon-180.png?v=1">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Veri Analisti"><meta name="theme-color" content="#1d2a42">
+<link rel="stylesheet" href="style.css?v=1">
+<script src="lib/chart.umd.min.js"></script>
+<script src="lib/marked.min.js"></script>
+<script src="lib/purify.min.js"></script>
+<script src="lib/xlsx.full.min.js"></script>
+<script src="lib/duckdb.min.js"></script>
+</head>
+<body>
+<header>
+  <a class="geri" href="../index.html" title="Kütüphaneme dön">‹ Kütüphanem</a>
+  <h1><img src="icon-192.png?v=1" alt="" class="logo">Veri Analisti</h1>
+  <nav id="menu">
+    <button data-sayfa="veriler" class="aktif">Veri kümeleri</button>
+    <button data-sayfa="sor">Soru sor</button>
+    <button data-sayfa="panel">Panel</button>
+  </nav>
+  <button class="btn kucuk ayar-btn" id="ayarlar-btn" title="Ayarlar ve yedek">⚙︎ Ayarlar</button>
+</header>
+
+<main>
+  <div class="kart uyari-kart" id="anahtar-uyari" hidden>
+    <b>Soru sormak için Gemini anahtarı gerekiyor.</b> Veri yükleme, profil ve düzeltmeler anahtarsız da çalışır.
+    <button class="btn kucuk">Anahtar ekle</button>
+  </div>
+  <div class="kart etiket yukleniyor" id="motor-durum" hidden>Veri motoru hazırlanıyor (ilk açılışta biraz sürebilir)</div>
+
+  <!-- VERİ KÜMELERİ -->
+  <section class="sayfa aktif" id="veriler">
+    <div class="satir" style="justify-content:space-between">
+      <div><h2>Veri kümeleri</h2><p class="alt">CSV, Excel, JSON ya da Parquet yükle; otomatik profil ve kalite raporu çıkarılır. Dosyaların bu cihazda kalır.</p></div>
+      <label class="btn ana" id="yukle-btn">Dosya yükle<input type="file" id="veri-dosya" accept=".csv,.tsv,.txt,.xlsx,.xlsm,.xls,.ods,.json,.parquet" hidden></label>
+    </div>
+    <div class="kart" id="veri-listesi"></div>
+    <div id="veri-detay"></div>
+  </section>
+
+  <!-- SORU SOR -->
+  <section class="sayfa" id="sor">
+    <h2>Verine soru sor</h2>
+    <p class="alt">Türkçe sor; SQL yazılır, çalıştırılır, grafik çizilir ve sonuç yorumlanır. Sorgu ve varsayımlar her zaman görünür.</p>
+    <div class="kart">
+      <div class="satir" style="margin-bottom:10px">
+        <select id="sor-veri" class="esnek"></select>
+        <button class="btn kucuk" id="sor-temizle">Yeni konu</button>
+      </div>
+      <form id="sor-form" class="satir">
+        <input id="sor-girdi" class="esnek" placeholder="Örn: Hangi kategoride ortalama sipariş tutarı en yüksek?" autocomplete="off">
+        <button class="btn ana">Sor</button>
+      </form>
+      <div id="sor-oneriler" class="satir" style="margin-top:10px"></div>
+    </div>
+    <div id="cevaplar"></div>
+    <div class="kart"><h3>Geçmiş sorular</h3><div id="gecmis"></div></div>
+  </section>
+
+  <!-- PANEL -->
+  <section class="sayfa" id="panel">
+    <div class="satir" style="justify-content:space-between">
+      <div><h2>Panel</h2><p class="alt">Sabitlediğin sorular her açılışta güncel veriyle yeniden çalışır.</p></div>
+      <button class="btn" id="panel-yenile">Yenile</button>
+    </div>
+    <div class="iki" id="panel-alan"></div>
+  </section>
+</main>
+
+<dialog id="ayarlar">
+  <h3>Ayarlar</h3>
+  <label class="etiket" for="ayar-anahtar">Gemini API anahtarı</label>
+  <input id="ayar-anahtar" type="password" autocomplete="off" spellcheck="false" placeholder="AIza…">
+  <p class="etiket">Ücretsiz anahtarı <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>'dan alabilirsin.
+    Anahtar yalnızca bu cihazda saklanır. Soru sorduğunda Gemini'ye tablonun şeması, birkaç örnek satır ve sonucun ilk satırları gönderilir; dosyanın tamamı gönderilmez.</p>
+  <label class="etiket" for="ayar-model">Önce denenecek model</label>
+  <select id="ayar-model"></select>
+  <p class="etiket">Bu model yoğunsa ya da kotası dolduysa sıradaki modele kendiliğinden geçilir.</p>
+  <div class="satir" style="justify-content:flex-end;margin-top:8px">
+    <button class="btn" id="ayar-kapat">Kapat</button>
+    <button class="btn ana" id="ayar-kaydet">Kaydet</button>
+  </div>
+  <span id="ayar-durum" class="etiket"></span>
+  <hr>
+  <h3>Yedek</h3>
+  <p class="etiket">Veriler bu tarayıcıda saklanır. Başka cihaza taşımak ya da güvene almak için ara ara yedek al.</p>
+  <div class="satir">
+    <button class="btn" id="yedek-al">Yedek al</button>
+    <label class="btn">Yedekten yükle<input type="file" id="yedek-dosya" accept=".json,application/json" hidden></label>
+  </div>
+</dialog>
+
+<div id="bildirim"></div>
+<script src="motor.js?v=1"></script>
+<script src="app.js?v=1"></script>
+<script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js", { scope: "../" }).catch(() => {});</script>
+</body>
+</html>
