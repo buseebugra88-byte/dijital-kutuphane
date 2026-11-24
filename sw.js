@@ -1,6 +1,6 @@
 // Dijital Kütüphanem — çevrimdışı çalışma (service worker)
 // Sürüm yükseltirken: C'yi, index.html'deki DK_VER'i ve version.json'u birlikte değiştir.
-const C='kutuphane-v217';
+const C='kutuphane-v218';
 const ONBELLEK=[
   './','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./config.js','./gizlilik.html',
   './mektup/','./mektup/manifest.webmanifest','./mektup/icon-192.png','./mektup/icon-180.png',
@@ -10,7 +10,7 @@ const ONBELLEK=[
   './masa/','./masa/manifest.webmanifest','./calisma-192.png','./calisma-180.png',
   './yazar/','./yazar/manifest.webmanifest','./yazar-192.png','./yazar-180.png',
   // PDF Atölyem (OCR motoru ve dil dosyaları ilk kullanımda önbelleğe girer)
-  './pdf/','./pdf/manifest.webmanifest','./pdf/icon-192.png','./pdf/icon-180.png','./pdf/style.css','./pdf/core.js','./pdf/viewer.js','./pdf/tools.js',
+  './pdf/','./pdf/manifest.webmanifest','./pdf/icon-192.png','./pdf/icon-180.png','./pdf/style.css','./pdf/core.js','./pdf/viewer.js','./pdf/textedit.js','./pdf/tools.js',
   './pdf/lib/pdf.min.js','./pdf/lib/pdf.worker.min.js','./pdf/lib/pdf-lib.min.js','./pdf/lib/fontkit.umd.min.js','./pdf/lib/Sortable.min.js',
   './pdf/lib/fonts/LiberationSans-Regular.ttf','./pdf/lib/fonts/LiberationSans-Bold.ttf'
 ];

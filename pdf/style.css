@@ -211,3 +211,27 @@ kbd{font:11px ui-monospace,Menlo,monospace;background:#f0f1f4;border:1px solid v
   .hide-s{display:none!important}
 }
 @media print{.top,.tbar2,.side,.searchbox{display:none!important}.viewer{position:static}.main{overflow:visible;background:#fff}}
+
+/* Metin düzenleme: önizleme ve dışa aktarma aynı yazı tiplerini kullanır */
+@font-face{font-family:PASans;src:url(lib/fonts/LiberationSans-Regular.ttf) format('truetype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:PASans;src:url(lib/fonts/LiberationSans-Bold.ttf) format('truetype');font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:PASans;src:url(lib/fonts/LiberationSans-Italic.ttf) format('truetype');font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:PASans;src:url(lib/fonts/LiberationSans-BoldItalic.ttf) format('truetype');font-weight:700;font-style:italic;font-display:swap}
+@font-face{font-family:PASerif;src:url(lib/fonts/LiberationSerif-Regular.ttf) format('truetype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:PASerif;src:url(lib/fonts/LiberationSerif-Bold.ttf) format('truetype');font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:PASerif;src:url(lib/fonts/LiberationSerif-Italic.ttf) format('truetype');font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:PASerif;src:url(lib/fonts/LiberationSerif-BoldItalic.ttf) format('truetype');font-weight:700;font-style:italic;font-display:swap}
+@font-face{font-family:PAMono;src:url(lib/fonts/LiberationMono-Regular.ttf) format('truetype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:PAMono;src:url(lib/fonts/LiberationMono-Bold.ttf) format('truetype');font-weight:700;font-style:normal;font-display:swap}
+/* Metni düzenle aracı */
+.main.etext svg.ov{pointer-events:all;cursor:text}
+.main.etext .textLayer{pointer-events:none}
+svg.ov .ethov{fill:rgba(51,82,214,.07);stroke:#3352d6;stroke-width:1;vector-effect:non-scaling-stroke;pointer-events:none}
+.etbox{position:absolute;z-index:21;white-space:pre;outline:1.5px solid var(--ac);outline-offset:1px;box-sizing:border-box;padding:0 0 0 .6px;overflow:visible;cursor:text;min-height:4px}
+.ettool{position:absolute;z-index:22;display:flex;align-items:center;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:9px;box-shadow:var(--sh2);padding:4px;white-space:nowrap;font-size:12.5px}
+.ettool select,.ettool input[type=number]{height:28px;border:1px solid var(--line2);border-radius:6px;background:var(--panel)}
+.ettool input[type=number]{width:58px;padding:0 4px}
+.ettool input[type=color]{width:28px;height:28px;border:1px solid var(--line2);border-radius:6px;padding:1px;background:var(--panel)}
+.ettool button{height:28px;min-width:28px;border:1px solid var(--line2);border-radius:6px;background:var(--panel);padding:0 8px}
+.ettool button.on{background:var(--acbg);border-color:#c9d3f7;color:var(--ac)}
+.ettool button.pri{background:var(--ac);border-color:var(--ac);color:#fff}

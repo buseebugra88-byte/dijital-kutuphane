@@ -49,9 +49,13 @@ async function pdflib(){if(!window.PDFLib)await loadScript(LIB+'pdf-lib.min.js')
 async function getFontkit(){if(!window.fontkit)await loadScript(LIB+"fontkit.umd.min.js");return window.fontkit}
 async function sortable(){if(!window.Sortable)await loadScript(LIB+'Sortable.min.js');return window.Sortable}
 const _fontBytes={};
-async function fontBytes(bold){const k=bold?'Bold':'Regular';return _fontBytes[k]||(_fontBytes[k]=fetch(LIB+'fonts/LiberationSans-'+k+'.ttf').then(r=>r.arrayBuffer()))}
-// Türkçe karakterleri destekleyen yazı tipini belgeye göm
-async function embedFont(doc,bold){const fk=await getFontkit();doc.registerFontkit(fk);return doc.embedFont(await fontBytes(bold),{subset:true})}
+// family: sans | serif | mono
+function fontFile(family='sans',bold,italic){const fam={sans:'Sans',serif:'Serif',mono:'Mono'}[family]||'Sans';
+  let v=bold&&italic?'BoldItalic':bold?'Bold':italic?'Italic':'Regular';if(fam==='Mono'&&italic)v=bold?'Bold':'Regular';return `Liberation${fam}-${v}`}
+async function fontBytes(bold,family,italic){const k=fontFile(family,bold,italic);return _fontBytes[k]||(_fontBytes[k]=fetch(LIB+'fonts/'+k+'.ttf').then(r=>{if(!r.ok)throw new Error('Yazı tipi yüklenemedi');return r.arrayBuffer()}))}
+// Türkçe karakterleri destekleyen yazı tipini belgeye göm (belge başına önbellekli)
+async function embedFont(doc,bold,family,italic){const fk=await getFontkit();doc.registerFontkit(fk);const k=fontFile(family,bold,italic);doc.__fonts=doc.__fonts||{};
+  return doc.__fonts[k]||(doc.__fonts[k]=doc.embedFont(await fontBytes(bold,family,italic),{subset:true}))}
 async function openPdf(bytes,password){const L=await pdfjs();
   const task=L.getDocument({data:bytes.slice?bytes.slice(0):bytes,password,cMapUrl:LIB+'cmaps/',cMapPacked:true,standardFontDataUrl:LIB+'standard_fonts/',isEvalSupported:false});
   return task.promise}

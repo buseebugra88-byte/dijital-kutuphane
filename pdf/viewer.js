@@ -1,11 +1,11 @@
 // PDF Atölyem — okuyucu ve işaretleme katmanı
 'use strict';
 const COLORS=['#ffd400','#7ee36d','#5ac8fa','#ff8fb1','#c39bff','#ff6b3d','#e53935','#1e63d6','#1d2330','#ffffff'];
-const TOOLS=[['sel','Seç ve taşı (V)','sel'],['hl','Vurgula (H)','hl'],['ul','Altını çiz (U)','ul'],['st','Üstünü çiz (S)','st'],'|',
+const TOOLS=[['sel','Seç ve taşı (V)','sel'],['edittext','Metni düzenle (M)','edit'],['hl','Vurgula (H)','hl'],['ul','Altını çiz (U)','ul'],['st','Üstünü çiz (S)','st'],'|',
   ['pen','Kalem (P)','pen'],['rect','Dikdörtgen (R)','rect'],['ell','Elips (O)','ell'],['line','Çizgi (L)','line'],['arrow','Ok (A)','arrow'],'|',
   ['text','Metin kutusu (T)','text'],['note','Yapışkan not (N)','note'],['sign','İmza ekle','sign'],['image','Görsel ekle','img'],['stamp','Damga','stamp'],'|',['erase','Silgi (E)','erase']];
-const KEYS={v:'sel',h:'hl',u:'ul',s:'st',p:'pen',r:'rect',o:'ell',l:'line',a:'arrow',t:'text',n:'note',e:'erase'};
-const TYPE_TR={highlight:'Vurgu',underline:'Altı çizili',strike:'Üstü çizili',ink:'Kalem',rect:'Dikdörtgen',ell:'Elips',line:'Çizgi',arrow:'Ok',text:'Metin',note:'Not',img:'Görsel'};
+const KEYS={m:'edittext',v:'sel',h:'hl',u:'ul',s:'st',p:'pen',r:'rect',o:'ell',l:'line',a:'arrow',t:'text',n:'note',e:'erase'};
+const TYPE_TR={etext:'Düzenlenen metin',highlight:'Vurgu',underline:'Altı çizili',strike:'Üstü çizili',ink:'Kalem',rect:'Dikdörtgen',ell:'Elips',line:'Çizgi',arrow:'Ok',text:'Metin',note:'Not',img:'Görsel'};
 const hexRgb=h=>{const n=parseInt(h.slice(1),16);return[(n>>16&255)/255,(n>>8&255)/255,(n&255)/255]};
 
 const V={
@@ -97,7 +97,7 @@ const V={
     m.addEventListener('wheel',e=>{if(e.ctrlKey||e.metaKey){e.preventDefault();this.zoom(s.scale*(e.deltaY<0?1.1:1/1.1),e)}},{passive:false});
     this._kd=e=>this.key(e);document.addEventListener('keydown',this._kd);
     this._rs=()=>{if(s.fit)this.applyFit()};window.addEventListener('resize',this._rs);
-    this.bindPointer();this.setTool('sel');this.markColor();this.histBtns();
+    this.bindPointer();this.etBind();this.setTool('sel');this.markColor();this.histBtns();
   },
   prefs(){const s=this.st;DB.put('kv',{fit:s.fit,two:s.two,theme:s.theme,tc:s.tc,width:s.width,font:s.font,side:s.side},'viewer')},
   markColor(){$$('#vCols .sw').forEach(w=>w.classList.toggle('on',w.dataset.c===this.st.color))},
@@ -105,7 +105,7 @@ const V={
     if(t==='sign')return this.signDlg();if(t==='image')return this.imageDlg();if(t==='stamp')return this.stampDlg();
     s.tool=t;this.pick(null);$$('#vBar [data-tool]').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
     const m=$('#vMain');m.classList.remove('draw','sel','erase');
-    if(['pen','rect','ell','line','arrow','text','note','place'].includes(t))m.classList.add('draw');else if(t==='erase')m.classList.add('erase');else if(t==='sel')m.classList.add('sel');
+    if(['pen','rect','ell','line','arrow','text','note','place'].includes(t))m.classList.add('draw');else if(t==='erase')m.classList.add('erase');else if(t==='edittext'){m.classList.add('etext');this.etPrepare()}else if(t==='sel')m.classList.add('sel');
     // Her araç kendi rengini hatırlar
     const def={hl:'#ffd400',ul:'#1e63d6',st:'#e53935',pen:'#e53935',rect:'#e53935',ell:'#e53935',line:'#e53935',arrow:'#e53935',text:'#1d2330',note:'#ffd400'}[t];
     if(def){s.color=s.tc[t]||def;this.markColor()}
@@ -191,6 +191,7 @@ const V={
         return `<g ${id}><line x1="${it.x1}" y1="${it.y1}" x2="${it.x2}" y2="${it.y2}" stroke="transparent" stroke-width="${it.width+10}"/><line x1="${it.x1}" y1="${it.y1}" x2="${it.x2}" y2="${it.y2}" stroke="${c}" stroke-width="${it.width}" stroke-linecap="round" stroke-opacity="${op}"/>${h}</g>`}
       case'text':{const lines=String(it.text).split('\n');return `<g ${id}><rect x="${it.x}" y="${it.y}" width="${it.w}" height="${it.h}" fill="${it.bg||'transparent'}"/><text x="${it.x}" y="${it.y}" font-family="Liberation Sans, Arial, Helvetica, sans-serif" font-size="${it.size}" fill="${c}">${lines.map((l,k)=>`<tspan x="${it.x+2}" y="${it.y+2+it.size*(.88+k*1.2)}">${esc(l)||' '}</tspan>`).join('')}</text></g>`}
       case'note':return `<g ${id}><path d="M${it.x},${it.y}h18v13l-5,5h-13z" fill="${c}" stroke="rgba(0,0,0,.35)" stroke-width=".8"/><path d="M${it.x+13},${it.y+18}v-5h5" fill="none" stroke="rgba(0,0,0,.35)" stroke-width=".8"/><path d="M${it.x+4},${it.y+6}h10M${it.x+4},${it.y+10}h10M${it.x+4},${it.y+14}h6" stroke="rgba(0,0,0,.45)" stroke-width="1"/></g>`;
+      case'etext':return this.etSvg(it,id);
       case'img':return `<g ${id}><image href="${it.src}" x="${it.x}" y="${it.y}" width="${it.w}" height="${it.h}" preserveAspectRatio="none"/><rect x="${it.x}" y="${it.y}" width="${it.w}" height="${it.h}" fill="transparent"/></g>`;
     }return''},
   pathD(p){if(!p.length)return'';if(p.length<3)return'M'+p.map(q=>q.join(',')).join('L')+(p.length===1?'l.1,0':'');let d=`M${p[0][0]},${p[0][1]}`;
@@ -213,7 +214,7 @@ const V={
   dirty(){this.histBtns();this.annList();clearTimeout(this._sv);this._sv=setTimeout(()=>this.saveNow(),500)},
   saveNow(){const s=this.st;if(!s)return;DB.put('ann',s.items,s.id);s.rec.annCount=s.items.length;Docs.update(s.rec)},
   move(it,dx,dy){switch(it.type){case'highlight':case'underline':case'strike':it.rects.forEach(r=>{r[0]+=dx;r[1]+=dy});break;case'ink':it.pts.forEach(p=>{p[0]+=dx;p[1]+=dy});break;
-    case'line':case'arrow':it.x1+=dx;it.x2+=dx;it.y1+=dy;it.y2+=dy;break;default:it.x+=dx;it.y+=dy}},
+    case'line':case'arrow':it.x1+=dx;it.x2+=dx;it.y1+=dy;it.y2+=dy;break;default:it.x+=dx;it.y+=dy;if(it.base!=null)it.base+=dy}},
   measureText(it){const c=this._mc||(this._mc=document.createElement('canvas').getContext('2d'));c.font=`${it.size}px "Liberation Sans", Arial, Helvetica, sans-serif`;
     const lines=String(it.text).split('\n');it.w=Math.max(20,...lines.map(l=>c.measureText(l).width))+6;it.h=it.size*(lines.length*1.2)+4},
 
@@ -226,6 +227,7 @@ const V={
         if(rs){const it=this.item(rs.dataset.id);const sv=rs.closest('svg');drag={k:'resize',it,svg:sv,start:this.ptIn(e,sv),orig:{w:it.w,h:it.h,size:it.size},snap:JSON.stringify(s.items)};e.preventDefault();return}
         if(a){const it=this.item(a.dataset.id);const sv=a.closest('svg');this.pick(it.id);drag={k:'move',it,svg:sv,last:this.ptIn(e,sv),moved:false,snap:JSON.stringify(s.items)};e.preventDefault();m.setPointerCapture(e.pointerId);return}
         if(s.picked)this.pick(null);return}
+      if(t==='edittext'){this.etDown(e);return}
       if(t==='erase'){const a=e.target.closest('.a');if(a)this.remove(a.dataset.id);drag={k:'erase'};return}
       if(['hl','ul','st'].includes(t)&&pageEl){const tl=$('.textLayer',pageEl);if(tl.classList.contains('empty')||!tl.children.length){const sv=$('svg.ov',pageEl);drag={k:'area',svg:sv,p:+sv.dataset.p,a:this.ptIn(e,sv)};e.preventDefault()}return}
       if(!svg)return;const p=+svg.dataset.p;const pt=this.ptIn(e,svg);
@@ -256,7 +258,7 @@ const V={
       if(d.k==='line'||d.k==='arrow'){if(Math.hypot(b[0]-a[0],b[1]-a[1])<3)return;this.add({...base,type:d.k,x1:a[0],y1:a[1],x2:b[0],y2:b[1]})}};
     m.addEventListener('pointerup',up);m.addEventListener('pointercancel',up);
     m.addEventListener('dblclick',e=>{const a=e.target.closest('.a');if(!a||s.tool!=='sel')return;const it=this.item(a.dataset.id);
-      if(it.type==='text')this.editText(it);else this.notePop(it)});
+      if(it.type==='text')this.editText(it);else if(it.type==='etext')this.etEdit(it);else this.notePop(it)});
     // Metin seçimiyle vurgulama
     document.addEventListener('selectionchange',this._sc=()=>{$$('.textLayer.selecting').forEach(t=>t.classList.remove('selecting'));const sel=getSelection();if(sel.rangeCount){const n=sel.anchorNode;const tl=n&&(n.nodeType===1?n:n.parentElement)?.closest?.('.textLayer');tl&&tl.classList.add('selecting')}});
     m.addEventListener('pointerup',()=>{if(['hl','ul','st'].includes(s.tool))setTimeout(()=>this.fromSelection(),0)});
@@ -415,6 +417,9 @@ const V={
     const doc=await L.PDFDocument.load(s.bytes,{ignoreEncryption:true});if(mode==='none'||!s.items.length)return doc.save();
     let font=null;const needFont=s.items.some(i=>i.type==='text');if(needFont)font=await embedFont(doc);
     const pages=doc.getPages();const imgCache={};const ctx=doc.context;
+    // Düzenlenen yazılar: önce eskilerini sayfa içeriğinden sil (çizimlerden önce yapılmalı)
+    const etPages={};s.items.forEach(i=>{delete i._stripped;if(i.type==='etext')(etPages[i.page]=etPages[i.page]||[]).push(i)});
+    for(const p in etPages){try{await this.etStrip(doc,+p,etPages[p],await this.getP(+p))}catch(e){console.warn('Eski yazı silinemedi, üstü kapatılacak',e)}}
     for(const it of s.items){const P=await this.getP(it.page);const pg=pages[it.page];if(!pg)continue;const vp=P.vp1;const R=(pg.getRotation().angle%360+360)%360;
       const cv=(x,y)=>vp.convertToPdfPoint(x,y);const col=rgb(...hexRgb(it.color||'#000000'));
       const svgPath=(pts,closed)=>pts.map((p,k)=>{const q=cv(p[0],p[1]);return(k?'L':'M')+q[0].toFixed(2)+','+(-q[1]).toFixed(2)}).join('')+(closed?'Z':'');
@@ -427,6 +432,8 @@ const V={
         if(it.comment||it.text)base.Contents=str(it.comment?(it.text?it.text+'\n\n'+it.comment:it.comment):it.text);const ref=ctx.register(ctx.obj({...base,...d}));pg.node.addAnnot(ref);return ref};
       // Notlar her iki modda da gerçek "yapışkan not" olarak kalır (içerikleri kaybolmasın)
       if(it.type==='note'){const q=cv(it.x,it.y);annot({Subtype:'Text',Rect:[q[0],q[1]-20,q[0]+20,q[1]],Name:'Comment',Open:false,Contents:str(it.text||'')});continue}
+      // Düzenlenen metin her iki modda da sayfaya yazılır
+      if(it.type==='etext'){await this.etDraw(doc,pg,it,cv,R);continue}
       if(it.type==='img'){const key=it.src.slice(0,64)+it.src.length;let im=imgCache[key];if(!im){const bytes=dataUrlBytes(it.src);im=imgCache[key]=/^data:image\/png/.test(it.src)?await doc.embedPng(bytes):await doc.embedJpg(bytes)}
         const o=cv(it.x,it.y+it.h);pg.drawImage(im,{x:o[0],y:o[1],width:it.w,height:it.h,rotate:degrees(R)});continue}
       if(mode==='edit'){
@@ -452,7 +459,7 @@ const V={
         case'arrow':{draw([[it.x1,it.y1],[it.x2,it.y2]],{stroke:col,width:it.width});const[a,b]=this.arrowHead(it);draw([a,[it.x2,it.y2],b],{stroke:col,width:it.width});break}
         case'text':{if(it.bg)draw(rectPts([it.x,it.y,it.w,it.h]),{closed:true,fill:rgb(1,1,1)});String(it.text).split('\n').forEach((ln,k)=>{const o=cv(it.x+2,it.y+2+it.size*(.88+k*1.2));pg.drawText(ln,{x:o[0],y:o[1],size:it.size,font,color:col,rotate:degrees(R)})});break}
       }}
-    return doc.save()},
+    const out=await doc.save();s.items.forEach(i=>delete i._stripped);return out},
   async freeTextAP(doc,pg,it,font,cv,R){// FreeText açıklamasına görünüm akışı ekle (her uygulamada metin görünsün)
     const L=window.PDFLib,ctx=doc.context;const[r,g,b]=hexRgb(it.color);const lines=String(it.text).split('\n');
     let ops='/Tx BMC q '+(it.bg?`1 1 1 rg 0 0 ${it.w.toFixed(2)} ${it.h.toFixed(2)} re f `:'')+`BT /F0 ${it.size} Tf ${r} ${g} ${b} rg `;
