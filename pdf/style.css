@@ -235,3 +235,6 @@ svg.ov .ethov{fill:rgba(51,82,214,.07);stroke:#3352d6;stroke-width:1;vector-effe
 .ettool button{height:28px;min-width:28px;border:1px solid var(--line2);border-radius:6px;background:var(--panel);padding:0 8px}
 .ettool button.on{background:var(--acbg);border-color:#c9d3f7;color:var(--ac)}
 .ettool button.pri{background:var(--ac);border-color:var(--ac);color:#fff}
+/* Kütüphanemdeki PDFler */
+.doc.off{opacity:.55}
+.doc .libt{display:grid;place-items:center;height:100%;padding:12px;text-align:center;font:600 13px/1.3 Georgia,serif;color:var(--tx2);background:linear-gradient(160deg,#f6f1e7,#e9e1cf)}

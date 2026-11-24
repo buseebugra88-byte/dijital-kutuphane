@@ -1743,7 +1743,7 @@ html[data-preset=orman] .sidenav .sn-brand,html[data-preset=orman] .sidenav .sn-
 </div>
 <div class="reader" id="reader" hidden role="dialog" aria-label="PDF okuyucu">
   <div class="rbar"><button class="iconbtn" id="rClose" type="button" aria-label="Okuyucuyu kapat">←</button><h2 id="rTitle"></h2>
-    <button class="iconbtn" id="rFocus" type="button" aria-label="Odak zamanlayıcısı" title="Odak zamanlayıcısı">⏱</button><button class="iconbtn" id="rTts" type="button" aria-label="Sesli okuma" title="Sesli okuma">🔊</button><button class="iconbtn" id="rQuote" type="button" aria-label="Alıntı kaydet" title="Alıntı kaydet">💬</button><button class="iconbtn" id="rCards" type="button" aria-label="Çalışma kartları" title="Çalışma kartları" hidden>🃏</button><button class="iconbtn" id="rSum" type="button" aria-label="Makaleyi özetle" title="Makaleyi Claude ile özetle" hidden>📝</button><button class="iconbtn" id="rInkBtn" type="button" aria-label="Kalem araçları" title="Kalem araçları (Apple Pencil)" aria-expanded="false">✏️</button><button class="iconbtn" id="rAsk" type="button" aria-label="Claude'a sor" title="Bu sayfa hakkında Claude'a sor" hidden>✨</button><button class="iconbtn" id="rModeBtn" type="button" aria-label="Okuma ayarları" title="Okuma ayarları" aria-expanded="false">Aa</button><button class="iconbtn" id="rZoomOut" type="button" aria-label="Uzaklaştır">−</button><button class="iconbtn" id="rZoomIn" type="button" aria-label="Yakınlaştır">+</button></div>
+    <button class="iconbtn" id="rFocus" type="button" aria-label="Odak zamanlayıcısı" title="Odak zamanlayıcısı">⏱</button><button class="iconbtn" id="rTts" type="button" aria-label="Sesli okuma" title="Sesli okuma">🔊</button><button class="iconbtn" id="rQuote" type="button" aria-label="Alıntı kaydet" title="Alıntı kaydet">💬</button><button class="iconbtn" id="rCards" type="button" aria-label="Çalışma kartları" title="Çalışma kartları" hidden>🃏</button><button class="iconbtn" id="rSum" type="button" aria-label="Makaleyi özetle" title="Makaleyi Claude ile özetle" hidden>📝</button><button class="iconbtn" id="rPdfA" type="button" aria-label="PDF Atölyem'de aç" title="PDF Atölyem'de aç: metni düzenle, imzala, OCR, birleştir…" hidden>🛠</button><button class="iconbtn" id="rInkBtn" type="button" aria-label="Kalem araçları" title="Kalem araçları (Apple Pencil)" aria-expanded="false">✏️</button><button class="iconbtn" id="rAsk" type="button" aria-label="Claude'a sor" title="Bu sayfa hakkında Claude'a sor" hidden>✨</button><button class="iconbtn" id="rModeBtn" type="button" aria-label="Okuma ayarları" title="Okuma ayarları" aria-expanded="false">Aa</button><button class="iconbtn" id="rZoomOut" type="button" aria-label="Uzaklaştır">−</button><button class="iconbtn" id="rZoomIn" type="button" aria-label="Yakınlaştır">+</button></div>
   <div class="inkbar" id="ttsBar" hidden><button class="btn primary" type="button" id="ttsPlay">▶ Bu sayfayı oku</button><button class="btn" type="button" id="ttsStopB" hidden>■ Durdur</button>
     <label class="hint" style="font-size:12px">Hız <select id="ttsRate"><option value="0.8">0.8×</option><option value="0.95" selected>1×</option><option value="1.2">1.2×</option><option value="1.4">1.4×</option></select></label>
     <label class="hint" style="display:flex;gap:6px;align-items:center;font-size:12px"><input type="checkbox" id="ttsAuto" checked> Sonraki sayfaya geç</label>
@@ -5971,7 +5971,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v218';
+const DK_VER='v219';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
@@ -9459,7 +9459,7 @@ function rMsg(html){$('rStage').innerHTML=`<div class="rmsg">${html}</div>`}
 async function openReader(b){
   if(!hasFile(b))return;if(dkLocalOnly(b)&&!LOCAL.has(b.assetId)){dkMissingDlg(b);return}setTimeout(()=>{if(R.book&&R.book.id===b.id&&!$('reader').hidden)dkShareBar(b)},1800);
   Object.assign(R,{sess:0,book:b,doc:null,epub:null,page:Math.max(1,b.currentPage||1),lastSaved:b.currentPage||0,pos:b.epubPos||0,lastPos:b.epubPos||0});
-  $('rPageLbl').textContent='Sayfa';try{$('rAsk').hidden=!BS()}catch(e){}$('reader').classList.toggle('ep-foot',b.fileType==='epub');$('rInkBtn').hidden=b.fileType==='epub';$('rSum').hidden=!(BS()&&b.fileType!=='epub'&&(b.kind==='makale'||b.kind==='pdf'));$('rCards').hidden=!(st.sample&&b.fileType!=='epub'&&b.kind!=='roman');$('ttsBar').hidden=true;$('ttsBar').dataset.open='0';$('inkBar').hidden=true;
+  $('rPageLbl').textContent='Sayfa';try{$('rAsk').hidden=!BS()}catch(e){}$('reader').classList.toggle('ep-foot',b.fileType==='epub');$('rInkBtn').hidden=b.fileType==='epub';{const pa=$('rPdfA');if(pa)pa.hidden=b.fileType==='epub'||b.kind==='roman'}$('rSum').hidden=!(BS()&&b.fileType!=='epub'&&(b.kind==='makale'||b.kind==='pdf'));$('rCards').hidden=!(st.sample&&b.fileType!=='epub'&&b.kind!=='roman');$('ttsBar').hidden=true;$('ttsBar').dataset.open='0';$('inkBar').hidden=true;
   try{const dz=dkDesk();R.scale=1;const z=parseFloat(localStorage.getItem(dz?'dk-zoom-d':'dk-zoom'));if(z)R.scale=z;if(dz&&!localStorage.getItem('dk-desk2')){localStorage.setItem('dk-desk2','1');if(RS.spread==='off'){RS.spread='on';applyRS()}}}catch(e){}
   $('rTitle').textContent=b.title;$('rSaved').textContent='';$('rTotal').textContent='';$('rPage').value=R.page;
   $('reader').hidden=false;if(RS.ah==='1'){$('reader').classList.add('bars-off');try{if(!localStorage.getItem('kt-tiphint')){localStorage.setItem('kt-tiphint','1');setTimeout(()=>toast('Menüler için sayfanın ortasına bir kez dokun'),900)}}catch(e){}}document.body.style.overflow='hidden';rMsg(stampSvg('frog',88)+'Kitap açılıyor…');
@@ -9680,6 +9680,18 @@ let rx=null;$('rStage').addEventListener('touchstart',e=>{rx=(e.touches.length==
 $('rStage').addEventListener('touchend',e=>{if(rx==null)return;const dx=e.changedTouches[0].clientX-rx;if(Math.abs(dx)>60&&(R.epub||R.scale<=1.01)&&!isScroll()){if(R.epub&&EPG.on){}else goPage(R.page+(dx<0?1:-1))}rx=null});
 window.addEventListener('resize',()=>{if(!$('reader').hidden){clearTimeout(R.rz);R.rz=setTimeout(renderPage,200)}});
 window.addEventListener('pagehide',()=>{saveMark()});
+/* PDF Atölyem bağlantısı: okuyucudan aç; Atölyem'den "Kütüphaneme ekle" ile gelen dosyayı forma yerleştir */
+$('rPdfA').addEventListener('click',()=>{const b=R.book;if(!b)return;try{saveMark()}catch(e){}(window.top||window).location.href=new URL('./pdf/#/kutuphane/'+encodeURIComponent(b.id),location.href).href});
+(function(){if(!new URLSearchParams(location.search).has('pdfa'))return;let tries=0;
+  const go=async()=>{if(!st.ready||!st.db||(!st.books.length&&tries<15)){if(++tries<60)setTimeout(go,300);return}
+    try{const d=await new Promise((ok,no)=>{const r=indexedDB.open('pdf-atolyem');r.onupgradeneeded=()=>r.transaction.abort();r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
+      const h=await new Promise((ok,no)=>{const q=d.transaction('kv','readonly').objectStore('kv').get('handoff');q.onsuccess=()=>ok(q.result);q.onerror=()=>no(q.error)});
+      history.replaceState(null,'',location.pathname+location.hash);if(!h)return;
+      const b=h.bookId?st.books.find(x=>x.id===h.bookId):null;openForm(b||null);
+      if(!b){const kr=form.querySelector('input[name=kind][value=pdf]');if(kr){kr.checked=true;syncKind()}$('fTitle').value=h.title||''}
+      const dt=new DataTransfer();dt.items.add(new File([h.bytes],h.name||'belge.pdf',{type:'application/pdf'}));$('fFile').files=dt.files;$('fFile').dispatchEvent(new Event('change',{bubbles:true}));
+      d.transaction('kv','readwrite').objectStore('kv').delete('handoff');toast(b?'PDF Atölyem\'deki yeni dosya forma eklendi. Kaydet\'e bas.':'PDF Atölyem\'den gelen dosya forma eklendi. Bilgileri seçip Kaydet\'e bas.')}
+    catch(e){console.warn('PDF Atölyem aktarımı',e)}};go()})();
 
 /* data */
 render();

@@ -404,12 +404,13 @@ const V={
       <label class="choice"><input type="radio" name="em" value="flat"><div><b>Kalıcı (sayfaya işlenmiş)</b><small>Her şey sayfanın parçası olur, her uygulamada aynı görünür ve değiştirilemez. Resmi belge gönderirken önerilir.</small></div></label>`:''}
       <label class="fld">Dosya adı<input type="text" id="exN" value="${esc(baseName(s.rec.name))}${n?'_notlu':''}"></label>`,
       onOpen:mb=>{const f=document.createElement('div');f.style.cssText='display:flex;gap:8px;flex-wrap:wrap';
-        f.innerHTML=`<button class="btn" data-a="share">${ic('share')} Paylaş</button><button class="btn" data-a="copy">${ic('copy')} Belgelerime kopya olarak kaydet</button>${n?`<button class="btn" data-a="bake">${ic('save')} Bu belgenin içine işle</button>`:''}`;mb.appendChild(f);
+        f.innerHTML=`<button class="btn" data-a="share">${ic('share')} Paylaş</button><button class="btn" data-a="copy">${ic('copy')} Belgelerime kopya olarak kaydet</button><button class="btn" data-a="lib">${ic('file')} ${s.rec.libId?'Kütüphanemdeki kitabı güncelle':'Kütüphaneme ekle'}</button>${n?`<button class="btn" data-a="bake">${ic('save')} Bu belgenin içine işle</button>`:''}`;mb.appendChild(f);
         $$('[data-a]',f).forEach(b=>b.onclick=()=>{mb.action=b.dataset.a;mb.closest('.modal').querySelector('.o').click()})}});
     if(!r)return;const mode=n?$('input[name=em]:checked',r).value:'none';const name=($('#exN',r).value.trim()||'belge')+'.pdf';
     if(r.action==='bake'&&!await confirmBox('Belgenin içine işle',mode==='flat'?'Notlar bu belgenin kendisine kalıcı olarak işlenecek ve not katmanı temizlenecek. Bu işlem geri alınamaz.':'Notlar bu belgenin içine PDF açıklaması olarak yazılacak ve uygulamadaki not katmanı temizlenecek. Sonrasında bu notları burada taşıyamazsın (başka PDF uygulamalarında düzenlenebilirler).','İşle'))return;
     const out=await withBusy('PDF hazırlanıyor…',()=>this.build_pdf(mode));
     if(r.action==='share')shareFile(out,name);
+    else if(r.action==='lib'){this.saveNow();await Lib.send(out,name,s.rec.libId||null)}
     else if(r.action==='copy'){await Docs.add(name,out);toast('Belgelerine kaydedildi')}
     else if(r.action==='bake'){await Docs.replaceBytes(s.id,out);s.items=[];this.saveNow();toast('Belgeye işlendi');const id=s.id;this.close();this.open(id)}
     else download(out,name)},

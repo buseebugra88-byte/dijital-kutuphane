@@ -34,20 +34,21 @@ const T=[
 const toolById=id=>T.find(t=>t.id===id);
 
 /* ---------- ana ekran ---------- */
-async function renderHome(){const app=$('#app');const docs=await Docs.list();
+async function renderHome(){const app=$('#app');const docs=await Docs.list();const libHtml=await Lib.section();
   app.innerHTML=`<header class="top"><a class="brand" href="#/"><span class="logo">PDF</span>PDF Atölyem</a><div class="sp"></div>
     <a class="btn ghost hide-s" href="../">${ic('back')} Kütüphanem</a><button class="btn pri" id="hOpen">${ic('open')} PDF aç</button></header>
   <div class="home">
     <div class="hero"><div class="drop" id="hDrop">${ic('file','i" style="width:40px;height:40px;color:var(--ac)')}<h2>PDF'i buraya bırak</h2><p>ya da bilgisayarından seç. Birden çok dosya bırakabilirsin.</p>
       <div style="display:flex;gap:8px;margin-top:6px"><button class="btn pri" id="hOpen2">${ic('open')} Dosya seç</button><a class="btn" href="#/arac/scan">${ic('cam')} Belge tara</a></div></div>
       <div class="privacy"><b>🔒 Dosyaların cihazında kalır</b>Tüm işlemler bu tarayıcının içinde yapılır. Hiçbir dosya bir sunucuya yüklenmez; internet olmadan da çalışır.<div style="margin-top:10px;font-size:12.5px">${docs.length} belge · ${fmtSize(docs.reduce((a,d)=>a+(d.size||0),0))}</div></div></div>
+    ${libHtml}
     <h3 class="sec">Son belgeler</h3>
     ${docs.length?`<div class="docs">${docs.map(d=>`<div class="doc" data-id="${d.id}"><div class="th" style="background-image:url('${d.thumb||''}')"></div><div class="nm" title="${esc(d.name)}">${esc(baseName(d.name))}</div><div class="mt">${d.pages||'?'} sayfa · ${fmtSize(d.size)}${d.annCount?` · ${d.annCount} not`:''}</div><button class="ib menu">${ic('dots')}</button></div>`).join('')}</div>`:'<div class="empty">Henüz belge yok. Bir PDF açtığında burada görünür.</div>'}
     ${CATS.map(([c,label])=>`<h3 class="sec">${label}</h3><div class="tools">${T.filter(t=>t.cat===c).map(toolCard).join('')}</div>`).join('')}
   </div>`;
   const open=async()=>{const fs=await pickFiles({multiple:true});importFiles(fs)};$('#hOpen').onclick=open;$('#hOpen2').onclick=open;
   dropZone($('#hDrop'),fs=>importFiles(fs.filter(f=>/pdf$/i.test(f.type)||/\.pdf$/i.test(f.name))));
-  $$('.doc').forEach(el=>{el.onclick=e=>{if(e.target.closest('.menu'))return;location.hash='#/oku/'+el.dataset.id};
+  $$('.doc[data-id]').forEach(el=>{el.onclick=e=>{if(e.target.closest('.menu'))return;location.hash='#/oku/'+el.dataset.id};
     $('.menu',el).onclick=async e=>{e.stopPropagation();const id=el.dataset.id;const d=await Docs.get(id);const r=e.currentTarget.getBoundingClientRect();
       popMenu(r.left,r.bottom+4,[{icon:'open',label:'Aç',fn:()=>location.hash='#/oku/'+id},
         {icon:'edit',label:'Yeniden adlandır',fn:async()=>{const n=await promptBox('Yeniden adlandır','Belge adı',baseName(d.name));if(n){d.name=n.trim()+'.pdf';await Docs.update(d);renderHome()}}},
@@ -55,7 +56,7 @@ async function renderHome(){const app=$('#app');const docs=await Docs.list();
         {icon:'org',label:'Sayfaları düzenle',fn:()=>location.hash='#/arac/organize?doc='+id},
         {icon:'ocr',label:'Aranabilir yap (OCR)',fn:()=>location.hash='#/arac/ocr?doc='+id},
         '-',{icon:'trash',label:'Sil',danger:true,fn:async()=>{if(await confirmBox('Belgeyi sil',`<b>${esc(d.name)}</b> ve üzerindeki tüm notlar silinecek.`,'Sil',true)){await Docs.remove(id);renderHome()}}}])}});
-  $$('.tool[data-id]').forEach(el=>el.onclick=()=>{const t=toolById(el.dataset.id);if(!t.soon)location.hash='#/arac/'+t.id})}
+  $$('.tool[data-id]').forEach(el=>el.onclick=()=>{const t=toolById(el.dataset.id);if(!t.soon)location.hash='#/arac/'+t.id});Lib.bindSection()}
 function toolCard(t){return `<div class="tool${t.soon?' soon':''}" data-id="${t.id}"><div class="ti" style="background:${t.col}">${ic(t.icon)}</div><div><b>${t.name}</b><span class="d">${t.d}</span></div>${t.soon?`<span class="badge">Yakında</span>`:''}</div>`}
 function dropZone(el,cb){['dragenter','dragover'].forEach(k=>el.addEventListener(k,e=>{e.preventDefault();el.classList.add('over')}));['dragleave','drop'].forEach(k=>el.addEventListener(k,e=>{e.preventDefault();el.classList.remove('over')}));
   el.addEventListener('drop',e=>{const fs=[...e.dataTransfer.files];if(fs.length)cb(fs)})}
@@ -81,13 +82,14 @@ async function fromQueryDoc(){const id=new URLSearchParams(location.hash.split('
 function resultStage(body,files,{msg,again,sourceDoc}={}){const one=files.length===1;const total=files.reduce((a,f)=>a+f.data.length,0);
   body.innerHTML=`<div class="card result"><div class="ok">${ic('check')}</div><h2 style="margin:0">${msg||'Hazır!'}</h2><div style="color:var(--tx2)">${one?esc(files[0].name):files.length+' dosya'} · ${fmtSize(total)}</div>
     <div class="row"><button class="btn pri" id="rDl">${ic('dl')} ${one?'İndir':'Hepsini ZIP olarak indir'}</button>${one?`<button class="btn" id="rSh">${ic('share')} Paylaş</button>`:''}
-    ${files.every(f=>/\.pdf$/i.test(f.name))?`<button class="btn" id="rSave">${ic('save')} Belgelerime kaydet</button>`:''}${one&&/\.pdf$/i.test(files[0].name)?`<button class="btn" id="rOpen">${ic('open')} Aç ve oku</button>`:''}
+    ${files.every(f=>/\.pdf$/i.test(f.name))?`<button class="btn" id="rSave">${ic('save')} Belgelerime kaydet</button>`:''}${one&&/\.pdf$/i.test(files[0].name)?`<button class="btn" id="rOpen">${ic('open')} Aç ve oku</button><button class="btn" id="rLib">${ic('file')} Kütüphaneme ekle</button>`:''}
     ${sourceDoc&&one&&/\.pdf$/i.test(files[0].name)?`<button class="btn" id="rRep">${ic('save')} Orijinal belgenin yerine kaydet</button>`:''}</div>
     ${!one?`<details style="width:100%;max-width:520px;text-align:left"><summary style="cursor:pointer;color:var(--tx2)">Dosyaları tek tek indir</summary>${files.map((f,k)=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)"><span>${esc(f.name)}</span><a href="#" data-k="${k}">İndir</a></div>`).join('')}</details>`:''}
     <button class="btn ghost" id="rAgain">${ic('rotl')} Baştan başla</button></div>`;
   const type=n=>/\.png$/i.test(n)?'image/png':/\.jpe?g$/i.test(n)?'image/jpeg':/\.txt$/i.test(n)?'text/plain':'application/pdf';
   $('#rDl',body).onclick=()=>one?download(files[0].data,files[0].name,type(files[0].name)):download(makeZip(files),(files[0].zip||'pdf-atolyem')+'.zip');
   const sh=$('#rSh',body);if(sh)sh.onclick=()=>shareFile(files[0].data,files[0].name,type(files[0].name));
+  const lb=$('#rLib',body);if(lb)lb.onclick=()=>Lib.send(files[0].data,files[0].name);
   const sv=$('#rSave',body);let saved=null;if(sv)sv.onclick=async()=>{await withBusy('Kaydediliyor…',async()=>{for(const f of files)saved=await Docs.add(f.name,f.data)});sv.disabled=true;sv.innerHTML=ic('check')+' Kaydedildi'};
   const op=$('#rOpen',body);if(op)op.onclick=async()=>{if(!saved)saved=await withBusy('Açılıyor…',()=>Docs.add(files[0].name,files[0].data));location.hash='#/oku/'+saved.id};
   const rp=$('#rRep',body);if(rp)rp.onclick=async()=>{if(!await confirmBox('Orijinalin yerine kaydet',`<b>${esc(sourceDoc.name)}</b> bu yeni hâliyle değiştirilecek.`,'Değiştir'))return;await withBusy('Kaydediliyor…',()=>Docs.replaceBytes(sourceDoc.id,files[0].data));if(sourceDoc.onReplace)await sourceDoc.onReplace();rp.disabled=true;rp.innerHTML=ic('check')+' Kaydedildi'};

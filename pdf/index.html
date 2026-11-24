@@ -10,6 +10,7 @@
 <script src="viewer.js?v=1"></script>
 <script src="textedit.js?v=1"></script>
 <script src="tools.js?v=1"></script>
+<script src="library.js?v=1"></script>
 <script>
 'use strict';
 // Yönlendirme: #/ ana ekran · #/oku/<id> okuyucu · #/arac/<ad>?doc=<id> araç
@@ -17,6 +18,7 @@ async function route(){clearBar();$$('.modalbg,.menu-pop,.searchbox').forEach(e=
   const h=location.hash.replace(/^#\/?/,'');const[path]=h.split('?');const[a,b]=path.split('/');
   try{
     if(a==='oku'&&b){await V.open(b);const t=sessionStorage.getItem('pdfTool');if(t&&V.st){sessionStorage.removeItem('pdfTool');V.setTool(t);if(t==='text')toast('Metin eklemek için sayfada bir yere tıkla')}}
+    else if(a==='kutuphane'&&b){$('#app').innerHTML='';await Lib.openBook(decodeURIComponent(b))}
     else if(a==='arac'&&b){const t=toolById(b);if(!t||t.soon){location.hash='#/';return}await RUN[t.id](t)}
     else await renderHome();
   }catch(e){console.error(e);alertBox('Bir sorun oluştu',esc(errText(e)))}}
