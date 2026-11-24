@@ -1,0 +1,196 @@
+/* =====================================================================
+   Dijital Kütüphanem — ortak "Profesyonel" tasarım dili
+   Ortak logodan türetildi: lacivert zemin, krem çizgi, altın vurgu.
+   Her uygulama bu dosyayı kendi stilinden SONRA yükler; burada yalnızca
+   ortak değişkenler (--pro-*) ve her uygulamanın değişkenlerini bunlara
+   bağlayan küçük eşlemeler vardır.
+   ===================================================================== */
+:root {
+  --pro-bg: #f5f6f8;
+  --pro-surface: #ffffff;
+  --pro-surface-2: #f0f2f5;
+  --pro-ink: #1b2333;
+  --pro-muted: #5d6678;
+  --pro-faint: #8b93a3;
+  --pro-line: #e2e5eb;
+  --pro-line-2: #d3d8e0;
+  --pro-navy: #1d2a42;
+  --pro-accent: #24365a;
+  --pro-accent-hover: #1b2a47;
+  --pro-accent-soft: #e8edf6;
+  --pro-on-accent: #ffffff;
+  --pro-gold: #b98a2f;
+  --pro-gold-bright: #d4a857;
+  --pro-gold-soft: #f8f0dd;
+  --pro-ok: #1f7a4a; --pro-ok-soft: #e3f2e9;
+  --pro-warn: #9a640e; --pro-warn-soft: #fbf0dc;
+  --pro-bad: #b42d2d; --pro-bad-soft: #fbe6e6;
+  --pro-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --pro-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --pro-r: 10px;
+  --pro-r-lg: 14px;
+  --pro-sh: 0 1px 2px rgba(16, 24, 40, .05), 0 1px 3px rgba(16, 24, 40, .07);
+  --pro-sh-lg: 0 10px 30px rgba(16, 24, 40, .16);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --pro-bg: #0f1522; --pro-surface: #171f2e; --pro-surface-2: #1d2738;
+    --pro-ink: #e7eaf0; --pro-muted: #a0a9ba; --pro-faint: #6f7889; --pro-line: #283246; --pro-line-2: #334058;
+    --pro-accent: #a9bde6; --pro-accent-hover: #c0d0f0; --pro-accent-soft: #1f2b42; --pro-on-accent: #0f1522;
+    --pro-gold: #d9ad5b; --pro-gold-soft: #2d2717;
+    --pro-ok: #5cc28a; --pro-ok-soft: #173325; --pro-warn: #e8b05a; --pro-warn-soft: #33270f; --pro-bad: #f07a7a; --pro-bad-soft: #3a1d1d;
+    --pro-sh: none; --pro-sh-lg: 0 10px 30px rgba(0, 0, 0, .5);
+  }
+}
+:root[data-theme="dark"] {
+  --pro-bg: #0f1522; --pro-surface: #171f2e; --pro-surface-2: #1d2738;
+  --pro-ink: #e7eaf0; --pro-muted: #a0a9ba; --pro-faint: #6f7889; --pro-line: #283246; --pro-line-2: #334058;
+  --pro-accent: #a9bde6; --pro-accent-hover: #c0d0f0; --pro-accent-soft: #1f2b42; --pro-on-accent: #0f1522;
+  --pro-gold: #d9ad5b; --pro-gold-soft: #2d2717;
+  --pro-ok: #5cc28a; --pro-ok-soft: #173325; --pro-warn: #e8b05a; --pro-warn-soft: #33270f; --pro-bad: #f07a7a; --pro-bad-soft: #3a1d1d;
+  --pro-sh: none; --pro-sh-lg: 0 10px 30px rgba(0, 0, 0, .5);
+}
+
+/* =====================================================================
+   Kütüphanem · Çalışma Masam · Yazar Köşem  (index.html, "Profesyonel" ön ayarı)
+   Renkler ön ayardan gelir; burada süsler sadeleşir, köşe ve gölgeler ortaklaşır.
+   ===================================================================== */
+:root[data-preset="pro"] {
+  --tx-grain: none; --tx-mask: none; --paper-tex: none;
+  --display: var(--pro-font); --body: var(--pro-font); --mono: var(--pro-mono);
+}
+:root[data-preset="pro"] body {
+  background-image: none !important;
+  font-family: var(--pro-font);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: 0;
+}
+:root[data-preset="pro"] :is(h1, h2, h3, h4) { font-family: var(--pro-font); font-weight: 650; letter-spacing: -.01em; }
+:root[data-preset="pro"] body :is(.brand b, .d-hello h2, .d-hello p, .hand, .tag-h) { -webkit-mask-image: none; mask-image: none; }
+:root[data-preset="pro"] body.font-hand :is(header.top h1 em, .shelf h3, .bk.gen .t, .quote blockquote) { font-family: var(--pro-font) !important; }
+
+/* Üst şerit ve logo */
+:root[data-preset="pro"] header.top { border-radius: var(--pro-r-lg); box-shadow: var(--pro-sh); padding: 22px 26px; }
+:root[data-preset="pro"] header.top h1 { font-size: clamp(26px, 4vw, 34px); font-weight: 700; letter-spacing: -.02em; }
+:root[data-preset="pro"] header.top h1 em { font-style: normal; font-weight: 700; color: var(--accent); }
+:root[data-preset="pro"] header.top .eyebrow { font-family: var(--pro-font); letter-spacing: .08em; color: var(--muted); }
+:root[data-preset="pro"] header.top > svg, :root[data-preset="pro"] .divider { display: none !important; }
+:root[data-preset="pro"] :is(#emblem, #snEmb) img.pro-logo { width: 100%; height: 100%; display: block; border-radius: 22%; box-shadow: var(--pro-sh); }
+:root[data-preset="pro"] #emblem { width: 96px; height: 96px; }
+:root[data-preset="pro"] .sn-emb { width: 56px; height: 56px; }
+:root[data-preset="pro"] .sn-brand b { font-family: var(--pro-font); font-weight: 650; font-size: 15px; }
+
+/* Kartlar, paneller, boş durumlar */
+:root[data-preset="pro"] :is(.empty, .card, .panel, .shelf, .goal, aside .box, .modal, dialog) { border-radius: var(--pro-r-lg); }
+:root[data-preset="pro"] .empty { border-style: solid; box-shadow: var(--pro-sh); }
+:root[data-preset="pro"] .empty h2 { font-size: 22px; }
+:root[data-preset="pro"] :is(.stamps-row, .stamp, svg.scene, .goal .deco) { display: none !important; }
+
+/* Düğmeler */
+:root[data-preset="pro"] .btn { border-radius: 8px; font-weight: 600; background-image: none !important; box-shadow: none; }
+:root[data-preset="pro"] .btn.primary { background: var(--pro-navy) !important; color: #fff !important; border-color: var(--pro-navy) !important; }
+:root[data-preset="pro"] .btn.primary:hover { background: var(--pro-accent-hover) !important; }
+:root[data-theme="dark"][data-preset="pro"] .btn.primary { background: var(--pro-gold-bright) !important; color: #111827 !important; border-color: var(--pro-gold-bright) !important; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"])[data-preset="pro"] .btn.primary { background: var(--pro-gold-bright) !important; color: #111827 !important; border-color: var(--pro-gold-bright) !important; } }
+:root[data-preset="pro"] .qc-fab { background: var(--pro-navy); color: #fff; box-shadow: var(--pro-sh-lg); }
+:root[data-preset="pro"] .dk-ver { background: var(--pro-navy); color: #fff; }
+
+/* Yan menü */
+:root[data-preset="pro"] .sn-item { border-radius: 8px; font-weight: 500; }
+:root[data-preset="pro"] .sn-item[aria-current="page"], :root[data-preset="pro"] .sn-item.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+
+/* Uygulamalarım: harf simgeleri (ortak logo tarzında) */
+.app-ic.app-harf { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 22%; background: linear-gradient(#22324a, #16223a); color: #f3f0e8; font: 650 16px/1 var(--pro-font); box-shadow: inset 0 -3px 0 #d4a857; }
+
+/* Okuma günlüğü rafı: ahşap yerine sade lacivert-gri */
+:root[data-preset="pro"] .sh-case { background: var(--pro-surface-2); box-shadow: inset 0 0 0 1px var(--pro-line), var(--pro-sh); border-radius: var(--pro-r-lg); }
+:root[data-preset="pro"] .sh-in { background: linear-gradient(#e9ecf1, #e1e5ec); box-shadow: inset 0 6px 12px rgba(16, 24, 40, .08); }
+:root[data-preset="pro"] .sh-board { background: var(--pro-navy); box-shadow: 0 2px 4px rgba(16, 24, 40, .18); height: 8px; }
+:root[data-preset="pro"] .sh-row .shdeco { display: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"])[data-preset="pro"] .sh-in { background: linear-gradient(#1d2738, #19212f); } :root:not([data-theme="light"])[data-preset="pro"] .sh-board { background: #3a4a68; } }
+:root[data-theme="dark"][data-preset="pro"] .sh-in { background: linear-gradient(#1d2738, #19212f); }
+:root[data-theme="dark"][data-preset="pro"] .sh-board { background: #3a4a68; }
+
+/* Çalışma Masam'daki sabit mavi vurgular */
+:root[data-preset="pro"] .nbx-t:focus { box-shadow: 0 0 0 2px var(--pro-accent) !important; }
+:root[data-preset="pro"] :is(.nbx-g, .nbx-d) { background: var(--pro-accent); }
+:root[data-preset="pro"] .gn-new { background: var(--pro-navy); border-radius: 8px; box-shadow: none; }
+:root[data-theme="dark"][data-preset="pro"] .gn-new { background: var(--pro-gold-bright); color: #111827; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"])[data-preset="pro"] .gn-new { background: var(--pro-gold-bright); color: #111827; } }
+
+/* =====================================================================
+   Mühürlü Mektuplar (mektup/) — çerçeve ortak tasarıma geçer;
+   mektup kâğıdı ve daktilo yazısı (içerik) olduğu gibi kalır.
+   ===================================================================== */
+html.app-mektup {
+  --desk: var(--pro-bg); --surface: var(--pro-surface); --fg: var(--pro-ink); --muted: var(--pro-muted); --line: var(--pro-line);
+  --accent: var(--pro-navy); --accent-fg: #fff;
+  --f-ui: var(--pro-font); --f-display: var(--pro-font);
+  --shadow: var(--pro-sh-lg);
+}
+html.app-mektup body { -webkit-font-smoothing: antialiased; }
+html.app-mektup :is(h1, h2, h3) { font-family: var(--pro-font); font-weight: 650; letter-spacing: -.01em; }
+html.app-mektup .toast { background: var(--pro-navy); color: #fff; border-radius: 10px; }
+
+/* =====================================================================
+   Yırtık Yaprak (defter/) — çerçeve ortak tasarıma geçer;
+   notun kendisi seçilen el yazısıyla kalır (.ink, .txt, .ph, .etx).
+   ===================================================================== */
+html.app-defter {
+  --bg: var(--pro-bg); --card: var(--pro-surface); --fg: var(--pro-ink); --muted: var(--pro-muted); --line: var(--pro-line);
+  --grid: rgba(36, 54, 90, .08); --shadow: var(--pro-sh);
+  --h-font: var(--pro-font);
+}
+html.app-defter.dark {
+  --bg: #0f1522; --card: #171f2e; --fg: #e7eaf0; --muted: #a0a9ba; --line: #283246; --grid: rgba(255, 255, 255, .05);
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 16px rgba(0, 0, 0, .3);
+}
+html.app-defter body { background-image: none; -webkit-font-smoothing: antialiased; }
+html.app-defter body *:not(:is(.ink, .txt, .ph, .etx, .ink *, .txt *, .ph *, .etx *, svg, svg *)) {
+  font-family: var(--pro-font) !important; text-transform: none !important; letter-spacing: 0 !important;
+}
+html.app-defter .lh h1 { font-weight: 700; font-size: 28px !important; letter-spacing: -.02em !important; }
+html.app-defter .toast { background: var(--pro-navy); color: #fff; border-radius: 10px; }
+
+/* =====================================================================
+   PDF Atölyem (pdf/)
+   ===================================================================== */
+html.app-pdf {
+  --bg: var(--pro-bg); --panel: var(--pro-surface); --line: var(--pro-line); --line2: var(--pro-line-2);
+  --tx: var(--pro-ink); --tx2: var(--pro-muted); --tx3: var(--pro-faint);
+  --ac: var(--pro-navy); --ac2: var(--pro-accent-hover); --acbg: var(--pro-accent-soft);
+  --ok: var(--pro-ok); --warn: var(--pro-warn); --bad: var(--pro-bad);
+  --sh: var(--pro-sh); --sh2: var(--pro-sh-lg); --r: var(--pro-r);
+}
+html.app-pdf, html.app-pdf body { font-family: var(--pro-font); }
+html.app-pdf .brand .logo { background: url(../pdf/icon-192.png?v=3) center / cover; color: transparent; border-radius: 22%; }
+
+/* =====================================================================
+   Veri Analisti (veri/)
+   ===================================================================== */
+html.app-veri {
+  --bg: var(--pro-bg); --panel: var(--pro-surface); --ink: var(--pro-ink); --muted: var(--pro-muted); --line: var(--pro-line);
+  --accent: var(--pro-navy); --accent-soft: var(--pro-accent-soft);
+  --good: var(--pro-ok); --good-soft: var(--pro-ok-soft); --bad: var(--pro-bad); --bad-soft: var(--pro-bad-soft);
+  --warn: var(--pro-warn); --warn-soft: var(--pro-warn-soft);
+  --radius: var(--pro-r-lg); --shadow: var(--pro-sh); --mono: var(--pro-mono);
+}
+@media (prefers-color-scheme: dark) { html.app-veri { --accent: var(--pro-accent); } }
+html.app-veri body { font-family: var(--pro-font); -webkit-font-smoothing: antialiased; }
+html.app-veri :is(button.btn.ana, label.btn.ana) { background: var(--pro-navy); border-color: var(--pro-navy); color: #fff; }
+@media (prefers-color-scheme: dark) { html.app-veri :is(button.btn.ana, label.btn.ana) { background: var(--pro-gold-bright); border-color: var(--pro-gold-bright); color: #111827; } }
+
+/* =====================================================================
+   Hatıra Kartı (hatira-karti/) — kartın kendisi aynı kalır, sahne ortaklaşır
+   ===================================================================== */
+html.app-hatira body { background: radial-gradient(1200px 700px at 30% 20%, #22324a 0%, #16223a 55%, #0f1522 100%); color: #e7eaf0; font-family: var(--pro-font); }
+html.app-hatira .glow { display: none; }
+html.app-hatira button { font-family: var(--pro-font); border-radius: 8px; }
+html.app-hatira button.primary { background: var(--pro-gold-bright); color: #111827; border-color: var(--pro-gold-bright); box-shadow: none; }
+
+/* =====================================================================
+   Gizlilik (gizlilik.html)
+   ===================================================================== */
+html.app-yazi { --bg: var(--pro-bg); --ink: var(--pro-ink); --mute: var(--pro-muted); --acc: var(--pro-accent); }
+html.app-yazi body { font: 16px/1.65 var(--pro-font); -webkit-font-smoothing: antialiased; }
+html.app-yazi :is(h1, h2) { font-weight: 650; letter-spacing: -.01em; }

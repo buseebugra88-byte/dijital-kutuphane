@@ -36,7 +36,7 @@ function tabloHtml(t, limit = 200) {
     <div class="etiket" style="margin-top:6px">${t.satirlar.length.toLocaleString("tr-TR")} satır${t.kesildi ? " (ilk 5.000 satır gösteriliyor)" : ""}${t.satirlar.length > limit ? `, tabloda ilk ${limit}` : ""}</div>`;
 }
 
-const RENKLER = ["#3b5bdb", "#e8590c", "#2f9e44", "#ae3ec9", "#1098ad", "#f08c00", "#c2255c", "#5c940d"];
+const RENKLER = ["#24365a", "#d4a857", "#5b7bb5", "#8c6d2e", "#9db4e0", "#3f5d4a", "#b35c44", "#7a6aa8"];
 const grafikler = new WeakMap();
 function grafikCiz(kap, g, t) {
   if (!g || !t?.satirlar.length || g.tur === "tablo") return false;

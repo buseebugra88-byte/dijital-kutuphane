@@ -1,8 +1,8 @@
 // Dijital Kütüphanem — çevrimdışı çalışma (service worker)
 // Sürüm yükseltirken: C'yi, index.html'deki DK_VER'i ve version.json'u birlikte değiştir.
-const C='kutuphane-v223';
+const C='kutuphane-v224';
 const ONBELLEK=[
-  './','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./config.js','./gizlilik.html',
+  './','./ortak/tema.css','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./config.js','./gizlilik.html',
   './mektup/','./mektup/manifest.webmanifest','./mektup/icon-192.png','./mektup/icon-180.png',
   './defter/','./defter/manifest.webmanifest','./defter/icon-192.png','./defter/icon-180.png',
   // Eski adresler (ana ekrandaki eski kısayollar internetsiz de doğru uygulamayı açsın)

@@ -34,3 +34,6 @@ Bu depo sadece uygulamanın kodunu içerir, kitapların ve notların burada değ
 
 ## Sürüm yükseltme (geliştirici notu)
 index.html değiştiğinde üçü birlikte yükseltilir: `index.html` içindeki `DK_VER`, `sw.js` içindeki `kutuphane-vN` ve `version.json` (`{"v":"vN"}`). Uygulamadaki "Yeni sürüm hazır" uyarısı yalnızca `version.json`a bakar; sadece `mektup.html` gibi diğer sayfalar değiştiyse `sw.js` yükseltmek yeterli, `version.json`a dokunma.
+
+## Ortak tasarım (Profesyonel)
+`ortak/tema.css`: bütün uygulamaların ortak görünümü (ortak logodan türetildi: lacivert, krem, altın; sistem yazı tipi). Her uygulama bu dosyayı kendi stilinden sonra yükler ve `<html>` etiketindeki sınıfla (`app-mektup`, `app-defter`, `app-pdf`, `app-veri`, `app-hatira`, `app-yazi`) kendi değişkenlerini ortak değişkenlere bağlar. Kütüphanem, Çalışma Masam ve Yazar Köşem'de bu görünüm "Profesyonel (lacivert)" ön ayarıdır; ilk açılışta herkes bir kez bu ön ayara geçirilir (`UI.proMig`), Ayarlar → Görünüm'den eski temalara dönülebilir. Mektup kâğıdı ve defterdeki el yazısı gibi içerik görünümleri değişmez.
