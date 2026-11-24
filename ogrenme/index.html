@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="tr" class="app-ogrenme">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Öğrenme Asistanı</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png?v=1"><link rel="apple-touch-icon" href="icon-180.png?v=1">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Öğrenme Asistanı"><meta name="theme-color" content="#1d2a42">
+<link rel="stylesheet" href="style.css?v=1">
+<link rel="stylesheet" href="../ortak/tema.css?v=2">
+<script src="lib/marked.min.js"></script>
+<script src="lib/purify.min.js"></script>
+</head>
+<body>
+<header>
+  <a class="geri" href="../index.html" title="Kütüphaneme dön">‹ Kütüphanem</a>
+  <h1><img src="icon-192.png?v=1" alt="" class="logo">Öğrenme Asistanı</h1>
+  <nav id="menu">
+    <button data-sayfa="genel" class="aktif">Genel bakış</button>
+    <button data-sayfa="belgeler">Belgeler</button>
+    <button data-sayfa="tekrar">Tekrar</button>
+    <button data-sayfa="quiz">Quiz</button>
+    <button data-sayfa="dil">Dil partneri</button>
+    <button data-sayfa="kod">Kod mentoru</button>
+  </nav>
+  <button class="btn kucuk ayar-btn" id="ayarlar-btn" title="Ayarlar ve yedek">⚙︎ Ayarlar</button>
+</header>
+
+<main>
+  <div class="kart uyari-kart" id="anahtar-uyari" hidden>
+    <b>Yapay zekâ özellikleri için Gemini anahtarı gerekiyor.</b> Kart tekrarı, quiz ve kod çalıştırma anahtarsız da çalışır.
+    <button class="btn kucuk">Anahtar ekle</button>
+  </div>
+  <!-- GENEL BAKIŞ -->
+  <section class="sayfa aktif" id="genel">
+    <h2>Bugün</h2>
+    <p class="alt">Tekrar zamanı gelen kartlar, en zayıf kavramlar ve son hata kalıpların.</p>
+    <div class="izgara" id="genel-sayilar"></div>
+    <div class="iki">
+      <div class="kart"><h3>En zayıf kavramlar</h3><div id="genel-zayif"></div></div>
+      <div class="kart"><h3>Son 30 günün hata türleri</h3><div id="genel-hatalar"></div></div>
+    </div>
+    <div class="kart"><h3>Son 14 gün</h3><div id="genel-gunluk"></div></div>
+  </section>
+
+  <!-- BELGELER -->
+  <section class="sayfa" id="belgeler">
+    <div class="satir" style="justify-content:space-between">
+      <div><h2>Belgeler</h2><p class="alt">PDF, TXT ya da MD yükle; özet, kartlar ve quiz otomatik üretilsin. Belgen bu cihazda kalır; materyal üretmek için metni Gemini'ye gönderilir.</p></div>
+      <label class="btn ana" id="yukle-btn">Belge yükle<input type="file" id="belge-dosya" accept=".pdf,.txt,.md" hidden></label>
+    </div>
+    <div class="iki">
+      <div class="kart"><div id="belge-listesi"></div></div>
+      <div id="belge-detay"><div class="kart bos">Ayrıntılar için soldan bir belge seç.</div></div>
+    </div>
+  </section>
+
+  <!-- TEKRAR -->
+  <section class="sayfa" id="tekrar">
+    <h2>Aralıklı tekrar</h2>
+    <p class="alt">Kartı düşün, cevabı göster, ne kadar iyi hatırladığını işaretle. Sistem bir sonraki tekrarı buna göre planlar.</p>
+    <div id="tekrar-alan"></div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="sayfa" id="quiz">
+    <div class="satir" style="justify-content:space-between">
+      <div><h2>Uyarlanabilir quiz</h2><p class="alt">Sorular en zayıf kavramlarından, seviyene uygun zorlukta seçilir.</p></div>
+      <select id="quiz-belge" style="width:auto"><option value="">Tüm belgeler</option></select>
+    </div>
+    <div id="quiz-alan"></div>
+  </section>
+
+  <!-- DİL -->
+  <section class="sayfa" id="dil">
+    <h2>Dil partneri</h2>
+    <p class="alt">Bir senaryo seç ve konuş. Hataların düzeltilir, kaydedilir; yeni kelimeler tekrar kartına eklenir.</p>
+    <div class="iki">
+      <div>
+        <div class="kart">
+          <h3>Yeni konuşma</h3>
+          <div class="satir" style="margin-bottom:10px">
+            <select id="dil-dil" class="esnek">
+              <option>İngilizce</option><option>Almanca</option><option>Fransızca</option>
+              <option>İspanyolca</option><option>İtalyanca</option><option>Japonca</option><option>Korece</option><option>Rusça</option>
+            </select>
+            <select id="dil-seviye" style="width:90px"><option>A1</option><option>A2</option><option selected>B1</option><option>B2</option><option>C1</option></select>
+          </div>
+          <select id="dil-senaryo" style="margin-bottom:10px">
+            <option>Serbest sohbet</option><option>İş görüşmesi</option><option>Restoranda sipariş</option>
+            <option>Otelde check-in</option><option>Doktor randevusu</option><option>Havalimanı ve seyahat</option>
+            <option>Toplantıda fikir sunma</option><option>Komşuyla tanışma</option><option>Teknik destek araması</option>
+          </select>
+          <button class="btn ana" id="dil-baslat">Konuşmayı başlat</button>
+        </div>
+        <div class="kart"><h3>Geçmiş konuşmalar</h3><div id="dil-oturumlar"></div></div>
+        <div class="kart">
+          <div class="satir" style="justify-content:space-between"><h3 style="margin:0">Hata kalıpların</h3>
+            <button class="btn kucuk" id="dil-alistirma-btn">Hatalarımdan alıştırma üret</button></div>
+          <div id="dil-hatalar" style="margin-top:10px"></div>
+        </div>
+      </div>
+      <div class="kart">
+        <div id="dil-baslik" class="etiket" style="margin-bottom:8px">Konuşma seçilmedi</div>
+        <div class="sohbet" id="dil-sohbet"></div>
+        <form id="dil-form" class="satir" style="margin-top:12px">
+          <input id="dil-girdi" class="esnek" placeholder="Mesajını yaz…" autocomplete="off" disabled>
+          <button class="btn ana" disabled>Gönder</button>
+        </form>
+      </div>
+    </div>
+    <div id="dil-alistirma"></div>
+  </section>
+
+  <!-- KOD -->
+  <section class="sayfa" id="kod">
+    <h2>Kod mentoru (Python)</h2>
+    <p class="alt">Kodun bu tarayıcıda çalışır (ilk çalıştırmada Python motoru bir kez yüklenir). Takıldığında kademeli ipucu al. Zorlandığın kavramlar takip edilir ve sana göre görev üretilir.</p>
+    <div class="iki">
+      <div>
+        <div class="kart">
+          <div class="satir" style="margin-bottom:10px">
+            <input id="kod-konu" class="esnek" placeholder="Görev konusu (boş = zayıf kavramlarım)">
+            <select id="kod-zorluk" style="width:auto"><option>kolay</option><option selected>orta</option><option>zor</option></select>
+            <button class="btn" id="kod-gorev-btn">Görev üret</button>
+          </div>
+          <textarea id="kod-gorev" rows="3" placeholder="Görev açıklaması (isteğe bağlı): kod ne yapmalı?"></textarea>
+        </div>
+        <div class="kart">
+          <textarea id="kod-editor" class="kod" spellcheck="false" placeholder="# Python kodunu buraya yaz"></textarea>
+          <div class="satir" style="margin-top:10px">
+            <button class="btn ana" id="kod-calistir">Çalıştır</button>
+            <button class="btn" data-seviye="1">İpucu 1: yönlendir</button>
+            <button class="btn" data-seviye="2">İpucu 2: açıkla</button>
+            <button class="btn" data-seviye="3">İpucu 3: çözümü göster</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="kart"><h3>Çıktı</h3><pre class="cikti" id="kod-cikti">Henüz çalıştırılmadı.</pre></div>
+        <div class="kart"><h3>Mentor</h3><div id="kod-ipucu" class="md bos">Takıldığında bir ipucu seviyesi seç.</div></div>
+        <div class="kart"><h3>Kavram hâkimiyetin</h3><div id="kod-kavramlar"></div></div>
+      </div>
+    </div>
+  </section>
+</main>
+<dialog id="ayarlar">
+  <h3>Ayarlar</h3>
+  <label class="etiket" for="ayar-anahtar">Gemini API anahtarı</label>
+  <input id="ayar-anahtar" type="password" autocomplete="off" spellcheck="false" placeholder="AIza…">
+  <p class="etiket">Ücretsiz anahtarı <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Google AI Studio</a>'dan alabilirsin.
+    Anahtar yalnızca bu cihazda saklanır ve Veri Analisti ile ortaktır.</p>
+  <label class="etiket" for="ayar-model">Önce denenecek model</label>
+  <select id="ayar-model"></select>
+  <p class="etiket">Bu model yoğunsa ya da kotası dolduysa sıradaki modele kendiliğinden geçilir.</p>
+  <div class="satir" style="justify-content:flex-end;margin-top:8px">
+    <button class="btn" id="ayar-kapat">Kapat</button>
+    <button class="btn ana" id="ayar-kaydet">Kaydet</button>
+  </div>
+  <hr>
+  <h3>Yedek</h3>
+  <p class="etiket">Belgeler, kartlar, quiz geçmişi ve konuşmalar bu tarayıcıda saklanır. Başka cihaza taşımak ya da güvene almak için ara ara yedek al.</p>
+  <div class="satir">
+    <button class="btn" id="yedek-al">Yedek al</button>
+    <label class="btn">Yedekten yükle<input type="file" id="yedek-dosya" accept=".json,application/json" hidden></label>
+  </div>
+</dialog>
+
+<div id="bildirim"></div>
+<script src="../ortak/gemini.js?v=1"></script>
+<script src="motor.js?v=1"></script>
+<script src="app.js?v=1"></script>
+<script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js", { scope: "../" }).catch(() => {});</script>
+</body>
+</html>

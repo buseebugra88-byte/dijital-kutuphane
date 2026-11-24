@@ -132,25 +132,7 @@ html.app-mektup body { -webkit-font-smoothing: antialiased; }
 html.app-mektup :is(h1, h2, h3) { font-family: var(--pro-font); font-weight: 650; letter-spacing: -.01em; }
 html.app-mektup .toast { background: var(--pro-navy); color: #fff; border-radius: 10px; }
 
-/* =====================================================================
-   Yırtık Yaprak (defter/) — çerçeve ortak tasarıma geçer;
-   notun kendisi seçilen el yazısıyla kalır (.ink, .txt, .ph, .etx).
-   ===================================================================== */
-html.app-defter {
-  --bg: var(--pro-bg); --card: var(--pro-surface); --fg: var(--pro-ink); --muted: var(--pro-muted); --line: var(--pro-line);
-  --grid: rgba(36, 54, 90, .08); --shadow: var(--pro-sh);
-  --h-font: var(--pro-font);
-}
-html.app-defter.dark {
-  --bg: #0f1522; --card: #171f2e; --fg: #e7eaf0; --muted: #a0a9ba; --line: #283246; --grid: rgba(255, 255, 255, .05);
-  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 6px 16px rgba(0, 0, 0, .3);
-}
-html.app-defter body { background-image: none; -webkit-font-smoothing: antialiased; }
-html.app-defter body *:not(:is(.ink, .txt, .ph, .etx, .ink *, .txt *, .ph *, .etx *, svg, svg *)) {
-  font-family: var(--pro-font) !important; text-transform: none !important; letter-spacing: 0 !important;
-}
-html.app-defter .lh h1 { font-weight: 700; font-size: 28px !important; letter-spacing: -.02em !important; }
-html.app-defter .toast { background: var(--pro-navy); color: #fff; border-radius: 10px; }
+/* Yırtık Yaprak (defter/, "Notlarım") kendi karalama defteri tasarımını korur; bu dosyayı yüklemez. */
 
 /* =====================================================================
    PDF Atölyem (pdf/)
@@ -166,19 +148,19 @@ html.app-pdf, html.app-pdf body { font-family: var(--pro-font); }
 html.app-pdf .brand .logo { background: url(../pdf/icon-192.png?v=3) center / cover; color: transparent; border-radius: 22%; }
 
 /* =====================================================================
-   Veri Analisti (veri/)
+   Veri Analisti (veri/) ve Öğrenme Asistanı (ogrenme/)
    ===================================================================== */
-html.app-veri {
+:is(html.app-veri, html.app-ogrenme) {
   --bg: var(--pro-bg); --panel: var(--pro-surface); --ink: var(--pro-ink); --muted: var(--pro-muted); --line: var(--pro-line);
   --accent: var(--pro-navy); --accent-soft: var(--pro-accent-soft);
   --good: var(--pro-ok); --good-soft: var(--pro-ok-soft); --bad: var(--pro-bad); --bad-soft: var(--pro-bad-soft);
   --warn: var(--pro-warn); --warn-soft: var(--pro-warn-soft);
   --radius: var(--pro-r-lg); --shadow: var(--pro-sh); --mono: var(--pro-mono);
 }
-@media (prefers-color-scheme: dark) { html.app-veri { --accent: var(--pro-accent); } }
-html.app-veri body { font-family: var(--pro-font); -webkit-font-smoothing: antialiased; }
-html.app-veri :is(button.btn.ana, label.btn.ana) { background: var(--pro-navy); border-color: var(--pro-navy); color: #fff; }
-@media (prefers-color-scheme: dark) { html.app-veri :is(button.btn.ana, label.btn.ana) { background: var(--pro-gold-bright); border-color: var(--pro-gold-bright); color: #111827; } }
+@media (prefers-color-scheme: dark) { :is(html.app-veri, html.app-ogrenme) { --accent: var(--pro-accent); } }
+:is(html.app-veri, html.app-ogrenme) body { font-family: var(--pro-font); -webkit-font-smoothing: antialiased; }
+:is(html.app-veri, html.app-ogrenme) :is(button.btn.ana, label.btn.ana) { background: var(--pro-navy); border-color: var(--pro-navy); color: #fff; }
+@media (prefers-color-scheme: dark) { :is(html.app-veri, html.app-ogrenme) :is(button.btn.ana, label.btn.ana) { background: var(--pro-gold-bright); border-color: var(--pro-gold-bright); color: #111827; } }
 
 /* =====================================================================
    Hatıra Kartı (hatira-karti/) — kartın kendisi aynı kalır, sahne ortaklaşır

@@ -32,8 +32,18 @@ Bu depo sadece uygulamanın kodunu içerir, kitapların ve notların burada değ
 - **Saklama:** veriler IndexedDB'de (`veri-analisti`) Arrow biçiminde tutulur. Ayarlar → Yedek al / Yedekten yükle ile tek dosyaya alınıp başka cihaza taşınabilir.
 - **Kütüphaneler** `veri/lib/` içinde durur: DuckDB-WASM 1.32.0 (Arrow ile birlikte `duckdb.min.js` olarak paketlendi), SheetJS 0.18.5, Chart.js 4, marked, DOMPurify. Not: bu DuckDB-WASM sürümünde `COPY ... TO parquet` çöküyor; bu yüzden kayıt Arrow IPC ile yapılır.
 
+## Öğrenme Asistanı
+
+`ogrenme/`: belgeden öğrenme, dil partneri ve Python kod mentoru. Kütüphanede Uygulamalarım'dan açılır. Python sunucusu gerektirmez.
+
+- **Belgeler:** PDF (PDF Atölyem'in `pdf/lib` pdf.js'i ile), TXT, MD. Gemini özet, kavram, kart ve çoktan seçmeli soru üretir. Belgeye soru sorarken ilgili parçalar tarayıcıda aranır (Türkçe eklerine toleranslı önek araması) ve sayfa atfıyla cevaplanır; Sokratik mod var.
+- **Tekrar ve quiz:** SM-2 aralıklı tekrar; quiz en zayıf kavramlardan hâkimiyete uygun zorlukta soru seçer.
+- **Dil partneri:** 8 dil, senaryolar, hata düzeltme ve kaydı, yeni kelimeler tekrar kartına eklenir, hatalardan alıştırma.
+- **Kod mentoru:** Python kodu tarayıcıda Pyodide 0.27.7 ile ayrı bir işçide çalışır (10 sn sınır, sonsuz döngüde işçi kapatılıp yeniden açılır); 3 kademeli ipucu ve kavram takibi.
+- **Saklama:** IndexedDB (`ogrenme-asistani`); Ayarlar → Yedek al / Yedekten yükle. Gemini anahtarı `ortak/gemini.js` üzerinden Veri Analisti ile ortaktır.
+
 ## Sürüm yükseltme (geliştirici notu)
 index.html değiştiğinde üçü birlikte yükseltilir: `index.html` içindeki `DK_VER`, `sw.js` içindeki `kutuphane-vN` ve `version.json` (`{"v":"vN"}`). Uygulamadaki "Yeni sürüm hazır" uyarısı yalnızca `version.json`a bakar; sadece `mektup.html` gibi diğer sayfalar değiştiyse `sw.js` yükseltmek yeterli, `version.json`a dokunma.
 
 ## Ortak tasarım (Profesyonel)
-`ortak/tema.css`: bütün uygulamaların ortak görünümü (ortak logodan türetildi: lacivert, krem, altın; sistem yazı tipi). Her uygulama bu dosyayı kendi stilinden sonra yükler ve `<html>` etiketindeki sınıfla (`app-mektup`, `app-defter`, `app-pdf`, `app-veri`, `app-hatira`, `app-yazi`) kendi değişkenlerini ortak değişkenlere bağlar. Kütüphanem, Çalışma Masam ve Yazar Köşem'de bu görünüm "Profesyonel (lacivert)" ön ayarıdır; ilk açılışta herkes bir kez bu ön ayara geçirilir (`UI.proMig`), Ayarlar → Görünüm'den eski temalara dönülebilir. Mektup kâğıdı ve defterdeki el yazısı gibi içerik görünümleri değişmez.
+`ortak/tema.css`: bütün uygulamaların ortak görünümü (ortak logodan türetildi: lacivert, krem, altın; sistem yazı tipi). Her uygulama bu dosyayı kendi stilinden sonra yükler ve `<html>` etiketindeki sınıfla (`app-mektup`, `app-pdf`, `app-veri`, `app-ogrenme`, `app-hatira`, `app-yazi`) kendi değişkenlerini ortak değişkenlere bağlar. Kütüphanem, Çalışma Masam ve Yazar Köşem'de bu görünüm "Profesyonel (lacivert)" ön ayarıdır; ilk açılışta herkes bir kez bu ön ayara geçirilir (`UI.proMig`; Drive/bulut ile eşitlenen eski ayar gelirse de uygulanır ve geri yazılır), Ayarlar → Görünüm'den eski temalara dönülebilir. Mektuplardaki daktilo sayfası değişmez; Yırtık Yaprak (Notlarım) kendi karalama defteri tasarımını korur ve ortak temayı yüklemez.

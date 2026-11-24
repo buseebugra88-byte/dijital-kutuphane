@@ -1,0 +1,143 @@
+:root {
+  --bg: #f6f5f1; --panel: #ffffff; --ink: #1d1d1b; --muted: #6b6a66; --line: #e4e2dc;
+  --accent: #3b5bdb; --accent-soft: #e7ecfd; --good: #2f9e44; --good-soft: #e6f4e9;
+  --bad: #c92a2a; --bad-soft: #fbe9e9; --warn: #e67700; --warn-soft: #fff3e0;
+  --radius: 10px; --shadow: 0 1px 2px rgba(0,0,0,.05), 0 2px 8px rgba(0,0,0,.04);
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161615; --panel: #1f1f1d; --ink: #ecebe6; --muted: #9d9b95; --line: #33322f;
+    --accent: #7c95f5; --accent-soft: #252c47; --good: #5cc171; --good-soft: #1d3324;
+    --bad: #f06b6b; --bad-soft: #3b2020; --warn: #f5a442; --warn-soft: #3a2c17;
+    --shadow: none;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+}
+header {
+  display: flex; align-items: center; gap: 24px; padding: 14px 24px;
+  background: var(--panel); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5;
+  flex-wrap: wrap;
+}
+header h1 { font-size: 17px; margin: 0; letter-spacing: -.01em; }
+nav { display: flex; gap: 4px; flex-wrap: wrap; }
+nav button {
+  background: none; border: 0; padding: 7px 12px; border-radius: 8px; color: var(--muted);
+  font: inherit; cursor: pointer;
+}
+nav button:hover { color: var(--ink); background: var(--bg); }
+nav button.aktif { color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 80px; }
+section.sayfa { display: none; }
+section.sayfa.aktif { display: block; }
+h2 { font-size: 22px; margin: 0 0 4px; letter-spacing: -.01em; }
+h3 { font-size: 16px; margin: 0 0 10px; }
+.alt { color: var(--muted); margin: 0 0 20px; }
+.kart {
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 18px; box-shadow: var(--shadow); margin-bottom: 16px;
+}
+.izgara { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.iki { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+@media (max-width: 800px) { .iki { grid-template-columns: 1fr; } }
+.sayi { font-size: 32px; font-weight: 700; letter-spacing: -.02em; }
+.etiket { color: var(--muted); font-size: 13px; }
+button.btn, label.btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px;
+  border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: inherit;
+  cursor: pointer; font-weight: 500;
+}
+button.btn:hover, label.btn:hover { border-color: var(--muted); }
+button.btn.ana, label.btn.ana { background: var(--accent); color: #fff; border-color: var(--accent); }
+button.btn.ana:hover { filter: brightness(1.08); }
+button.btn:disabled { opacity: .5; cursor: wait; }
+button.btn.kucuk { padding: 4px 10px; font-size: 13px; }
+input, select, textarea {
+  font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+  border-radius: 8px; padding: 8px 10px; width: 100%;
+}
+textarea { resize: vertical; }
+textarea.kod { font-family: var(--mono); font-size: 13.5px; min-height: 260px; tab-size: 4; }
+.satir { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.satir > * { flex: 0 0 auto; }
+.satir .esnek { flex: 1 1 200px; }
+.rozet {
+  display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 12px; font-weight: 600;
+  background: var(--accent-soft); color: var(--accent);
+}
+.rozet.iyi { background: var(--good-soft); color: var(--good); }
+.rozet.kotu { background: var(--bad-soft); color: var(--bad); }
+.rozet.uyari { background: var(--warn-soft); color: var(--warn); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 12.5px; text-transform: uppercase; letter-spacing: .03em; }
+.cubuk { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; min-width: 80px; }
+.cubuk > span { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+.liste-ogesi {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 10px 0; border-bottom: 1px solid var(--line);
+}
+.liste-ogesi:last-child { border-bottom: 0; }
+.tikla { cursor: pointer; }
+.tikla:hover { color: var(--accent); }
+.md p:first-child { margin-top: 0; } .md p:last-child { margin-bottom: 0; }
+.md pre { background: var(--bg); padding: 10px; border-radius: 8px; overflow-x: auto; }
+.md code { font-family: var(--mono); font-size: 13px; }
+pre.cikti {
+  background: #111; color: #e8e8e8; padding: 12px; border-radius: 8px; font-family: var(--mono);
+  font-size: 13px; white-space: pre-wrap; max-height: 300px; overflow: auto; margin: 0;
+}
+pre.cikti .hata { color: #ff8a8a; }
+.bos { color: var(--muted); text-align: center; padding: 30px 10px; }
+.yukleniyor::after {
+  content: ""; display: inline-block; width: 12px; height: 12px; margin-left: 8px;
+  border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%;
+  animation: don .7s linear infinite; vertical-align: -2px;
+}
+@keyframes don { to { transform: rotate(360deg); } }
+#bildirim {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); padding: 10px 16px;
+  border-radius: 8px; background: var(--ink); color: var(--bg); display: none; z-index: 20; max-width: 90vw;
+}
+#bildirim.hata { background: var(--bad); color: #fff; }
+
+/* Öğrenme asistanına özel */
+.flashcard {
+  min-height: 200px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center; font-size: 19px; padding: 30px;
+}
+.flashcard .arka { margin-top: 18px; padding-top: 18px; border-top: 1px dashed var(--line); color: var(--muted); width: 100%; }
+.secenek {
+  display: block; width: 100%; text-align: left; padding: 12px 14px; margin: 8px 0; border-radius: 8px;
+  border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: inherit; cursor: pointer;
+}
+.secenek:hover:not(:disabled) { border-color: var(--accent); }
+.secenek.dogru { border-color: var(--good); background: var(--good-soft); }
+.secenek.yanlis { border-color: var(--bad); background: var(--bad-soft); }
+.sohbet { display: flex; flex-direction: column; gap: 10px; max-height: 60vh; overflow-y: auto; padding: 4px; }
+.balon { max-width: 80%; padding: 10px 14px; border-radius: 14px; }
+.balon.user { align-self: flex-end; background: var(--accent); color: #fff; border-bottom-right-radius: 4px; }
+.balon.assistant { align-self: flex-start; background: var(--bg); border: 1px solid var(--line); border-bottom-left-radius: 4px; }
+.duzeltme { align-self: flex-end; max-width: 80%; font-size: 13px; background: var(--warn-soft); border-radius: 8px; padding: 8px 10px; }
+.duzeltme s { color: var(--bad); }
+.duzeltme b { color: var(--good); }
+.kelime { align-self: flex-start; font-size: 12.5px; color: var(--muted); }
+
+/* Kütüphane içi sürüm */
+header { padding: 10px 16px; gap: 14px; padding-top: max(10px, env(safe-area-inset-top)); }
+header h1 { display: flex; align-items: center; gap: 8px; }
+header .logo { width: 26px; height: 26px; border-radius: 6px; }
+header .geri { color: var(--muted); text-decoration: none; font-size: 14px; }
+header .geri:hover { color: var(--accent); }
+header .ayar-btn { margin-left: auto; }
+.uyari-kart { background: var(--warn-soft); border-color: transparent; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+dialog { border: 1px solid var(--line); border-radius: 12px; padding: 20px; max-width: 440px; width: calc(100vw - 32px); background: var(--panel); color: var(--ink); }
+dialog::backdrop { background: rgba(0,0,0,.35); }
+dialog hr { border: 0; border-top: 1px solid var(--line); margin: 18px 0; }
+dialog input, dialog select { margin: 4px 0 6px; }
+@media (max-width: 600px) { main { padding: 16px 10px 80px; } .kart { padding: 14px; } nav { order: 3; width: 100%; overflow-x: auto; flex-wrap: nowrap; } }
+[hidden] { display: none !important; }
