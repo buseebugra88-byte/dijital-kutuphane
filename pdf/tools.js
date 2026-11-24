@@ -86,7 +86,7 @@ function resultStage(body,files,{msg,again,sourceDoc}={}){const one=files.length
     ${sourceDoc&&one&&/\.pdf$/i.test(files[0].name)?`<button class="btn" id="rRep">${ic('save')} Orijinal belgenin yerine kaydet</button>`:''}</div>
     ${!one?`<details style="width:100%;max-width:520px;text-align:left"><summary style="cursor:pointer;color:var(--tx2)">Dosyaları tek tek indir</summary>${files.map((f,k)=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)"><span>${esc(f.name)}</span><a href="#" data-k="${k}">İndir</a></div>`).join('')}</details>`:''}
     <button class="btn ghost" id="rAgain">${ic('rotl')} Baştan başla</button></div>`;
-  const type=n=>/\.png$/i.test(n)?'image/png':/\.jpe?g$/i.test(n)?'image/jpeg':/\.txt$/i.test(n)?'text/plain':'application/pdf';
+  const type=n=>/\.png$/i.test(n)?'image/png':/\.jpe?g$/i.test(n)?'image/jpeg':/\.txt$/i.test(n)?'text/plain':/\.docx$/i.test(n)?'application/vnd.openxmlformats-officedocument.wordprocessingml.document':/\.xlsx$/i.test(n)?'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':/\.pptx$/i.test(n)?'application/vnd.openxmlformats-officedocument.presentationml.presentation':'application/pdf';
   $('#rDl',body).onclick=()=>one?download(files[0].data,files[0].name,type(files[0].name)):download(makeZip(files),(files[0].zip||'pdf-atolyem')+'.zip');
   const sh=$('#rSh',body);if(sh)sh.onclick=()=>shareFile(files[0].data,files[0].name,type(files[0].name));
   const lb=$('#rLib',body);if(lb)lb.onclick=()=>Lib.send(files[0].data,files[0].name);
