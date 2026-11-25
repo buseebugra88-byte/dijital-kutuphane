@@ -56,7 +56,7 @@ button{font:inherit;color:inherit}
 .pl.gece .pl-top,.pl.open .pl-top{color:#d9d4ca}
 .ctr{margin-left:auto;margin-right:6px;font:400 .86rem var(--f-type);letter-spacing:.06em;color:#9a948a}
 .stage{position:absolute;inset:0;cursor:text}
-.col{position:absolute;left:50%;top:0;width:var(--colw,min(36ch,88vw));margin-left:calc(var(--colw,min(36ch,88vw)) / -2);font:600 17px/23px var(--f-type);letter-spacing:.03em;transition:transform .14s ease-out;will-change:transform}
+.col{position:absolute;left:50%;top:0;width:var(--colw,min(56ch,88vw));margin-left:calc(var(--colw,min(56ch,88vw)) / -2);font:600 17px/23px var(--f-type);letter-spacing:.03em;transition:transform .14s ease-out;will-change:transform}
 .ink,.col textarea,.meas{white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;font:inherit;letter-spacing:inherit;margin:0;padding:0;border:0}
 .ink{position:relative;z-index:1;pointer-events:none;min-height:23px;text-shadow:0 0 .6px currentColor}
 .ink span{position:relative}
@@ -605,7 +605,7 @@ function applyLook(){const pl=document.getElementById("pl");if(!pl)return;const 
   const pp=night?"#3a3937":(PAPERC[draft.paperC]||PAPERC.krem)[1];pl.style.setProperty("--pp",pp);pl.style.setProperty("--pfade",hexA(pp,0));
   pl.classList.toggle("gece",night);pl.classList.toggle("curved",!!PREF.curved);pl.classList.toggle("nomach",!PREF.machine);
   pl.style.setProperty("--cap",CAPS[PREF.cap]||CAPS.klasik);pl.style.setProperty("--raybg",(RAYS[PREF.ray]||RAYS.antrasit)[1]);
-  pl.dataset.str=draft.str||100;pl.style.setProperty("--colw",{kisa:"min(25ch,78vw)",orta:"min(31ch,84vw)",uzun:"min(36ch,88vw)",tam:"min(60ch,calc(100vw - 36px))"}[PREF.satir||"uzun"]);const g=gardenSVG(PREF.garden);pl.style.setProperty("--garden",g||"none");pl.classList.toggle("garden",!!g);
+  pl.dataset.str=draft.str||100;pl.style.setProperty("--colw",{kisa:"min(25ch,78vw)",orta:"min(31ch,84vw)",uzun:"min(56ch,88vw)",tam:"min(80ch,calc(100vw - 36px))"}[PREF.satir||"uzun"]);const g=gardenSVG(PREF.garden);pl.style.setProperty("--garden",g||"none");pl.classList.toggle("garden",!!g);
   const col=document.getElementById("col");if(col)col.style.color=inkNow();
   const fl=document.getElementById("flmark");if(fl)fl.innerHTML=draft.flower&&FLOWERS[draft.flower]?flowerSVG(FLOWERS[draft.flower],30):"";
   const dot=document.querySelector("#t-ink .dot");if(dot)dot.style.background=INKS[draft.ink];
