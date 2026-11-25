@@ -56,7 +56,7 @@ button{font:inherit;color:inherit}
 .pl.gece .pl-top,.pl.open .pl-top{color:#d9d4ca}
 .ctr{margin-left:auto;margin-right:6px;font:400 .86rem var(--f-type);letter-spacing:.06em;color:#9a948a}
 .stage{position:absolute;inset:0;cursor:text}
-.col{position:absolute;left:50%;top:0;width:min(25ch,78vw);margin-left:calc(min(25ch,78vw) / -2);font:600 17px/23px var(--f-type);letter-spacing:.03em;transition:transform .14s ease-out;will-change:transform}
+.col{position:absolute;left:50%;top:0;width:var(--colw,min(36ch,88vw));margin-left:calc(var(--colw,min(36ch,88vw)) / -2);font:600 17px/23px var(--f-type);letter-spacing:.03em;transition:transform .14s ease-out;will-change:transform}
 .ink,.col textarea,.meas{white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;font:inherit;letter-spacing:inherit;margin:0;padding:0;border:0}
 .ink{position:relative;z-index:1;pointer-events:none;min-height:23px;text-shadow:0 0 .6px currentColor}
 .ink span{position:relative}
@@ -605,7 +605,7 @@ function applyLook(){const pl=document.getElementById("pl");if(!pl)return;const 
   const pp=night?"#3a3937":(PAPERC[draft.paperC]||PAPERC.krem)[1];pl.style.setProperty("--pp",pp);pl.style.setProperty("--pfade",hexA(pp,0));
   pl.classList.toggle("gece",night);pl.classList.toggle("curved",!!PREF.curved);pl.classList.toggle("nomach",!PREF.machine);
   pl.style.setProperty("--cap",CAPS[PREF.cap]||CAPS.klasik);pl.style.setProperty("--raybg",(RAYS[PREF.ray]||RAYS.antrasit)[1]);
-  pl.dataset.str=draft.str||100;const g=gardenSVG(PREF.garden);pl.style.setProperty("--garden",g||"none");pl.classList.toggle("garden",!!g);
+  pl.dataset.str=draft.str||100;pl.style.setProperty("--colw",{kisa:"min(25ch,78vw)",orta:"min(31ch,84vw)",uzun:"min(36ch,88vw)",tam:"min(60ch,calc(100vw - 36px))"}[PREF.satir||"uzun"]);const g=gardenSVG(PREF.garden);pl.style.setProperty("--garden",g||"none");pl.classList.toggle("garden",!!g);
   const col=document.getElementById("col");if(col)col.style.color=inkNow();
   const fl=document.getElementById("flmark");if(fl)fl.innerHTML=draft.flower&&FLOWERS[draft.flower]?flowerSVG(FLOWERS[draft.flower],30):"";
   const dot=document.querySelector("#t-ink .dot");if(dot)dot.style.background=INKS[draft.ink];
@@ -635,7 +635,7 @@ function openSet(){
     ${row("yeni","Yeni boş sayfa","Şu anki taslağı temizler; kutundakiler kalır",'<i class="chev">→</i>')}
     ${head("Yazı alanınız","Bu cihazda yazı alanı")}
     ${row("makine","Makine ve ray",`${CAPN[PREF.cap]} · ${RAYS[PREF.ray][0]}`)}
-    ${row("duzen","Sayfa düzeni",PREF.curved?"Kavisli kâğıt":"Düz kâğıt")}
+    ${row("duzen","Sayfa düzeni",(PREF.curved?"Kavisli kâğıt":"Düz kâğıt")+" · "+({kisa:"kısa",orta:"orta",uzun:"uzun",tam:"sayfa boyu"}[PREF.satir||"uzun"])+" satır")}
     ${row("ses","Ses ve dokunuş",PREF.sound?("Mekanik"+(PREF.bell?" · yumuşak zil":"")):"Kapalı")}
     ${row("gece","Gece ışığı",(PREF.gece==="oto"?"Telefona göre":PREF.gece?"Açık":"Kapalı")+" · değiştirmek için kapsülü basılı tut")}
     ${row("mak","Makineyi göster",PREF.machine?"Açık":"Kapalı",chk(PREF.machine))}
@@ -658,7 +658,7 @@ function openSet(){
     if(r==="kagit")sub("Kâğıt ve mürekkep",`<div class="slab">Kâğıt</div>${pick("paperC",PAPERC,draft.paperC,paperSw)}<div class="slab">Mürekkep</div>${pick("ink",INKN,draft.ink,inkSw)}<div class="slab">Şerit</div>${pick("str",STRN,draft.str)}`,(g,k)=>{draft[g]=g==="str"?+k:k;saveDraft()});
     else if(r==="varsay")sub("Varsayılanlar",`<div class="slab">Kâğıt</div>${pick("paperC",PAPERC,PREF.def.paperC,paperSw)}<div class="slab">Mürekkep</div>${pick("ink",INKN,PREF.def.ink,inkSw)}<div class="slab">Şerit</div>${pick("str",STRN,PREF.def.str)}`,(g,k)=>{PREF.def[g]=g==="str"?+k:k;savePref()});
     else if(r==="makine")sub("Makine ve ray",`<div class="slab">Kapsül</div><div class="caps">${Object.entries(CAPS).map(([k,c])=>`<button data-p="cap" data-k="${k}" aria-pressed="${k===PREF.cap}" style="background:${c}" aria-label="${CAPN[k]}"></button>`).join("")}</div><div class="slab">Ray</div>${pick("ray",RAYS,PREF.ray,k=>`<i class="sw ray" style="background:${RAYS[k][1]}"></i>`)}`,(g,k)=>{PREF[g]=k;savePref()});
-    else if(r==="duzen")sub("Sayfa düzeni",`<div class="slab">Kâğıt</div>${pick("curved",{0:"Düz kâğıt",1:"Kavisli kâğıt"},PREF.curved?1:0)}`,(g,k)=>{PREF.curved=k==="1";savePref()});
+    else if(r==="duzen")sub("Sayfa düzeni",`<div class="slab">Kâğıt</div>${pick("curved",{0:"Düz kâğıt",1:"Kavisli kâğıt"},PREF.curved?1:0)}<div class="slab">Satır uzunluğu</div>${pick("satir",{kisa:"Kısa",orta:"Orta",uzun:"Uzun",tam:"Sayfa boyu"},PREF.satir||"uzun")}`,(g,k)=>{if(g==="satir")PREF.satir=k;else PREF.curved=k==="1";savePref()});
     else if(r==="ses")sub("Ses ve dokunuş",`<div class="slab">Yazma sesi</div>${pick("sound",{0:"Kapalı",1:"Mekanik daktilo"},PREF.sound?1:0)}<div class="slab">Satır sonu zili</div>${pick("bell",{0:"Kapalı",1:"Yumuşak zil"},PREF.bell?1:0)}`,(g,k)=>{PREF[g]=k==="1";savePref();if(PREF.sound){sndKey()}});
     else if(r==="gece")sub("Gece ışığı",`${pick("gece",{0:"Kapalı · aydınlık",1:"Açık · gece lambası",oto:"Telefona göre"},PREF.gece==="oto"?"oto":PREF.gece?1:0)}`,(g,k)=>{PREF.gece=k==="oto"?"oto":k==="1";savePref()});
     else if(r==="bahce")sub("Bahçe ve süsler",`<div class="slab">Kâğıdın kenarı</div>${pick("garden",GARDENS,PREF.garden)}`,(g,k)=>{PREF.garden=k;savePref()});
