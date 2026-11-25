@@ -34,7 +34,7 @@ const T=[
 const toolById=id=>T.find(t=>t.id===id);
 
 /* ---------- ana ekran ---------- */
-async function renderHome(){const app=$('#app');const docs=await Docs.list();const libHtml=await Lib.section();
+async function renderHome(){const app=$('#app');const docs=await Docs.list();const libHtml='';
   app.innerHTML=`<header class="top"><a class="brand" href="#/"><span class="logo">PDF</span>PDF Atölyem</a><div class="sp"></div>
     <a class="btn ghost hide-s" href="../">${ic('back')} Kütüphanem</a><button class="btn pri" id="hOpen">${ic('open')} PDF aç</button></header>
   <div class="home">
