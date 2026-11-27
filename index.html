@@ -1458,6 +1458,10 @@ body.cov-xs .bkc small{display:none}body.cov-xs .bkc b{font-size:10.5px}
 .rv-top .rv-sp{flex:1}.rv-top button{border:1px solid #d8ccbb;background:#fbf7f0;color:#4a4038;border-radius:999px;padding:8px 14px;font:inherit;font-size:14px;cursor:pointer}
 .rv{--rb:#dfe7ef;--rbe:#efe4d4;--ri:#3d3631;--ra:#7f9cbd;font-family:'Patrick Hand','Caveat',cursive;color:var(--ri);background:#f8f2e8;max-width:880px;margin:6px auto 40px;border-radius:6px;padding:34px 34px 40px;position:relative;box-shadow:0 20px 50px -30px rgba(60,40,20,.5);font-size:19px;line-height:1.45}
 .rv *{box-sizing:border-box}
+.rv .rv-lnk{display:flex;align-items:center;gap:6px;min-width:0}
+.rv .rv-lnk button{flex:none;border:1px solid #c9d3de;background:#fbf7f0;color:var(--ri);border-radius:999px;padding:1px 10px;font:inherit;font-size:15px;cursor:pointer;line-height:1.4}
+.rv .rv-lnk input{flex:1;min-width:0;font-size:14px;opacity:.75}
+@media print{.rv .rv-lnk button{display:none}}
 .rv .rv-tm{position:relative;margin:26px -6px 0;height:520px;border-radius:14px;overflow:hidden;color:#efe2c4;font-family:'Caveat','Patrick Hand',cursive;-webkit-print-color-adjust:exact;print-color-adjust:exact;
  background:radial-gradient(ellipse 55% 45% at 50% 50%,rgba(120,150,190,.28),transparent 70%),radial-gradient(ellipse 40% 30% at 18% 80%,rgba(212,175,100,.10),transparent 70%),radial-gradient(ellipse 50% 35% at 85% 15%,rgba(150,170,210,.14),transparent 70%),linear-gradient(160deg,#1c2b40,#0f1a2a 55%,#162436)}
 .rv .rv-tm::before{content:"";position:absolute;inset:0;opacity:.5;background-image:radial-gradient(1.2px 1.2px at 12% 22%,#e9cf8f 50%,transparent 51%),radial-gradient(1px 1px at 33% 72%,#e9cf8f 50%,transparent 51%),radial-gradient(1.4px 1.4px at 71% 18%,#e9cf8f 50%,transparent 51%),radial-gradient(1px 1px at 86% 64%,#e9cf8f 50%,transparent 51%),radial-gradient(1.2px 1.2px at 24% 90%,#e9cf8f 50%,transparent 51%),radial-gradient(1px 1px at 58% 88%,#e9cf8f 50%,transparent 51%),radial-gradient(1.3px 1.3px at 92% 88%,#e9cf8f 50%,transparent 51%),radial-gradient(1px 1px at 6% 52%,#e9cf8f 50%,transparent 51%);pointer-events:none}
@@ -2473,6 +2477,10 @@ document.addEventListener('click',e=>{const sec=e.target.closest&&e.target.close
   const del=e.target.closest('[data-tmdel]');if(del){const L=tpList(b).slice();L.splice(+del.dataset.tmdel,1);tpSet(b,L)}});
 document.addEventListener('keydown',e=>{if(e.target&&e.target.id==='tmNew'&&e.key==='Enter'){e.preventDefault();const b=st.books.find(x=>x.id===RV.id);const v=tpCap(e.target.value);if(!b||!v)return;const L=tpList(b).slice();if(L.length>=TP_SLOTS.length){toast('En fazla '+TP_SLOTS.length+' etiket sığıyor');return}L.push(v);tpSet(b,L);setTimeout(()=>{const i=$('tmNew');i&&i.focus()},0)}},true);
 addEventListener('resize',()=>{const pg=$('rvPage');if(pg&&!pg.hidden)tpDraw()});
+document.addEventListener('click',e=>{const x=e.target.closest&&e.target.closest('#rvPage [data-rvlink]');if(!x)return;const b=st.books.find(y=>y.id===RV.id);if(!b)return;const f=x.dataset.rvlink;
+  let u=String(((b.rv||{})[f])||'').trim();if(u&&!/^https?:\/\//i.test(u))u='https://'+u;
+  if(!u){const q=encodeURIComponent([b.title,b.author].filter(Boolean).join(' '));u=f==='pin'?'https://www.pinterest.com/search/pins/?q='+encodeURIComponent([b.title,b.author,'aesthetic'].filter(Boolean).join(' ')):'https://open.spotify.com/search/'+q+'/playlists'}
+  window.open(u,'_blank','noopener')});
 function rvRender(){const pg=$('rvPage'),b=st.books.find(x=>x.id===RV.id);if(!pg||!b)return;const r=b.rv||{};const src=coverSrc(b);
   const q0=r.quote!==undefined?r.quote:((TL.quotes||[]).find(q=>q.title===b.title)||{}).text||'';
   const tk=(r.tk&&r.tk.length?r.tk:['']);const rt=b.rating||0;
@@ -2497,6 +2505,8 @@ function rvRender(){const pg=$('rvPage'),b=st.books.find(x=>x.id===RV.id);if(!pg
           <span>👤</span><span class="rv-k">Yazar</span><span>: <input data-bare class="bare" data-rv="author" value="${esc(b.author||'')}" placeholder="Yazar" style="width:calc(100% - 14px)"></span>
           <span>🏷</span><span class="rv-k">Tür</span><span>: <input data-bare class="bare" data-rv="shelf" value="${esc(b.shelf||'')}" placeholder="Tür" style="width:calc(100% - 14px)"></span>
           ${seriesOf(b)?`<span>📚</span><span class="rv-k">Seri</span><span>: ${esc(seriesOf(b).name)}${seriesOf(b).no?' #'+seriesOf(b).no:''}</span>`:''}
+          <span>📌</span><span class="rv-k">Pinterest</span><span class="rv-lnk">: <button type="button" data-rvlink="pin">Aç ↗</button><input data-bare class="bare" data-rv="pin" value="${esc(r.pin||'')}" placeholder="Pano linkin (boşsa arama açılır)"></span>
+          <span>🎧</span><span class="rv-k">Spotify</span><span class="rv-lnk">: <button type="button" data-rvlink="sp">Aç ↗</button><input data-bare class="bare" data-rv="sp" value="${esc(r.sp||'')}" placeholder="Çalma listen (boşsa arama açılır)"></span>
           <span>☆</span><span class="rv-k">Puan</span><span>: <span class="rv-stars">${stars}</span></span>
           ${b.finishedAt?`<span>📅</span><span class="rv-k">Bitirdim</span><span>: ${esc(new Date(b.finishedAt).toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'}))}</span>`:''}
         </div></div>
@@ -6019,7 +6029,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v233';
+const DK_VER='v234';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
