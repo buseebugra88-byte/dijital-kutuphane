@@ -2488,7 +2488,6 @@ function rvRender(){const pg=$('rvPage'),b=st.books.find(x=>x.id===RV.id);if(!pg
     ${rvTmHtml(b,src)}
     <div class="rv-grid">
       <div class="rv-col">
-        <div class="rv-cover"><span class="rv-tape" style="left:-14px;top:-8px;transform:rotate(-28deg)"></span>${src?`<img src="${src}" alt="">`:`<div class="rv-ph">${esc(b.title)}</div>`}<span class="rv-tape" style="left:50%;bottom:-12px;transform:translateX(-50%) rotate(-3deg)"></span></div>
         <div class="rv-quote"><h2 style="font-family:'Patrick Hand',cursive;font-weight:400;font-size:22px;letter-spacing:.05em;margin:0 0 6px">EN SEVDİĞİM ALINTI <span style="color:var(--ra)">♥</span></h2>${ta('quote',q0,'“Seni en çok etkileyen cümle…”',3)}</div>
         <div class="rv-box b"><h2><u>YORUMUM</u> <span style="color:var(--ra)">♥</span></h2><div class="rv-lines">${ta('review',b.review,'Bu kitap bana ne hissettirdi?',6)}</div></div>
       </div>
@@ -6020,7 +6019,7 @@ document.addEventListener('input',e=>{if(e.target.id==='cmP'){const o=$('cmPv');
 document.addEventListener('keydown',async e=>{const t=e.target;if(e.key!=='Enter'||!t.dataset||t.dataset.cmenter!=='appt'||e.isComposing)return;e.preventDefault();const v=t.value.trim();if(!v)return;const c=calmCfg();t.value='';LF.focus='cmAI';await calmSet({appt:[...(c.appt||[]),{id:nbId(),t:v,at:new Date().toISOString()}]});setTimeout(lfForce,150)});
 
 /* ===================== Kitabı tüm cihazlarda açma (Drive) + sürüm güncelleme ===================== */
-const DK_VER='v232';
+const DK_VER='v233';
 function dkLocalOnly(b){return typeof LOCAL!=='undefined'&&b&&b.assetId&&!b.driveId&&!b.fileRemoved&&!(b.parts&&b.parts.length>1)}
 function dkHere(b){return dkLocalOnly(b)&&LOCAL.has(b.assetId)}
 const DK_BF='📱 Uygulamadan eklenenler';
